@@ -1,5 +1,5 @@
 import { inject, Injectable, OnDestroy } from '@angular/core';
-import { Supabase } from '../supabase/supabase';
+import { Supabase } from '../../../../core/services/supabase/supabase';
 import { Session } from '@supabase/supabase-js';
 import { BehaviorSubject } from 'rxjs';
 

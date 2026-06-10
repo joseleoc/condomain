@@ -17,14 +17,14 @@ export const routes: Routes = [
       {
         path: 'sign-up',
         loadComponent: () =>
-          import('./features/auth/sign-up/sign-up.page').then(
+          import('./features/auth/pages/sign-up/sign-up.page').then(
             (m) => m.SignUpPage,
           ),
       },
       {
         path: 'sign-in',
         loadComponent: () =>
-          import('./features/auth/sign-in/sign-in.page').then(
+          import('./features/auth/pages/sign-in/sign-in.page').then(
             (m) => m.SignInPage,
           ),
       },
@@ -38,6 +38,8 @@ export const routes: Routes = [
   {
     path: 'sign-in',
     loadComponent: () =>
-      import('./features/auth/sign-in/sign-in.page').then((m) => m.SignInPage),
+      import('./features/auth/pages/sign-in/sign-in.page').then(
+        (m) => m.SignInPage,
+      ),
   },
 ];
