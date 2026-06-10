@@ -1,0 +1,7 @@
+{
+  "name": "condomain",
+  "integrations": {
+    "capacitor": {}
+  },
+  "type": "angular-standalone"
+}
