@@ -11,4 +11,33 @@ export const routes: Routes = [
     redirectTo: 'home',
     pathMatch: 'full',
   },
+  {
+    path: 'auth',
+    children: [
+      {
+        path: 'sign-up',
+        loadComponent: () =>
+          import('./features/auth/sign-up/sign-up.page').then(
+            (m) => m.SignUpPage,
+          ),
+      },
+      {
+        path: 'sign-in',
+        loadComponent: () =>
+          import('./features/auth/sign-in/sign-in.page').then(
+            (m) => m.SignInPage,
+          ),
+      },
+      {
+        path: '',
+        redirectTo: 'sign-in',
+        pathMatch: 'full',
+      },
+    ],
+  },
+  {
+    path: 'sign-in',
+    loadComponent: () =>
+      import('./features/auth/sign-in/sign-in.page').then((m) => m.SignInPage),
+  },
 ];
