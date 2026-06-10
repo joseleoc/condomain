@@ -100,7 +100,7 @@ importers:
         specifier: ^12.0.0
         version: 12.3.0(chokidar@4.0.3)
       '@types/jasmine':
-        specifier: ~5.1.0
+        specifier: ~5.1.15
         version: 5.1.15
       '@typescript-eslint/eslint-plugin':
         specifier: ^8.18.0
@@ -120,6 +120,9 @@ importers:
       eslint-plugin-prefer-arrow:
         specifier: 1.2.2
         version: 1.2.2(eslint@9.39.4(jiti@1.21.7))
+      jasmine:
+        specifier: ^6.3.0
+        version: 6.3.0
       jasmine-core:
         specifier: ~5.1.0
         version: 5.1.2
@@ -1595,6 +1598,9 @@ packages:
   '@istanbuljs/schema@0.1.6':
     resolution: {integrity: sha512-+Sg6GCR/wy1oSmQDFq4LQDAhm3ETKnorxN+y5nbLULOR3P0c14f2Wurzj3/xqPXtasLFfHd5iRFQ7AJt4KH2cw==}
     engines: {node: '>=8'}
+
+  '@jasminejs/reporters@1.0.0':
+    resolution: {integrity: sha512-rM3GG4vx2H1Gp5kYCTr9aKlOEJFd43pzpiMAiy5b1+FUc2ub4e6bS6yCi/WQNDzAa5MVp9++dwcoEtcIfoEnhA==}
 
   '@jridgewell/gen-mapping@0.3.13':
     resolution: {integrity: sha512-2kkt/7niJ6MgEPxF0bYdQ6etZaA+fQvDcLKckhy1yIQOzaoKjBBjSj63/aLVjYE3qhRt5dvM+uUyfCg6UKCBbA==}
@@ -4098,8 +4104,15 @@ packages:
   jasmine-core@5.1.2:
     resolution: {integrity: sha512-2oIUMGn00FdUiqz6epiiJr7xcFyNYj3rDcfmnzfkBnHyBQ3cBQUs4mmyGsOb7TTLb9kxk7dBcmEmqhDKkBoDyA==}
 
+  jasmine-core@6.3.0:
+    resolution: {integrity: sha512-eMm5qBovNjNoGOcgE/W207+wrcK5zrQv0Rg/rWGboUJUmZp0dFCpHTyjpuDAfCwRCqg7f9U2q2jtv/aUuzdCQg==}
+
   jasmine-spec-reporter@5.0.2:
     resolution: {integrity: sha512-6gP1LbVgJ+d7PKksQBc2H0oDGNRQI3gKUsWlswKaQ2fif9X5gzhQcgM5+kiJGCQVurOG09jqNhk7payggyp5+g==}
+
+  jasmine@6.3.0:
+    resolution: {integrity: sha512-u6L7yYtrtS1JALlp7f4k7Wz7o7ZKXauSKKkXc0L3qUkKrdaxYvNiMHhHp5gtTuVZZXVihXRxS7bWwDBX1wJ7EQ==}
+    hasBin: true
 
   jest-worker@27.5.1:
     resolution: {integrity: sha512-7vuh85V5cdDofPyxn58nrPjBktZo0u9x1g8WtjQol+jZDaE+fhN+cIvTj11GndBnMnyfrUOG1sZQxCdjKh+DKg==}
@@ -7490,6 +7503,8 @@ snapshots:
 
   '@istanbuljs/schema@0.1.6': {}
 
+  '@jasminejs/reporters@1.0.0': {}
+
   '@jridgewell/gen-mapping@0.3.13':
     dependencies:
       '@jridgewell/sourcemap-codec': 1.5.5
@@ -10170,9 +10185,17 @@ snapshots:
 
   jasmine-core@5.1.2: {}
 
+  jasmine-core@6.3.0: {}
+
   jasmine-spec-reporter@5.0.2:
     dependencies:
       colors: 1.4.0
+
+  jasmine@6.3.0:
+    dependencies:
+      '@jasminejs/reporters': 1.0.0
+      glob: 13.0.6
+      jasmine-core: 6.3.0
 
   jest-worker@27.5.1:
     dependencies:
