@@ -1,5 +1,9 @@
 <ng-container *transloco="let t">
   <ion-card class="ion-padding">
+    <ion-card-header>
+      <ion-card-title class="ion-text-center"> {{ t("auth.signIn.title") }} </ion-card-title>
+    </ion-card-header>
+    
     <form [formGroup]="signInForm" (ngSubmit)="onSubmit()">
       <ion-input
         formControlName="email"

@@ -1,6 +1,1 @@
-.redirect-list {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 1rem;
-}
+@use "../../styles/auth.styles.scss";

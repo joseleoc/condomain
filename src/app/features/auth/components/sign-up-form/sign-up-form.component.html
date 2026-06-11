@@ -1,5 +1,11 @@
 <ng-container *transloco="let t">
   <ion-card class="ion-padding">
+    <ion-card-header>
+      <ion-card-title class="ion-text-center">
+        {{ t("auth.signUp.title") }}
+      </ion-card-title>
+    </ion-card-header>
+
     <form [formGroup]="signUpForm" (ngSubmit)="onSubmit()">
       <ion-input
         formControlName="email"
@@ -32,7 +38,7 @@
         class="ion-padding-top"
         [disabled]="signUpForm.touched && signUpForm.invalid"
       >
-        {{ t('auth.signUp.submitButton') }}
+        {{ t("auth.signUp.submitButton") }}
       </ion-button>
     </form>
   </ion-card>

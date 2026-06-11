@@ -1,5 +1,5 @@
-import { Component, input } from '@angular/core';
-import { IonContent, IonIcon } from '@ionic/angular/standalone';
+import { Component } from '@angular/core';
+import { IonContent } from '@ionic/angular/standalone';
 
 @Component({
   selector: 'app-auth-layout',
@@ -7,7 +7,4 @@ import { IonContent, IonIcon } from '@ionic/angular/standalone';
   styleUrls: ['./auth-layout.component.scss'],
   imports: [IonContent],
 })
-export class AuthLayoutComponent {
-  // -- Inputs ---
-  readonly title = input.required<string>();
-}
+export class AuthLayoutComponent {}

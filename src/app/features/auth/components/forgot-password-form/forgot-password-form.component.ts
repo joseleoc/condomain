@@ -7,7 +7,13 @@ import {
   Validators,
 } from '@angular/forms';
 import { ForgotPasswordFormValue } from '@features/auth/types';
-import { IonInput, IonButton, IonCard } from '@ionic/angular/standalone';
+import {
+  IonInput,
+  IonButton,
+  IonCard,
+  IonCardTitle,
+  IonCardHeader,
+} from '@ionic/angular/standalone';
 import { TranslocoModule, TranslocoService } from '@jsverse/transloco';
 import { map } from 'rxjs';
 
@@ -26,6 +32,8 @@ interface ForgotPasswordFormControls {
     IonCard,
     TranslocoModule,
     AsyncPipe,
+    IonCardTitle,
+    IonCardHeader,
   ],
 })
 export class ForgotPasswordFormComponent {
