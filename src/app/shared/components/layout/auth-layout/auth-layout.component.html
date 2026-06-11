@@ -1,0 +1,16 @@
+<ion-header [translucent]="true">
+  <ion-toolbar>
+    @if (showBackButton()) {
+      <ion-buttons slot="start">
+        <ion-back-button defaultHref="/auth/sign-in"></ion-back-button>
+      </ion-buttons>
+    }
+  </ion-toolbar>
+</ion-header>
+
+<ion-content [fullscreen]="true" class="ion-padding">
+  <div class="auth-layout-container">
+    <div class="logo"></div>
+    <ng-content></ng-content>
+  </div>
+</ion-content>

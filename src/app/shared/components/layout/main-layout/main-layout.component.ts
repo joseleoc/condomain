@@ -1,10 +1,14 @@
-import { Component, input } from '@angular/core';
+import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import {
   IonContent,
   IonHeader,
   IonTitle,
-  IonToolbar
+  IonToolbar,
+  IonMenu,
+  IonButtons,
+  IonMenuButton,
+  IonIcon,
 } from '@ionic/angular/standalone';
 
 @Component({
@@ -18,12 +22,10 @@ import {
     IonTitle,
     IonToolbar,
     CommonModule,
+    IonMenu,
+    IonButtons,
+    IonMenuButton,
+    IonIcon,
   ],
 })
-export class MainLayoutComponent {
-  // -- Inputs ---
-  readonly title = input.required<string>();
-
-  // --- Constructor ---
-  constructor() {}
-}
+export class MainLayoutComponent {}

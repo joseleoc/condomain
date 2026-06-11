@@ -1,11 +1,11 @@
 import { Component, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { TranslocoModule, TranslocoService } from '@jsverse/transloco';
-import { MainLayoutComponent } from '@features/layout/main-layout/main-layout.component';
 import { UpdatePasswordFormComponent } from '@features/auth/components/update-password-form/update-password-form.component';
 import { Auth } from '@core/services/auth/auth';
 import { AlertController } from '@ionic/angular/standalone';
 import { Router } from '@angular/router';
+import { AuthLayoutComponent } from "@shared/components/layout/auth-layout/auth-layout.component";
 
 @Component({
   selector: 'app-update-password',
@@ -15,9 +15,9 @@ import { Router } from '@angular/router';
   imports: [
     CommonModule,
     TranslocoModule,
-    MainLayoutComponent,
     UpdatePasswordFormComponent,
-  ],
+    AuthLayoutComponent
+],
 })
 export class UpdatePasswordPage {
   // --- Dependencies ---

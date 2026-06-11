@@ -1,11 +1,11 @@
 import { Component, inject, OnInit } from '@angular/core';
 import { Router, RouterLink } from '@angular/router';
-import { MainLayoutComponent } from '@features/layout/main-layout/main-layout.component';
 import { ForgotPasswordFormComponent } from '@features/auth/components/forgot-password-form/forgot-password-form.component';
 import { TranslocoModule, TranslocoService } from '@jsverse/transloco';
 import { ForgotPasswordFormValue } from '@features/auth/types';
 import { Auth } from '@core/services/auth/auth';
 import { AlertController } from '@ionic/angular/standalone';
+import { AuthLayoutComponent } from '@shared/components/layout/auth-layout/auth-layout.component';
 
 @Component({
   selector: 'app-forgot-password',
@@ -13,7 +13,7 @@ import { AlertController } from '@ionic/angular/standalone';
   styleUrls: ['./forgot-password.page.scss'],
   standalone: true,
   imports: [
-    MainLayoutComponent,
+    AuthLayoutComponent,
     TranslocoModule,
     RouterLink,
     ForgotPasswordFormComponent,

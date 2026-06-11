@@ -7,6 +7,8 @@ import {
   IonButton,
   IonInputPasswordToggle,
   IonCard,
+  IonCardHeader,
+  IonCardTitle,
 } from '@ionic/angular/standalone';
 import { TranslocoModule, TranslocoService } from '@jsverse/transloco';
 import { map } from 'rxjs';
@@ -28,6 +30,8 @@ interface SignInFormControls {
     IonCard,
     AsyncPipe,
     TranslocoModule,
+    IonCardHeader,
+    IonCardTitle,
   ],
 })
 export class SignInFormComponent {
@@ -78,8 +82,7 @@ export class SignInFormComponent {
     }),
   );
 
-
-    // --- Methods ---
+  // --- Methods ---
   onSubmit() {
     if (this.signInForm.valid) {
       this.submitSignInForm.emit(this.signInForm.getRawValue());

@@ -1,12 +1,12 @@
 import { Component, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { SignInFormComponent } from '@features/auth/components/sign-in-form/sign-in-form.component';
-import { MainLayoutComponent } from '@features/layout/main-layout/main-layout.component';
 import { TranslocoModule, TranslocoService } from '@jsverse/transloco';
 import { SignInFormValue } from '@features/auth/types';
 import { Auth } from '@core/services/auth/auth';
 import { AlertController } from '@ionic/angular/standalone';
 import { Router, RouterLink } from '@angular/router';
+import { AuthLayoutComponent } from '@shared/components/layout/auth-layout/auth-layout.component';
 
 @Component({
   selector: 'app-sign-in',
@@ -16,9 +16,9 @@ import { Router, RouterLink } from '@angular/router';
   imports: [
     CommonModule,
     SignInFormComponent,
-    MainLayoutComponent,
     TranslocoModule,
     RouterLink,
+    AuthLayoutComponent,
   ],
 })
 export class SignInPage {

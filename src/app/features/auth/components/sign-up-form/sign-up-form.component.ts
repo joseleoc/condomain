@@ -4,6 +4,8 @@ import {
   IonButton,
   IonInputPasswordToggle,
   IonCard,
+  IonCardHeader,
+  IonCardTitle,
 } from '@ionic/angular/standalone';
 import {
   FormControl,
@@ -35,6 +37,8 @@ interface SignUpFormControls {
     IonCard,
     AsyncPipe,
     TranslocoModule,
+    IonCardHeader,
+    IonCardTitle,
   ],
 })
 export class SignUpFormComponent {
