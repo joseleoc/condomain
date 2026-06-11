@@ -1,18 +1,16 @@
-import { Component, input, OnInit } from '@angular/core';
+import { Component, input } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { FormsModule } from '@angular/forms';
 import {
   IonContent,
   IonHeader,
   IonTitle,
-  IonToolbar,
-  IonFooter,
+  IonToolbar
 } from '@ionic/angular/standalone';
 
 @Component({
   selector: 'app-main-layout',
-  templateUrl: './main-layout.page.html',
-  styleUrls: ['./main-layout.page.scss'],
+  templateUrl: './main-layout.component.html',
+  styleUrls: ['./main-layout.component.scss'],
   standalone: true,
   imports: [
     IonContent,
@@ -20,10 +18,9 @@ import {
     IonTitle,
     IonToolbar,
     CommonModule,
-    IonFooter,
   ],
 })
-export class MainLayoutPage {
+export class MainLayoutComponent {
   // -- Inputs ---
   readonly title = input.required<string>();
 
