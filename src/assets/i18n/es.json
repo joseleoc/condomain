@@ -4,7 +4,16 @@
     "cancel": "Cancelar",
     "save": "Guardar",
     "edit": "Editar",
-    "delete": "Eliminar"
+    "delete": "Eliminar",
+    "error": "Error",
+    "ok": "Aceptar"
+  },
+  "validation": {
+    "required": "Este campo es obligatorio",
+    "email": "Por favor, introduce una dirección de correo electrónico válida",
+    "minLength": "La longitud mínima es de {{length}} caracteres",
+    "maxLength": "La longitud máxima es de {{length}} caracteres",
+    "passwordMismatch": "Las contraseñas no coinciden"
   },
   "auth": {
     "login": "Iniciar sesión",
@@ -13,6 +22,7 @@
     "email": "Correo electrónico",
     "password": "Contraseña",
     "confirmPassword": "Confirmar contraseña",
-    "forgotPassword": "¿Olvidaste tu contraseña?"
+    "forgotPassword": "¿Olvidaste tu contraseña?",
+    "signUpError": "Ocurrió un error durante el registro."
   }
 }
