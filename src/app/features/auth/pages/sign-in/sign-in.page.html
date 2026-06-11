@@ -1,4 +1,9 @@
 
-<app-main-layout title="Sign In">
+<ng-container *transloco="let t">
+
+
+<app-main-layout [title]="t('auth.login')">
   <app-sign-in-form (submitSignInForm)="onSubmitSignInForm($event)" />
+  <a [routerLink]="['/auth/sign-up']">{{ t('auth.goToRegister') }}</a>
 </app-main-layout>
+</ng-container>

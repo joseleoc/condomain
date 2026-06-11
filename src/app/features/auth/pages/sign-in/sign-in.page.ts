@@ -6,7 +6,7 @@ import { TranslocoModule, TranslocoService } from '@jsverse/transloco';
 import { SignInFormValue } from '@features/auth/types';
 import { Auth } from '@core/services/auth/auth';
 import { AlertController } from '@ionic/angular/standalone';
-import { Router } from '@angular/router';
+import { Router, RouterLink } from '@angular/router';
 
 @Component({
   selector: 'app-sign-in',
@@ -18,6 +18,7 @@ import { Router } from '@angular/router';
     SignInFormComponent,
     MainLayoutComponent,
     TranslocoModule,
+    RouterLink,
   ],
 })
 export class SignInPage {
