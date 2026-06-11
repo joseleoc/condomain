@@ -1,4 +1,4 @@
-import { Component, inject, OnInit } from '@angular/core';
+import { Component, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { SignInFormComponent } from '@features/auth/components/sign-in-form/sign-in-form.component';
 import { MainLayoutComponent } from '@features/layout/main-layout/main-layout.component';
