@@ -1,5 +1,5 @@
 <ng-container *transloco="let t">
-  <app-auth-layout [title]="t('auth.signIn.title')">
+  <app-auth-layout [title]="t('auth.signIn.title')" [showBackButton]="false">
     <div class="auth-form-container">
       <app-sign-in-form (submitSignInForm)="onSubmitSignInForm($event)" />
     </div>
