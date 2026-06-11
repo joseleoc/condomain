@@ -15,6 +15,7 @@ import { matchValidator } from '@core/validators/match-validator';
 import { map } from 'rxjs';
 import { AsyncPipe } from '@angular/common';
 import { SignUpFormValue } from '@features/auth/types';
+import { TranslocoDirective, TranslocoModule } from '@jsverse/transloco';
 
 interface SignUpFormControls {
   email: FormControl<string>;
@@ -35,6 +36,8 @@ interface SignUpFormControls {
     IonInputPasswordToggle,
     IonCard,
     AsyncPipe,
+    TranslocoDirective,
+    TranslocoModule,
   ],
 })
 export class SignUpFormComponent {

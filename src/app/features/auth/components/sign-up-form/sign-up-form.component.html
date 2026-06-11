@@ -1,28 +1,39 @@
-<ion-card class="ion-padding">
-  <form [formGroup]="signUpForm" (ngSubmit)="onSubmit()">
-    <ion-input
-      formControlName="email"
-      type="email"
-      label="Email"
-      [errorText]="emailError$ | async"
-    />
+<ng-container *transloco="let t">
+  <ion-card class="ion-padding">
+    <form [formGroup]="signUpForm" (ngSubmit)="onSubmit()">
+      <ion-input
+        formControlName="email"
+        type="email"
+        [placeholder]="t('auth.email')"
+        [errorText]="emailError$ | async"
+      />
 
-    <ion-input formControlName="password" type="password" label="Password" [errorText]="passwordError$ | async">
-      <ion-input-password-toggle slot="end"></ion-input-password-toggle>
-    </ion-input>
+      <ion-input
+        formControlName="password"
+        type="password"
+        [placeholder]="t('auth.password')"
+        [errorText]="passwordError$ | async"
+      >
+        <ion-input-password-toggle slot="end"></ion-input-password-toggle>
+      </ion-input>
 
-    <ion-input
-      formControlName="confirmPassword"
-      type="password"
-      label="Confirm Password"
-      [errorText]="confirmPasswordError$ | async"
-    >
-      <ion-input-password-toggle slot="end"></ion-input-password-toggle>
-    </ion-input>
+      <ion-input
+        formControlName="confirmPassword"
+        type="password"
+        [placeholder]="t('auth.confirmPassword')"
+        [errorText]="confirmPasswordError$ | async"
+      >
+        <ion-input-password-toggle slot="end"></ion-input-password-toggle>
+      </ion-input>
 
-    <ion-button type="submit" expand="block"  class="ion-padding-top"
-    [disabled]="signUpForm.touched && signUpForm.invalid">
-      Sign Up
-    </ion-button>
-  </form>
-</ion-card>
+      <ion-button
+        type="submit"
+        expand="block"
+        class="ion-padding-top"
+        [disabled]="signUpForm.touched && signUpForm.invalid"
+      >
+        {{ t('auth.register') }}
+      </ion-button>
+    </form>
+  </ion-card>
+</ng-container>
