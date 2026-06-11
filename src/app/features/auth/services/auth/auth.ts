@@ -1,5 +1,5 @@
 import { inject, Injectable, OnDestroy } from '@angular/core';
-import { Supabase } from '../../../../core/services/supabase/supabase';
+import { Supabase } from '@core/services/supabase/supabase';
 import { Session } from '@supabase/supabase-js';
 import { BehaviorSubject } from 'rxjs';
 
@@ -34,6 +34,7 @@ export class Auth implements OnDestroy {
       this.session.next(data.session);
       return data;
     } catch (error) {
+      console.log(error);
       this.session.next(null);
       throw error;
     }
@@ -51,6 +52,8 @@ export class Auth implements OnDestroy {
       this.session.next(data.session);
       return data;
     } catch (error) {
+      console.log(error);
+
       this.session.next(null);
       throw error;
     }
@@ -64,6 +67,8 @@ export class Auth implements OnDestroy {
       }
       this.session.next(null);
     } catch (error) {
+      console.log(error);
+
       throw error;
     }
   }

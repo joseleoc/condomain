@@ -14,6 +14,7 @@ import {
 import { matchValidator } from '@core/validators/match-validator';
 import { map } from 'rxjs';
 import { AsyncPipe } from '@angular/common';
+import { SignUpFormValue } from '@features/auth/types';
 
 interface SignUpFormControls {
   email: FormControl<string>;
@@ -21,11 +22,7 @@ interface SignUpFormControls {
   confirmPassword: FormControl<string>;
 }
 
-interface SignUpFormValue {
-  email: string;
-  password: string;
-  confirmPassword: string;
-}
+
 
 @Component({
   selector: 'app-sign-up-form',
