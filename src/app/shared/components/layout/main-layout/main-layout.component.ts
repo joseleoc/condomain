@@ -1,5 +1,5 @@
-import { Component, input, signal } from '@angular/core';
-import { CommonModule, NgOptimizedImage } from '@angular/common';
+import { Component } from '@angular/core';
+import { CommonModule } from '@angular/common';
 import {
   IonContent,
   IonHeader,
@@ -28,7 +28,4 @@ import {
     IonIcon,
   ],
 })
-export class MainLayoutComponent {
-  // -- Inputs ---
-  readonly title = input.required<string>();
-}
+export class MainLayoutComponent {}

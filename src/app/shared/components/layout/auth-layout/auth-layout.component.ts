@@ -1,16 +1,11 @@
-import { Component, input, OnInit } from '@angular/core';
-import {
-  IonHeader,
-  IonToolbar,
-  IonTitle,
-  IonContent,
-} from '@ionic/angular/standalone';
+import { Component, input } from '@angular/core';
+import { IonContent, IonIcon } from '@ionic/angular/standalone';
 
 @Component({
   selector: 'app-auth-layout',
   templateUrl: './auth-layout.component.html',
   styleUrls: ['./auth-layout.component.scss'],
-  imports: [IonHeader, IonToolbar, IonTitle, IonContent],
+  imports: [IonContent],
 })
 export class AuthLayoutComponent {
   // -- Inputs ---
