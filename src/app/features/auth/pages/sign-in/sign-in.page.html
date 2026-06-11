@@ -1,5 +1,5 @@
 <ng-container *transloco="let t">
-  <app-main-layout [title]="t('auth.signIn.title')">
+  <app-auth-layout [title]="t('auth.signIn.title')">
     <app-sign-in-form (submitSignInForm)="onSubmitSignInForm($event)" />
 
     <div class="redirect-list">
@@ -8,5 +8,5 @@
         >{{ t('auth.goToForgotPassword') }}</a
       >
     </div>
-  </app-main-layout>
+  </app-auth-layout>
 </ng-container>

@@ -12,18 +12,9 @@ import {
   templateUrl: './main-layout.component.html',
   styleUrls: ['./main-layout.component.scss'],
   standalone: true,
-  imports: [
-    IonContent,
-    IonHeader,
-    IonTitle,
-    IonToolbar,
-    CommonModule,
-  ],
+  imports: [IonContent, IonHeader, IonTitle, IonToolbar, CommonModule],
 })
 export class MainLayoutComponent {
   // -- Inputs ---
   readonly title = input.required<string>();
-
-  // --- Constructor ---
-  constructor() {}
 }
