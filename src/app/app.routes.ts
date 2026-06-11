@@ -29,6 +29,13 @@ export const routes: Routes = [
           ),
       },
       {
+        path: 'update-password',
+        loadComponent: () =>
+          import('./features/auth/pages/update-password/update-password.page').then(
+            (m) => m.UpdatePasswordPage,
+          ),
+      },
+      {
         path: '',
         redirectTo: 'sign-in',
         pathMatch: 'full',
@@ -51,6 +58,13 @@ export const routes: Routes = [
     loadComponent: () =>
       import('./features/auth/pages/forgot-password/forgot-password.page').then(
         (m) => m.ForgotPasswordPage,
+      ),
+  },
+  {
+    path: 'update-password',
+    loadComponent: () =>
+      import('./features/auth/pages/update-password/update-password.page').then(
+        (m) => m.UpdatePasswordPage,
       ),
   },
 ];

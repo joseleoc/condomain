@@ -112,4 +112,18 @@ export class Auth implements OnDestroy {
       throw error;
     }
   }
+
+  async updatePassword(newPassword: string) {
+    try {
+      const { error } = await this.client.auth.updateUser({
+        password: newPassword,
+      });
+      if (error) {
+        throw error;
+      }
+    } catch (error) {
+      console.log(error);
+      throw error;
+    }
+  }
 }

@@ -12,3 +12,8 @@ export interface SignInFormValue extends SignFromBase {}
 export interface ForgotPasswordFormValue {
   email: string;
 }
+
+export interface UpdatePasswordFormValue {
+  newPassword: string;
+  confirmNewPassword: string;
+} 

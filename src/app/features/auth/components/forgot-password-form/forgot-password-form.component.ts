@@ -65,6 +65,7 @@ export class ForgotPasswordFormComponent {
     } else {
       Object.values(this.forgotPasswordForm.controls).forEach((control) => {
         control.markAsTouched();
+        control.markAsDirty();
         control.updateValueAndValidity();
       });
     }

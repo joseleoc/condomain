@@ -41,6 +41,16 @@
       "emailPlaceholder": "Enter your email",
       "resetPasswordError": "An error occurred while trying to reset your password. Please try again later.",
       "resetPasswordSuccess": "If an account with that email exists, a password reset link has been sent."
+    },
+    "updatePassword": {
+      "title": "Update Password",
+      "newPasswordLabel": "New Password",
+      "newPasswordPlaceholder": "Enter your new password",
+      "confirmNewPasswordLabel": "Confirm New Password",
+      "confirmNewPasswordPlaceholder": "Confirm your new password",
+      "submitButton": "Update Password",
+      "updatePasswordError": "An error occurred while trying to update your password. Please try again later.",
+      "updatePasswordSuccess": "Your password has been updated successfully."
     }
   }
 }

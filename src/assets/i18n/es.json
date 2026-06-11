@@ -41,6 +41,16 @@
       "emailPlaceholder": "Introduce tu correo electrónico",
       "resetPasswordError": "Ocurrió un error al intentar restablecer tu contraseña. Por favor, inténtalo de nuevo más tarde.",
       "resetPasswordSuccess": "Si existe una cuenta con ese correo electrónico, se ha enviado un enlace para restablecer la contraseña."
+    },
+    "updatePassword": {
+      "title": "Actualizar contraseña",
+      "newPasswordLabel": "Nueva contraseña",
+      "newPasswordPlaceholder": "Introduce tu nueva contraseña",
+      "confirmNewPasswordLabel": "Confirmar nueva contraseña",
+      "confirmNewPasswordPlaceholder": "Confirma tu nueva contraseña",
+      "submitButton": "Actualizar contraseña",
+      "updatePasswordError": "Ocurrió un error al intentar actualizar tu contraseña. Por favor, inténtalo de nuevo más tarde.",
+      "updatePasswordSuccess": "Tu contraseña ha sido actualizada exitosamente."
     }
   }
 }
