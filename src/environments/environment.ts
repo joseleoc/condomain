@@ -4,6 +4,7 @@
 
 export const environment = {
   production: false,
+  appUrl: 'http://localhost:8100',
   supabaseUrl: 'http://127.0.0.1:54321',
   supabasePublishableKey: 'sb_publishable_ACJWlzQHlZjBrEguHvfOxg_3BJgxAaH',
 };

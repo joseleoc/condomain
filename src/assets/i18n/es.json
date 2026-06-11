@@ -16,16 +16,28 @@
     "passwordMismatch": "Las contraseñas no coinciden"
   },
   "auth": {
-    "login": "Iniciar sesión",
-    "logout": "Cerrar sesión",
-    "register": "Registrarse",
-    "email": "Correo electrónico",
-    "password": "Contraseña",
+    "email": "Email",
+    "password": "Password",
     "confirmPassword": "Confirmar contraseña",
-    "forgotPassword": "¿Olvidaste tu contraseña?",
-    "signUpError": "Ocurrió un error durante el registro.",
-    "signInError": "Ocurrió un error durante el inicio de sesión.",
     "goToLogin": "¿Ya tienes una cuenta? Inicia sesión",
-    "goToRegister": "¿No tienes una cuenta? Regístrate"
+    "goToRegister": "¿No tienes una cuenta? Regístrate",
+    "goToForgotPassword": "¿Olvidaste tu contraseña?",
+    "signIn": {
+      "title": "Iniciar sesión",
+      "submitButton": "Iniciar sesión",
+      "signInError": "Ocurrió un error durante el inicio de sesión."
+    },
+    "signUp": {
+      "title": "Registrarse",
+      "submitButton": "Registrarse",
+      "confirmPassword": "Confirmar contraseña",
+      "signUpError": "Ocurrió un error durante el registro."
+    },
+    "forgotPassword": {
+      "title": "Recuperar contraseña",
+      "submitButton": "Enviar",
+      "emailLabel": "Correo electrónico",
+      "emailPlaceholder": "Introduce tu correo electrónico"
+    }
   }
 }
