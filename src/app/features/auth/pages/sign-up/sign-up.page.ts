@@ -1,6 +1,6 @@
 import { Component, inject, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { Auth } from '@features/auth/services/auth/auth';
+import { Auth } from '@core/services/auth/auth';
 import { SignUpFormComponent } from '@features/auth/components/sign-up-form/sign-up-form.component';
 import { MainLayoutComponent } from '@features/layout/main-layout/main-layout.component';
 import { SignUpFormValue } from '@features/auth/types';

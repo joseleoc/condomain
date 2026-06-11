@@ -1,4 +1,5 @@
 import { Routes } from '@angular/router';
+import { isAuthenticatedGuard } from '@core/guards/is-authenticated/is-authenticated-guard';
 
 export const routes: Routes = [
   {
@@ -26,15 +27,14 @@ export const routes: Routes = [
     ],
   },
   {
-    path: 'sign-in',
+    path: 'home',
+    canActivate: [isAuthenticatedGuard],
     loadComponent: () =>
-      import('./features/auth/pages/sign-in/sign-in.page').then(
-        (m) => m.SignInPage,
-      ),
+      import('./features/home/home.page').then((m) => m.HomePage),
   },
   {
     path: '',
-    redirectTo: 'auth',
+    redirectTo: 'home',
     pathMatch: 'full',
   },
 ];

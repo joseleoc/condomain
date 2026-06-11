@@ -4,8 +4,9 @@ import { SignInFormComponent } from '@features/auth/components/sign-in-form/sign
 import { MainLayoutComponent } from '@features/layout/main-layout/main-layout.component';
 import { TranslocoModule, TranslocoService } from '@jsverse/transloco';
 import { SignInFormValue } from '@features/auth/types';
-import { Auth } from '@features/auth/services/auth/auth';
+import { Auth } from '@core/services/auth/auth';
 import { AlertController } from '@ionic/angular/standalone';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-sign-in',
@@ -24,6 +25,7 @@ export class SignInPage {
   private authService = inject(Auth);
   private translocoService = inject(TranslocoService);
   private alertController = inject(AlertController);
+  private router = inject(Router);
 
   // --- Methods ---
   async onSubmitSignInForm(event: SignInFormValue) {
@@ -33,6 +35,7 @@ export class SignInPage {
         email,
         password,
       );
+      await this.router.navigate(['/home'], { replaceUrl: true });
     } catch (error) {
       const alert = await this.alertController.create({
         header: this.translocoService.translate('common.error'),
