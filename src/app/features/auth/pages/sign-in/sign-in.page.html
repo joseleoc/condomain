@@ -1,13 +1,4 @@
-<ion-header [translucent]="true">
-  <ion-toolbar>
-    <ion-title>sign-in</ion-title>
-  </ion-toolbar>
-</ion-header>
 
-<ion-content [fullscreen]="true">
-  <ion-header collapse="condense">
-    <ion-toolbar>
-      <ion-title size="large">sign-in</ion-title>
-    </ion-toolbar>
-  </ion-header>
-</ion-content>
+<app-main-layout title="Sign In">
+  <app-sign-in-form (submitSignInForm)="onSubmitSignInForm($event)" />
+</app-main-layout>

@@ -1,5 +1,10 @@
-export interface SignUpFormValue {
+export interface SignFromBase {
   email: string;
   password: string;
+}
+
+export interface SignUpFormValue extends SignFromBase {
   confirmPassword: string;
 }
+
+export interface SignInFormValue extends SignFromBase {}

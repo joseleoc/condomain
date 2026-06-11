@@ -1,0 +1,31 @@
+<ng-container *transloco="let t">
+  <ion-card class="ion-padding">
+    <form [formGroup]="signInForm" (ngSubmit)="onSubmit()">
+      <ion-input
+        formControlName="email"
+        type="email"
+        [placeholder]="t('auth.email')"
+        [errorText]="emailError$ | async"
+      />
+
+      <ion-input
+        formControlName="password"
+        type="password"
+        [placeholder]="t('auth.password')"
+        [errorText]="passwordError$ | async"
+      >
+        <ion-input-password-toggle slot="end"></ion-input-password-toggle>
+      </ion-input>
+
+
+      <ion-button
+        type="submit"
+        expand="block"
+        class="ion-padding-top"
+        [disabled]="signInForm.touched && signInForm.invalid"
+      >
+        {{ t('auth.login') }}
+      </ion-button>
+    </form>
+  </ion-card>
+</ng-container>

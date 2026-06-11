@@ -40,7 +40,7 @@ export class Auth implements OnDestroy {
     }
   }
 
-  async signIn(email: string, password: string) {
+  async signInWithEmailAndPassword(email: string, password: string) {
     try {
       const { data, error } = await this.client.auth.signInWithPassword({
         email,

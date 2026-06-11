@@ -23,6 +23,7 @@
     "password": "Contraseña",
     "confirmPassword": "Confirmar contraseña",
     "forgotPassword": "¿Olvidaste tu contraseña?",
-    "signUpError": "Ocurrió un error durante el registro."
+    "signUpError": "Ocurrió un error durante el registro.",
+    "signInError": "Ocurrió un error durante el inicio de sesión."
   }
 }
