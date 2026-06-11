@@ -1,7 +1,7 @@
 import { Component, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { SignInFormComponent } from '@features/auth/components/sign-in-form/sign-in-form.component';
-import { MainLayoutComponent } from '@features/layout/main-layout/main-layout.component';
+import { MainLayoutComponent } from '@shared/main-layout/main-layout.component';
 import { TranslocoModule, TranslocoService } from '@jsverse/transloco';
 import { SignInFormValue } from '@features/auth/types';
 import { Auth } from '@core/services/auth/auth';

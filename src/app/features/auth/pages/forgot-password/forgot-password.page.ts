@@ -1,6 +1,6 @@
 import { Component, inject, OnInit } from '@angular/core';
 import { Router, RouterLink } from '@angular/router';
-import { MainLayoutComponent } from '@features/layout/main-layout/main-layout.component';
+import { MainLayoutComponent } from '@shared/main-layout/main-layout.component';
 import { ForgotPasswordFormComponent } from '@features/auth/components/forgot-password-form/forgot-password-form.component';
 import { TranslocoModule, TranslocoService } from '@jsverse/transloco';
 import { ForgotPasswordFormValue } from '@features/auth/types';

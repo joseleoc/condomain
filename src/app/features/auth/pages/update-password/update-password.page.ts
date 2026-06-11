@@ -1,7 +1,7 @@
 import { Component, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { TranslocoModule, TranslocoService } from '@jsverse/transloco';
-import { MainLayoutComponent } from '@features/layout/main-layout/main-layout.component';
+import { MainLayoutComponent } from '@shared/main-layout/main-layout.component';
 import { UpdatePasswordFormComponent } from '@features/auth/components/update-password-form/update-password-form.component';
 import { Auth } from '@core/services/auth/auth';
 import { AlertController } from '@ionic/angular/standalone';
