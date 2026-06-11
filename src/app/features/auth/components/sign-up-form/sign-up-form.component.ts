@@ -1,4 +1,4 @@
-import { Component, output } from '@angular/core';
+import { Component, inject, output } from '@angular/core';
 import {
   IonInput,
   IonButton,
@@ -15,14 +15,17 @@ import { matchValidator } from '@core/validators/match-validator';
 import { map } from 'rxjs';
 import { AsyncPipe } from '@angular/common';
 import { SignUpFormValue } from '@features/auth/types';
+import {
+  TranslocoDirective,
+  TranslocoModule,
+  TranslocoService,
+} from '@jsverse/transloco';
 
 interface SignUpFormControls {
   email: FormControl<string>;
   password: FormControl<string>;
   confirmPassword: FormControl<string>;
 }
-
-
 
 @Component({
   selector: 'app-sign-up-form',
@@ -35,9 +38,13 @@ interface SignUpFormControls {
     IonInputPasswordToggle,
     IonCard,
     AsyncPipe,
+    TranslocoModule,
   ],
 })
 export class SignUpFormComponent {
+  // --- Dependencies ---
+  private translocoService = inject(TranslocoService);
+
   // --- Outputs ---
   submitSignUpForm = output<SignUpFormValue>();
 
@@ -70,10 +77,10 @@ export class SignUpFormComponent {
     map(() => {
       const emailControl = this.signUpForm.controls.email;
       if (emailControl.hasError('required')) {
-        return 'Email is required';
+        return this.translocoService.translate('validation.required');
       }
       if (emailControl.hasError('email')) {
-        return 'Please enter a valid email address';
+        return this.translocoService.translate('validation.email');
       }
       return null;
     }),
@@ -83,13 +90,15 @@ export class SignUpFormComponent {
     map(() => {
       const passwordControl = this.signUpForm.controls.password;
       if (passwordControl.hasError('required')) {
-        return 'Password is required';
+        return this.translocoService.translate('validation.required');
       }
       if (passwordControl.hasError('minlength')) {
-        return 'Password must be at least 6 characters long';
+        return this.translocoService.translate('validation.minLength', {
+          length: 6,
+        });
       }
       if (passwordControl.hasError('matching')) {
-        return 'Passwords do not match';
+        return this.translocoService.translate('validation.passwordMismatch');
       }
       return null;
     }),
@@ -100,13 +109,15 @@ export class SignUpFormComponent {
       map(() => {
         const confirmPasswordControl = this.signUpForm.controls.confirmPassword;
         if (confirmPasswordControl.hasError('required')) {
-          return 'Confirm Password is required';
+          return this.translocoService.translate('validation.required');
         }
         if (confirmPasswordControl.hasError('minlength')) {
-          return 'Confirm Password must be at least 6 characters long';
+          return this.translocoService.translate('validation.minLength', {
+            length: 6,
+          });
         }
         if (confirmPasswordControl.hasError('matching')) {
-          return 'Passwords do not match';
+          return this.translocoService.translate('validation.passwordMismatch');
         }
         return null;
       }),
