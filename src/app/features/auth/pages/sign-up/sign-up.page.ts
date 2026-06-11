@@ -6,7 +6,7 @@ import { MainLayoutComponent } from '@features/layout/main-layout/main-layout.co
 import { SignUpFormValue } from '@features/auth/types';
 import { AlertController } from '@ionic/angular/standalone';
 import { TranslocoModule, TranslocoService } from '@jsverse/transloco';
-import { RouterLink } from '@angular/router';
+import { Router, RouterLink } from '@angular/router';
 
 @Component({
   selector: 'app-sign-up',
@@ -26,8 +26,7 @@ export class SignUpPage implements OnInit {
   private authService = inject(Auth);
   private translocoService = inject(TranslocoService);
   private alertController = inject(AlertController);
-
-  // -- State ---
+  private router = inject(Router);
 
   // --- Constructor ---
   constructor() {}
@@ -42,6 +41,11 @@ export class SignUpPage implements OnInit {
         email,
         password,
       );
+
+      // TODO CONFIRM EMAIL
+      if (result.session) {
+        await this.router.navigate(['/home']);
+      }
     } catch (error) {
       const alert = await this.alertController.create({
         header: this.translocoService.translate('common.error'),

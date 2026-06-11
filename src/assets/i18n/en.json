@@ -6,7 +6,8 @@
     "edit": "Edit",
     "delete": "Delete",
     "error": "Error",
-    "ok": "Ok"
+    "ok": "Ok",
+    "sent": "Sent"
   },
   "validation": {
     "required": "This field is required",
@@ -37,7 +38,9 @@
       "title": "Recover Password",
       "submitButton": "Submit",
       "emailLabel": "Email",
-      "emailPlaceholder": "Enter your email"
+      "emailPlaceholder": "Enter your email",
+      "resetPasswordError": "An error occurred while trying to reset your password. Please try again later.",
+      "resetPasswordSuccess": "If an account with that email exists, a password reset link has been sent."
     }
   }
 }

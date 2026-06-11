@@ -94,9 +94,9 @@ export class Auth implements OnDestroy {
 
   async resetPasswordForEmail(email: string) {
     try {
-      const redirectTo = this.router
-        .parseUrl(environment.appUrl + '/auth/reset-password')
-        .toString();
+      const redirectTo = environment.appUrl + '/auth/reset-password';
+
+      console.log(redirectTo);
       const { data, error } = await this.client.auth.resetPasswordForEmail(
         email,
         {

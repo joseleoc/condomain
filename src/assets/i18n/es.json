@@ -6,7 +6,8 @@
     "edit": "Editar",
     "delete": "Eliminar",
     "error": "Error",
-    "ok": "Aceptar"
+    "ok": "Aceptar",
+    "sent": "Enviado"
   },
   "validation": {
     "required": "Este campo es obligatorio",
@@ -37,7 +38,9 @@
       "title": "Recuperar contraseña",
       "submitButton": "Enviar",
       "emailLabel": "Correo electrónico",
-      "emailPlaceholder": "Introduce tu correo electrónico"
+      "emailPlaceholder": "Introduce tu correo electrónico",
+      "resetPasswordError": "Ocurrió un error al intentar restablecer tu contraseña. Por favor, inténtalo de nuevo más tarde.",
+      "resetPasswordSuccess": "Si existe una cuenta con ese correo electrónico, se ha enviado un enlace para restablecer la contraseña."
     }
   }
 }
