@@ -1,11 +1,12 @@
 import { Component, inject, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { Auth } from '@features/auth/services/auth/auth';
+import { Auth } from '@core/services/auth/auth';
 import { SignUpFormComponent } from '@features/auth/components/sign-up-form/sign-up-form.component';
 import { MainLayoutComponent } from '@features/layout/main-layout/main-layout.component';
 import { SignUpFormValue } from '@features/auth/types';
 import { AlertController } from '@ionic/angular/standalone';
 import { TranslocoModule, TranslocoService } from '@jsverse/transloco';
+import { RouterLink } from '@angular/router';
 
 @Component({
   selector: 'app-sign-up',
@@ -17,6 +18,7 @@ import { TranslocoModule, TranslocoService } from '@jsverse/transloco';
     SignUpFormComponent,
     MainLayoutComponent,
     TranslocoModule,
+    RouterLink,
   ],
 })
 export class SignUpPage implements OnInit {

@@ -15,11 +15,7 @@ import { matchValidator } from '@core/validators/match-validator';
 import { map } from 'rxjs';
 import { AsyncPipe } from '@angular/common';
 import { SignUpFormValue } from '@features/auth/types';
-import {
-  TranslocoDirective,
-  TranslocoModule,
-  TranslocoService,
-} from '@jsverse/transloco';
+import { TranslocoModule, TranslocoService } from '@jsverse/transloco';
 
 interface SignUpFormControls {
   email: FormControl<string>;
@@ -72,7 +68,7 @@ export class SignUpFormComponent {
     }),
   });
 
-  // --- Signals ---
+  // --- Properties ---
   emailError$ = this.signUpForm.controls.email.statusChanges.pipe(
     map(() => {
       const emailControl = this.signUpForm.controls.email;
@@ -122,9 +118,6 @@ export class SignUpFormComponent {
         return null;
       }),
     );
-
-  // --- Constructor ---
-  constructor() {}
 
   // --- Methods ---
   onSubmit() {

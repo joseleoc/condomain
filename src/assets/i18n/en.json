@@ -23,6 +23,9 @@
     "password": "Password",
     "confirmPassword": "Confirm Password",
     "forgotPassword": "Forgot Password?",
-    "signUpError": "An error occurred during sign up."
+    "signUpError": "An error occurred during sign up.",
+    "signInError": "An error occurred during sign in.",
+    "goToLogin": "Already have an account? Login",
+    "goToRegister": "Don't have an account? Register"
   }
 }

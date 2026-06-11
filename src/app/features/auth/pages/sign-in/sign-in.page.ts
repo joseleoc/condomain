@@ -1,20 +1,54 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, inject, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { FormsModule } from '@angular/forms';
-import { IonContent, IonHeader, IonTitle, IonToolbar } from '@ionic/angular/standalone';
+import { SignInFormComponent } from '@features/auth/components/sign-in-form/sign-in-form.component';
+import { MainLayoutComponent } from '@features/layout/main-layout/main-layout.component';
+import { TranslocoModule, TranslocoService } from '@jsverse/transloco';
+import { SignInFormValue } from '@features/auth/types';
+import { Auth } from '@core/services/auth/auth';
+import { AlertController } from '@ionic/angular/standalone';
+import { Router, RouterLink } from '@angular/router';
 
 @Component({
   selector: 'app-sign-in',
   templateUrl: './sign-in.page.html',
   styleUrls: ['./sign-in.page.scss'],
   standalone: true,
-  imports: [IonContent, IonHeader, IonTitle, IonToolbar, CommonModule, FormsModule]
+  imports: [
+    CommonModule,
+    SignInFormComponent,
+    MainLayoutComponent,
+    TranslocoModule,
+    RouterLink,
+  ],
 })
-export class SignInPage implements OnInit {
+export class SignInPage {
+  // --- Dependency Injection ---
+  private authService = inject(Auth);
+  private translocoService = inject(TranslocoService);
+  private alertController = inject(AlertController);
+  private router = inject(Router);
 
-  constructor() { }
-
-  ngOnInit() {
+  // --- Methods ---
+  async onSubmitSignInForm(event: SignInFormValue) {
+    try {
+      const { email, password } = event;
+      const result = await this.authService.signInWithEmailAndPassword(
+        email,
+        password,
+      );
+      await this.router.navigate(['/home'], { replaceUrl: true });
+    } catch (error) {
+      const alert = await this.alertController.create({
+        header: this.translocoService.translate('common.error'),
+        message: this.translocoService.translate('auth.signInError'),
+        buttons: [
+          {
+            text: this.translocoService.translate('common.ok'),
+            role: 'cancel',
+          },
+        ],
+      });
+      await alert.present();
+    }
   }
-
 }
