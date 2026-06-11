@@ -6,7 +6,8 @@
     "edit": "Editar",
     "delete": "Eliminar",
     "error": "Error",
-    "ok": "Aceptar"
+    "ok": "Aceptar",
+    "sent": "Enviado"
   },
   "validation": {
     "required": "Este campo es obligatorio",
@@ -16,16 +17,40 @@
     "passwordMismatch": "Las contraseñas no coinciden"
   },
   "auth": {
-    "login": "Iniciar sesión",
-    "logout": "Cerrar sesión",
-    "register": "Registrarse",
-    "email": "Correo electrónico",
-    "password": "Contraseña",
+    "email": "Email",
+    "password": "Password",
     "confirmPassword": "Confirmar contraseña",
-    "forgotPassword": "¿Olvidaste tu contraseña?",
-    "signUpError": "Ocurrió un error durante el registro.",
-    "signInError": "Ocurrió un error durante el inicio de sesión.",
     "goToLogin": "¿Ya tienes una cuenta? Inicia sesión",
-    "goToRegister": "¿No tienes una cuenta? Regístrate"
+    "goToRegister": "¿No tienes una cuenta? Regístrate",
+    "goToForgotPassword": "¿Olvidaste tu contraseña?",
+    "signIn": {
+      "title": "Iniciar sesión",
+      "submitButton": "Iniciar sesión",
+      "signInError": "Ocurrió un error durante el inicio de sesión."
+    },
+    "signUp": {
+      "title": "Registrarse",
+      "submitButton": "Registrarse",
+      "confirmPassword": "Confirmar contraseña",
+      "signUpError": "Ocurrió un error durante el registro."
+    },
+    "forgotPassword": {
+      "title": "Recuperar contraseña",
+      "submitButton": "Enviar",
+      "emailLabel": "Correo electrónico",
+      "emailPlaceholder": "Introduce tu correo electrónico",
+      "resetPasswordError": "Ocurrió un error al intentar restablecer tu contraseña. Por favor, inténtalo de nuevo más tarde.",
+      "resetPasswordSuccess": "Si existe una cuenta con ese correo electrónico, se ha enviado un enlace para restablecer la contraseña."
+    },
+    "updatePassword": {
+      "title": "Actualizar contraseña",
+      "newPasswordLabel": "Nueva contraseña",
+      "newPasswordPlaceholder": "Introduce tu nueva contraseña",
+      "confirmNewPasswordLabel": "Confirmar nueva contraseña",
+      "confirmNewPasswordPlaceholder": "Confirma tu nueva contraseña",
+      "submitButton": "Actualizar contraseña",
+      "updatePasswordError": "Ocurrió un error al intentar actualizar tu contraseña. Por favor, inténtalo de nuevo más tarde.",
+      "updatePasswordSuccess": "Tu contraseña ha sido actualizada exitosamente."
+    }
   }
 }

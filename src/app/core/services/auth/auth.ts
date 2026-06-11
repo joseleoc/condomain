@@ -3,6 +3,7 @@ import { Router } from '@angular/router';
 import { Supabase } from '@core/services/supabase/supabase';
 import { Session, Subscription } from '@supabase/supabase-js';
 import { BehaviorSubject, map } from 'rxjs';
+import { environment } from 'src/environments/environment';
 
 @Injectable({
   providedIn: 'root',
@@ -15,7 +16,9 @@ export class Auth implements OnDestroy {
 
   // --- Properties ---
   session = new BehaviorSubject<Session | null>(null);
-  isAuthenticated$ = this.session.asObservable().pipe(map((session) => !!session));
+  isAuthenticated$ = this.session
+    .asObservable()
+    .pipe(map((session) => !!session));
 
   // --- Constructor ---
   constructor() {
@@ -85,6 +88,41 @@ export class Auth implements OnDestroy {
     } catch (error) {
       console.log(error);
 
+      throw error;
+    }
+  }
+
+  async resetPasswordForEmail(email: string) {
+    try {
+      const redirectTo = environment.appUrl + '/auth/reset-password';
+
+      console.log(redirectTo);
+      const { data, error } = await this.client.auth.resetPasswordForEmail(
+        email,
+        {
+          redirectTo,
+        },
+      );
+      if (error) {
+        throw error;
+      }
+      return data;
+    } catch (error) {
+      console.log(error);
+      throw error;
+    }
+  }
+
+  async updatePassword(newPassword: string) {
+    try {
+      const { error } = await this.client.auth.updateUser({
+        password: newPassword,
+      });
+      if (error) {
+        throw error;
+      }
+    } catch (error) {
+      console.log(error);
       throw error;
     }
   }

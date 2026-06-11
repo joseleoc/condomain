@@ -6,7 +6,8 @@
     "edit": "Edit",
     "delete": "Delete",
     "error": "Error",
-    "ok": "Ok"
+    "ok": "Ok",
+    "sent": "Sent"
   },
   "validation": {
     "required": "This field is required",
@@ -16,16 +17,40 @@
     "passwordMismatch": "Passwords do not match"
   },
   "auth": {
-    "login": "Login",
-    "logout": "Logout",
-    "register": "Register",
     "email": "Email",
     "password": "Password",
     "confirmPassword": "Confirm Password",
-    "forgotPassword": "Forgot Password?",
-    "signUpError": "An error occurred during sign up.",
-    "signInError": "An error occurred during sign in.",
+    "goToRegister": "Don't have an account? Register",
     "goToLogin": "Already have an account? Login",
-    "goToRegister": "Don't have an account? Register"
+    "goToForgotPassword": "Forgot your password?",
+    "signIn": {
+      "title": "Sign In",
+      "submitButton": "Sign In",
+      "signInError": "An error occurred during sign in."
+    },
+    "signUp": {
+      "title": "Sign Up",
+      "submitButton": "Sign Up",
+      "confirmPassword": "Confirm Password",
+      "signUpError": "An error occurred during sign up."
+    },
+    "forgotPassword": {
+      "title": "Recover Password",
+      "submitButton": "Submit",
+      "emailLabel": "Email",
+      "emailPlaceholder": "Enter your email",
+      "resetPasswordError": "An error occurred while trying to reset your password. Please try again later.",
+      "resetPasswordSuccess": "If an account with that email exists, a password reset link has been sent."
+    },
+    "updatePassword": {
+      "title": "Update Password",
+      "newPasswordLabel": "New Password",
+      "newPasswordPlaceholder": "Enter your new password",
+      "confirmNewPasswordLabel": "Confirm New Password",
+      "confirmNewPasswordPlaceholder": "Confirm your new password",
+      "submitButton": "Update Password",
+      "updatePasswordError": "An error occurred while trying to update your password. Please try again later.",
+      "updatePasswordSuccess": "Your password has been updated successfully."
+    }
   }
 }

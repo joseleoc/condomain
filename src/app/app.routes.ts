@@ -22,6 +22,20 @@ export const routes: Routes = [
           ),
       },
       {
+        path: 'forgot-password',
+        loadComponent: () =>
+          import('./features/auth/pages/forgot-password/forgot-password.page').then(
+            (m) => m.ForgotPasswordPage,
+          ),
+      },
+      {
+        path: 'update-password',
+        loadComponent: () =>
+          import('./features/auth/pages/update-password/update-password.page').then(
+            (m) => m.UpdatePasswordPage,
+          ),
+      },
+      {
         path: '',
         redirectTo: 'sign-in',
         pathMatch: 'full',
@@ -38,5 +52,19 @@ export const routes: Routes = [
     path: '',
     redirectTo: 'home',
     pathMatch: 'full',
+  },
+  {
+    path: 'forgot-password',
+    loadComponent: () =>
+      import('./features/auth/pages/forgot-password/forgot-password.page').then(
+        (m) => m.ForgotPasswordPage,
+      ),
+  },
+  {
+    path: 'update-password',
+    loadComponent: () =>
+      import('./features/auth/pages/update-password/update-password.page').then(
+        (m) => m.UpdatePasswordPage,
+      ),
   },
 ];
