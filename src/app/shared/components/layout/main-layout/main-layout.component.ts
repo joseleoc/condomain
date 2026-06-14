@@ -9,7 +9,10 @@ import {
   IonButtons,
   IonMenuButton,
   IonIcon,
+  IonFooter,
 } from '@ionic/angular/standalone';
+import { languageSelectorComponent } from '@shared/components/language-selector/language-selector.component';
+import { SidemenuContentComponent } from '@shared/components/sidemenu-content/sidemenu-content.component';
 
 @Component({
   selector: 'app-main-layout',
@@ -26,6 +29,9 @@ import {
     IonButtons,
     IonMenuButton,
     IonIcon,
+    IonFooter,
+    languageSelectorComponent,
+    SidemenuContentComponent,
   ],
 })
 export class MainLayoutComponent {}
