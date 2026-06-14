@@ -9,6 +9,7 @@ import {
 import { CreateCondominiumData } from '@core/services/condominium/condominium.types';
 import { IonInput, IonButton, IonTextarea } from '@ionic/angular/standalone';
 import { TranslocoModule, TranslocoService } from '@jsverse/transloco';
+import { CurrencySelectorComponent } from '@shared/components/currency-selector/currency-selector.component';
 import { map } from 'rxjs/internal/operators/map';
 
 interface CreateCondominiumFormControls {
@@ -28,6 +29,7 @@ interface CreateCondominiumFormControls {
     IonTextarea,
     TranslocoModule,
     AsyncPipe,
+    CurrencySelectorComponent,
   ],
 })
 export class CreateCondominiumFormComponent {

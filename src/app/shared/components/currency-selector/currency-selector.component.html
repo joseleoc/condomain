@@ -1,0 +1,30 @@
+<ng-container *transloco="let t">
+  <ion-item>
+    @if (isLoadingCurrencies$ | async) {
+      <ion-spinner slot="end" name="crescent"></ion-spinner>
+    }
+
+    <ion-select
+      [placeholder]="placeholder()"
+      [errorText]="errorText()"
+      [value]="value()"
+      [disabled]="disabled()"
+      (ionChange)="onCurrencyChange($event)"
+      (ionDismiss)="onTouched()"
+    >
+      @if (
+        (currencies$ | async)?.length === 0 && !(isLoadingCurrencies$ | async)
+      ) {
+        <ion-select-option disabled>
+          {{ t("currency.noCurrencies") }}
+        </ion-select-option>
+      }
+
+      @for (currency of currencies$ | async; track currency.iso_code) {
+        <ion-select-option [value]="currency.iso_code">
+          {{ t(`currency.${currency.iso_code}`) }} ({{ currency.symbol }})
+        </ion-select-option>
+      }
+    </ion-select>
+  </ion-item>
+</ng-container>

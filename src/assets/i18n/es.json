@@ -65,5 +65,28 @@
       "updatePasswordError": "Ocurrió un error al intentar actualizar tu contraseña. Por favor, inténtalo de nuevo más tarde.",
       "updatePasswordSuccess": "Tu contraseña ha sido actualizada exitosamente."
     }
+  },
+  "currency": {
+    "selectCurrency": "Seleccionar moneda",
+    "loadingCurrencies": "Cargando monedas...",
+    "noCurrencies": "No hay monedas disponibles",
+    "VES": "Bolívar venezolano",
+    "EUR": "Euro",
+    "COP": "Peso colombiano",
+    "MXN": "Peso mexicano",
+    "USD": "Dólar estadounidense",
+    "ARS": "Peso argentino",
+    "CLP": "Peso chileno",
+    "PEN": "Sol peruano",
+    "BRL": "Real brasileño",
+    "BOB": "Boliviano",
+    "UYU": "Peso uruguayo",
+    "PYG": "Guaraní paraguayo",
+    "DOP": "Peso dominicano",
+    "GTQ": "Quetzal guatemalteco",
+    "HNL": "Lempira hondureño",
+    "NIO": "Córdoba nicaragüense",
+    "CRC": "Colón costarricense",
+    "CUP": "Peso cubano"
   }
 }

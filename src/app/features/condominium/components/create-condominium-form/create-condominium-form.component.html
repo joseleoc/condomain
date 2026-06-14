@@ -7,19 +7,20 @@
       [errorText]="nameError$ | async"
       required
     ></ion-input>
+
     <ion-textarea
       formControlName="address"
       [label]="t('condominium.createForm.address')"
       [placeholder]="t('condominium.createForm.address')"
       required
     ></ion-textarea>
-    <ion-input
+
+    <app-currency-selector
       formControlName="currency"
       [label]="t('condominium.createForm.currency')"
       [placeholder]="t('condominium.createForm.currency')"
       [errorText]="currencyError$ | async"
-      required
-    ></ion-input>
+    ></app-currency-selector>
     <ion-button
       type="submit"
       expand="block"
