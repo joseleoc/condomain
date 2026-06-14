@@ -67,7 +67,6 @@ export class ForgotPasswordFormComponent {
 
   // --- Methods ---
   onSubmit() {
-    console.log(this.forgotPasswordForm);
     if (this.forgotPasswordForm.valid) {
       this.submitForgotPasswordForm.emit(this.forgotPasswordForm.getRawValue());
     } else {

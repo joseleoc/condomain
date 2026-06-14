@@ -9,6 +9,11 @@
     "ok": "Ok",
     "sent": "Sent"
   },
+  "i18n": {
+    "selectLanguage": "Select Language",
+    "english": "English",
+    "spanish": "Spanish"
+  },
   "validation": {
     "required": "This field is required",
     "email": "Please enter a valid email address",

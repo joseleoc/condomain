@@ -1,0 +1,17 @@
+<ng-content *transloco="let t">
+  <ion-select
+    #languageSelector
+    placeholder="{{ t('i18n.selectLanguage') }}"
+    [value]="selectedLanguage()"
+    (ionChange)="changeLanguage($event)"
+    interface="popover"
+  >
+    <ion-icon name="language-outline" slot="start"></ion-icon>
+    <ion-select-option value="en">
+      {{ t("i18n.english") }}
+    </ion-select-option>
+    <ion-select-option value="es">
+      {{ t("i18n.spanish") }}
+    </ion-select-option>
+  </ion-select>
+</ng-content>
