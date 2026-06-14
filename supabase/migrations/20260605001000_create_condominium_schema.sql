@@ -14,12 +14,10 @@ comment on table public.roles is 'Role catalog used for condominium membership p
 create table if not exists public.condominiums (
 	id uuid primary key default uuid_generate_v4(),
 	name text not null,
-	location text,
+	address text,
 	avatar text,
 	currency varchar(3) not null references public.currencies(iso_code),
 	owner_id uuid not null references public.profiles(id) on delete cascade,
-	balance numeric(14,2) not null default 0,
-	initial_balance numeric(14,2) not null default 0,
 	active boolean not null default true,
 	updated_at timestamptz not null default now(),
 	created_at timestamptz not null default now(),
