@@ -50,7 +50,7 @@ export class UpdatePasswordPage {
       });
       await alert.present();
     } catch (error) {
-      console.log(error);
+      console.error(error);
       const alert = await this.alertController.create({
         header: this.translocoService.translate('common.error'),
         message: this.translocoService.translate(

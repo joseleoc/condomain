@@ -9,6 +9,11 @@
     "ok": "Aceptar",
     "sent": "Enviado"
   },
+  "i18n": {
+    "selectLanguage": "Seleccionar idioma",
+    "english": "Inglés",
+    "spanish": "Español"
+  },
   "validation": {
     "required": "Este campo es obligatorio",
     "email": "Por favor, introduce una dirección de correo electrónico válida",

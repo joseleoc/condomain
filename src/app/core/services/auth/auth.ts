@@ -52,7 +52,7 @@ export class Auth implements OnDestroy {
       this.session.next(data.session);
       return data;
     } catch (error) {
-      console.log(error);
+      console.error(error);
       this.session.next(null);
       throw error;
     }
@@ -70,7 +70,7 @@ export class Auth implements OnDestroy {
       this.session.next(data.session);
       return data;
     } catch (error) {
-      console.log(error);
+      console.error(error);
 
       this.session.next(null);
       throw error;
@@ -86,7 +86,7 @@ export class Auth implements OnDestroy {
       this.session.next(null);
       await this.router.navigate(['/auth/sign-in'], { replaceUrl: true });
     } catch (error) {
-      console.log(error);
+      console.error(error);
 
       throw error;
     }
@@ -96,7 +96,7 @@ export class Auth implements OnDestroy {
     try {
       const redirectTo = environment.appUrl + '/auth/reset-password';
 
-      console.log(redirectTo);
+      console.error(redirectTo);
       const { data, error } = await this.client.auth.resetPasswordForEmail(
         email,
         {
@@ -108,7 +108,7 @@ export class Auth implements OnDestroy {
       }
       return data;
     } catch (error) {
-      console.log(error);
+      console.error(error);
       throw error;
     }
   }
@@ -122,7 +122,7 @@ export class Auth implements OnDestroy {
         throw error;
       }
     } catch (error) {
-      console.log(error);
+      console.error(error);
       throw error;
     }
   }
