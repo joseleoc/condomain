@@ -16,6 +16,7 @@
   },
   "condominium": {
     "createForm": {
+      "title": "Crear Condominio",
       "name": "Nombre",
       "address": "Dirección",
       "currency": "Moneda",

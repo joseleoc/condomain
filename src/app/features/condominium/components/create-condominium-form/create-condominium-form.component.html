@@ -1,5 +1,6 @@
 <ng-container *transloco="let t">
-  <form [formGroup]="createCondominiumForm" (ngSubmit)="onSubmit()">
+  <form [formGroup]="createCondominiumForm" (ngSubmit)="onSubmit()" class="form-container">
+    <h3>{{ t('condominium.createForm.title') }}</h3>
     <ion-input
       formControlName="name"
       [label]="t('condominium.createForm.name')"

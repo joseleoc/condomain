@@ -46,7 +46,7 @@ export class CreateCondominiumFormComponent {
       nonNullable: true,
     }),
     address: new FormControl('', { nonNullable: true }),
-    currency: new FormControl('USD', {
+    currency: new FormControl('', {
       validators: [Validators.required],
       nonNullable: true,
     }),
@@ -81,9 +81,16 @@ export class CreateCondominiumFormComponent {
 
   // --- Methods ---
   onSubmit() {
-    console.log(this.createCondominiumForm.value);
     if (this.createCondominiumForm.valid) {
+      console.log(this.createCondominiumForm.value);
       // Handle form submission
+    } else {
+      Object.values(this.createCondominiumForm.controls).forEach((control) => {
+        control.markAsTouched();
+        control.markAsDirty();
+        control.updateValueAndValidity();
+      });
     }
+    console.log(this.createCondominiumForm.controls.currency);
   }
 }

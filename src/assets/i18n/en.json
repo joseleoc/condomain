@@ -16,6 +16,7 @@
   },
   "condominium": {
     "createForm": {
+      "title": "Create Condominium",
       "name": "Name",
       "address": "Address",
       "currency": "Currency",
