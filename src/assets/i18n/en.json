@@ -17,7 +17,7 @@
   "condominium": {
     "hub": {
       "title": "Condominium Hub",
-      "newButton": "New Condominium",
+      "newButton": "Create Condominium",
       "noCondominiums": "No condominiums found. Please create one to get started."
     },
     "createForm": {
@@ -43,6 +43,7 @@
     "goToRegister": "Don't have an account? Register",
     "goToLogin": "Already have an account? Login",
     "goToForgotPassword": "Forgot your password?",
+    "signOut": "Sign Out",
     "signIn": {
       "title": "Sign In",
       "submitButton": "Sign In",

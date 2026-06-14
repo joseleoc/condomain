@@ -1,0 +1,31 @@
+.button-container {
+  padding-top: 10px;
+  display: flex;
+  align-items: center;
+  flex-direction: column;
+  justify-content: center;
+  gap: 1rem;
+
+  ion-button {
+    --box-shadow: 0 0 0 0 rgba(var(--ion-color-primary-rgb, 56, 128, 255), 0.7);
+    animation: pulse-animation 2s infinite;
+    border-radius: 50%; /* Asegura que la sombra siga la forma redonda del botón */
+  }
+}
+
+@keyframes pulse-animation {
+  0% {
+    transform: scale(0.95);
+    box-shadow: 0 0 0 0 rgba(var(--ion-color-primary-rgb, 56, 128, 255), 0.7);
+  }
+
+  70% {
+    transform: scale(1);
+    box-shadow: 0 0 0 15px rgba(var(--ion-color-primary-rgb, 56, 128, 255), 0);
+  }
+
+  100% {
+    transform: scale(0.95);
+    box-shadow: 0 0 0 0 rgba(var(--ion-color-primary-rgb, 56, 128, 255), 0);
+  }
+}

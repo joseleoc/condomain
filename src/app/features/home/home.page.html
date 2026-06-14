@@ -1,3 +1,6 @@
 <app-main-layout>
-  <ion-button expand="block" (click)="logOut()">Sign Out</ion-button>
+  @if(activeCondominium() == null) {
+  <app-new-condo-animated-btn />
+  }
+
 </app-main-layout>
