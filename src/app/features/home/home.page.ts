@@ -2,13 +2,12 @@ import { Component, inject } from '@angular/core';
 import { Auth } from '@core/services/auth/auth';
 import { MainLayoutComponent } from '@shared/components/layout/main-layout/main-layout.component';
 import { IonButton } from '@ionic/angular/standalone';
-import { CreateCondominiumFormComponent } from '@features/condominium/components/create-condominium-form/create-condominium-form.component';
 
 @Component({
   selector: 'app-home',
   templateUrl: 'home.page.html',
   styleUrls: ['home.page.scss'],
-  imports: [MainLayoutComponent, IonButton, CreateCondominiumFormComponent],
+  imports: [MainLayoutComponent, IonButton],
 })
 export class HomePage {
   private authService = inject(Auth);
