@@ -7,6 +7,7 @@ import {
   Validators,
 } from '@angular/forms';
 import { CreateCondominiumData } from '@core/services/condominium/condominium.types';
+import { Profile } from '@core/services/profile/profile';
 import { IonInput, IonButton, IonTextarea } from '@ionic/angular/standalone';
 import { TranslocoModule, TranslocoService } from '@jsverse/transloco';
 import { CurrencySelectorComponent } from '@shared/components/currency-selector/currency-selector.component';
@@ -35,6 +36,7 @@ interface CreateCondominiumFormControls {
 export class CreateCondominiumFormComponent {
   // --- Dependencies ---
   private translocoService = inject(TranslocoService);
+  private profileService = inject(Profile);
 
   // --- Outputs ---
   submitCreateCondominiumForm = output<CreateCondominiumData>();
@@ -81,9 +83,16 @@ export class CreateCondominiumFormComponent {
 
   // --- Methods ---
   onSubmit() {
+    const profileId = this.profileService.profile$.getValue()?.id;
+    if (profileId == undefined) {
+      throw new Error('Profile ID is required to create a condominium');
+    }
+
     if (this.createCondominiumForm.valid) {
-      console.log(this.createCondominiumForm.value);
-      // Handle form submission
+      this.submitCreateCondominiumForm.emit({
+        ...this.createCondominiumForm.getRawValue(),
+        owner_id: profileId,
+      });
     } else {
       Object.values(this.createCondominiumForm.controls).forEach((control) => {
         control.markAsTouched();

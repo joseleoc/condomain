@@ -4,7 +4,7 @@ create table if not exists public.profiles (
 	name text,
 	email text not null,
 	phone_number text,
-	avatar_id text,
+	avatar text,
 	updated_at timestamptz not null default now(),
 	created_at timestamptz not null default now(),
 	deleted_at timestamptz,
