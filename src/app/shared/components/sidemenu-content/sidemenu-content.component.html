@@ -1,15 +1,29 @@
 <ion-content>
-  <div class="condominium-data-container">
-    <app-avatar
-      [src]="
-        activeCondominium()?.avatar ||
-        '../../../../assets/icon/home-outline.svg'
-      "
-      size="medium"
-      alt="Profile Picture"
-    />
-    <h4 class="condominium-name">
-      {{ activeCondominium()?.name }}
+  @if (loadingCondominiums()) {
+    <div class="avatar-skeleton-wrapper">
+      <ion-skeleton-text [animated]="true" class="skeleton-avatar" />
+    </div>
+    <h4 class="skeleton-name">
+      <ion-skeleton-text [animated]="true" />
     </h4>
-  </div>
+  } @else {
+    <ion-button fill="clear" expand="full">
+      <div class="condominium-button-container">
+        <div class="condominium-button-content">
+          <app-avatar
+            [src]="
+              activeCondominium()?.avatar ||
+              '../../../../../assets/icon/home-outline.svg'
+            "
+            size="medium"
+            alt="Profile Picture"
+          />
+          <h4 class="condominium-name">
+            {{ activeCondominium()?.name }}
+          </h4>
+        </div>
+        <ion-icon name="chevron-forward" />
+      </div>
+    </ion-button>
+  }
 </ion-content>

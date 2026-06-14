@@ -22,6 +22,7 @@ export class Condominium {
   private authService = inject(Auth);
 
   // --- Properties ---
+  loadingCondominiums$ = new BehaviorSubject<boolean>(false);
   activeCondominium$ = new BehaviorSubject<CondominiumWithRole | null>(null);
   userCondominiums$ = new BehaviorSubject<CondominiumWithRole[]>([]);
 
@@ -86,6 +87,7 @@ export class Condominium {
   ) {
     try {
       const { profileId, page = 0, pageSize = 5 } = values;
+      this.loadingCondominiums$.next(true);
 
       const { data, error } = await this.client
         .from('profile_condominiums')
@@ -138,6 +140,8 @@ export class Condominium {
     } catch (error) {
       console.error('Error fetching user condominiums:', error);
       throw error;
+    } finally {
+      this.loadingCondominiums$.next(false);
     }
   }
 }
