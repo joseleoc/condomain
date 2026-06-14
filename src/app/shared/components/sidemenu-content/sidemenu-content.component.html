@@ -1,10 +1,15 @@
 <ion-content>
-  <div class="ion-flex ion-align-items-center ion-justify-content-center">
+  <div class="condominium-data-container">
     <app-avatar
-      [src]="activeCondominium()?.avatar || '../../../../assets/icon/home-outline.svg'"
+      [src]="
+        activeCondominium()?.avatar ||
+        '../../../../assets/icon/home-outline.svg'
+      "
+      size="medium"
       alt="Profile Picture"
-      class="center"
     />
-    {{ activeCondominium()?.name }}
+    <h4 class="condominium-name">
+      {{ activeCondominium()?.name }}
+    </h4>
   </div>
 </ion-content>

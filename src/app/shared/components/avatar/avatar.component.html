@@ -1,9 +1,16 @@
-<ion-avatar>
+<ion-avatar
+  [class.small]="size() === 'small'"
+  [class.medium]="size() === 'medium'"
+  [class.large]="size() === 'large'"
+>
   <img
     [src]="src()"
     [alt]="alt()"
     [width]="width()"
     [height]="height()"
+    [class.small]="size() === 'small'"
+    [class.medium]="size() === 'medium'"
+    [class.large]="size() === 'large'"
     withFallbackImage
     default="../../../../assets/icon/home-outline.svg"
   />
