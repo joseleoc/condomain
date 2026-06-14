@@ -1,7 +1,16 @@
 import { Component, inject, OnInit } from '@angular/core';
 import { CreateCondominiumFormComponent } from '../components/create-condominium-form/create-condominium-form.component';
 import { TranslocoModule } from '@jsverse/transloco';
-import { IonContent } from '@ionic/angular/standalone';
+import {
+  IonContent,
+  IonHeader,
+  IonToolbar,
+  IonButtons,
+  IonBackButton,
+  IonCard,
+  IonCardContent,
+  IonCardHeader,
+} from '@ionic/angular/standalone';
 import { Condominium } from '@core/services/condominium/condominium';
 import { CreateCondominiumData } from '@core/services/condominium/condominium.types';
 
@@ -10,7 +19,18 @@ import { CreateCondominiumData } from '@core/services/condominium/condominium.ty
   templateUrl: './create-condominium.page.html',
   styleUrls: ['./create-condominium.page.scss'],
   standalone: true,
-  imports: [CreateCondominiumFormComponent, TranslocoModule, IonContent],
+  imports: [
+    CreateCondominiumFormComponent,
+    TranslocoModule,
+    IonContent,
+    IonHeader,
+    IonToolbar,
+    IonButtons,
+    IonBackButton,
+    IonCard,
+    IonCardContent,
+    IonCardHeader,
+  ],
 })
 export class CreateCondominiumPage {
   // --- Dependencies ---

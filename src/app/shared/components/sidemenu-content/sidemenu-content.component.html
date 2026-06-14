@@ -1,3 +1,4 @@
+
 <ion-content>
   @if (loadingCondominiums()) {
     <div class="avatar-skeleton-wrapper">
@@ -6,7 +7,7 @@
     <h4 class="skeleton-name">
       <ion-skeleton-text [animated]="true" />
     </h4>
-  } @else {
+  } @else if (activeCondominium() != null) {
     <ion-button fill="clear" expand="full" href="/condominium" role="link">
       <div class="condominium-button-container">
         <div class="condominium-button-content">
@@ -25,5 +26,9 @@
         <ion-icon name="chevron-forward" />
       </div>
     </ion-button>
+  } @else {
+    <div class="no-condominiums">
+      <app-new-condo-animated-btn />
+    </div>
   }
 </ion-content>

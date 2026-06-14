@@ -1,13 +1,30 @@
-<ion-header [translucent]="true">
-  <ion-toolbar>
-    <ion-title>condominium-hub</ion-title>
-  </ion-toolbar>
-</ion-header>
-
-<ion-content [fullscreen]="true">
-  <ion-header collapse="condense">
+<ng-container *transloco="let t">
+  <ion-header [translucent]="true">
     <ion-toolbar>
-      <ion-title size="large">condominium-hub</ion-title>
+      <ion-buttons slot="start">
+        <ion-back-button defaultHref="/" />
+      </ion-buttons>
     </ion-toolbar>
   </ion-header>
-</ion-content>
+
+  <ion-content [fullscreen]="true" class="ion-padding">
+    <div class="condominium-hub-header">
+      <div class="active-condominium-data">
+        <app-avatar
+          [src]="
+              activeCondominium()?.avatar ||
+              '../../../../../assets/icon/home-outline.svg'
+            "
+          size="small"
+          alt="Profile Picture"
+        />
+        <h4>{{activeCondominium()?.name}}</h4>
+      </div>
+
+      <ion-button size="small" href="/condominium/create">
+        {{ t('condominium.createForm.newCondominium') }}
+        <ion-icon name="add" slot="end" />
+      </ion-button>
+    </div>
+  </ion-content>
+</ng-container>

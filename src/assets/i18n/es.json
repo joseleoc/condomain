@@ -15,7 +15,13 @@
     "spanish": "Español"
   },
   "condominium": {
+    "hub": {
+      "title": "Condominium Hub",
+      "newButton": "New Condominium",
+      "noCondominiums": "No condominiums found. Please create one to get started."
+    },
     "createForm": {
+      "newCondominium": "Nuevo Condominio",
       "title": "Crear Condominio",
       "name": "Nombre",
       "address": "Dirección",
