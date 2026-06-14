@@ -53,11 +53,23 @@ export const routes: Routes = [
     canActivate: [isNotAuthenticatedGuard],
     children: [
       {
+        path: 'condominium-hub',
+        loadComponent: () =>
+          import('./features/condominium/condominium-hub/condominium-hub.page').then(
+            (m) => m.CondominiumHubPage,
+          ),
+      },
+      {
         path: 'create',
         loadComponent: () =>
           import('./features/condominium/create-condominium/create-condominium.page').then(
             (m) => m.CreateCondominiumPage,
           ),
+      },
+      {
+        path: '',
+        redirectTo: 'condominium-hub',
+        pathMatch: 'full',
       },
     ],
   },
