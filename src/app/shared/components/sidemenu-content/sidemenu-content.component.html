@@ -1,6 +1,10 @@
 <ion-content>
   <div class="ion-flex ion-align-items-center ion-justify-content-center">
-    <app-avatar src="assets/images/profile-placeholder.png" alt="Profile Picture" class="center" />
-
+    <app-avatar
+      [src]="activeCondominium()?.avatar || '../../../../assets/icon/home-outline.svg'"
+      alt="Profile Picture"
+      class="center"
+    />
+    {{ activeCondominium()?.name }}
   </div>
 </ion-content>

@@ -29,7 +29,6 @@ export class Auth implements OnDestroy {
       .getSession()
       .then(({ data }) => {
         this.session$.next(data.session);
-        console.log('Session loaded successfully:', data.session);
       })
       .finally(() => {
         this.isLoadingSession$.next(false);

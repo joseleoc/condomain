@@ -1,6 +1,8 @@
-import { Component, OnInit } from '@angular/core';
-import { IonContent, IonHeader, IonAvatar } from "@ionic/angular/standalone";
+import { Component, inject, OnInit } from '@angular/core';
+import { IonContent, IonHeader, IonAvatar } from '@ionic/angular/standalone';
 import { AvatarComponent } from '../avatar/avatar.component';
+import { Condominium } from '@core/services/condominium/condominium';
+import { toSignal } from '@angular/core/rxjs-interop';
 
 @Component({
   selector: 'app-sidemenu-content',
@@ -8,8 +10,10 @@ import { AvatarComponent } from '../avatar/avatar.component';
   styleUrls: ['./sidemenu-content.component.scss'],
   imports: [IonContent, IonHeader, IonAvatar, AvatarComponent],
 })
-export class SidemenuContentComponent implements OnInit {
-  constructor() {}
+export class SidemenuContentComponent {
+  // --- Dependencies ---
+  private condominiumService = inject(Condominium);
 
-  ngOnInit() {}
+  // --- Properties ---
+  activeCondominium = toSignal(this.condominiumService.activeCondominium$);
 }

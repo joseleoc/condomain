@@ -12,12 +12,7 @@ import { Condominium } from '@core/services/condominium/condominium';
 })
 export class HomePage {
   private authService = inject(Auth);
-  private condominiumService = inject(Condominium);
-  constructor() {
-    this.condominiumService.fetchUserCondominiums({
-      userId: this.authService.session$.getValue()?.user.id || '',
-    });
-  }
+  constructor() {}
 
   logOut() {
     this.authService.signOut();

@@ -9,6 +9,7 @@ import { type CreateCondominiumData } from './condominium.types';
 import { PaginatedRequest } from '@app-types/general';
 import { Profile } from '../profile/profile';
 import { Roles } from '../roles/roles';
+import { Auth } from '../auth/auth';
 
 @Injectable({
   providedIn: 'root',
@@ -18,12 +19,28 @@ export class Condominium {
   private client = inject(Supabase).client;
   private profileService = inject(Profile);
   private rolesService = inject(Roles);
+  private authService = inject(Auth);
 
   // --- Properties ---
   activeCondominium$ = new BehaviorSubject<CondominiumWithRole | null>(null);
   userCondominiums$ = new BehaviorSubject<CondominiumWithRole[]>([]);
 
+  // --- Constructor ---
+  constructor() {
+    this.subscribeToAuthChanges();
+  }
+
   // --- Private Methods ---
+  private subscribeToAuthChanges() {
+    this.authService.session$.subscribe((session) => {
+      if (session) {
+        this.fetchUserCondominiums({ profileId: session.user.id });
+      } else {
+        this.activeCondominium$.next(null);
+        this.userCondominiums$.next([]);
+      }
+    });
+  }
 
   // --- Public Methods ---
   async createCondominium(values: CreateCondominiumData) {
@@ -65,10 +82,10 @@ export class Condominium {
   }
 
   async fetchUserCondominiums(
-    values: { userId: string } & Partial<PaginatedRequest>,
+    values: { profileId: string } & Partial<PaginatedRequest>,
   ) {
     try {
-      const { userId, page = 0, pageSize = 5 } = values;
+      const { profileId, page = 0, pageSize = 5 } = values;
 
       const { data, error } = await this.client
         .from('profile_condominiums')
@@ -78,7 +95,7 @@ export class Condominium {
           condominiums(*) 
           `,
         )
-        .eq('profile_id', userId)
+        .eq('profile_id', profileId)
         .is('deleted_at', null)
         .range(page * pageSize, (page + 1) * pageSize - 1);
 
@@ -102,6 +119,20 @@ export class Condominium {
           };
         })
         .filter((item) => item !== null);
+
+      // Set active condominium based on profile's active_condominium_id or default to the first one
+      const activeCondominiumId =
+        this.profileService.profile$.getValue()?.active_condominium_id;
+      if (activeCondominiumId != null) {
+        const activeCondominium = condominiums.find(
+          (c) => c?.id === activeCondominiumId,
+        );
+        if (activeCondominium) {
+          this.activeCondominium$.next(activeCondominium);
+        }
+      } else {
+        this.activeCondominium$.next(condominiums[0] || null);
+      }
 
       this.userCondominiums$.next(condominiums);
     } catch (error) {

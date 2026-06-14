@@ -20,7 +20,6 @@ export class CreateCondominiumPage {
   async createCondominium(data: CreateCondominiumData) {
     try {
       const res = await this.condominiumService.createCondominium(data);
-      console.log('Condominium created successfully:', res);
     } catch (error) {
       throw error;
     }
