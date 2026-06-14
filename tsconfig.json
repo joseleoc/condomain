@@ -5,9 +5,13 @@
     "baseUrl": "./",
     "paths": {
       "@core/*": ["src/app/core/*"],
+      "@directives/*": ["src/app/core/directives/*"],
+      "@guards/*": ["src/app/core/guards/*"],
+      "@services/*": ["src/app/core/services/*"],
       "@shared/*": ["src/app/shared/*"],
       "@features/*": ["src/app/features/*"],
-      "@assets/*": ["src/assets/*"]
+      "@assets/*": ["src/assets/*"],
+      "@app-types/*": ["src/app-types/*"]
     },
     "outDir": "./dist/out-tsc",
     "forceConsistentCasingInFileNames": true,
