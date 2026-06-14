@@ -30,7 +30,7 @@ npm install supabase --save-dev
 Run the initialization tool to generate the configuration scaffolding:
 
 ```bash
-npx supabase init
+pnpx supabase init
 
 ```
 
@@ -41,7 +41,7 @@ npx supabase init
 Ensure Docker is running in the background, then spin up your local offline servers:
 
 ```bash
-npx supabase start
+pnpx supabase start
 
 ```
 
@@ -60,7 +60,7 @@ Now that your local machine is hosting your staging database, you can start buil
 Run this command to create a new code-controlled timestamped ledger for your table blueprints:
 
 ```bash
-npx supabase migration new create_profiles_and_posts
+pnpx supabase migration new create_profiles_and_posts
 
 ```
 
@@ -92,7 +92,9 @@ create policy "Allow public read access" on public.profiles
 To force your local Docker PostgreSQL container to read your migration files and apply those structural updates, run a database reset:
 
 ```bash
-npx supabase db reset
+pnpx supabase migration up
+ or
+pnpx supabase db reset
 
 ```
 
@@ -109,7 +111,7 @@ Once your local application logic performs flawlessly with your offline schema a
 Find your **Project Reference ID** from your remote cloud Supabase dashboard URL (`https://supabase.com/dashboard/project/your-project-id`). Link your terminal workspace to it:
 
 ```bash
-npx supabase link --project-ref your-project-id
+pnpx supabase link --project-ref your-project-id
 
 ```
 
@@ -120,7 +122,7 @@ _(The CLI will prompt you to enter the database root password you selected when 
 Push your code-first schema modifications up to the production database:
 
 ```bash
-npx supabase db push
+pnpx supabase db push
 
 ```
 
@@ -128,4 +130,4 @@ npx supabase db push
 
 Supabase maintains an internal ledger (`supabase_migrations.schema_migrations`) inside your cloud database to track every timestamped migration file that has been applied in the past.
 
-When you execute `npx supabase db push`, the CLI compares your local `supabase/migrations/` files against that remote cloud tracking table. It calculates exactly which files are missing, and runs _only_ the new migration files on your live production server without duplicating or corrupting your existing datasets.
+When you execute `pnpx supabase db push`, the CLI compares your local `supabase/migrations/` files against that remote cloud tracking table. It calculates exactly which files are missing, and runs _only_ the new migration files on your live production server without duplicating or corrupting your existing datasets.

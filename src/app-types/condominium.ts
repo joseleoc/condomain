@@ -13,3 +13,7 @@ export interface Condominium {
   updated_at: string;
   deleted_at: string | null;
 }
+
+export interface CondominiumWithRole extends Condominium {
+  role_id: string;
+}

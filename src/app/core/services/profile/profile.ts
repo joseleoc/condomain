@@ -54,4 +54,31 @@ export class Profile implements OnDestroy {
       throw error;
     }
   }
+
+  async setActiveCondominium(condominiumId: string) {
+    try {
+      const currentProfile = this.profile$.getValue();
+      if (!currentProfile) {
+        throw new Error('No profile loaded');
+      }
+
+      const { error } = await this.client
+        .from('profiles')
+        .update({ active_condominium_id: condominiumId })
+        .eq('id', currentProfile.id);
+
+      if (error) {
+        throw error;
+      }
+
+      // Update the local profile state with the new active condominium ID
+      this.profile$.next({
+        ...currentProfile,
+        active_condominium_id: condominiumId,
+      });
+    } catch (error) {
+      console.error('Error setting active condominium:', error);
+      throw error;
+    }
+  }
 }
