@@ -14,7 +14,7 @@ import { map } from 'rxjs/internal/operators/map';
 
 interface CreateCondominiumFormControls {
   name: FormControl<string>;
-  address: FormControl<string>;
+  address?: FormControl<string | null>;
   currency: FormControl<string>;
 }
 
@@ -45,8 +45,8 @@ export class CreateCondominiumFormComponent {
       validators: [Validators.required, Validators.minLength(3)],
       nonNullable: true,
     }),
-    address: new FormControl('', { nonNullable: true }),
-    currency: new FormControl('', {
+    address: new FormControl(''),
+    currency: new FormControl('USD', {
       validators: [Validators.required],
       nonNullable: true,
     }),
@@ -91,6 +91,5 @@ export class CreateCondominiumFormComponent {
         control.updateValueAndValidity();
       });
     }
-    console.log(this.createCondominiumForm.controls.currency);
   }
 }
