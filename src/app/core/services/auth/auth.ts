@@ -20,11 +20,19 @@ export class Auth implements OnDestroy {
     .asObservable()
     .pipe(map((session) => !!session));
 
+  isLoadingSession$ = new BehaviorSubject<boolean>(false);
+
   // --- Constructor ---
   constructor() {
-    this.client.auth.getSession().then(({ data }) => {
-      this.session.next(data.session);
-    });
+    this.isLoadingSession$.next(true);
+    this.client.auth
+      .getSession()
+      .then(({ data }) => {
+        this.session.next(data.session);
+      })
+      .finally(() => {
+        this.isLoadingSession$.next(false);
+      });
 
     this.authStateSubscription = this.client.auth.onAuthStateChange(
       (_event, session) => {
