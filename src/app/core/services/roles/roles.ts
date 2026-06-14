@@ -34,9 +34,34 @@ export class Roles {
       this.loadingRoles$.next(false);
     }
   }
+
+  private warnLoadingRoles() {
+    if (this.loadingRoles$.getValue()) {
+      console.warn('Roles are still loading. Data may not be available yet.');
+    }
+  }
   // --- Public Methods ---
   getRoleIdByName(roleName: TRole['name']): string | undefined {
+    this.warnLoadingRoles();
+
     const role = this.roles$.getValue().find((r) => r.name === roleName);
     return role?.id;
+  }
+
+  getMultipleRoleIdsByNames(roleNames: TRole['name'][]): string[] {
+    this.warnLoadingRoles();
+
+    const roleIds = this.roles$
+      .getValue()
+      .filter((r) => roleNames.includes(r.name))
+      .map((r) => r.id);
+    return roleIds;
+  }
+
+  getRoleNameById(roleId: string): TRole['name'] | undefined {
+    this.warnLoadingRoles();
+
+    const role = this.roles$.getValue().find((r) => r.id === roleId);
+    return role?.name;
   }
 }
