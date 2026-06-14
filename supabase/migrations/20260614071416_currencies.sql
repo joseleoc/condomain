@@ -32,3 +32,8 @@ select
 -- administrador de Supabase (o tus scripts de migración) podrá alterarlas.
 -- Índice para optimizar los ordenamientos y listados alfabéticos por nombre de moneda
 create index if not exists idx_currencies_name on public.currencies (name);
+
+
+-- Privilegios para el catálogo de Monedas (Generalmente de solo lectura para la app)
+grant select on public.currencies to authenticated;
+grant select on public.currencies to anon;

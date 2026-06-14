@@ -1,6 +1,10 @@
 -- Habilitar la extensión para generación de UUIDs si no está activa
 create extension if not exists "uuid-ossp";
 
+
+-- Asegurar permisos de uso sobre el esquema público
+grant usage on schema public to anon, authenticated;
+
 -- =========================================================================
 -- FUNCTION: Automatización de updated_at
 -- =========================================================================

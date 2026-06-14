@@ -54,3 +54,9 @@ where
 create index if not exists idx_profiles_name_lower_active on public.profiles (lower(name))
 where
     deleted_at is null;
+
+grant
+select
+,
+    insert,
+update on public.profiles to authenticated;
