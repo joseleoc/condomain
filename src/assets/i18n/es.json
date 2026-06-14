@@ -23,7 +23,7 @@
   },
   "auth": {
     "email": "Email",
-    "password": "Password",
+    "password": "Contraseña",
     "confirmPassword": "Confirmar contraseña",
     "goToLogin": "¿Ya tienes una cuenta? Inicia sesión",
     "goToRegister": "¿No tienes una cuenta? Regístrate",
