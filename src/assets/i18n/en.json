@@ -39,6 +39,11 @@
       "createButton": "Create Condominium",
       "createSuccessfully": "Condominium created successfully!",
       "createError": "An error occurred while creating the condominium. Please try again later."
+    },
+    "createStructure": {
+      "noStructuresAdded": "No structures added yet.",
+      "noStructuresAddedDescription": "Divide your complex into Towers, Blocks, or Sectors to keep things organized.",
+      "addNewStructure": "Add New Structure"
     }
   },
   "validation": {

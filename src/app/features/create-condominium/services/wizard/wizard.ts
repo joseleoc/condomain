@@ -16,7 +16,7 @@ export class Wizard {
   private translocoService = inject(TranslocoService);
 
   // --- Properties ---
-  step = signal(1);
+  step = signal(2);
   loading = signal(false);
   createdCondominium = signal<TCondominium | null>(null);
   updatedFileAvatar = signal<File | null>(null);

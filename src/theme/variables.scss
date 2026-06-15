@@ -103,6 +103,40 @@
 
 @media (prefers-color-scheme: dark) {
   :root {
+    --ion-color-secondary: #fffafa;
+    --ion-color-secondary-rgb: 255, 250, 250;
+    --ion-color-secondary-contrast: #000000;
+    --ion-color-secondary-contrast-rgb: 0, 0, 0;
+    --ion-color-secondary-shade: #e0dcdc;
+    --ion-color-secondary-tint: #fffbfb;
+    --ion-color-secondary-step-900: #292626;
+    --ion-color-secondary-step-800: #4b4747;
+    --ion-color-secondary-step-700: #6b6767;
+    --ion-color-secondary-step-600: #807b7b;
+    --ion-color-secondary-step-500: #a9a5a5;
+    --ion-color-secondary-step-400: #c8c3c3;
+    --ion-color-secondary-step-300: #eae5e5;
+    --ion-color-secondary-step-200: #f5f0f0;
+    --ion-color-secondary-step-100: #faf5f5;
+    --ion-color-secondary-step-50: #fffafa;
+
+    --ion-color-tertiary: #1e1e1e;
+    --ion-color-tertiary-rgb: 30, 30, 30;
+    --ion-color-tertiary-contrast: #ffffff;
+    --ion-color-tertiary-contrast-rgb: 255, 255, 255;
+    --ion-color-tertiary-shade: #1a1a1a;
+    --ion-color-tertiary-tint: #353535;
+    --ion-color-tertiary-step-900: #1e1e1e;
+    --ion-color-tertiary-step-800: #3f3f3f;
+    --ion-color-tertiary-step-700: #5d5d5d;
+    --ion-color-tertiary-step-600: #717171;
+    --ion-color-tertiary-step-500: #9a9a9a;
+    --ion-color-tertiary-step-400: #b9b9b9;
+    --ion-color-tertiary-step-300: #dddddd;
+    --ion-color-tertiary-step-200: #ececec;
+    --ion-color-tertiary-step-100: #f4f4f4;
+    --ion-color-tertiary-step-50: #f9f9f9;
+
     --text-base: #fffafa;
     --text-secondary: #aaaaaa;
     --text-medium: #cccccc;

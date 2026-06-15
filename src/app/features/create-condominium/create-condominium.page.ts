@@ -27,6 +27,7 @@ import { MAX_STEPS } from './create-condominium.constants';
 import { Wizard } from './services/wizard/wizard';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { Step1Component } from './components/step-1/step-1.component';
+import { Step2Component } from './components/step-2/step-2.component';
 
 @Component({
   selector: 'app-create-condominium',
@@ -48,6 +49,7 @@ import { Step1Component } from './components/step-1/step-1.component';
     IonFooter,
     IonSpinner,
     Step1Component,
+    Step2Component,
   ],
 })
 export class CreateCondominiumPage {

@@ -3,6 +3,7 @@ import { IonApp, IonRouterOutlet } from '@ionic/angular/standalone';
 import { addIcons } from 'ionicons';
 import {
   add,
+  businessOutline,
   cameraOutline,
   chevronForward,
   languageOutline,
@@ -15,6 +16,12 @@ import {
 })
 export class AppComponent {
   constructor() {
-    addIcons({ languageOutline, chevronForward, add, cameraOutline });
+    addIcons({
+      languageOutline,
+      chevronForward,
+      add,
+      cameraOutline,
+      businessOutline,
+    });
   }
 }
