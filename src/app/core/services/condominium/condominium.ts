@@ -45,10 +45,13 @@ export class Condominium {
     });
   }
 
+  private buildAvatarUrl(filePath: string): string {
+    return this.condominiumAvatarService.getAvatarUrl(filePath);
+  }
+
   // --- Public Methods ---
   async createCondominium(values: CreateCondominiumData) {
     try {
-      console.log(values);
       const valuesToInsert = {
         ...values,
         currency: values.currency || 'USD',
@@ -83,8 +86,15 @@ export class Condominium {
 
       this.activeCondominium$.next({
         ...data,
-        role_id, // Assuming the creator is the owner
+        role_id,
       });
+      this.userCondominiums$.next([
+        {
+          ...data,
+          role_id,
+        },
+        ...this.userCondominiums$.getValue(),
+      ]);
 
       await this.profileService.setActiveCondominium(data.id);
 
@@ -95,11 +105,9 @@ export class Condominium {
     }
   }
 
-  async fetchUserCondominiums(
-    values: { profileId: string } & Partial<PaginatedRequest>,
-  ) {
+  async fetchUserCondominiums(values: { profileId: string }) {
     try {
-      const { profileId, page = 0, pageSize = 5 } = values;
+      const { profileId } = values;
       this.loadingCondominiums$.next(true);
 
       const { data, error } = await this.client
@@ -107,12 +115,12 @@ export class Condominium {
         .select(
           `
           role_id, 
-          condominiums(*) 
+          condominiums(*)
           `,
         )
+        .order('name', { referencedTable: 'condominiums', ascending: true })
         .eq('profile_id', profileId)
-        .is('deleted_at', null)
-        .range(page * pageSize, (page + 1) * pageSize - 1);
+        .is('deleted_at', null);
 
       if (error) {
         throw error;
@@ -133,7 +141,16 @@ export class Condominium {
             role_id: item.role_id,
           };
         })
-        .filter((item) => item !== null);
+        .filter((item) => item !== null)
+        .map((item) => {
+          if (item && item.avatar) {
+            return {
+              ...item,
+              avatar: this.buildAvatarUrl(item.avatar),
+            };
+          }
+          return item;
+        });
 
       // Set active condominium based on profile's active_condominium_id or default to the first one
       const activeCondominiumId =
@@ -150,6 +167,8 @@ export class Condominium {
       }
 
       this.userCondominiums$.next(condominiums);
+      console.log(condominiums);
+      console.log(this.activeCondominium$.getValue());
     } catch (error) {
       console.error('Error fetching user condominiums:', error);
       throw error;
@@ -157,6 +176,4 @@ export class Condominium {
       this.loadingCondominiums$.next(false);
     }
   }
-
-  async updateCondominiumAvatarFile(condominiumId: string, avatarUrl: string) {}
 }
