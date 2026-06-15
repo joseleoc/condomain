@@ -10,15 +10,15 @@
   </ion-toolbar>
 </ion-header>
 <ion-content class="ion-padding">
-  
-    <div class="stepper-container">
-      <ion-text class="text-secondary">{{ stepLabel() | transloco }}</ion-text>
-      <ion-progress-bar [value]="progressPercentage()"></ion-progress-bar>
-    </div>
-    <app-create-condominium-form
-      (submitCreateCondominiumForm)="createCondominium($event)"
-    />
-    <ion-button expand="block" fill="clear" color="tertiary" (click)="goBack()"
-      >{{ 'common.back' | transloco }}</ion-button
-    >
+  <div class="stepper-container">
+    <ion-text class="text-secondary">{{ stepLabel() | transloco }}</ion-text>
+    <ion-progress-bar [value]="progressPercentage()"></ion-progress-bar>
+  </div>
+  <app-create-condominium-form
+    (submitCreateCondominiumForm)="createCondominium($event)"
+    [loading]="isCreatingCondominium()"
+  />
+  <ion-button expand="block" fill="clear" color="tertiary" (click)="goBack()"
+    >{{ 'common.back' | transloco }}</ion-button
+  >
 </ion-content>

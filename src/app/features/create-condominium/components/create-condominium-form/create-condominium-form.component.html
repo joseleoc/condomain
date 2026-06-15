@@ -1,6 +1,10 @@
 <ng-container *transloco="let t">
-  <form [formGroup]="createCondominiumForm" (ngSubmit)="onSubmit()" class="form-container">
-    <app-avatar-uploader />
+  <form
+    [formGroup]="createCondominiumForm"
+    (ngSubmit)="onSubmit()"
+    class="form-container"
+  >
+    <app-avatar-uploader (fileSelected)="selectAvatar($event)" />
     <ion-input
       formControlName="name"
       [label]="t('condominium.createForm.name')"
@@ -26,10 +30,15 @@
       expand="block"
       class="ion-padding-top"
       [disabled]="
-        createCondominiumForm.touched && createCondominiumForm.invalid
+        loading() ||
+        (createCondominiumForm.touched && createCondominiumForm.invalid)
       "
     >
-      {{ t("condominium.createForm.createButton") }}
+      @if (loading()) {
+        <ion-spinner name="crescent"></ion-spinner>
+      } @else {
+        {{ t("condominium.createForm.createButton") }}
+      }
     </ion-button>
   </form>
 </ng-container>

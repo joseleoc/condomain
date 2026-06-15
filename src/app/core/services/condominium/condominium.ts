@@ -10,6 +10,7 @@ import { PaginatedRequest } from '@app-types/general';
 import { Profile } from '../profile/profile';
 import { Roles } from '../roles/roles';
 import { Auth } from '../auth/auth';
+import { CondominiumAvatar } from '../condominium-avatar/condominium-avatar';
 
 @Injectable({
   providedIn: 'root',
@@ -20,6 +21,7 @@ export class Condominium {
   private profileService = inject(Profile);
   private rolesService = inject(Roles);
   private authService = inject(Auth);
+  private condominiumAvatarService = inject(CondominiumAvatar);
 
   // --- Properties ---
   loadingCondominiums$ = new BehaviorSubject<boolean>(false);
@@ -46,12 +48,23 @@ export class Condominium {
   // --- Public Methods ---
   async createCondominium(values: CreateCondominiumData) {
     try {
+      console.log(values);
       const valuesToInsert = {
         ...values,
         currency: values.currency || 'USD',
         created_at: new Date().toISOString(),
         updated_at: new Date().toISOString(),
+        avatar: '',
       };
+
+      if (values.avatar != null) {
+        const avatarFilePath = await this.condominiumAvatarService.uploadAvatar(
+          values.avatar,
+        );
+        if (avatarFilePath) valuesToInsert.avatar = avatarFilePath;
+        console.log(avatarFilePath);
+      }
+
       const { data, error } = await this.client
         .from('condominiums')
         .insert(valuesToInsert)
@@ -144,4 +157,6 @@ export class Condominium {
       this.loadingCondominiums$.next(false);
     }
   }
+
+  async updateCondominiumAvatarFile(condominiumId: string, avatarUrl: string) {}
 }

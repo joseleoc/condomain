@@ -59,13 +59,17 @@ export class CreateCondominiumPage {
   step = signal(1);
   progressPercentage = computed(() => this.step() / MAX_STEPS);
   stepLabel = signal('condominium.createForm.newCondominium');
+  isCreatingCondominium = signal(false);
 
   // --- Methods ---
   async createCondominium(data: CreateCondominiumData) {
     try {
+      this.isCreatingCondominium.set(true);
       const res = await this.condominiumService.createCondominium(data);
     } catch (error) {
       throw error;
+    } finally {
+      this.isCreatingCondominium.set(false);
     }
   }
 
