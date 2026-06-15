@@ -1,1 +1,16 @@
+:root {
+  background-color: var(--background);
+}
 
+
+ion-content {
+    --background: var(--background);
+}
+
+ion-card {
+    border-radius: 0.75rem;
+}
+
+ion-toolbar {
+    --background: var(--background);
+}
