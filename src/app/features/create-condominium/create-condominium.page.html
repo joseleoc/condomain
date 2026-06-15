@@ -9,16 +9,36 @@
     </div>
   </ion-toolbar>
 </ion-header>
-<ion-content class="ion-padding">
+<ion-content class="ion-padding" [fullscreen]="true">
   <div class="stepper-container">
     <ion-text class="text-secondary">{{ stepLabel() | transloco }}</ion-text>
     <ion-progress-bar [value]="progressPercentage()"></ion-progress-bar>
   </div>
   <app-create-condominium-form
-    (submitCreateCondominiumForm)="createCondominium($event)"
-    [loading]="isCreatingCondominium()"
+    [loading]="loading()"
+    [showSubmitButton]="false"
   />
-  <ion-button expand="block" fill="clear" color="tertiary" (click)="goBack()"
-    >{{ 'common.back' | transloco }}</ion-button
-  >
 </ion-content>
+<ion-footer>
+  <ion-toolbar>
+    <ion-buttons slot="start">
+      <ion-button fill="clear" color="tertiary" (click)="goBack()"
+        >{{ 'common.back' | transloco }}</ion-button
+      >
+    </ion-buttons>
+
+    <ion-buttons slot="end">
+      <ion-button
+        type="submit"
+        fill="solid"
+        color="primary"
+        [disabled]="loading()"
+        (click)="handleNextStep()"
+      >
+        @if (loading()) {
+        <ion-spinner name="crescent"></ion-spinner>
+        } @else { {{ 'condominium.createForm.createButton' | transloco }} }
+      </ion-button>
+    </ion-buttons>
+  </ion-toolbar>
+</ion-footer>

@@ -1,4 +1,4 @@
-import { Component, computed, inject, OnInit, signal } from '@angular/core';
+import { Component, computed, inject, signal, viewChild } from '@angular/core';
 import { TranslocoModule, TranslocoPipe } from '@jsverse/transloco';
 import {
   IonContent,
@@ -6,18 +6,15 @@ import {
   IonToolbar,
   IonButtons,
   IonBackButton,
-  IonCard,
-  IonCardContent,
-  IonCardHeader,
-  ToastController,
   IonProgressBar,
   IonText,
   IonTitle,
   IonButton,
+  IonFooter,
+  IonSpinner,
 } from '@ionic/angular/standalone';
 import { Condominium } from '@core/services/condominium/condominium';
 import { CreateCondominiumData } from '@core/services/condominium/condominium.types';
-import { Router } from '@angular/router';
 import { CreateCondominiumFormComponent } from './components/create-condominium-form/create-condominium-form.component';
 import { Location } from '@angular/common';
 
@@ -36,44 +33,63 @@ const MAX_STEPS = 4;
     IonToolbar,
     IonButtons,
     IonBackButton,
-    IonCard,
-    IonCardContent,
-    IonCardHeader,
     IonProgressBar,
     TranslocoPipe,
     IonText,
     IonTitle,
     IonButton,
+    IonFooter,
+    IonSpinner,
   ],
 })
 export class CreateCondominiumPage {
   // --- Dependencies ---
-
   private condominiumService = inject(Condominium);
-  private router = inject(Router);
   private location = inject(Location);
-  private toastController = inject(ToastController);
+
+  // --- Components ---
+  createCondominiumForm = viewChild(CreateCondominiumFormComponent);
 
   // --- Properties ---
   /** Progress percentage for the creation process from 0 to 1 */
   step = signal(1);
   progressPercentage = computed(() => this.step() / MAX_STEPS);
   stepLabel = signal('condominium.createForm.newCondominium');
-  isCreatingCondominium = signal(false);
+  loading = signal(false);
 
   // --- Methods ---
   async createCondominium(data: CreateCondominiumData) {
     try {
-      this.isCreatingCondominium.set(true);
+      this.loading.set(true);
       const res = await this.condominiumService.createCondominium(data);
     } catch (error) {
       throw error;
     } finally {
-      this.isCreatingCondominium.set(false);
+      this.loading.set(false);
     }
   }
 
   goBack() {
+    if (this.step() > 1) {
+      this.step.update((value) => value - 1);
+      return;
+    }
     this.location.back();
+  }
+
+  async handleNextStep() {
+    let canContinue = false;
+
+    if (this.step() === 1) {
+      const formData = this.createCondominiumForm()?.onSubmit();
+      if (formData) {
+        await this.createCondominium(formData);
+        canContinue = true;
+      }
+    }
+
+    if (canContinue && this.step() < MAX_STEPS) {
+      this.step.update((value) => value + 1);
+    }
   }
 }

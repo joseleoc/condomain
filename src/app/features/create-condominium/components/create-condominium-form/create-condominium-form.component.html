@@ -25,20 +25,23 @@
       [placeholder]="t('condominium.createForm.currency')"
       [errorText]="currencyError$ | async"
     ></app-currency-selector>
-    <ion-button
-      type="submit"
-      expand="block"
-      class="ion-padding-top"
-      [disabled]="
-        loading() ||
-        (createCondominiumForm.touched && createCondominiumForm.invalid)
-      "
-    >
-      @if (loading()) {
-        <ion-spinner name="crescent"></ion-spinner>
-      } @else {
-        {{ t("condominium.createForm.createButton") }}
-      }
-    </ion-button>
+
+    @if (showSubmitButton()) {
+      <ion-button
+        type="submit"
+        expand="block"
+        class="ion-padding-top"
+        [disabled]="
+          loading() ||
+          (createCondominiumForm.touched && createCondominiumForm.invalid)
+        "
+      >
+        @if (loading()) {
+          <ion-spinner name="crescent"></ion-spinner>
+        } @else {
+          {{ t("condominium.createForm.createButton") }}
+        }
+      </ion-button>
+    }
   </form>
 </ng-container>

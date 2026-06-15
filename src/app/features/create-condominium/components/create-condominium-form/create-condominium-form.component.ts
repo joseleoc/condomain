@@ -49,6 +49,7 @@ export class CreateCondominiumFormComponent {
 
   // -- Inputs ---
   loading = input<boolean>(false);
+  showSubmitButton = input<boolean>(true);
 
   // --- Outputs ---
   submitCreateCondominiumForm = output<CreateCondominiumData>();
@@ -95,8 +96,9 @@ export class CreateCondominiumFormComponent {
     );
 
   // --- Methods ---
-  onSubmit() {
-    if (this.loading()) return;
+  /** Returns true if the form is successfully submitted, false otherwise */
+  onSubmit(): CreateCondominiumData | null {
+    if (this.loading()) return null;
 
     const profileId = this.profileService.profile$.getValue()?.id;
     if (profileId == undefined) {
@@ -106,17 +108,21 @@ export class CreateCondominiumFormComponent {
     const avatarFile: File | null | undefined =
       this.createCondominiumForm.controls.avatar.value || null;
     if (this.createCondominiumForm.valid) {
-      this.submitCreateCondominiumForm.emit({
+      const valueToEmit = {
         ...this.createCondominiumForm.getRawValue(),
         avatar: avatarFile,
         owner_id: profileId,
-      });
+      };
+      this.submitCreateCondominiumForm.emit(valueToEmit);
+
+      return valueToEmit;
     } else {
       Object.values(this.createCondominiumForm.controls).forEach((control) => {
         control.markAsTouched();
         control.markAsDirty();
         control.updateValueAndValidity();
       });
+      return null;
     }
   }
 
