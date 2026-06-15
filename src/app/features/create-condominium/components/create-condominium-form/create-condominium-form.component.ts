@@ -10,6 +10,7 @@ import { CreateCondominiumData } from '@core/services/condominium/condominium.ty
 import { Profile } from '@core/services/profile/profile';
 import { IonInput, IonButton, IonTextarea } from '@ionic/angular/standalone';
 import { TranslocoModule, TranslocoService } from '@jsverse/transloco';
+import { AvatarUploaderComponent } from '@shared/components/avatar-uploader/avatar-uploader.component';
 import { CurrencySelectorComponent } from '@shared/components/currency-selector/currency-selector.component';
 import { map } from 'rxjs/internal/operators/map';
 
@@ -31,6 +32,7 @@ interface CreateCondominiumFormControls {
     TranslocoModule,
     AsyncPipe,
     CurrencySelectorComponent,
+    AvatarUploaderComponent,
   ],
 })
 export class CreateCondominiumFormComponent {

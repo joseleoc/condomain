@@ -1,0 +1,26 @@
+<div class="uploader-container" (click)="fileInput.click()">
+  <input
+    type="file"
+    #fileInput
+    accept="image/*"
+    (change)="onFileSelected($event)"
+    style="display: none"
+  />
+
+  <div
+    class="avatar-preview"
+    [style.backgroundImage]="
+      localImagePreview() ? 'url(' + localImagePreview() + ')' : 'none'
+    "
+  >
+    @if (!localImagePreview()) {
+      <div class="avatar-overlay">
+        <ion-icon name="camera-outline" class="camera-icon" color="primary"></ion-icon>
+      </div>
+    }
+  </div>
+
+  <span class="uploader-label">
+    {{ localImagePreview() ? "Cambiar Logo" : "Upload Logo" }}
+  </span>
+</div>

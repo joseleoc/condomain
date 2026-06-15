@@ -3,17 +3,22 @@
     <ion-buttons slot="start">
       <ion-back-button defaultHref="/condominium" />
     </ion-buttons>
+
+    <div>
+      <ion-title color="primary">Condomain</ion-title>
+    </div>
   </ion-toolbar>
 </ion-header>
 <ion-content class="ion-padding">
-  <ion-card>
-    <ion-card-header>
-      <h3>{{'condominium.createForm.title' | transloco }}</h3>
-    </ion-card-header>
-    <ion-card-content>
-      <app-create-condominium-form
-        (submitCreateCondominiumForm)="createCondominium($event)"
-      />
-    </ion-card-content>
-  </ion-card>
+  
+    <div class="stepper-container">
+      <ion-text class="text-secondary">{{ stepLabel() | transloco }}</ion-text>
+      <ion-progress-bar [value]="progressPercentage()"></ion-progress-bar>
+    </div>
+    <app-create-condominium-form
+      (submitCreateCondominiumForm)="createCondominium($event)"
+    />
+    <ion-button expand="block" fill="clear" color="tertiary" (click)="goBack()"
+      >{{ 'common.back' | transloco }}</ion-button
+    >
 </ion-content>

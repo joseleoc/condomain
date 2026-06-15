@@ -1,5 +1,6 @@
 <ng-container *transloco="let t">
   <form [formGroup]="createCondominiumForm" (ngSubmit)="onSubmit()" class="form-container">
+    <app-avatar-uploader />
     <ion-input
       formControlName="name"
       [label]="t('condominium.createForm.name')"
