@@ -10,9 +10,11 @@ import {
   IonCard,
   IonCardContent,
   IonCardHeader,
+  ToastController,
 } from '@ionic/angular/standalone';
 import { Condominium } from '@core/services/condominium/condominium';
 import { CreateCondominiumData } from '@core/services/condominium/condominium.types';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-create-condominium',
@@ -35,11 +37,16 @@ import { CreateCondominiumData } from '@core/services/condominium/condominium.ty
 export class CreateCondominiumPage {
   // --- Dependencies ---
   private condominiumService = inject(Condominium);
+  private router = inject(Router);
 
+  private toastController = inject(ToastController);
   // --- Methods ---
   async createCondominium(data: CreateCondominiumData) {
     try {
       const res = await this.condominiumService.createCondominium(data);
+      if (res) {
+        this.router.navigate(['/condominium-hub']);
+      }
     } catch (error) {
       throw error;
     }
