@@ -4,13 +4,13 @@ create table if not exists public.profiles (
 	name text,
 	email text not null,
 	phone_number text,
-	avatar_id text,
+	avatar text,
 	updated_at timestamptz not null default now(),
 	created_at timestamptz not null default now(),
 	deleted_at timestamptz,
-	is_deleted boolean not null default false,
 	constraint profiles_email_unique unique (email)
 );
+
 
 comment on table public.profiles is 'Application profile data tied to auth.users.';
 

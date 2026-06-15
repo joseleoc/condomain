@@ -6,7 +6,6 @@ create table if not exists public.structures (
 	created_at timestamptz not null default now(),
 	updated_at timestamptz not null default now(),
 	deleted_at timestamptz,
-	is_deleted boolean not null default false,
 	constraint structures_name_not_empty check (char_length(trim(name)) > 0),
 	constraint structures_id_condominium_unique unique (id, condominium_id)
 );
@@ -26,7 +25,6 @@ create table if not exists public.properties (
 	created_at timestamptz not null default now(),
 	updated_at timestamptz not null default now(),
 	deleted_at timestamptz,
-	is_deleted boolean not null default false,
 	constraint properties_number_not_empty check (char_length(trim(property_number)) > 0),
 	constraint properties_share_percentage_range check (share_percentage >= 0 and share_percentage <= 100),
 	constraint properties_status_check check (status in ('active', 'inactive', 'maintenance')),
@@ -36,6 +34,7 @@ create table if not exists public.properties (
 		on delete cascade,
 	constraint properties_id_condominium_unique unique (id, condominium_id)
 );
+
 
 comment on table public.properties is 'Individual condominium units with balances and share quotas.';
 
@@ -48,7 +47,6 @@ create table if not exists public.user_properties (
 	created_at timestamptz not null default now(),
 	updated_at timestamptz not null default now(),
 	deleted_at timestamptz,
-	is_deleted boolean not null default false,
 	constraint user_properties_role_check check (role in ('owner', 'tenant', 'manager', 'co_owner')),
 	constraint user_properties_property_condominium_fk
 		foreign key (property_id, condominium_id)
@@ -58,37 +56,38 @@ create table if not exists public.user_properties (
 
 comment on table public.user_properties is 'User assignments to properties with role context.';
 
+
 create unique index if not exists uq_structures_condominium_name_active
 	on public.structures (condominium_id, name)
-	where is_deleted = false;
+	where deleted_at is null;
 
 create unique index if not exists uq_properties_condominium_number_active
 	on public.properties (condominium_id, property_number)
-	where is_deleted = false;
+	where deleted_at is null;
 
 create unique index if not exists uq_user_properties_user_property_role_active
 	on public.user_properties (user_id, property_id, role)
-	where is_deleted = false;
+	where deleted_at is null;
 
 create index if not exists idx_structures_condominium_active
 	on public.structures (condominium_id, updated_at desc)
-	where is_deleted = false;
+	where deleted_at is null;
 
 create index if not exists idx_properties_structure_active
 	on public.properties (structure_id)
-	where is_deleted = false;
+	where deleted_at is null;
 
 create index if not exists idx_properties_condominium_status_active
 	on public.properties (condominium_id, status)
-	where is_deleted = false;
+	where deleted_at is null;
 
 create index if not exists idx_user_properties_user_active
 	on public.user_properties (user_id)
-	where is_deleted = false;
+	where deleted_at is null;
 
 create index if not exists idx_user_properties_property_active
 	on public.user_properties (property_id)
-	where is_deleted = false;
+	where deleted_at is null;
 
 -- Validates that active properties within a condominium total exactly 100 percent share.
 create or replace function public.validate_condominium_share_percentage_total(
@@ -106,7 +105,7 @@ begin
 	into v_total
 	from public.properties p
 	where p.condominium_id = p_condominium_id
-		and p.is_deleted = false;
+		and p.deleted_at is null;
 
 	if v_total <> 100 then
 		raise exception 'Property share percentage total must be 100.00 for condominium %, current total: %', p_condominium_id, v_total
@@ -142,7 +141,7 @@ on public.structures
 for select
 to authenticated
 using (
-	is_deleted = false
+	deleted_at is null
 	and public.has_condominium_role(
 		condominium_id,
 		array['condominium_admin', 'admin_operator']
@@ -201,7 +200,7 @@ on public.properties
 for select
 to authenticated
 using (
-	is_deleted = false
+	deleted_at is null
 	and (
 		public.has_condominium_role(
 			condominium_id,
@@ -213,7 +212,7 @@ using (
 			where up.property_id = properties.id
 				and up.condominium_id = properties.condominium_id
 				and up.user_id = auth.uid()
-				and up.is_deleted = false
+				and up.deleted_at is null
 		)
 	)
 );
@@ -270,7 +269,7 @@ on public.user_properties
 for select
 to authenticated
 using (
-	is_deleted = false
+	deleted_at is null
 	and (
 		user_id = auth.uid()
 		or public.has_condominium_role(

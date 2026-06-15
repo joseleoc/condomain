@@ -1,0 +1,34 @@
+<ng-container *transloco="let t">
+  <form [formGroup]="createCondominiumForm" (ngSubmit)="onSubmit()" class="form-container">
+    <ion-input
+      formControlName="name"
+      [label]="t('condominium.createForm.name')"
+      [placeholder]="t('condominium.createForm.name')"
+      [errorText]="nameError$ | async"
+      required
+    ></ion-input>
+
+    <ion-textarea
+      formControlName="address"
+      [label]="t('condominium.createForm.address')"
+      [placeholder]="t('condominium.createForm.address')"
+    ></ion-textarea>
+
+    <app-currency-selector
+      formControlName="currency"
+      [label]="t('condominium.createForm.currency')"
+      [placeholder]="t('condominium.createForm.currency')"
+      [errorText]="currencyError$ | async"
+    ></app-currency-selector>
+    <ion-button
+      type="submit"
+      expand="block"
+      class="ion-padding-top"
+      [disabled]="
+        createCondominiumForm.touched && createCondominiumForm.invalid
+      "
+    >
+      {{ t("condominium.createForm.createButton") }}
+    </ion-button>
+  </form>
+</ng-container>

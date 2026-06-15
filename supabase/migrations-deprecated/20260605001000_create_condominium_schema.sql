@@ -5,28 +5,26 @@ create table if not exists public.roles (
 	created_at timestamptz not null default now(),
 	updated_at timestamptz not null default now(),
 	deleted_at timestamptz,
-	is_deleted boolean not null default false,
 	constraint roles_name_unique unique (name)
 );
+
 
 comment on table public.roles is 'Role catalog used for condominium membership permissions.';
 
 create table if not exists public.condominiums (
 	id uuid primary key default uuid_generate_v4(),
 	name text not null,
-	location text,
+	address text,
 	avatar text,
 	currency varchar(3) not null references public.currencies(iso_code),
 	owner_id uuid not null references public.profiles(id) on delete cascade,
-	balance numeric(14,2) not null default 0,
-	initial_balance numeric(14,2) not null default 0,
 	active boolean not null default true,
 	updated_at timestamptz not null default now(),
 	created_at timestamptz not null default now(),
 	deleted_at timestamptz,
-	is_deleted boolean not null default false,
 	constraint condominiums_name_not_empty check (char_length(trim(name)) > 0)
 );
+
 
 comment on table public.condominiums is 'Condominium master data with condominium-wide balance.';
 
@@ -38,9 +36,9 @@ create table if not exists public.user_condominiums (
 	updated_at timestamptz not null default now(),
 	created_at timestamptz not null default now(),
 	deleted_at timestamptz,
-	is_deleted boolean not null default false,
 	constraint user_condominiums_user_id_condominium_id_unique unique (user_id, condominium_id)
 );
+
 
 comment on table public.user_condominiums is 'Membership link between users and condominiums with role assignment.';
 
@@ -58,28 +56,28 @@ create table if not exists public.condominium_transactions (
 	updated_at timestamptz not null default now(),
 	created_at timestamptz not null default now(),
 	deleted_at timestamptz,
-	is_deleted boolean not null default false,
 	constraint condominium_transactions_kind_check check (kind in ('credit', 'debit', 'adjustment')),
 	constraint condominium_transactions_balance_transition_check check (new_balance = previous_balance + amount)
 );
 
 comment on table public.condominium_transactions is 'Full ledger of condominium balance transitions.';
 
+
 create index if not exists idx_condominiums_owner_active_updated_at
 	on public.condominiums (owner_id, active, updated_at desc)
-	where is_deleted = false;
+	where deleted_at is null;
 
 create index if not exists idx_user_condominiums_user_active
 	on public.user_condominiums (user_id)
-	where is_deleted = false;
+	where deleted_at is null;
 
 create index if not exists idx_user_condominiums_condominium_active
 	on public.user_condominiums (condominium_id)
-	where is_deleted = false;
+	where deleted_at is null;
 
 create index if not exists idx_condominium_transactions_condominium_created_at
 	on public.condominium_transactions (condominium_id, created_at desc)
-	where is_deleted = false;
+	where deleted_at is null;
 
 -- Returns true when a user has an active (not soft-deleted) membership in a condominium.
 create or replace function public.is_condominium_member(
@@ -96,7 +94,7 @@ as $$
 		from public.user_condominiums uc
 		where uc.condominium_id = p_condominium_id
 			and uc.user_id = p_user_id
-			and uc.is_deleted = false
+			and uc.deleted_at is null
 	);
 $$;
 
@@ -117,9 +115,9 @@ as $$
 		join public.roles r on r.id = uc.role_id
 		where uc.condominium_id = p_condominium_id
 			and uc.user_id = p_user_id
-			and uc.is_deleted = false
+			and uc.deleted_at is null
 			and r.name = any (p_role_names)
-			and r.is_deleted = false
+			and r.deleted_at is null
 	);
 $$;
 
@@ -161,7 +159,7 @@ create policy roles_select_authenticated
 on public.roles
 for select
 to authenticated
-using (is_deleted = false);
+using (deleted_at is null);
 
 -- Allow admin-level condominium roles to read condominium records.
 drop policy if exists condominiums_select_member on public.condominiums;
@@ -170,8 +168,14 @@ on public.condominiums
 for select
 to authenticated
 using (
-	is_deleted = false
-	and public.has_condominium_role(id, array['condominium_admin', 'admin_operator'])
+	deleted_at is null
+	and (
+        -- El usuario es el dueño directo
+        auth.uid() = owner_id
+        or
+        -- O el usuario tiene un rol administrativo delegado
+        public.has_condominium_role(id, array['condominium_admin', 'admin_operator', 'resident_owner'])
+    )
 );
 
 -- Allow users to create condominiums only when they are the declared owner.
@@ -204,7 +208,7 @@ on public.user_condominiums
 for select
 to authenticated
 using (
-	is_deleted = false
+	deleted_at is null
 	and (
 		user_id = auth.uid()
 		or public.has_condominium_role(
@@ -214,17 +218,26 @@ using (
 	)
 );
 
--- Allow privileged roles to add memberships in their condominium.
+-- 1. Eliminamos la política actual que está bloqueando el trigger
 drop policy if exists user_condominiums_insert_privileged_member on public.user_condominiums;
+
+-- 2. Creamos la política corregida con la condición "or" para el dueño
 create policy user_condominiums_insert_privileged_member
 on public.user_condominiums
 for insert
 to authenticated
 with check (
-	public.has_condominium_role(
-		condominium_id,
-		array['condominium_admin', 'admin_operator']
-	)
+    -- Escenario A: El usuario ya tiene un rol administrativo delegado en ese condominio
+    public.has_condominium_role(condominium_id, array['condominium_admin', 'admin_operator'])
+    or 
+    -- Escenario B: El usuario es el dueño ("owner_id") registrado en la tabla de condominios.
+    -- Esto permite que el trigger 'handle_new_condominium_owner_membership' funcione con éxito.
+    exists (
+        select 1 
+        from public.condominiums c 
+        where c.id = condominium_id 
+          and c.owner_id = auth.uid()
+    )
 );
 
 -- Allow privileged roles to update memberships in their condominium.
@@ -266,7 +279,7 @@ on public.condominium_transactions
 for select
 to authenticated
 using (
-	is_deleted = false
+	deleted_at is null
 	and public.has_condominium_role(
 		condominium_id,
 		array['condominium_admin', 'admin_operator']
@@ -284,7 +297,7 @@ with check (
 		condominium_id,
 		array['condominium_admin', 'admin_operator']
 	)
-	and is_deleted = false
+	and deleted_at is null
 );
 
 -- Allow privileged roles to update transaction entries in their condominium.

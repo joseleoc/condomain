@@ -9,6 +9,7 @@ create table if not exists public.currencies (
     constraint currencies_minor_unit_non_negative check (minor_unit >= 0)
 );
 
+
 comment on table public.currencies is 'Supported currencies for condominium accounting and display.';
 
 alter table public.currencies enable row level security;

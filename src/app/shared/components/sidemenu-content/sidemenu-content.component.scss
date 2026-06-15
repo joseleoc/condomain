@@ -1,5 +1,45 @@
-.center {
-    display: flex;
-    align-items: center;
-    justify-content: center;
+.condominium-button-container {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  width: 100%;
+}
+
+.condominium-button-content {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.condominium-name {
+  color: var(--ion-color-dark);
+  font-size: 1.2rem;
+  font-weight: bold;
+  margin: 0;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  text-transform: none;
+}
+
+@media (prefers-color-scheme: dark) {
+  .condominium-name {
+    color: var(--ion-color-light);
+  }
+}
+
+.skeleton-avatar {
+  width: 3rem;
+  height: 3rem;
+  border-radius: 50%;
+}
+
+.skeleton-name {
+  width: 100%;
+  height: 1.2rem;
+  margin: 0;
 }

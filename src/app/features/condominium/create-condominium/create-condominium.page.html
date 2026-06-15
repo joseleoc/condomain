@@ -1,0 +1,21 @@
+<ng-container *transloco="let t">
+  <ion-header [translucent]="true">
+    <ion-toolbar>
+      <ion-buttons slot="start">
+        <ion-back-button defaultHref="/condominium" />
+      </ion-buttons>
+    </ion-toolbar>
+  </ion-header>
+  <ion-content class="ion-padding">
+    <ion-card>
+      <ion-card-header>
+        <h3>{{ t('condominium.createForm.title') }}</h3>
+      </ion-card-header>
+      <ion-card-content>
+        <app-create-condominium-form
+          (submitCreateCondominiumForm)="createCondominium($event)"
+        />
+      </ion-card-content>
+    </ion-card>
+  </ion-content>
+</ng-container>

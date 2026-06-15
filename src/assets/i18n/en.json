@@ -14,6 +14,21 @@
     "english": "English",
     "spanish": "Spanish"
   },
+  "condominium": {
+    "hub": {
+      "title": "Condominium Hub",
+      "newButton": "Create Condominium",
+      "noCondominiums": "No condominiums found. Please create one to get started."
+    },
+    "createForm": {
+      "newCondominium": "New Condominium",
+      "title": "Create Condominium",
+      "name": "Name",
+      "address": "Address",
+      "currency": "Currency",
+      "createButton": "Create Condominium"
+    }
+  },
   "validation": {
     "required": "This field is required",
     "email": "Please enter a valid email address",
@@ -28,6 +43,7 @@
     "goToRegister": "Don't have an account? Register",
     "goToLogin": "Already have an account? Login",
     "goToForgotPassword": "Forgot your password?",
+    "signOut": "Sign Out",
     "signIn": {
       "title": "Sign In",
       "submitButton": "Sign In",
@@ -57,5 +73,28 @@
       "updatePasswordError": "An error occurred while trying to update your password. Please try again later.",
       "updatePasswordSuccess": "Your password has been updated successfully."
     }
+  },
+  "currency": {
+    "selectCurrency": "Select Currency",
+    "loadingCurrencies": "Loading currencies...",
+    "noCurrencies": "No currencies available",
+    "VES": "Venezuelan Bolívar",
+    "EUR": "Euro",
+    "COP": "Colombian Peso",
+    "MXN": "Mexican Peso",
+    "USD": "US Dollar",
+    "ARS": "Argentine Peso",
+    "CLP": "Chilean Peso",
+    "PEN": "Peruvian Sol",
+    "BRL": "Brazilian Real",
+    "BOB": "Bolivian Boliviano",
+    "UYU": "Uruguayan Peso",
+    "PYG": "Paraguayan Guaraní",
+    "DOP": "Dominican Peso",
+    "GTQ": "Guatemalan Quetzal",
+    "HNL": "Honduran Lempira",
+    "NIO": "Nicaraguan Córdoba",
+    "CRC": "Costa Rican Colón",
+    "CUP": "Cuban Peso"
   }
 }

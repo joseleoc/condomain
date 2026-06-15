@@ -15,8 +15,8 @@ export class Auth implements OnDestroy {
   private authStateSubscription: Subscription;
 
   // --- Properties ---
-  session = new BehaviorSubject<Session | null>(null);
-  isAuthenticated$ = this.session
+  session$ = new BehaviorSubject<Session | null>(null);
+  isAuthenticated$ = this.session$
     .asObservable()
     .pipe(map((session) => !!session));
 
@@ -28,7 +28,7 @@ export class Auth implements OnDestroy {
     this.client.auth
       .getSession()
       .then(({ data }) => {
-        this.session.next(data.session);
+        this.session$.next(data.session);
       })
       .finally(() => {
         this.isLoadingSession$.next(false);
@@ -36,7 +36,7 @@ export class Auth implements OnDestroy {
 
     this.authStateSubscription = this.client.auth.onAuthStateChange(
       (_event, session) => {
-        this.session.next(session);
+        this.session$.next(session);
       },
     ).data.subscription;
   }
@@ -44,7 +44,7 @@ export class Auth implements OnDestroy {
   // --- Lifecycle Hooks ---
   ngOnDestroy(): void {
     this.authStateSubscription.unsubscribe();
-    this.session.complete();
+    this.session$.complete();
   }
 
   // --- Methods ---
@@ -57,11 +57,11 @@ export class Auth implements OnDestroy {
       if (error) {
         throw error;
       }
-      this.session.next(data.session);
+      this.session$.next(data.session);
       return data;
     } catch (error) {
       console.error(error);
-      this.session.next(null);
+      this.session$.next(null);
       throw error;
     }
   }
@@ -75,12 +75,12 @@ export class Auth implements OnDestroy {
       if (error) {
         throw error;
       }
-      this.session.next(data.session);
+      this.session$.next(data.session);
       return data;
     } catch (error) {
       console.error(error);
 
-      this.session.next(null);
+      this.session$.next(null);
       throw error;
     }
   }
@@ -91,7 +91,7 @@ export class Auth implements OnDestroy {
       if (error) {
         throw error;
       }
-      this.session.next(null);
+      this.session$.next(null);
       await this.router.navigate(['/auth/sign-in'], { replaceUrl: true });
     } catch (error) {
       console.error(error);

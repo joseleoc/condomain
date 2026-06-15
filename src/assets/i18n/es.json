@@ -14,6 +14,21 @@
     "english": "Inglés",
     "spanish": "Español"
   },
+  "condominium": {
+    "hub": {
+      "title": "Condominium Hub",
+      "newButton": "Crear Condominio",
+      "noCondominiums": "No se encontraron condominios. Por favor, crea uno para comenzar."
+    },
+    "createForm": {
+      "newCondominium": "Nuevo Condominio",
+      "title": "Crear Condominio",
+      "name": "Nombre",
+      "address": "Dirección",
+      "currency": "Moneda",
+      "createButton": "Crear Condominio"
+    }
+  },
   "validation": {
     "required": "Este campo es obligatorio",
     "email": "Por favor, introduce una dirección de correo electrónico válida",
@@ -28,6 +43,7 @@
     "goToLogin": "¿Ya tienes una cuenta? Inicia sesión",
     "goToRegister": "¿No tienes una cuenta? Regístrate",
     "goToForgotPassword": "¿Olvidaste tu contraseña?",
+    "signOut": "Cerrar sesión",
     "signIn": {
       "title": "Iniciar sesión",
       "submitButton": "Iniciar sesión",
@@ -57,5 +73,28 @@
       "updatePasswordError": "Ocurrió un error al intentar actualizar tu contraseña. Por favor, inténtalo de nuevo más tarde.",
       "updatePasswordSuccess": "Tu contraseña ha sido actualizada exitosamente."
     }
+  },
+  "currency": {
+    "selectCurrency": "Seleccionar moneda",
+    "loadingCurrencies": "Cargando monedas...",
+    "noCurrencies": "No hay monedas disponibles",
+    "VES": "Bolívar venezolano",
+    "EUR": "Euro",
+    "COP": "Peso colombiano",
+    "MXN": "Peso mexicano",
+    "USD": "Dólar estadounidense",
+    "ARS": "Peso argentino",
+    "CLP": "Peso chileno",
+    "PEN": "Sol peruano",
+    "BRL": "Real brasileño",
+    "BOB": "Boliviano",
+    "UYU": "Peso uruguayo",
+    "PYG": "Guaraní paraguayo",
+    "DOP": "Peso dominicano",
+    "GTQ": "Quetzal guatemalteco",
+    "HNL": "Lempira hondureño",
+    "NIO": "Córdoba nicaragüense",
+    "CRC": "Colón costarricense",
+    "CUP": "Peso cubano"
   }
 }

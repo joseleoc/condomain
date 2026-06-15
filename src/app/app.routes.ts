@@ -49,22 +49,33 @@ export const routes: Routes = [
       import('./features/home/home.page').then((m) => m.HomePage),
   },
   {
+    path: 'condominium',
+    canActivate: [isNotAuthenticatedGuard],
+    children: [
+      {
+        path: 'condominium-hub',
+        loadComponent: () =>
+          import('./features/condominium/condominium-hub/condominium-hub.page').then(
+            (m) => m.CondominiumHubPage,
+          ),
+      },
+      {
+        path: 'create',
+        loadComponent: () =>
+          import('./features/condominium/create-condominium/create-condominium.page').then(
+            (m) => m.CreateCondominiumPage,
+          ),
+      },
+      {
+        path: '',
+        redirectTo: 'condominium-hub',
+        pathMatch: 'full',
+      },
+    ],
+  },
+  {
     path: '',
     redirectTo: 'home',
     pathMatch: 'full',
-  },
-  {
-    path: 'forgot-password',
-    loadComponent: () =>
-      import('./features/auth/pages/forgot-password/forgot-password.page').then(
-        (m) => m.ForgotPasswordPage,
-      ),
-  },
-  {
-    path: 'update-password',
-    loadComponent: () =>
-      import('./features/auth/pages/update-password/update-password.page').then(
-        (m) => m.UpdatePasswordPage,
-      ),
   },
 ];

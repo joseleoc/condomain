@@ -1,6 +1,34 @@
-<ion-content>
-  <div class="ion-flex ion-align-items-center ion-justify-content-center">
-    <app-avatar src="assets/images/profile-placeholder.png" alt="Profile Picture" class="center" />
 
-  </div>
+<ion-content>
+  @if (loadingCondominiums()) {
+    <div class="avatar-skeleton-wrapper">
+      <ion-skeleton-text [animated]="true" class="skeleton-avatar" />
+    </div>
+    <h4 class="skeleton-name">
+      <ion-skeleton-text [animated]="true" />
+    </h4>
+  } @else if (activeCondominium() != null) {
+    <ion-button fill="clear" expand="full" href="/condominium" role="link">
+      <div class="condominium-button-container">
+        <div class="condominium-button-content">
+          <app-avatar
+            [src]="
+              activeCondominium()?.avatar ||
+              '../../../../../assets/icon/home-outline.svg'
+            "
+            size="medium"
+            alt="Profile Picture"
+          />
+          <h4 class="condominium-name">
+            {{ activeCondominium()?.name }}
+          </h4>
+        </div>
+        <ion-icon name="chevron-forward" />
+      </div>
+    </ion-button>
+  } @else {
+    <div class="no-condominiums">
+      <app-new-condo-animated-btn />
+    </div>
+  }
 </ion-content>
