@@ -58,8 +58,7 @@ export class CreateCondominiumPage {
   // --- Properties ---
   step = this.wizardService.step;
   loading = this.wizardService.loading;
-  /** Progress percentage for the creation process from 0 to 1 */
-  progressPercentage = signal(() => this.step() / MAX_STEPS);
+  progressPercentage = this.wizardService.progressPercentage;
   stepLabel = signal('condominium.createForm.newCondominium');
 
   // --- ViewChild ---

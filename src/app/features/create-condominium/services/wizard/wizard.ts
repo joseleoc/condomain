@@ -4,7 +4,7 @@ import { ToastController } from '@ionic/angular/standalone';
 import { TranslocoService } from '@jsverse/transloco';
 import { Condominium as TCondominium } from '@app-types/condominium';
 import { CreateCondominiumData } from '@core/services/condominium/condominium.types';
-import { BehaviorSubject } from 'rxjs';
+import { MAX_STEPS } from '@features/create-condominium/create-condominium.constants';
 
 @Injectable({
   providedIn: 'root',
@@ -20,6 +20,7 @@ export class Wizard {
   loading = signal(false);
   createdCondominium = signal<TCondominium | null>(null);
   updatedFileAvatar = signal<File | null>(null);
+  progressPercentage = signal(() => this.step() / MAX_STEPS);
 
   // --- Methods ---
 
@@ -34,6 +35,12 @@ export class Wizard {
           message: this.translocoService.translate(
             'condominium.createForm.createSuccessfully',
           ),
+          buttons: [
+            {
+              text: this.translocoService.translate('common.dismiss'),
+              role: 'cancel',
+            },
+          ],
           duration: 2000,
         });
         toast.present();
@@ -43,6 +50,12 @@ export class Wizard {
         message: this.translocoService.translate(
           'condominium.createForm.createError',
         ),
+        buttons: [
+          {
+            text: this.translocoService.translate('common.dismiss'),
+            role: 'cancel',
+          },
+        ],
         duration: 2000,
       });
       toast.present();

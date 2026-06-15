@@ -8,7 +8,8 @@
     "error": "Error",
     "ok": "Aceptar",
     "sent": "Enviado",
-    "back": "Volver"
+    "back": "Volver",
+    "dismiss": "Cerrar"
   },
   "i18n": {
     "selectLanguage": "Seleccionar idioma",
