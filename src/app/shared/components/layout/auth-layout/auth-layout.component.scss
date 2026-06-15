@@ -8,10 +8,10 @@
   width: 100%;
   display: flex;
   flex-direction: column;
-  justify-content: center;
   align-items: center;
   flex: 1;
   gap: 1rem;
+  margin-top: 2rem
 }
 
 .logo {
@@ -19,7 +19,7 @@
   width: 6rem;
   height: auto;
   aspect-ratio: 1 / 1;
-  background-color: var(--ion-color-tertiary);
+  background-color: var(--ion-color-primary);
 
   /* Uses the SVG file as a mask */
   -webkit-mask: url("../../../../../assets/icon/logo/condomain-logo-stacked.svg")
