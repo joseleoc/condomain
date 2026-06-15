@@ -1,4 +1,12 @@
-import { Component, input, OnInit, output, signal } from '@angular/core';
+import {
+  Component,
+  computed,
+  effect,
+  input,
+  OnInit,
+  output,
+  signal,
+} from '@angular/core';
 import { IonIcon } from '@ionic/angular/standalone';
 
 /**
@@ -25,6 +33,23 @@ export class AvatarUploaderComponent {
   // --- Properties ---
   localImagePreview = signal<string | ArrayBuffer | null>(this.imagePreview());
 
+  displayImage = computed(() => {
+    const rawImage = this.localImagePreview() || this.imagePreview();
+
+    if (!rawImage) return null;
+
+    if (typeof rawImage === 'string') {
+      return rawImage;
+    }
+
+    if (rawImage instanceof ArrayBuffer) {
+      const blob = new Blob([rawImage]);
+      return URL.createObjectURL(blob);
+    }
+
+    return null;
+  });
+
   // --- Methods ---
   onFileSelected(event: Event) {
     const input = event.target as HTMLInputElement;
@@ -42,6 +67,7 @@ export class AvatarUploaderComponent {
         img.src = e.target.result;
       };
       reader.readAsDataURL(file);
+      this.localImagePreview.set(URL.createObjectURL(file));
     }
   }
 

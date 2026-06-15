@@ -10,16 +10,19 @@
   <div
     class="avatar-preview"
     [style.backgroundImage]="
-      localImagePreview() ? 'url(' + localImagePreview() + ')' : 'none'
+      displayImage() ? 'url(' + displayImage() + ')' : 'none'
     "
   >
-    @if (!localImagePreview()) {
+    @if (!displayImage()) {
       <div class="avatar-overlay">
-        <ion-icon name="camera-outline" class="camera-icon" color="primary"></ion-icon>
+        <ion-icon
+          name="camera-outline"
+          class="camera-icon"
+          color="primary"
+        ></ion-icon>
       </div>
     }
   </div>
-
   <span class="uploader-label">
     {{ localImagePreview() ? "Cambiar Logo" : "Upload Logo" }}
   </span>

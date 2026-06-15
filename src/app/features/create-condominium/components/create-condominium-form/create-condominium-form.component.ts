@@ -1,5 +1,12 @@
 import { AsyncPipe } from '@angular/common';
-import { Component, inject, input, output } from '@angular/core';
+import {
+  Component,
+  effect,
+  inject,
+  input,
+  output,
+  signal,
+} from '@angular/core';
 import {
   FormControl,
   FormGroup,
@@ -18,6 +25,7 @@ import { TranslocoModule, TranslocoService } from '@jsverse/transloco';
 import { AvatarUploaderComponent } from '@shared/components/avatar-uploader/avatar-uploader.component';
 import { CurrencySelectorComponent } from '@shared/components/currency-selector/currency-selector.component';
 import { map } from 'rxjs/internal/operators/map';
+import { Wizard } from '@features/create-condominium/services/wizard/wizard';
 
 interface CreateCondominiumFormControls {
   name: FormControl<string>;
@@ -46,8 +54,11 @@ export class CreateCondominiumFormComponent {
   // --- Dependencies ---
   private translocoService = inject(TranslocoService);
   private profileService = inject(Profile);
+  private wizardService = inject(Wizard);
 
   // -- Inputs ---
+  defaultValues = this.wizardService.createdCondominium;
+
   loading = input<boolean>(false);
   showSubmitButton = input<boolean>(true);
 
@@ -56,12 +67,12 @@ export class CreateCondominiumFormComponent {
 
   // --- Form ---
   createCondominiumForm = new FormGroup<CreateCondominiumFormControls>({
-    name: new FormControl('', {
+    name: new FormControl(this.defaultValues()?.name || '', {
       validators: [Validators.required, Validators.minLength(3)],
       nonNullable: true,
     }),
-    address: new FormControl(''),
-    currency: new FormControl('USD', {
+    address: new FormControl(this.defaultValues()?.address || null),
+    currency: new FormControl(this.defaultValues()?.currency || 'USD', {
       validators: [Validators.required],
       nonNullable: true,
     }),
@@ -69,6 +80,9 @@ export class CreateCondominiumFormComponent {
   });
 
   //--- Properties ---
+
+  fileBuffer = signal<string | ArrayBuffer | null>(null);
+
   nameError$ = this.createCondominiumForm.controls.name.statusChanges.pipe(
     map(() => {
       const nameControl = this.createCondominiumForm.controls.name;
@@ -94,6 +108,27 @@ export class CreateCondominiumFormComponent {
         return null;
       }),
     );
+
+  constructor() {
+    effect(async () => {
+      const file = this.wizardService.updatedFileAvatar();
+
+      if (!file) {
+        this.fileBuffer.set(null);
+        return;
+      }
+
+      const reader = new FileReader();
+      reader.onload = () => {
+        this.fileBuffer.set(reader.result);
+      };
+      reader.onerror = () => {
+        this.fileBuffer.set(null);
+      };
+
+      reader.readAsArrayBuffer(file);
+    });
+  }
 
   // --- Methods ---
   /** Returns true if the form is successfully submitted, false otherwise */
