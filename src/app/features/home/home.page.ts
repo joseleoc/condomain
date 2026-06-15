@@ -1,6 +1,5 @@
 import { Component, inject } from '@angular/core';
 import { MainLayoutComponent } from '@shared/components/layout/main-layout/main-layout.component';
-import { IonButton } from '@ionic/angular/standalone';
 import { Condominium } from '@core/services/condominium/condominium';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { NewCondoAnimatedBtnComponent } from '@shared/components/new-condo-animated-btn/new-condo-animated-btn.component';
@@ -9,7 +8,7 @@ import { NewCondoAnimatedBtnComponent } from '@shared/components/new-condo-anima
   selector: 'app-home',
   templateUrl: 'home.page.html',
   styleUrls: ['home.page.scss'],
-  imports: [MainLayoutComponent, IonButton, NewCondoAnimatedBtnComponent],
+  imports: [MainLayoutComponent, NewCondoAnimatedBtnComponent],
 })
 export class HomePage {
   private condominiumService = inject(Condominium);

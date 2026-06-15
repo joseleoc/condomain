@@ -24,7 +24,6 @@ import { AvatarComponent } from '@shared/components/avatar/avatar.component';
   imports: [
     IonContent,
     IonHeader,
-    IonTitle,
     IonToolbar,
     CommonModule,
     FormsModule,

@@ -1,17 +1,9 @@
 import { AsyncPipe } from '@angular/common';
-import {
-  Component,
-  forwardRef,
-  inject,
-  input,
-  OnInit,
-  signal,
-} from '@angular/core';
+import { Component, forwardRef, inject, input, signal } from '@angular/core';
 import { NG_VALUE_ACCESSOR, ReactiveFormsModule } from '@angular/forms';
 import { Currency } from '@core/services/currency/currency';
 import {
   IonSelect,
-  IonItem,
   IonSpinner,
   IonSelectOption,
 } from '@ionic/angular/standalone';
@@ -25,7 +17,6 @@ import { TranslocoModule } from '@jsverse/transloco';
     AsyncPipe,
     IonSelect,
     ReactiveFormsModule,
-    IonItem,
     IonSpinner,
     IonSelectOption,
     TranslocoModule,
