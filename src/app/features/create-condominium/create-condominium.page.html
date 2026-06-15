@@ -14,10 +14,13 @@
     <ion-text class="text-secondary">{{ stepLabel() | transloco }}</ion-text>
     <ion-progress-bar [value]="progressPercentage()"></ion-progress-bar>
   </div>
+
+  @switch (step()) { @case (1) {
   <app-create-condominium-form
     [loading]="loading()"
     [showSubmitButton]="false"
   />
+  } }
 </ion-content>
 <ion-footer>
   <ion-toolbar>

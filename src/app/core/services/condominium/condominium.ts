@@ -50,7 +50,9 @@ export class Condominium {
   }
 
   // --- Public Methods ---
-  async createCondominium(values: CreateCondominiumData) {
+  async createCondominium(
+    values: CreateCondominiumData,
+  ): Promise<TCondominium> {
     try {
       const valuesToInsert = {
         ...values,
@@ -65,7 +67,6 @@ export class Condominium {
           values.avatar,
         );
         if (avatarFilePath) valuesToInsert.avatar = avatarFilePath;
-        console.log(avatarFilePath);
       }
 
       const { data, error } = await this.client

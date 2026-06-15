@@ -1,5 +1,9 @@
 import { Component, computed, inject, signal, viewChild } from '@angular/core';
-import { TranslocoModule, TranslocoPipe } from '@jsverse/transloco';
+import {
+  TranslocoModule,
+  TranslocoPipe,
+  TranslocoService,
+} from '@jsverse/transloco';
 import {
   IonContent,
   IonHeader,
@@ -12,6 +16,7 @@ import {
   IonButton,
   IonFooter,
   IonSpinner,
+  ToastController,
 } from '@ionic/angular/standalone';
 import { Condominium } from '@core/services/condominium/condominium';
 import { CreateCondominiumData } from '@core/services/condominium/condominium.types';
@@ -46,6 +51,8 @@ export class CreateCondominiumPage {
   // --- Dependencies ---
   private condominiumService = inject(Condominium);
   private location = inject(Location);
+  private toastController = inject(ToastController);
+  private translocoService = inject(TranslocoService);
 
   // --- Components ---
   createCondominiumForm = viewChild(CreateCondominiumFormComponent);
@@ -62,7 +69,23 @@ export class CreateCondominiumPage {
     try {
       this.loading.set(true);
       const res = await this.condominiumService.createCondominium(data);
+      if (res) {
+        const toast = await this.toastController.create({
+          message: this.translocoService.translate(
+            'condominium.createForm.createSuccessfully',
+          ),
+          duration: 2000,
+        });
+        toast.present();
+      }
     } catch (error) {
+      const toast = await this.toastController.create({
+        message: this.translocoService.translate(
+          'condominium.createForm.createError',
+        ),
+        duration: 2000,
+      });
+      toast.present();
       throw error;
     } finally {
       this.loading.set(false);

@@ -27,7 +27,9 @@
       "name": "Name",
       "address": "Address",
       "currency": "Currency",
-      "createButton": "Create Condominium"
+      "createButton": "Create Condominium",
+      "createSuccessfully": "Condominium created successfully!",
+      "createError": "An error occurred while creating the condominium. Please try again later."
     }
   },
   "validation": {
