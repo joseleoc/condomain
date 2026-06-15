@@ -1,12 +1,17 @@
-<article class="container">
+<article class="container ion-padding">
   <div class="icon-halo">
     <ion-icon name="business-outline" color="primary" size="large"></ion-icon>
   </div>
-  <h4>{{ "condominium.createStructure.noStructuresAdded" | transloco }}</h4>
-  <p>
-    {{ "condominium.createStructure.noStructuresAddedDescription" | transloco }}
-  </p>
+  <div class="text-spacing">
+    <h4>{{ "condominium.createStructure.noStructuresAdded" | transloco }}</h4>
+    <p>
+      {{
+        "condominium.createStructure.noStructuresAddedDescription" | transloco
+      }}
+    </p>
+  </div>
   <ion-button fill="outline">
     {{ "condominium.createStructure.addNewStructure" | transloco }}
+    <ion-icon name="add" slot="end"></ion-icon>
   </ion-button>
 </article>
