@@ -9,7 +9,15 @@
     "ok": "Ok",
     "sent": "Sent",
     "back": "Back",
-    "dismiss": "Dismiss"
+    "dismiss": "Dismiss",
+    "loading": "Loading...",
+    "uploading": "Uploading..."
+  },
+  "general": {
+    "changeImage": "Change Image",
+    "selectImage": "Select Image",
+    "removeImage": "Remove Image",
+    "selectFile": "Select File"
   },
   "i18n": {
     "selectLanguage": "Select Language",

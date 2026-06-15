@@ -9,7 +9,15 @@
     "ok": "Aceptar",
     "sent": "Enviado",
     "back": "Volver",
-    "dismiss": "Cerrar"
+    "dismiss": "Cerrar",
+    "loading": "Cargando...",
+    "uploading": "Subiendo..."
+  },
+  "general": {
+    "changeImage": "Cambiar imagen",
+    "selectImage": "Seleccionar imagen",
+    "removeImage": "Eliminar imagen",
+    "selectFile": "Seleccionar archivo"
   },
   "i18n": {
     "selectLanguage": "Seleccionar idioma",

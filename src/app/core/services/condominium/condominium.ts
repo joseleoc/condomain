@@ -168,8 +168,6 @@ export class Condominium {
       }
 
       this.userCondominiums$.next(condominiums);
-      console.log(condominiums);
-      console.log(this.activeCondominium$.getValue());
     } catch (error) {
       console.error('Error fetching user condominiums:', error);
       throw error;

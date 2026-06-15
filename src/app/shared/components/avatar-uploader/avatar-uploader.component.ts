@@ -8,6 +8,7 @@ import {
   signal,
 } from '@angular/core';
 import { IonIcon } from '@ionic/angular/standalone';
+import { TranslocoPipe } from '@jsverse/transloco';
 
 /**
  *  This component handles avatar image uploading, resizing, and previewing.
@@ -22,7 +23,7 @@ import { IonIcon } from '@ionic/angular/standalone';
   selector: 'app-avatar-uploader',
   templateUrl: './avatar-uploader.component.html',
   styleUrls: ['./avatar-uploader.component.scss'],
-  imports: [IonIcon],
+  imports: [IonIcon, TranslocoPipe],
 })
 export class AvatarUploaderComponent {
   // --- Inputs ---

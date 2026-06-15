@@ -24,6 +24,10 @@
     }
   </div>
   <span class="uploader-label">
-    {{ localImagePreview() ? "Cambiar Logo" : "Upload Logo" }}
+    @if (localImagePreview()) {
+      {{ "general.changeImage" | transloco }}
+    } @else {
+      {{ "general.selectImage" | transloco }}
+    }
   </span>
 </div>

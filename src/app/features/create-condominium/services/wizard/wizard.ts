@@ -1,4 +1,4 @@
-import { inject, Injectable, signal } from '@angular/core';
+import { computed, inject, Injectable, signal } from '@angular/core';
 import { Condominium } from '@core/services/condominium/condominium';
 import { ToastController } from '@ionic/angular/standalone';
 import { TranslocoService } from '@jsverse/transloco';
@@ -20,7 +20,7 @@ export class Wizard {
   loading = signal(false);
   createdCondominium = signal<TCondominium | null>(null);
   updatedFileAvatar = signal<File | null>(null);
-  progressPercentage = signal(() => this.step() / MAX_STEPS);
+  progressPercentage = computed(() => this.step() / MAX_STEPS);
 
   // --- Methods ---
 
