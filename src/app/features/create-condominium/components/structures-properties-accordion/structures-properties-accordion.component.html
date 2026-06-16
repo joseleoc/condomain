@@ -1,0 +1,24 @@
+<ion-accordion-group expand="inset">
+  @for (structure of structures(); track structure.name) {
+    <ion-accordion [value]="structure.name">
+      <ion-item slot="header">
+        <ion-icon name="business-outline" slot="start" />
+        <span class="structure-name">
+          {{ structure.name }}
+        </span>
+      </ion-item>
+      <div slot="content" >
+        <ion-list>
+          <ion-item>
+            <ion-icon name="person-outline" slot="start" />
+          </ion-item>
+             <ion-item>
+            <ion-icon name="person-outline" slot="start" />
+          </ion-item>   <ion-item>
+            <ion-icon name="person-outline" slot="start" />
+          </ion-item>
+        </ion-list>
+      </div>
+    </ion-accordion>
+  }
+</ion-accordion-group>

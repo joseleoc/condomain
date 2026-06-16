@@ -15,6 +15,7 @@ import { Wizard } from './services/wizard/wizard';
 import { Step1Component } from './components/step-1/step-1.component';
 import { Step2Component } from './components/step-2/step-2.component';
 import { WizardFooterComponent } from './components/wizard-footer/wizard-footer.component';
+import { Step3Component } from './components/step-3/step-3.component';
 
 @Component({
   selector: 'app-create-condominium',
@@ -35,6 +36,7 @@ import { WizardFooterComponent } from './components/wizard-footer/wizard-footer.
     Step1Component,
     Step2Component,
     WizardFooterComponent,
+    Step3Component,
   ],
 })
 export class CreateCondominiumPage {

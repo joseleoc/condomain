@@ -26,7 +26,7 @@ export class Wizard {
   nextStep$ = this.nextStepSource.asObservable();
   backStep$ = this.backStepSource.asObservable();
 
-  step = signal(2);
+  step = signal(3);
   loading = signal(false);
   createdCondominium = signal<TCondominium | null>(null);
   updatedFileAvatar = signal<File | null>(null);

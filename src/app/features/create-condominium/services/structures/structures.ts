@@ -13,7 +13,16 @@ export class Structures {
   private toastController = inject(ToastController);
   private translocoService = inject(TranslocoService);
   // --- Properties ---
-  structures$ = new BehaviorSubject<LocalStructure[]>([]);
+  structures$ = new BehaviorSubject<LocalStructure[]>([
+    {
+      name: 'Torre A',
+      description: 'Descrição da Torre A',
+    },
+    {
+      name: 'Torre B',
+      description: 'Descrição da Torre B',
+    },
+  ]);
 
   // --- Methods ---
   saveStructureLocally(structure: LocalStructure): boolean {
