@@ -11,7 +11,8 @@
     "back": "Back",
     "dismiss": "Dismiss",
     "loading": "Loading...",
-    "uploading": "Uploading..."
+    "uploading": "Uploading...",
+    "next": "Next"
   },
   "general": {
     "changeImage": "Change Image",
@@ -44,6 +45,16 @@
       "noStructuresAdded": "No structures added yet.",
       "noStructuresAddedDescription": "Divide your complex into Towers, Blocks, or Sectors to keep things organized.",
       "addNewStructure": "Add New Structure"
+    },
+    "setUp": {
+      "title": "How do you want to create your condominium?",
+      "subtitle": "Select the method that best suits your needs to start organizing your property.",
+      "simpleCreation": "Simple Creation",
+      "simpleCreationDescription": "Create structures and properties one by one manually. Ideal for small condominiums or specific adjustments.",
+      "massiveCreation": "Massive Creation",
+      "massiveCreationDescription": "Define naming rules and generate multiple towers and units in a few steps. The fastest option for large complexes.",
+      "aiAssistantCreation": "I Assistant",
+      "aiAssistantCreationDescription": "Chat with our AI to describe your condominium and let us configure the structure for you. Perfect for those who prefer a guided and intelligent approach."
     }
   },
   "validation": {

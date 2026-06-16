@@ -1,6 +1,7 @@
-import { Component, inject, OnInit, viewChild } from '@angular/core';
+import { Component, inject, OnDestroy, OnInit, viewChild } from '@angular/core';
 import { CreateCondominiumFormComponent } from '../create-condominium-form/create-condominium-form.component';
 import { Wizard } from '@features/create-condominium/services/wizard/wizard';
+import { Subscription } from 'rxjs';
 
 @Component({
   selector: 'app-step-1',
@@ -8,11 +9,29 @@ import { Wizard } from '@features/create-condominium/services/wizard/wizard';
   styleUrls: ['./step-1.component.scss'],
   imports: [CreateCondominiumFormComponent],
 })
-export class Step1Component {
+export class Step1Component implements OnInit, OnDestroy {
+  // --- Dependencies ---
   private wizardService = inject(Wizard);
 
+  // --- Properties ---
+  private nextSubscription!: Subscription;
   private condominiumForm = viewChild(CreateCondominiumFormComponent);
 
+  // --- Lifecycle hooks ---
+  ngOnInit() {
+    this.nextSubscription = this.wizardService.nextStep$.subscribe(async () => {
+      const submitted = await this.submitForm();
+      if (submitted) {
+        this.wizardService.step.set(2);
+      }
+    });
+  }
+  ngOnDestroy(): void {
+    if (this.nextSubscription) {
+      this.nextSubscription.unsubscribe();
+    }
+  }
+  // --- Methods ---
   /** Returns true if the form submission was successful */
   async submitForm() {
     // Submit the form, triggers validation and if it is valid it returns the form data, otherwise it returns null

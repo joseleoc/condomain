@@ -1,9 +1,5 @@
-import { Component, computed, inject, signal, viewChild } from '@angular/core';
-import {
-  TranslocoModule,
-  TranslocoPipe,
-  TranslocoService,
-} from '@jsverse/transloco';
+import { Component, inject, signal, viewChild } from '@angular/core';
+import { TranslocoModule, TranslocoPipe } from '@jsverse/transloco';
 import {
   IonContent,
   IonHeader,
@@ -13,21 +9,12 @@ import {
   IonProgressBar,
   IonText,
   IonTitle,
-  IonButton,
-  IonFooter,
-  IonSpinner,
-  ToastController,
 } from '@ionic/angular/standalone';
-import { Condominium } from '@core/services/condominium/condominium';
-import { CreateCondominiumData } from '@core/services/condominium/condominium.types';
-import { CreateCondominiumFormComponent } from './components/create-condominium-form/create-condominium-form.component';
-import { Location } from '@angular/common';
-import { Condominium as TCondominium } from '@app-types/condominium';
 import { MAX_STEPS } from './create-condominium.constants';
 import { Wizard } from './services/wizard/wizard';
-import { toSignal } from '@angular/core/rxjs-interop';
 import { Step1Component } from './components/step-1/step-1.component';
 import { Step2Component } from './components/step-2/step-2.component';
+import { WizardFooterComponent } from './components/wizard-footer/wizard-footer.component';
 
 @Component({
   selector: 'app-create-condominium',
@@ -45,16 +32,13 @@ import { Step2Component } from './components/step-2/step-2.component';
     TranslocoPipe,
     IonText,
     IonTitle,
-    IonButton,
-    IonFooter,
-    IonSpinner,
     Step1Component,
     Step2Component,
+    WizardFooterComponent,
   ],
 })
 export class CreateCondominiumPage {
   // --- Dependencies ---
-  private location = inject(Location);
   private wizardService = inject(Wizard);
 
   // --- Properties ---
@@ -67,15 +51,6 @@ export class CreateCondominiumPage {
   private step1Component = viewChild(Step1Component);
 
   // --- Methods ---
-
-  goBack() {
-    if (this.step() > 1) {
-      this.step.update((value) => value - 1);
-      return;
-    }
-    this.location.back();
-  }
-
   async handleNextStep() {
     let canContinue = false;
 

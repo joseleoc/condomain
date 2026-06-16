@@ -11,7 +11,8 @@
     "back": "Volver",
     "dismiss": "Cerrar",
     "loading": "Cargando...",
-    "uploading": "Subiendo..."
+    "uploading": "Subiendo...",
+    "next": "Siguiente"
   },
   "general": {
     "changeImage": "Cambiar imagen",
@@ -44,6 +45,16 @@
       "noStructuresAdded": "No se han agregado estructuras aún.",
       "noStructuresAddedDescription": "Divide tu complejo en Torres, Bloques o Sectores para mantener todo organizado.",
       "addNewStructure": "Agregar nueva estructura"
+    },
+    "setUp": {
+      "title": "¿Cómo quieres crear tu condominio?",
+      "subtitle": "Seleccione el método que mejor se adapte a tus necesidades para empezar a organizar tu propiedad.",
+      "simpleCreation": "Creación simple",
+      "simpleCreationDescription": "Crea estructuras y propiedades una por una manualmente. Ideal para condominios pequeños o ajustes específicos.",
+      "massiveCreation": "Creación masiva",
+      "massiveCreationDescription": "Define reglas de nomenclatura y genera múltiples torres y unidades en pocos pasos. La opción más rápida para grandes comlejos.",
+      "aiAssistantCreation": "Asistente IA",
+      "aiAssistantCreationDescription": "Conversa con nuestra IA para describir tu condominio y deja que nosotros configuremos la estructura por ti. Perfecto para quienes prefieren un enfoque guiado e inteligente."
     }
   },
   "validation": {

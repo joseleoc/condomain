@@ -5,8 +5,10 @@ import {
   add,
   businessOutline,
   cameraOutline,
+  chatbubblesOutline,
   chevronForward,
   languageOutline,
+  personOutline,
 } from 'ionicons/icons';
 
 @Component({
@@ -22,6 +24,8 @@ export class AppComponent {
       add,
       cameraOutline,
       businessOutline,
+      chatbubblesOutline,
+      personOutline,
     });
   }
 }
