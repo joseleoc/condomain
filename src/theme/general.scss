@@ -14,7 +14,6 @@ ion-toolbar {
   --background: var(--background);
 }
 
-
 h1,
 h2,
 h3,
@@ -24,4 +23,15 @@ h6,
 p {
   margin: 0;
   padding: 0;
+}
+
+.clamp-text {
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  text-transform: none;
+  text-align: start;
 }

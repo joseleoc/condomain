@@ -46,7 +46,12 @@ export class Structures {
         .then((toast) => toast.present());
       return false;
     }
-    this.structures$.next([...currentStructures, structure]);
+
+    const structuresToSave = [...currentStructures, structure].sort((a, b) =>
+      a.name.localeCompare(b.name),
+    );
+
+    this.structures$.next(structuresToSave);
     return true;
   }
 }

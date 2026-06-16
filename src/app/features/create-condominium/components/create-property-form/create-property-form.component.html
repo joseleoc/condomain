@@ -1,0 +1,24 @@
+<form [formGroup]="createPropertyForm">
+  <ion-input
+    formControlName="number"
+    [label]="'condominium.createProperty.propertyNumber' | transloco"
+  ></ion-input>
+
+  <ion-input
+    formControlName="fee"
+    [label]="'condominium.createProperty.feePercentage' | transloco"
+    type="number"
+  ></ion-input>
+
+  <ion-select
+    interface="action-sheet"
+    formControlName="structure"
+    [label]="'condominium.createProperty.structure' | transloco"
+  >
+    @for (structure of structures(); track structure.name) {
+      <ion-select-option [value]="structure.name">
+        {{ structure.name }}
+      </ion-select-option>
+    }
+  </ion-select>
+</form>

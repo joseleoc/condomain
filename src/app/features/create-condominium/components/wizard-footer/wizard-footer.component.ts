@@ -46,5 +46,6 @@ export class WizardFooterComponent {
 
   triggerBack() {
     this.wizardService.triggerBackStep();
+    this.wizardService.goBack();
   }
 }

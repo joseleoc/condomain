@@ -39,9 +39,8 @@ export class Step2Component implements OnInit, OnDestroy {
   ngOnInit() {
     this.nextSubscription = this.wizardService.nextStep$.subscribe(
       async (currentStep) => {
-        console.log(currentStep);
         const structures = this.structuresService.structures$.getValue();
-        if (structures.length > 0) {
+        if (structures.length > 0 && this.creationProcessSelected() != null) {
           this.wizardService.step.set(3);
         } else {
           if (!this.showMinStructuresToast) {

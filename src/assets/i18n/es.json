@@ -55,7 +55,14 @@
     "structuresList": {
       "title": "Estructuras del Condominio",
       "description": "Define un nuevo edificio, torre o bloque dentro del condominio para gestionar sus unidades y configuraciones específicas.",
-      "addAtLeastOneStructure": "Please add at least one structure to continue."
+      "addAtLeastOneStructure": "Por favor, agrega al menos una estructura para continuar."
+    },
+    "createProperty": {
+      "createProperty": "Agregar nueva unidad",
+      "propertyNumber": "Número de unidad",
+      "feePercentage": "Cuota de propiedad (%)",
+      "structure": "Estructura",
+      "createButton": "Crear unidad"
     },
     "setUp": {
       "title": "¿Cómo quieres crear tu condominio?",
