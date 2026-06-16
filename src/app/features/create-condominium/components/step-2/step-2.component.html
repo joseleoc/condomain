@@ -1,1 +1,7 @@
-<app-creation-process-selector />
+@switch (creationProcessSelected()) {
+  @case (null) {
+    <app-creation-process-selector
+      (onSelectionSubmitted)="creationProcessSelected.set($event)"
+    />
+  }
+}

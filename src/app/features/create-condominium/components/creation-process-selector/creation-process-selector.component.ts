@@ -1,4 +1,4 @@
-import { Component, inject, OnInit, signal } from '@angular/core';
+import { Component, inject, OnInit, output, signal } from '@angular/core';
 import { TranslocoPipe } from '@jsverse/transloco';
 import {
   IonCard,
@@ -11,6 +11,7 @@ import {
 } from '@ionic/angular/standalone';
 import { Subscription } from 'rxjs/internal/Subscription';
 import { Wizard } from '@features/create-condominium/services/wizard/wizard';
+import { CreateCondominiumProcessOptions } from '@features/create-condominium/create-condominium.types';
 @Component({
   selector: 'app-creation-process-selector',
   templateUrl: './creation-process-selector.component.html',
@@ -30,14 +31,17 @@ export class CreationProcessSelectorComponent implements OnInit {
   // --- Dependencies ---
   private wizardService = inject(Wizard);
 
+  // --- Output ---
+  onSelectionSubmitted = output<CreateCondominiumProcessOptions | null>();
+
   // --- Properties ---
   private nextSubscription!: Subscription;
-  selectedOption = signal<'simple' | 'massive' | 'ai'>('simple');
+  selectedOption = signal<CreateCondominiumProcessOptions | null>(null);
 
   // --- Lifecycle hooks ---
   ngOnInit() {
     this.nextSubscription = this.wizardService.nextStep$.subscribe(async () => {
-      console.log(this.selectedOption());
+      this.handleSubmit();
     });
   }
   ngOnDestroy(): void {
@@ -46,11 +50,11 @@ export class CreationProcessSelectorComponent implements OnInit {
     }
   }
 
-  selectOption(option: 'simple' | 'massive' | 'ai') {
+  selectOption(option: CreateCondominiumProcessOptions) {
     this.selectedOption.set(option);
   }
 
-  handleNext() {
-    console.log('Next clicked');
+  handleSubmit() {
+    this.onSelectionSubmitted.emit(this.selectedOption());
   }
 }

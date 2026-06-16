@@ -1,0 +1,1 @@
+export type CreateCondominiumProcessOptions = 'simple' | 'massive' | 'ai';
