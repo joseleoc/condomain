@@ -1,0 +1,67 @@
+<article class="container">
+  <div>
+    <h1>{{ "condominium.setUp.title" | transloco }}</h1>
+    <p>{{ "condominium.setUp.subtitle" | transloco }}</p>
+  </div>
+  <ion-radio-group [value]="selectedOption()">
+    <ion-card
+      (click)="selectOption('simple')"
+      [class.selected]="selectedOption() === 'simple'"
+    >
+      <ion-card-header class="header-spacing">
+        <ion-card-title class="title-container">
+          <div class="icon-wrapper">
+            <ion-icon name="person-outline"></ion-icon>
+          </div>
+          {{ "condominium.setUp.simpleCreation" | transloco }}
+        </ion-card-title>
+        <ion-radio value="simple"></ion-radio>
+      </ion-card-header>
+      <ion-card-content>
+        <span class="text-secondary">
+          {{ "condominium.setUp.simpleCreationDescription" | transloco }}
+        </span>
+      </ion-card-content>
+    </ion-card>
+
+    <ion-card
+      (click)="selectOption('massive')"
+      [class.selected]="selectedOption() === 'massive'"
+    >
+      <ion-card-header class="header-spacing">
+        <ion-card-title class="title-container">
+          <div class="icon-wrapper">
+            <ion-icon name="business-outline"></ion-icon>
+          </div>
+          {{ "condominium.setUp.massiveCreation" | transloco }}
+        </ion-card-title>
+        <ion-radio value="massive"></ion-radio>
+      </ion-card-header>
+      <ion-card-content>
+        <span class="text-secondary">
+          {{ "condominium.setUp.massiveCreationDescription" | transloco }}
+        </span>
+      </ion-card-content>
+    </ion-card>
+
+    <ion-card
+      (click)="selectOption('ai')"
+      [class.selected]="selectedOption() === 'ai'"
+    >
+      <ion-card-header class="header-spacing">
+        <ion-card-title class="title-container">
+          <div class="icon-wrapper">
+            <ion-icon name="chatbubbles-outline"></ion-icon>
+          </div>
+          {{ "condominium.setUp.aiAssistantCreation" | transloco }}
+        </ion-card-title>
+        <ion-radio value="ai"></ion-radio>
+      </ion-card-header>
+      <ion-card-content>
+        <span class="text-secondary">
+          {{ "condominium.setUp.aiAssistantCreationDescription" | transloco }}
+        </span>
+      </ion-card-content>
+    </ion-card>
+  </ion-radio-group>
+</article>
