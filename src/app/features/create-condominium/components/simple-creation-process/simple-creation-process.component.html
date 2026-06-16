@@ -1,6 +1,13 @@
-<app-structures-list-empty (addStructure)="openAddStructureModal()" />
+@if (structures()?.length === 0) {
+  <app-structures-list-empty (addStructure)="openAddStructureModal()" />
+} @else {
+  <app-structures-list (addStructure)="openAddStructureModal()" />
+}
 
-<ion-modal [isOpen]="isOpenAddStructureModal()" (ionModalDidDismiss)="closeAddStructureModal()">
+<ion-modal
+  [isOpen]="isOpenAddStructureModal()"
+  (ionModalDidDismiss)="closeAddStructureModal()"
+>
   <ng-template>
     <ion-header>
       <ion-toolbar>
@@ -23,7 +30,7 @@
       <p class="text-secondary structure-modal-description ion-padding-bottom">
         {{ "condominium.createStructure.description" | transloco }}
       </p>
-        <app-add-structure-form />
+      <app-add-structure-form />
     </ion-content>
     <ion-footer>
       <ion-toolbar>

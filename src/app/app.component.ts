@@ -10,6 +10,7 @@ import {
   documentOutline,
   languageOutline,
   personOutline,
+  trashOutline,
 } from 'ionicons/icons';
 
 @Component({
@@ -28,6 +29,7 @@ export class AppComponent {
       chatbubblesOutline,
       personOutline,
       documentOutline,
+      trashOutline,
     });
   }
 }

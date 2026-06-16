@@ -48,7 +48,13 @@
       "noStructuresAddedDescription": "Divide your complex into Towers, Blocks, or Sectors to keep things organized.",
       "addNewStructure": "Add New Structure",
       "structureName": "Structure Name (e.g., Tower A)",
-      "structureDescription": "Description (optional)"
+      "structureDescription": "Description (optional)",
+      "structureAlreadyExists": "A structure with name {{name}} already exists. Please choose a different name.",
+      "deleteStructureAlertMessage": "Are you sure you want to delete the structure \"{{name}}\"?"
+    },
+    "structuresList": {
+      "title": "Condominium Structures",
+      "description": "Define the primary structures within your condominium to help organize units."
     },
     "setUp": {
       "title": "How do you want to create your condominium?",

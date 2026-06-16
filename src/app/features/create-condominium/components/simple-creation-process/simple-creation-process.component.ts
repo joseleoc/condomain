@@ -1,4 +1,11 @@
-import { Component, inject, OnInit, signal, viewChild } from '@angular/core';
+import {
+  Component,
+  inject,
+  OnInit,
+  signal,
+  viewChild,
+  computed,
+} from '@angular/core';
 import { StructuresListEmptyComponent } from '../structures-list-empty/structures-list-empty.component';
 import {
   IonModal,
@@ -14,6 +21,8 @@ import {
 import { TranslocoPipe } from '@jsverse/transloco';
 import { AddStructureFormComponent } from '../add-structure-form/add-structure-form.component';
 import { Structures } from '@features/create-condominium/services/structures/structures';
+import { toSignal } from '@angular/core/rxjs-interop';
+import { StructuresListComponent } from '../structures-list/structures-list.component';
 
 @Component({
   selector: 'app-simple-creation-process',
@@ -32,6 +41,7 @@ import { Structures } from '@features/create-condominium/services/structures/str
     AddStructureFormComponent,
     IonCard,
     IonFooter,
+    StructuresListComponent,
   ],
 })
 export class SimpleCreationProcessComponent implements OnInit {
@@ -41,6 +51,7 @@ export class SimpleCreationProcessComponent implements OnInit {
   addStructureFormComponent = viewChild(AddStructureFormComponent);
   // --- Properties ---
   isOpenAddStructureModal = signal(false);
+  structures = computed(toSignal(this.structuresService.structures$));
 
   constructor() {}
 
@@ -60,8 +71,10 @@ export class SimpleCreationProcessComponent implements OnInit {
     if (formComponent) {
       const values = formComponent.submitAddStructureForm();
       if (values) {
-        this.structuresService.saveStructureLocally(values);
-        this.closeAddStructureModal();
+        const success = this.structuresService.saveStructureLocally(values);
+        if (success) {
+          this.closeAddStructureModal();
+        }
       }
       console.log(values);
     }

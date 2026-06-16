@@ -48,7 +48,13 @@
       "noStructuresAddedDescription": "Divide tu complejo en Torres, Bloques o Sectores para mantener todo organizado.",
       "addNewStructure": "Agregar nueva estructura",
       "structureName": "Nombre de la estructura (ej. Torre A)",
-      "structureDescription": "Descripción (opcional)"
+      "structureDescription": "Descripción (opcional)",
+      "structureAlreadyExists": "Una estructura con el nombre {{name}} ya existe. Por favor, elige un nombre diferente.",
+      "deleteStructureAlertMessage": "¿Estás seguro de que deseas eliminar la estructura \"{{name}}\"?"
+    },
+    "structuresList": {
+      "title": "Estructuras del Condominio",
+      "description": "Define un nuevo edificio, torre o bloque dentro del condominio para gestionar sus unidades y configuraciones específicas."
     },
     "setUp": {
       "title": "¿Cómo quieres crear tu condominio?",
