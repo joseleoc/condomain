@@ -1,0 +1,21 @@
+<form [formGroup]="addStructureForm" (ngSubmit)="submitAddStructureForm()">
+  <ion-input
+    formControlName="name"
+    [label]="'condominium.createStructure.structureName' | transloco"
+    labelPlacement="floating"
+    [errorText]="nameErrors$ | async | transloco"
+  >
+    <ion-icon name="business-outline" slot="start" />
+  </ion-input>
+
+  <ion-textarea
+    formControlName="description"
+    [label]="'condominium.createStructure.structureDescription' | transloco"
+    [counter]="true"
+    [errorText]="descriptionErrors$ | async"
+    labelPlacement="floating"
+    maxlength="120"
+  >
+    <ion-icon name="document-outline" slot="start"
+  /></ion-textarea>
+</form>

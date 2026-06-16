@@ -1,6 +1,6 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, output } from '@angular/core';
 import { TranslocoPipe } from '@jsverse/transloco';
-import { IonButton, IonIcon } from "@ionic/angular/standalone";
+import { IonButton, IonIcon } from '@ionic/angular/standalone';
 
 @Component({
   selector: 'app-structures-list-empty',
@@ -8,8 +8,11 @@ import { IonButton, IonIcon } from "@ionic/angular/standalone";
   styleUrls: ['./structures-list-empty.component.scss'],
   imports: [TranslocoPipe, IonButton, IonIcon],
 })
-export class StructuresListEmptyComponent implements OnInit {
-  constructor() {}
+export class StructuresListEmptyComponent {
+  addStructure = output<void>();
 
-  ngOnInit() {}
+  emitClick() {
+    console.log('Emitting add structure event');
+    this.addStructure.emit();
+  }
 }

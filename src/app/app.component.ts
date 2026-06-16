@@ -7,6 +7,7 @@ import {
   cameraOutline,
   chatbubblesOutline,
   chevronForward,
+  documentOutline,
   languageOutline,
   personOutline,
 } from 'ionicons/icons';
@@ -26,6 +27,7 @@ export class AppComponent {
       businessOutline,
       chatbubblesOutline,
       personOutline,
+      documentOutline,
     });
   }
 }

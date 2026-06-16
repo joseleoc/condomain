@@ -42,9 +42,13 @@
       "createError": "Ocurrió un error al crear el condominio. Por favor, inténtalo de nuevo más tarde."
     },
     "createStructure": {
+      "title": "Añadir Estructura",
+      "description": "Define un nuevo edificio, torre o bloque dentro del condominio para gestionar sus unidades y configuraciones específicas.",
       "noStructuresAdded": "No se han agregado estructuras aún.",
       "noStructuresAddedDescription": "Divide tu complejo en Torres, Bloques o Sectores para mantener todo organizado.",
-      "addNewStructure": "Agregar nueva estructura"
+      "addNewStructure": "Agregar nueva estructura",
+      "structureName": "Nombre de la estructura (ej. Torre A)",
+      "structureDescription": "Descripción (opcional)"
     },
     "setUp": {
       "title": "¿Cómo quieres crear tu condominio?",
