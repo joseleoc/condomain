@@ -54,7 +54,8 @@
     },
     "structuresList": {
       "title": "Estructuras del Condominio",
-      "description": "Define un nuevo edificio, torre o bloque dentro del condominio para gestionar sus unidades y configuraciones específicas."
+      "description": "Define un nuevo edificio, torre o bloque dentro del condominio para gestionar sus unidades y configuraciones específicas.",
+      "addAtLeastOneStructure": "Please add at least one structure to continue."
     },
     "setUp": {
       "title": "¿Cómo quieres crear tu condominio?",

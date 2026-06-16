@@ -19,8 +19,8 @@ export class Wizard {
   private translocoService = inject(TranslocoService);
 
   // --- Private Properties ---
-  private nextStepSource = new Subject<void>();
-  private backStepSource = new Subject<void>();
+  private nextStepSource = new Subject<number>();
+  private backStepSource = new Subject<number>();
 
   // --- Properties ---
   nextStep$ = this.nextStepSource.asObservable();
@@ -79,13 +79,13 @@ export class Wizard {
 
   triggerNextStep() {
     if (!this.loading()) {
-      this.nextStepSource.next();
+      this.nextStepSource.next(this.step());
     }
   }
 
   triggerBackStep() {
     if (!this.loading()) {
-      this.backStepSource.next();
+      this.backStepSource.next(this.step());
     }
   }
 

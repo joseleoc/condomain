@@ -54,7 +54,8 @@
     },
     "structuresList": {
       "title": "Condominium Structures",
-      "description": "Define the primary structures within your condominium to help organize units."
+      "description": "Define the primary structures within your condominium to help organize units.",
+      "addAtLeastOneStructure": "Please add at least one structure to continue."
     },
     "setUp": {
       "title": "How do you want to create your condominium?",
