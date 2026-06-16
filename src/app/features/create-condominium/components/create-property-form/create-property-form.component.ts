@@ -1,4 +1,4 @@
-import { Component, inject } from '@angular/core';
+import { Component, inject, output } from '@angular/core';
 import {
   ReactiveFormsModule,
   FormGroup,
@@ -10,10 +10,19 @@ import {
   IonInput,
   IonSelect,
   IonSelectOption,
+  IonButton,
 } from '@ionic/angular/standalone';
 import { map } from 'rxjs';
 import { Structures } from '@features/create-condominium/services/structures/structures';
 import { toSignal } from '@angular/core/rxjs-interop';
+import { AsyncPipe } from '@angular/common';
+import { CreatePropertyFormData } from '@features/create-condominium/create-condominium.types';
+
+interface CreatePropertyFromControls {
+  number: FormControl<string>;
+  fee: FormControl<number>;
+  structure: FormControl<string>;
+}
 
 @Component({
   selector: 'app-create-property-form',
@@ -25,6 +34,8 @@ import { toSignal } from '@angular/core/rxjs-interop';
     IonInput,
     IonSelect,
     IonSelectOption,
+    IonButton,
+    AsyncPipe,
   ],
 })
 export class CreatePropertyFormComponent {
@@ -33,12 +44,12 @@ export class CreatePropertyFormComponent {
   private structuresService = inject(Structures);
 
   // --- Form ---
-  createPropertyForm = new FormGroup({
+  createPropertyForm = new FormGroup<CreatePropertyFromControls>({
     number: new FormControl('', {
       validators: [Validators.required, Validators.maxLength(64)],
       nonNullable: true,
     }),
-    fee: new FormControl('', {
+    fee: new FormControl(0, {
       validators: [Validators.required, Validators.min(0)],
       nonNullable: true,
     }),
@@ -48,6 +59,8 @@ export class CreatePropertyFormComponent {
     }),
   });
 
+  // --- Outputs ---
+  submitCreatePropertyForm = output<CreatePropertyFormData>();
   // --- Properties ---
   structures = toSignal(this.structuresService.structures$);
 
@@ -99,4 +112,24 @@ export class CreatePropertyFormComponent {
     );
 
   // --- Methods ---
+
+  submit() {
+    if (this.createPropertyForm.valid) {
+      const formData: CreatePropertyFormData = {
+        number: this.createPropertyForm.controls.number.value,
+        fee: this.createPropertyForm.controls.fee.value,
+        structure: this.createPropertyForm.controls.structure.value,
+      };
+      this.submitCreatePropertyForm.emit(formData);
+
+      // Reset form after submit
+      this.createPropertyForm.controls.number.reset('');
+      this.createPropertyForm.controls.fee.reset(0);
+    } else {
+      Object.values(this.createPropertyForm.controls).forEach((control) => {
+        control.markAsTouched();
+        control.updateValueAndValidity();
+      });
+    }
+  }
 }

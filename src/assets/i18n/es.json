@@ -12,13 +12,16 @@
     "dismiss": "Cerrar",
     "loading": "Cargando...",
     "uploading": "Subiendo...",
-    "next": "Siguiente"
+    "next": "Siguiente",
+    "added": "Agregado",
+    "total": "Total"
   },
   "general": {
     "changeImage": "Cambiar imagen",
     "selectImage": "Seleccionar imagen",
     "removeImage": "Eliminar imagen",
-    "selectFile": "Seleccionar archivo"
+    "selectFile": "Seleccionar archivo",
+    "units": "Unidades"
   },
   "i18n": {
     "selectLanguage": "Seleccionar idioma",
@@ -50,7 +53,10 @@
       "structureName": "Nombre de la estructura (ej. Torre A)",
       "structureDescription": "Descripción (opcional)",
       "structureAlreadyExists": "Una estructura con el nombre {{name}} ya existe. Por favor, elige un nombre diferente.",
-      "deleteStructureAlertMessage": "¿Estás seguro de que deseas eliminar la estructura \"{{name}}\"?"
+      "deleteStructureAlertMessage": "¿Estás seguro de que deseas eliminar la estructura \"{{name}}\"?",
+      "structureNotFound": "Estructura no encontrada. Por favor, inténtalo de nuevo.",
+      "propertyAlreadyExists": "Una unidad con el número {{number}} ya existe en {{structure}}. Por favor, elige un número diferente.",
+      "fee": "Ownership: {{value}} %"
     },
     "structuresList": {
       "title": "Estructuras del Condominio",
@@ -80,6 +86,8 @@
     "email": "Por favor, introduce una dirección de correo electrónico válida",
     "minLength": "La longitud mínima es de {{length}} caracteres",
     "maxLength": "La longitud máxima es de {{length}} caracteres",
+    "min": "El valor mínimo es {{value}}",
+    "max": "El valor máximo es {{value}}",
     "passwordMismatch": "Las contraseñas no coinciden"
   },
   "auth": {

@@ -1,12 +1,16 @@
-<form [formGroup]="createPropertyForm">
+<form [formGroup]="createPropertyForm" (ngSubmit)="submit()">
   <ion-input
     formControlName="number"
     [label]="'condominium.createProperty.propertyNumber' | transloco"
+    [errorText]="numberErrors$ | async"
   ></ion-input>
 
   <ion-input
+    type="0"
+    step="0.0001"
     formControlName="fee"
     [label]="'condominium.createProperty.feePercentage' | transloco"
+    [errorText]="feeErrors$ | async"
     type="number"
   ></ion-input>
 
@@ -14,6 +18,7 @@
     interface="action-sheet"
     formControlName="structure"
     [label]="'condominium.createProperty.structure' | transloco"
+    [errorText]="structureErrors$ | async"
   >
     @for (structure of structures(); track structure.name) {
       <ion-select-option [value]="structure.name">
@@ -21,4 +26,8 @@
       </ion-select-option>
     }
   </ion-select>
+
+  <ion-button type="submit">
+    {{ 'condominium.createProperty.createButton' | transloco }}
+  </ion-button>
 </form>

@@ -12,13 +12,16 @@
     "dismiss": "Dismiss",
     "loading": "Loading...",
     "uploading": "Uploading...",
-    "next": "Next"
+    "next": "Next",
+    "added": "Added",
+    "total": "Total"
   },
   "general": {
     "changeImage": "Change Image",
     "selectImage": "Select Image",
     "removeImage": "Remove Image",
-    "selectFile": "Select File"
+    "selectFile": "Select File",
+    "units": "Units"
   },
   "i18n": {
     "selectLanguage": "Select Language",
@@ -50,7 +53,10 @@
       "structureName": "Structure Name (e.g., Tower A)",
       "structureDescription": "Description (optional)",
       "structureAlreadyExists": "A structure with name {{name}} already exists. Please choose a different name.",
-      "deleteStructureAlertMessage": "Are you sure you want to delete the structure \"{{name}}\"?"
+      "deleteStructureAlertMessage": "Are you sure you want to delete the structure \"{{name}}\"?",
+      "structureNotFound": "Structure not found. Please try again.",
+      "propertyAlreadyExists": "A unit with number {{number}} already exists in {{structure}}. Please choose a different number.",
+      "fee": "Ownership: {{value}} %"
     },
     "structuresList": {
       "title": "Condominium Structures",

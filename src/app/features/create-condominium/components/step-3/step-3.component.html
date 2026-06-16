@@ -4,8 +4,8 @@
       <ion-card-title>{{ 'condominium.createProperty.createProperty' | transloco }}</ion-card-title>
     </ion-card-header>
     <ion-card-content>
-      <app-create-property-form />
+      <app-create-property-form (submitCreatePropertyForm)="handleCreateProperty($event)" />
     </ion-card-content>
   </ion-card>
-  <app-structures-properties-accordion />
+  <app-structures-properties-accordion [structureSelected]="structureSelected()" />
 </section>

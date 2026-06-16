@@ -71,7 +71,10 @@ export class SimpleCreationProcessComponent implements OnInit {
     if (formComponent) {
       const values = formComponent.submitAddStructureForm();
       if (values) {
-        const success = this.structuresService.saveStructureLocally(values);
+        const success = this.structuresService.saveStructureLocally({
+          ...values,
+          properties: [],
+        });
         if (success) {
           this.closeAddStructureModal();
         }

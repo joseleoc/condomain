@@ -1,4 +1,8 @@
-<ion-accordion-group expand="inset">
+<div class="total-percentage-container">
+  <ion-badge>{{ "common.total" | transloco }} {{ totalPercentage() }}% </ion-badge>
+</div>
+
+<ion-accordion-group expand="inset" [value]="structureSelected()">
   @for (structure of structures(); track structure.name) {
     <ion-accordion [value]="structure.name">
       <ion-item slot="header">
@@ -6,17 +10,31 @@
         <span class="structure-name clamp-text">
           {{ structure.name }}
         </span>
+
+        <ion-badge slot="end" color="primary">
+          {{ structure.properties.length }}
+          {{ "general.units" | transloco }}
+          ({{ calculateStructurePercentage(structure) }}%)
+        </ion-badge>
       </ion-item>
-      <div slot="content" >
+      <div slot="content">
         <ion-list>
-          <ion-item>
-            <ion-icon name="person-outline" slot="start" />
-          </ion-item>
-             <ion-item>
-            <ion-icon name="person-outline" slot="start" />
-          </ion-item>   <ion-item>
-            <ion-icon name="person-outline" slot="start" />
-          </ion-item>
+          @for (property of structure.properties; track property.number) {
+            <ion-item>
+              <ion-icon name="person-outline" slot="start" />
+              <div class="property-container">
+                <span class="property-number clamp-text">
+                  {{ property.number }}
+                </span>
+                <span class="text-secondary property-fee">
+                  {{
+                    "condominium.createStructure.fee"
+                      | transloco: { value: property.fee }
+                  }}
+                </span>
+              </div>
+            </ion-item>
+          }
         </ion-list>
       </div>
     </ion-accordion>
