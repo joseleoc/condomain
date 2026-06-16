@@ -25,3 +25,20 @@
   padding-left: 1rem;
   padding-right: 1rem;
 }
+
+@media (max-width: 350px) {
+  .units-label {
+    display: none;
+  }
+
+  .structure-name {
+    font-size: 0.8rem;
+  }
+
+}
+
+@media(max-width: 450px) {
+  .structure-name {
+    font-size: 1rem;
+  }
+}

@@ -1,3 +1,4 @@
+import { DecimalPipe } from '@angular/common';
 import { Component, inject, computed, input } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { LocalStructure } from '@features/create-condominium/create-condominium.types';
@@ -9,6 +10,7 @@ import {
   IonIcon,
   IonList,
   IonBadge,
+  IonLabel,
 } from '@ionic/angular/standalone';
 import { TranslocoPipe } from '@jsverse/transloco';
 
@@ -24,6 +26,7 @@ import { TranslocoPipe } from '@jsverse/transloco';
     IonList,
     TranslocoPipe,
     IonBadge,
+    DecimalPipe,
   ],
 })
 export class StructuresPropertiesAccordionComponent {

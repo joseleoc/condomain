@@ -4,15 +4,15 @@ import {
   LocalStructure,
 } from '@features/create-condominium/create-condominium.types';
 import { BehaviorSubject } from 'rxjs';
-import { ToastController } from '@ionic/angular/standalone';
 import { TranslocoService } from '@jsverse/transloco';
+import { Toast } from '@core/services/toast/toast';
 
 @Injectable({
   providedIn: 'root',
 })
 export class Structures {
   // --- Dependencies ---
-  private toastController = inject(ToastController);
+  private toast = inject(Toast);
   private translocoService = inject(TranslocoService);
   // --- Properties ---
   structures$ = new BehaviorSubject<LocalStructure[]>([
@@ -32,21 +32,13 @@ export class Structures {
   saveStructureLocally(structure: LocalStructure): boolean {
     const currentStructures = this.structures$.getValue();
     if (currentStructures.some((s) => s.name === structure.name)) {
-      this.toastController
-        .create({
-          message: this.translocoService.translate(
-            'condominium.createStructure.structureAlreadyExists',
-            { name: structure.name },
-          ),
-          duration: 2000,
-          buttons: [
-            {
-              text: this.translocoService.translate('common.ok'),
-              role: 'cancel',
-            },
-          ],
-        })
-        .then((toast) => toast.present());
+      this.toast.present({
+        message: this.translocoService.translate(
+          'condominium.createStructure.structureAlreadyExists',
+          { name: structure.name },
+        ),
+        dismissButton: true,
+      });
       return false;
     }
 
@@ -67,42 +59,25 @@ export class Structures {
       (s) => s.name === structureName,
     );
     if (structureIndex === -1) {
-      this.toastController
-        .create({
-          message: this.translocoService.translate(
-            'condominium.createStructure.structureNotFound',
-            { name: structureName },
-          ),
-          duration: 2000,
-          color: 'danger',
-          buttons: [
-            {
-              text: this.translocoService.translate('common.ok'),
-              role: 'cancel',
-            },
-          ],
-        })
-        .then((toast) => toast.present());
+      this.toast.present({
+        message: this.translocoService.translate(
+          'condominium.createStructure.structureNotFound',
+          { name: structureName },
+        ),
+        color: 'danger',
+      });
       return false;
     }
 
     const structure = currentStructures[structureIndex];
     if (structure.properties.some((p) => p.number === property.number)) {
-      this.toastController
-        .create({
-          message: this.translocoService.translate(
-            'condominium.createStructure.propertyAlreadyExists',
-            { number: property.number, structure: structure.name },
-          ),
-          duration: 2000,
-          buttons: [
-            {
-              text: this.translocoService.translate('common.ok'),
-              role: 'cancel',
-            },
-          ],
-        })
-        .then((toast) => toast.present());
+      this.toast.present({
+        message: this.translocoService.translate(
+          'condominium.createStructure.propertyAlreadyExists',
+          { number: property.number, structure: structure.name },
+        ),
+        dismissButton: true,
+      });
       return false;
     }
 

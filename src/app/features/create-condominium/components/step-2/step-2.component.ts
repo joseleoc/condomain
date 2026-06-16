@@ -7,8 +7,8 @@ import { AiCreationProcessComponent } from '../ai-creation-process/ai-creation-p
 import { Subscription } from 'rxjs';
 import { Wizard } from '@features/create-condominium/services/wizard/wizard';
 import { Structures } from '@features/create-condominium/services/structures/structures';
-import { ToastController } from '@ionic/angular/standalone';
 import { TranslocoService } from '@jsverse/transloco';
+import { Toast } from '@core/services/toast/toast';
 
 @Component({
   selector: 'app-step-2',
@@ -25,7 +25,7 @@ export class Step2Component implements OnInit, OnDestroy {
   // --- Dependencies ---
   private wizardService = inject(Wizard);
   private structuresService = inject(Structures);
-  private toastController = inject(ToastController);
+  private toast = inject(Toast);
   private translocoService = inject(TranslocoService);
 
   // --- Properties ---
@@ -48,19 +48,13 @@ export class Step2Component implements OnInit, OnDestroy {
             this.showMinStructuresToast = true;
             return;
           }
-          const toast = await this.toastController.create({
+
+          this.toast.present({
             message: this.translocoService.translate(
               'condominium.structuresList.addAtLeastOneStructure',
             ),
-            duration: 2000,
-            buttons: [
-              {
-                text: this.translocoService.translate('common.dismiss'),
-                role: 'cancel',
-              },
-            ],
+            dismissButton: true,
           });
-          await toast.present();
         }
       },
     );

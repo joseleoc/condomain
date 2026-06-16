@@ -15,7 +15,6 @@ import {
   IonButtons,
   IonButton,
   IonContent,
-  IonCard,
   IonFooter,
 } from '@ionic/angular/standalone';
 import { TranslocoPipe } from '@jsverse/transloco';
@@ -39,7 +38,6 @@ import { StructuresListComponent } from '../structures-list/structures-list.comp
     TranslocoPipe,
     IonContent,
     AddStructureFormComponent,
-    IonCard,
     IonFooter,
     StructuresListComponent,
   ],

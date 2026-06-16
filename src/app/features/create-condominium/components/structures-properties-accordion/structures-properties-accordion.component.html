@@ -1,5 +1,7 @@
 <div class="total-percentage-container">
-  <ion-badge>{{ "common.total" | transloco }} {{ totalPercentage() }}% </ion-badge>
+  <ion-badge
+    >{{ "common.total" | transloco }} {{ totalPercentage() | number: "1.0-4" }}%
+  </ion-badge>
 </div>
 
 <ion-accordion-group expand="inset" [value]="structureSelected()">
@@ -7,14 +9,16 @@
     <ion-accordion [value]="structure.name">
       <ion-item slot="header">
         <ion-icon name="business-outline" slot="start" />
-        <span class="structure-name clamp-text">
+        <span class="structure-name clamp-text ion-text-wrap">
           {{ structure.name }}
         </span>
 
-        <ion-badge slot="end" color="primary">
+        <ion-badge slot="end" color="primary" class="ion-text-nowrap text-xs">
           {{ structure.properties.length }}
-          {{ "general.units" | transloco }}
-          ({{ calculateStructurePercentage(structure) }}%)
+          <span class="units-label">
+            {{ "general.units" | transloco }}
+          </span>
+          ({{ calculateStructurePercentage(structure) | number: "1.0-4" }}%)
         </ion-badge>
       </ion-item>
       <div slot="content">
@@ -29,7 +33,7 @@
                 <span class="text-secondary property-fee">
                   {{
                     "condominium.createStructure.fee"
-                      | transloco: { value: property.fee }
+                      | transloco: { value: property.fee | number: "1.0-4" }
                   }}
                 </span>
               </div>

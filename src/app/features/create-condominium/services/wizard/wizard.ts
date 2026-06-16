@@ -1,12 +1,12 @@
 import { computed, inject, Injectable, signal } from '@angular/core';
 import { Condominium } from '@core/services/condominium/condominium';
-import { ToastController } from '@ionic/angular/standalone';
 import { TranslocoService } from '@jsverse/transloco';
 import { Condominium as TCondominium } from '@app-types/condominium';
 import { CreateCondominiumData } from '@core/services/condominium/condominium.types';
 import { MAX_STEPS } from '@features/create-condominium/create-condominium.constants';
 import { Location } from '@angular/common';
 import { Subject } from 'rxjs';
+import { Toast } from '@core/services/toast/toast';
 
 @Injectable({
   providedIn: 'root',
@@ -15,7 +15,7 @@ export class Wizard {
   // --- Dependencies ---
   private location = inject(Location);
   private condominiumService = inject(Condominium);
-  private toastController = inject(ToastController);
+  private toast = inject(Toast);
   private translocoService = inject(TranslocoService);
 
   // --- Private Properties ---
@@ -43,34 +43,18 @@ export class Wizard {
       if (res) {
         this.createdCondominium.set(res);
         this.updatedFileAvatar.set(data.avatar || null);
-        const toast = await this.toastController.create({
+        this.toast.present({
           message: this.translocoService.translate(
             'condominium.createForm.createSuccessfully',
           ),
-          buttons: [
-            {
-              text: this.translocoService.translate('common.dismiss'),
-              role: 'cancel',
-            },
-          ],
-          duration: 2000,
         });
-        toast.present();
       }
     } catch (error) {
-      const toast = await this.toastController.create({
+      this.toast.present({
         message: this.translocoService.translate(
           'condominium.createForm.createError',
         ),
-        buttons: [
-          {
-            text: this.translocoService.translate('common.dismiss'),
-            role: 'cancel',
-          },
-        ],
-        duration: 2000,
       });
-      toast.present();
       throw error;
     } finally {
       this.loading.set(false);
