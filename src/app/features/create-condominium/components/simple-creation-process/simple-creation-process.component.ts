@@ -56,7 +56,6 @@ export class SimpleCreationProcessComponent implements OnInit {
   ngOnInit() {}
 
   openAddStructureModal() {
-    console.log('Opening add structure modal');
     this.isOpenAddStructureModal.set(true);
   }
 
@@ -77,7 +76,6 @@ export class SimpleCreationProcessComponent implements OnInit {
           this.closeAddStructureModal();
         }
       }
-      console.log(values);
     }
   }
 }

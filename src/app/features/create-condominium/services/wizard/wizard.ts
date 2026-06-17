@@ -36,7 +36,7 @@ export class Wizard {
   nextStep$ = this.nextStepSource.asObservable();
   backStep$ = this.backStepSource.asObservable();
 
-  step = signal(1);
+  step = signal(3);
   loading = signal(false);
   createdCondominium = signal<TCondominium | null>(null);
   updatedFileAvatar = signal<File | null>(null);
@@ -44,7 +44,13 @@ export class Wizard {
   buttonLabel = signal('common.next');
   backLabel = signal('common.back');
 
-  structures$ = new BehaviorSubject<LocalStructure[]>([]);
+  structures$ = new BehaviorSubject<LocalStructure[]>([
+    {
+      name: 'Prueba 1',
+      description: '',
+      properties: [],
+    },
+  ]);
 
   // --- Methods ---
 
@@ -295,10 +301,8 @@ export class Wizard {
     try {
       const updatedStructures =
         await this.uploadStructuresToBackend(structures);
-      console.log('Structures created successfully:', updatedStructures);
 
       await this.uploadPropertiesToBackend(updatedStructures);
-      console.log('Properties created successfully');
 
       this.structures$.next([]);
       this.toast.present({

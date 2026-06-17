@@ -1,11 +1,53 @@
 <section>
-  <ion-card>
-    <ion-card-header>
-      <ion-card-title>{{ 'condominium.createProperty.createProperty' | transloco }}</ion-card-title>
-    </ion-card-header>
-    <ion-card-content>
-      <app-create-property-form (submitCreatePropertyForm)="handleCreateProperty($event)" />
-    </ion-card-content>
-  </ion-card>
-  <app-structures-properties-accordion [structureSelected]="structureSelected()" />
+  @if (!hasProperties()) {
+    <app-properties-list-empty (addProperty)="openModal()" />
+  } @else {
+    <ion-button fill="outline" expand="block" (click)="openModal()">
+      <ion-icon name="add" slot="start"></ion-icon>
+      {{ "condominium.createProperty.createProperty" | transloco }}
+    </ion-button>
+    <app-structures-properties-accordion
+      [structureSelected]="structureSelected()"
+    />
+  }
 </section>
+
+<ion-modal
+  [isOpen]="isPropertiesModalOpen()"
+  (ionModalDidDismiss)="closeModal()"
+>
+  <ng-template>
+    <ion-header>
+      <ion-toolbar>
+        <ion-title>{{
+          "condominium.createProperty.createProperty" | transloco
+        }}</ion-title>
+        <ion-buttons slot="end">
+          <ion-button fill="clear" color="secondary" (click)="closeModal()">
+            {{ "common.cancel" | transloco }}
+          </ion-button>
+        </ion-buttons>
+      </ion-toolbar>
+    </ion-header>
+
+    <ion-content class="ion-padding">
+      <p class="text-secondary structure-modal-description ion-padding-bottom">
+        {{ "condominium.createProperty.description" | transloco }}
+      </p>
+      <app-create-property-form [showButton]="false" />
+    </ion-content>
+    <ion-footer>
+      <ion-toolbar>
+        <ion-buttons slot="end">
+          <ion-button
+            fill="solid"
+            color="primary"
+            (click)="handleCreateProperty()"
+          >
+            {{ "common.save" | transloco }}
+          </ion-button>
+        </ion-buttons>
+      </ion-toolbar>
+    </ion-footer>
+  </ng-template>
+</ion-modal>

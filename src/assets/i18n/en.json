@@ -34,6 +34,11 @@
       "newButton": "Create Condominium",
       "noCondominiums": "No condominiums found. Please create one to get started."
     },
+    "wizard": {
+      "step1Description": "Create a new condominium",
+      "step2Description": "Create the structures",
+      "step3Description": "Create the units"
+    },
     "createForm": {
       "newCondominium": "New Condominium",
       "title": "Create Condominium",
@@ -74,7 +79,12 @@
       "propertyNumber": "Unit Number",
       "feePercentage": "Ownership Fee (%)",
       "structure": "Structure",
-      "createButton": "Create Unit"
+      "createButton": "Create Unit",
+      "noPropertiesAdded": "No units added yet.",
+      "noPropertiesAddedDescription": "Start adding units to your structures to manage them effectively.",
+      "deletePropertyAlertMessage": "Are you sure you want to delete unit {{number}}",
+      "addNewProperty": "Add New Unit",
+      "description": "Define condo properties, such as apartments, commercial spaces, or parking spots, and assign them to their corresponding structures."
     },
     "setUp": {
       "title": "How do you want to create your condominium?",
@@ -104,6 +114,10 @@
     "goToLogin": "Already have an account? Login",
     "goToForgotPassword": "Forgot your password?",
     "signOut": "Sign Out",
+    "signUpError": "An error occurred during sign up.",
+    "emailInUse": "This email is already in use. Please use a different email.",
+    "invalidCredentials": "Invalid email or password. Please try again.",
+    "userNotFound": "No account found with that email. Please check your email or register for a new account.",
     "signIn": {
       "title": "Sign In",
       "submitButton": "Sign In",
@@ -133,6 +147,17 @@
       "updatePasswordError": "An error occurred while trying to update your password. Please try again later.",
       "updatePasswordSuccess": "Your password has been updated successfully."
     }
+  },
+
+  "authError": {
+    "signUpError": "An error occurred during sign up.",
+    "signInError": "An error occurred during sign in.",
+    "emailInUse": "This email is already in use. Please use a different email.",
+    "invalidCredentials": "Invalid email or password. Please try again.",
+    "userNotFound": "No account found with that email. Please check your email or register for a new account.",
+    "samePassword": "The new password cannot be the same as the previous one. Please choose a different password.",
+    "emailNotConfirmed": "The email has not been confirmed. Please check your inbox to confirm your email.",
+    "userAlreadyExists": "An account with this email already exists. Please sign in or use a different email to register."
   },
   "currency": {
     "selectCurrency": "Select Currency",

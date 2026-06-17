@@ -1,4 +1,4 @@
-import { Component, inject, signal, viewChild } from '@angular/core';
+import { Component, computed, inject, signal, viewChild } from '@angular/core';
 import { TranslocoModule, TranslocoPipe } from '@jsverse/transloco';
 import {
   IonContent,
@@ -10,7 +10,6 @@ import {
   IonText,
   IonTitle,
 } from '@ionic/angular/standalone';
-import { MAX_STEPS } from './create-condominium.constants';
 import { Wizard } from './services/wizard/wizard';
 import { Step1Component } from './components/step-1/step-1.component';
 import { Step2Component } from './components/step-2/step-2.component';
@@ -47,21 +46,12 @@ export class CreateCondominiumPage {
   step = this.wizardService.step;
   loading = this.wizardService.loading;
   progressPercentage = this.wizardService.progressPercentage;
-  stepLabel = signal('condominium.createForm.newCondominium');
+  stepLabel = computed(
+    () => `condominium.wizard.step${this.step()}Description`,
+  );
 
   // --- ViewChild ---
   private step1Component = viewChild(Step1Component);
 
   // --- Methods ---
-  async handleNextStep() {
-    let canContinue = false;
-
-    if (this.step() === 1) {
-      canContinue = (await this.step1Component()?.submitForm()) || false;
-    }
-
-    if (canContinue && this.step() < MAX_STEPS) {
-      this.step.update((value) => value + 1);
-    }
-  }
 }

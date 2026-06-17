@@ -34,6 +34,11 @@
       "newButton": "Crear Condominio",
       "noCondominiums": "No se encontraron condominios. Por favor, crea uno para comenzar."
     },
+    "wizard": {
+      "step1Description": "Crea un nuevo condominio",
+      "step2Description": "Crear estrucuras",
+      "step3Description": "Crear las unidades"
+    },
     "createForm": {
       "newCondominium": "Nuevo Condominio",
       "title": "Crear Condominio",
@@ -74,7 +79,12 @@
       "propertyNumber": "Número de unidad",
       "feePercentage": "Cuota de propiedad (%)",
       "structure": "Estructura",
-      "createButton": "Crear unidad"
+      "createButton": "Crear unidad",
+      "noPropertiesAdded": "No se han agregado unidades aún.",
+      "noPropertiesAddedDescription": "Comienza a agregar unidades a tus estructuras para gestionarlas de manera efectiva.",
+      "deletePropertyAlertMessage": "¿Estás seguro de que deseas eliminar la unidad {{number}}?",
+      "addNewProperty": "Agregar nueva unidad",
+      "description": "Define las propiedades del condominio, como departamentos, locales comerciales o estacionamientos, asignándolos a las estructuras correspondientes."
     },
     "setUp": {
       "title": "¿Cómo quieres crear tu condominio?",
@@ -133,6 +143,15 @@
       "updatePasswordError": "Ocurrió un error al intentar actualizar tu contraseña. Por favor, inténtalo de nuevo más tarde.",
       "updatePasswordSuccess": "Tu contraseña ha sido actualizada exitosamente."
     }
+  },
+  "authError": {
+    "signUpError": "Ocurrió un error durante el registro.",
+    "emailInUse": "Este correo electrónico ya está en uso. Por favor, utiliza un correo diferente.",
+    "invalidCredentials": "Correo electrónico o contraseña inválidos. Por favor, inténtalo de nuevo.",
+    "userNotFound": "No se encontró una cuenta con ese correo electrónico. Por favor, verifica tu correo o regístrate para una nueva cuenta.",
+    "samePassword": "La nueva contraseña no puede ser igual a la anterior. Por favor, elige una contraseña diferente.",
+    "emailNotConfirmed": "El correo electrónico no ha sido confirmado. Por favor, verifica tu bandeja de entrada para confirmar tu correo.",
+    "userAlreadyExists": "Ya existe una cuenta con ese correo electrónico. Por favor, inicia sesión o utiliza un correo diferente para registrarte."
   },
   "currency": {
     "selectCurrency": "Seleccionar moneda",

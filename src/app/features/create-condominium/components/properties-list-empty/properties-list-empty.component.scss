@@ -1,0 +1,29 @@
+.container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 1rem;
+  text-align: center;
+  margin: auto;
+  width: 100%;
+  max-width: 30rem;
+}
+
+.icon-halo {
+  padding: 1rem;
+  background-color: var(--ion-color-secondary);
+  border-radius: 50%;
+  width: 4rem;
+  height: 4rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.text-spacing {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    
+}

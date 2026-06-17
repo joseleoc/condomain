@@ -12,7 +12,6 @@ export class StructuresListEmptyComponent {
   addStructure = output<void>();
 
   emitClick() {
-    console.log('Emitting add structure event');
     this.addStructure.emit();
   }
 }

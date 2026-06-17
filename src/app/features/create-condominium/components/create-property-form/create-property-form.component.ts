@@ -1,4 +1,4 @@
-import { Component, inject, output } from '@angular/core';
+import { Component, inject, input, output } from '@angular/core';
 import {
   ReactiveFormsModule,
   FormGroup,
@@ -43,6 +43,10 @@ export class CreatePropertyFormComponent {
   private translocoService = inject(TranslocoService);
   private wizardService = inject(Wizard);
 
+  // --- Inputs ---
+  showButton = input(true);
+
+  
   // --- Form ---
   createPropertyForm = new FormGroup<CreatePropertyFromControls>({
     number: new FormControl('', {
@@ -125,11 +129,13 @@ export class CreatePropertyFormComponent {
       // Reset form after submit
       this.createPropertyForm.controls.number.reset('');
       this.createPropertyForm.controls.fee.reset(0);
+      return formData;
     } else {
       Object.values(this.createPropertyForm.controls).forEach((control) => {
         control.markAsTouched();
         control.updateValueAndValidity();
       });
     }
+    return null;
   }
 }

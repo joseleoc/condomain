@@ -5,7 +5,7 @@ import { UpdatePasswordFormComponent } from '@features/auth/components/update-pa
 import { Auth } from '@core/services/auth/auth';
 import { AlertController } from '@ionic/angular/standalone';
 import { Router } from '@angular/router';
-import { AuthLayoutComponent } from "@shared/components/layout/auth-layout/auth-layout.component";
+import { AuthLayoutComponent } from '@shared/components/layout/auth-layout/auth-layout.component';
 
 @Component({
   selector: 'app-update-password',
@@ -16,8 +16,8 @@ import { AuthLayoutComponent } from "@shared/components/layout/auth-layout/auth-
     CommonModule,
     TranslocoModule,
     UpdatePasswordFormComponent,
-    AuthLayoutComponent
-],
+    AuthLayoutComponent,
+  ],
 })
 export class UpdatePasswordPage {
   // --- Dependencies ---
@@ -29,7 +29,6 @@ export class UpdatePasswordPage {
   // --- Methods ---
   async onUpdatePasswordSubmit({ newPassword }: { newPassword: string }) {
     try {
-      throw new Error('Simulated error'); // TODO: Remove this line after testing the error handling
       await this.authService.updatePassword(newPassword);
 
       const alert = await this.alertController.create({
@@ -44,19 +43,25 @@ export class UpdatePasswordPage {
             handler: () => {
               this.authService.signOut();
               this.router.navigate(['/auth/sign-in'], { replaceUrl: true });
-            }
+            },
           },
         ],
       });
       await alert.present();
     } catch (error) {
       console.error(error);
+      const message =
+        (error as any)?.translationKey ||
+        'auth.updatePassword.updatePasswordError';
       const alert = await this.alertController.create({
         header: this.translocoService.translate('common.error'),
-        message: this.translocoService.translate(
-          'auth.updatePassword.updatePasswordError',
-        ),
-        buttons: [this.translocoService.translate('common.ok')],
+        message: this.translocoService.translate(message),
+        buttons: [
+          {
+            text: this.translocoService.translate('common.ok'),
+            role: 'cancel',
+          },
+        ],
       });
       await alert.present();
     }

@@ -1,18 +1,12 @@
 import { AsyncPipe } from '@angular/common';
-import { Component, inject, OnInit, output } from '@angular/core';
+import { Component, inject, output } from '@angular/core';
 import {
   FormControl,
   FormGroup,
   ReactiveFormsModule,
   Validators,
 } from '@angular/forms';
-import {
-  IonInput,
-  IonButton,
-  IonTextarea,
-  IonIcon,
-  IonItem,
-} from '@ionic/angular/standalone';
+import { IonInput, IonTextarea, IonIcon } from '@ionic/angular/standalone';
 import { TranslocoPipe, TranslocoService } from '@jsverse/transloco';
 import { map } from 'rxjs';
 
@@ -91,11 +85,9 @@ export class AddStructureFormComponent {
         name: this.addStructureForm.controls.name.value,
         description: this.addStructureForm.controls.description.value,
       };
-      console.log('Submitting form with value:', formValue);
       this.submitForm.emit(formValue);
       return formValue;
     } else {
-      console.log('Form is invalid');
       return null;
     }
   }

@@ -1,9 +1,15 @@
 import { inject, Injectable, OnDestroy } from '@angular/core';
 import { Router } from '@angular/router';
 import { Supabase } from '@core/services/supabase/supabase';
-import { Session, Subscription } from '@supabase/supabase-js';
+import {
+  AuthError,
+  isAuthApiError,
+  Session,
+  Subscription,
+} from '@supabase/supabase-js';
 import { BehaviorSubject, map } from 'rxjs';
 import { environment } from 'src/environments/environment';
+import { ErrorCode } from './error-codes';
 
 @Injectable({
   providedIn: 'root',
@@ -55,7 +61,8 @@ export class Auth implements OnDestroy {
         password,
       });
       if (error) {
-        throw error;
+        const errorKey = this.getTranslationErrorKey(error);
+        throw { ...error, translationKey: errorKey };
       }
       this.session$.next(data.session);
       return data;
@@ -73,7 +80,8 @@ export class Auth implements OnDestroy {
         password,
       });
       if (error) {
-        throw error;
+        const errorKey = this.getTranslationErrorKey(error);
+        throw { ...error, translationKey: errorKey };
       }
       this.session$.next(data.session);
       return data;
@@ -89,7 +97,8 @@ export class Auth implements OnDestroy {
     try {
       const { error } = await this.client.auth.signOut();
       if (error) {
-        throw error;
+        const errorKey = this.getTranslationErrorKey(error);
+        throw { ...error, translationKey: errorKey };
       }
       this.session$.next(null);
       await this.router.navigate(['/auth/sign-in'], { replaceUrl: true });
@@ -104,7 +113,6 @@ export class Auth implements OnDestroy {
     try {
       const redirectTo = environment.appUrl + '/auth/reset-password';
 
-      console.error(redirectTo);
       const { data, error } = await this.client.auth.resetPasswordForEmail(
         email,
         {
@@ -112,7 +120,8 @@ export class Auth implements OnDestroy {
         },
       );
       if (error) {
-        throw error;
+        const errorKey = this.getTranslationErrorKey(error);
+        throw { ...error, translationKey: errorKey };
       }
       return data;
     } catch (error) {
@@ -127,11 +136,34 @@ export class Auth implements OnDestroy {
         password: newPassword,
       });
       if (error) {
-        throw error;
+        const errorKey = this.getTranslationErrorKey(error);
+        throw { ...error, translationKey: errorKey };
       }
     } catch (error) {
       console.error(error);
       throw error;
     }
+  }
+
+  private getTranslationErrorKey(error: AuthError) {
+    if (isAuthApiError(error)) {
+      switch (error.code as ErrorCode) {
+        case 'email_exists':
+          return 'authError.emailInUse';
+        case 'invalid_credentials':
+          return 'authError.invalidCredentials';
+        case 'user_not_found':
+          return 'authError.userNotFound';
+        case 'same_password':
+          return 'authError.samePassword';
+        case 'email_not_confirmed':
+          return 'authError.emailNotConfirmed';
+        case 'user_already_exists':
+          return 'authError.userAlreadyExists';
+        default:
+          return 'authError.signUpError';
+      }
+    }
+    return 'authError.signUpError';
   }
 }

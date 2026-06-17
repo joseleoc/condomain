@@ -1,0 +1,18 @@
+<article class="container ion-padding">
+  <div class="icon-halo">
+    <ion-icon name="business-outline" color="primary" size="large"></ion-icon>
+  </div>
+  <div class="text-spacing">
+    <h4>{{ "condominium.createProperty.noPropertiesAdded" | transloco }}</h4>
+    <p>
+      {{
+        "condominium.createProperty.noPropertiesAddedDescription" | transloco
+      }}
+    </p>
+  </div>
+  <ion-button fill="outline" (click)="emitClick()">
+    {{ "condominium.createProperty.addNewProperty" | transloco }}
+    <ion-icon name="add" slot="end"></ion-icon>
+
+  </ion-button>
+</article>
