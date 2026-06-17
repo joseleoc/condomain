@@ -14,6 +14,7 @@ import {
 } from '@features/create-condominium/create-condominium.types';
 import { Structures } from '@core/services/structures/structures';
 import { Properties } from '@core/services/properties/properties';
+import { Router } from '@angular/router';
 
 @Injectable({
   providedIn: 'root',
@@ -27,6 +28,7 @@ export class Wizard {
   private alertController = inject(AlertController);
   private structuresService = inject(Structures);
   private propertiesService = inject(Properties);
+  private router = inject(Router);
 
   // --- Private Properties ---
   private nextStepSource = new Subject<number>();
@@ -308,11 +310,10 @@ export class Wizard {
 
       this.structures$.next([]);
       this.toast.present({
-        message: this.translocoService.translate(
-          'condominium.createStructure.creationSuccess',
-        ),
+        message: this.translocoService.translate('condominium.creationSuccess'),
         color: 'success',
       });
+      this.router.navigate(['/home']);
     } catch (error) {
       throw error;
     }

@@ -29,6 +29,7 @@
     "spanish": "Español"
   },
   "condominium": {
+    "creationSuccess": "¡Condominio creado exitosamente!",
     "hub": {
       "title": "Condominium Hub",
       "newButton": "Crear Condominio",
@@ -65,7 +66,6 @@
       "totalFeeExceeds100": "La cuota total de propiedad no puede exceder el 100%.",
       "creationFailed": "Error al crear la estructura. Por favor, inténtalo de nuevo",
       "noStructuresToCreate": "No hay estructuras para crear. Por favor, agrega al menos una estructura antes de continuar.",
-      "creationSuccess": "¡Estructura creada exitosamente!",
       "invalidTotalFee": "La alícuota total de propiedad no es 100%.",
       "continueWithoutValidFeeMessage": "¿Deseas continuar sin una cuota total de propiedad válida? Puedes ajustar las cuotas más tarde.",
       "totalOwnershipFee": "Total alícuota: {{value}}%",
@@ -88,7 +88,8 @@
       "addNewProperty": "Agregar nueva propiedad",
       "description": "Define las propiedades del condominio, como departamentos, locales comerciales o estacionamientos, asignándolos a las estructuras correspondientes.",
       "ownerName": "Nombre del propietario",
-      "ownerEmail": "Correo electrónico del propietario"
+      "ownerEmail": "Correo electrónico del propietario",
+      "optionalData": "Datos opcionales"
     },
     "setUp": {
       "title": "¿Cómo quieres crear tu condominio?",
@@ -158,7 +159,7 @@
     "userAlreadyExists": "Ya existe una cuenta con ese correo electrónico. Por favor, inicia sesión o utiliza un correo diferente para registrarte."
   },
   "currency": {
-    "selectCurrency": "Seleccionar moneda",
+    "selectCurrency": "Moneda",
     "loadingCurrencies": "Cargando monedas...",
     "noCurrencies": "No hay monedas disponibles",
     "VES": "Bolívar venezolano",
