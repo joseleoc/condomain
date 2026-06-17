@@ -2,7 +2,7 @@ import { DecimalPipe } from '@angular/common';
 import { Component, inject, computed, input } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { LocalStructure } from '@features/create-condominium/create-condominium.types';
-import { Structures } from '@features/create-condominium/services/structures/structures';
+import { Wizard } from '@features/create-condominium/services/wizard/wizard';
 import {
   IonAccordionGroup,
   IonAccordion,
@@ -10,7 +10,6 @@ import {
   IonIcon,
   IonList,
   IonBadge,
-  IonLabel,
 } from '@ionic/angular/standalone';
 import { TranslocoPipe } from '@jsverse/transloco';
 
@@ -31,13 +30,13 @@ import { TranslocoPipe } from '@jsverse/transloco';
 })
 export class StructuresPropertiesAccordionComponent {
   // --- Dependencies ---
-  private structuresService = inject(Structures);
+  private wizardService = inject(Wizard);
 
   // --- Inputs ---
   structureSelected = input<string | null>(null);
 
   // --- Properties ---
-  structures = toSignal(this.structuresService.structures$);
+  structures = toSignal(this.wizardService.structures$);
   totalPercentage = computed(
     () =>
       this.structures()?.reduce(

@@ -19,9 +19,9 @@ import {
 } from '@ionic/angular/standalone';
 import { TranslocoPipe } from '@jsverse/transloco';
 import { AddStructureFormComponent } from '../add-structure-form/add-structure-form.component';
-import { Structures } from '@features/create-condominium/services/structures/structures';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { StructuresListComponent } from '../structures-list/structures-list.component';
+import { Wizard } from '@features/create-condominium/services/wizard/wizard';
 
 @Component({
   selector: 'app-simple-creation-process',
@@ -44,12 +44,12 @@ import { StructuresListComponent } from '../structures-list/structures-list.comp
 })
 export class SimpleCreationProcessComponent implements OnInit {
   // --- Dependencies ---
-  private structuresService = inject(Structures);
+  private wizardService = inject(Wizard);
   // --- Components ---
   addStructureFormComponent = viewChild(AddStructureFormComponent);
   // --- Properties ---
   isOpenAddStructureModal = signal(false);
-  structures = computed(toSignal(this.structuresService.structures$));
+  structures = computed(toSignal(this.wizardService.structures$));
 
   constructor() {}
 
@@ -69,7 +69,7 @@ export class SimpleCreationProcessComponent implements OnInit {
     if (formComponent) {
       const values = formComponent.submitAddStructureForm();
       if (values) {
-        const success = this.structuresService.saveStructureLocally({
+        const success = this.wizardService.saveStructureLocally({
           ...values,
           properties: [],
         });

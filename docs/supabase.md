@@ -47,7 +47,7 @@ pnpx supabase start
 
 _If this is your first time running this command, grab a coffee. Docker needs a few minutes to fetch the latest official repository container images._
 
-Once finished, your terminal will display a summary block containing local API keys and URLs. Open the **Studio URL** (`http://127.0.0.1:54323`) in your web browser. This is an offline, completely functional clone of the Supabase dashboard interface.
+Once finished, your terminal will display a summary block containing local API keys and URLs. Open the **Studio URL** ([Supabase Dashboard](http://127.0.0.1:54323)) in your web browser. This is an offline, completely functional clone of the Supabase dashboard interface.
 
 ---
 

@@ -13,10 +13,10 @@ import {
   IonButton,
 } from '@ionic/angular/standalone';
 import { map } from 'rxjs';
-import { Structures } from '@features/create-condominium/services/structures/structures';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { AsyncPipe } from '@angular/common';
 import { CreatePropertyFormData } from '@features/create-condominium/create-condominium.types';
+import { Wizard } from '@features/create-condominium/services/wizard/wizard';
 
 interface CreatePropertyFromControls {
   number: FormControl<string>;
@@ -41,7 +41,7 @@ interface CreatePropertyFromControls {
 export class CreatePropertyFormComponent {
   // --- Dependencies ---
   private translocoService = inject(TranslocoService);
-  private structuresService = inject(Structures);
+  private wizardService = inject(Wizard);
 
   // --- Form ---
   createPropertyForm = new FormGroup<CreatePropertyFromControls>({
@@ -62,7 +62,7 @@ export class CreatePropertyFormComponent {
   // --- Outputs ---
   submitCreatePropertyForm = output<CreatePropertyFormData>();
   // --- Properties ---
-  structures = toSignal(this.structuresService.structures$);
+  structures = toSignal(this.wizardService.structures$);
 
   numberErrors$ = this.createPropertyForm.controls.number.statusChanges.pipe(
     map(() => {

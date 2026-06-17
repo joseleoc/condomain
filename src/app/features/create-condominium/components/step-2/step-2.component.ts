@@ -24,7 +24,6 @@ import { Toast } from '@core/services/toast/toast';
 export class Step2Component implements OnInit, OnDestroy {
   // --- Dependencies ---
   private wizardService = inject(Wizard);
-  private structuresService = inject(Structures);
   private toast = inject(Toast);
   private translocoService = inject(TranslocoService);
 
@@ -39,7 +38,7 @@ export class Step2Component implements OnInit, OnDestroy {
   ngOnInit() {
     this.nextSubscription = this.wizardService.nextStep$.subscribe(
       async (currentStep) => {
-        const structures = this.structuresService.structures$.getValue();
+        const structures = this.wizardService.structures$.getValue();
         if (structures.length > 0 && this.creationProcessSelected() != null) {
           this.wizardService.step.set(3);
         } else {

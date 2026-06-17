@@ -1,6 +1,5 @@
-import { Component, computed, inject, OnInit, output } from '@angular/core';
+import { Component, computed, inject, output } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
-import { Structures } from '@features/create-condominium/services/structures/structures';
 import { TranslocoPipe, TranslocoService } from '@jsverse/transloco';
 import { AlertController } from '@ionic/angular/standalone';
 import {
@@ -9,6 +8,7 @@ import {
   IonIcon,
   IonButton,
 } from '@ionic/angular/standalone';
+import { Wizard } from '@features/create-condominium/services/wizard/wizard';
 
 @Component({
   selector: 'app-structures-list',
@@ -18,7 +18,7 @@ import {
 })
 export class StructuresListComponent {
   // --- Dependencies ---
-  private structuresService = inject(Structures);
+  private wizardService = inject(Wizard);
   private alertController = inject(AlertController);
   private translocoService = inject(TranslocoService);
 
@@ -26,15 +26,15 @@ export class StructuresListComponent {
   addStructure = output<void>();
 
   // --- Properties ---
-  structures = computed(toSignal(this.structuresService.structures$));
+  structures = computed(toSignal(this.wizardService.structures$));
 
   // --- Private Methods ---
   private confirmDeleteStructure(structureName: string) {
-    const currentStructures = this.structuresService.structures$.getValue();
+    const currentStructures = this.wizardService.structures$.getValue();
     const updatedStructures = currentStructures.filter(
       (s) => s.name !== structureName,
     );
-    this.structuresService.structures$.next(updatedStructures);
+    this.wizardService.structures$.next(updatedStructures);
   }
 
   // --- Methods ---
