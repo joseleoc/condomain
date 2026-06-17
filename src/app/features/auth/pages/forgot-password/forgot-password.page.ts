@@ -48,11 +48,12 @@ export class ForgotPasswordPage {
       });
       await successAlert.present();
     } catch (error) {
+      const message =
+        (error as any)?.translationKey ||
+        'auth.forgotPassword.resetPasswordError';
       const alert = await this.alertController.create({
         header: this.translocoService.translate('common.error'),
-        message: this.translocoService.translate(
-          'auth.forgotPassword.resetPasswordError',
-        ),
+        message: this.translocoService.translate(message),
         buttons: [this.translocoService.translate('common.ok')],
       });
       await alert.present();

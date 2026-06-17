@@ -10,6 +10,7 @@ import { PaginatedRequest } from '@app-types/general';
 import { Profile } from '../profile/profile';
 import { Roles } from '../roles/roles';
 import { Auth } from '../auth/auth';
+import { CondominiumAvatar } from '../condominium-avatar/condominium-avatar';
 
 @Injectable({
   providedIn: 'root',
@@ -20,6 +21,7 @@ export class Condominium {
   private profileService = inject(Profile);
   private rolesService = inject(Roles);
   private authService = inject(Auth);
+  private condominiumAvatarService = inject(CondominiumAvatar);
 
   // --- Properties ---
   loadingCondominiums$ = new BehaviorSubject<boolean>(false);
@@ -43,15 +45,30 @@ export class Condominium {
     });
   }
 
+  private buildAvatarUrl(filePath: string): string {
+    return this.condominiumAvatarService.getAvatarUrl(filePath);
+  }
+
   // --- Public Methods ---
-  async createCondominium(values: CreateCondominiumData) {
+  async createCondominium(
+    values: CreateCondominiumData,
+  ): Promise<TCondominium> {
     try {
       const valuesToInsert = {
         ...values,
         currency: values.currency || 'USD',
         created_at: new Date().toISOString(),
         updated_at: new Date().toISOString(),
+        avatar: '',
       };
+
+      if (values.avatar != null) {
+        const avatarFilePath = await this.condominiumAvatarService.uploadAvatar(
+          values.avatar,
+        );
+        if (avatarFilePath) valuesToInsert.avatar = avatarFilePath;
+      }
+
       const { data, error } = await this.client
         .from('condominiums')
         .insert(valuesToInsert)
@@ -70,8 +87,15 @@ export class Condominium {
 
       this.activeCondominium$.next({
         ...data,
-        role_id, // Assuming the creator is the owner
+        role_id,
       });
+      this.userCondominiums$.next([
+        {
+          ...data,
+          role_id,
+        },
+        ...this.userCondominiums$.getValue(),
+      ]);
 
       await this.profileService.setActiveCondominium(data.id);
 
@@ -82,11 +106,9 @@ export class Condominium {
     }
   }
 
-  async fetchUserCondominiums(
-    values: { profileId: string } & Partial<PaginatedRequest>,
-  ) {
+  async fetchUserCondominiums(values: { profileId: string }) {
     try {
-      const { profileId, page = 0, pageSize = 5 } = values;
+      const { profileId } = values;
       this.loadingCondominiums$.next(true);
 
       const { data, error } = await this.client
@@ -94,12 +116,12 @@ export class Condominium {
         .select(
           `
           role_id, 
-          condominiums(*) 
+          condominiums(*)
           `,
         )
+        .order('name', { referencedTable: 'condominiums', ascending: true })
         .eq('profile_id', profileId)
-        .is('deleted_at', null)
-        .range(page * pageSize, (page + 1) * pageSize - 1);
+        .is('deleted_at', null);
 
       if (error) {
         throw error;
@@ -120,7 +142,16 @@ export class Condominium {
             role_id: item.role_id,
           };
         })
-        .filter((item) => item !== null);
+        .filter((item) => item !== null)
+        .map((item) => {
+          if (item && item.avatar) {
+            return {
+              ...item,
+              avatar: this.buildAvatarUrl(item.avatar),
+            };
+          }
+          return item;
+        });
 
       // Set active condominium based on profile's active_condominium_id or default to the first one
       const activeCondominiumId =

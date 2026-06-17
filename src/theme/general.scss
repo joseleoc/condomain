@@ -1,16 +1,54 @@
 :root {
-  background-color: var(--background);
+  background-color: var(--custom-background-color);
 }
 
-
 ion-content {
-    --background: var(--background);
+  --background: var(--custom-background-color);
+  background-color: var(--custom-background-color);
 }
 
 ion-card {
-    border-radius: 0.75rem;
+  border-radius: 0.75rem;
 }
 
 ion-toolbar {
-    --background: var(--background);
+  --background: var(--custom-background-color);
+  background-color: var(--custom-background-color);
+}
+
+ion-header {
+  --background: var(--custom-background-color);
+  background-color: var(--custom-background-color);
+}
+
+ion-footer {
+  --background: var(--custom-background-color);
+  background-color: var(--custom-background-color);
+}
+
+ion-toolbar > .toolbar-background {
+  --background: var(--custom-background-color);
+  background-color: var(--custom-background-color);
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6,
+p {
+  margin: 0;
+  padding: 0;
+}
+
+.clamp-text {
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  text-transform: none;
+  text-align: start;
 }

@@ -1,0 +1,21 @@
+<ion-header>
+  <ion-toolbar>
+    <ion-title color="primary">Condomain</ion-title>
+  </ion-toolbar>
+</ion-header>
+<ion-content class="ion-padding" [fullscreen]="true">
+  <div class="stepper-container">
+    <ion-text class="text-secondary">{{ stepLabel() | transloco }}</ion-text>
+    <ion-progress-bar [value]="progressPercentage()"></ion-progress-bar>
+  </div>
+
+  @switch (step()) { @case (1) {
+  <app-step-1 />
+  } @case (2) {
+  <app-step-2 />
+  } @case (3) {
+  <app-step-3 />
+  } }
+</ion-content>
+
+<app-wizard-footer />

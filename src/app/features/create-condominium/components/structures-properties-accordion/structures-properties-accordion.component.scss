@@ -1,0 +1,69 @@
+.structure-name {
+  font-weight: 500;
+  font-size: 1.5rem;
+}
+
+.property-container {
+  display: flex;
+  flex-direction: column;
+  padding-bottom: 0.5rem;
+}
+
+.property-number {
+  font-size: 1.125rem;
+  font-weight: 500;
+}
+
+.property-fee {
+  font-size: 0.875rem;
+}
+
+.total-percentage-container {
+  display: flex;
+  justify-content: flex-end;
+  padding-top: 0.5rem;
+  padding-left: 1rem;
+  padding-right: 1rem;
+}
+
+@media (max-width: 350px) {
+  .units-label {
+    display: none;
+  }
+
+  .structure-name {
+    font-size: 0.8rem;
+  }
+}
+
+@media (max-width: 450px) {
+  .structure-name {
+    font-size: 1rem;
+  }
+
+  .property-number {
+    font-size: 0.9rem;
+  }
+
+  .property-fee {
+    font-size: 0.75rem;
+  }
+}
+
+.badge-short {
+  display: inline;
+}
+
+.badge-long {
+  display: none;
+}
+
+@media (min-width: 375px) {
+  .badge-short {
+    display: none;
+  }
+
+  .badge-long {
+    display: inline;
+  }
+}

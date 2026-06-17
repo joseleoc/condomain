@@ -60,18 +60,19 @@ export const routes: Routes = [
           ),
       },
       {
-        path: 'create',
-        loadComponent: () =>
-          import('./features/condominium/create-condominium/create-condominium.page').then(
-            (m) => m.CreateCondominiumPage,
-          ),
-      },
-      {
         path: '',
         redirectTo: 'condominium-hub',
         pathMatch: 'full',
       },
     ],
+  },
+  {
+    path: 'create-condominium',
+    canActivate: [isNotAuthenticatedGuard],
+    loadComponent: () =>
+      import('./features/create-condominium/create-condominium.page').then(
+        (m) => m.CreateCondominiumPage,
+      ),
   },
   {
     path: '',

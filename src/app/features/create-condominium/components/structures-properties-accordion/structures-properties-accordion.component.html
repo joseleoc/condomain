@@ -1,0 +1,65 @@
+<div class="total-percentage-container">
+  <ion-badge>
+    {{
+      "condominium.createStructure.totalOwnershipFee"
+        | transloco: { value: totalPercentage() | number: "1.0-4" }
+    }}
+  </ion-badge>
+</div>
+
+<ion-accordion-group expand="inset" [value]="structureSelected()">
+  @for (structure of structures(); track structure.name) {
+    <ion-accordion [value]="structure.name">
+      <ion-item slot="header">
+        <ion-icon name="business-outline" slot="start" />
+        <span class="structure-name clamp-text ion-text-wrap">
+          {{ structure.name }}
+        </span>
+
+        <ion-badge slot="end" color="primary" class="ion-text-nowrap text-xs">
+          <span class="badge-short units-label"
+            >{{ structure.properties.length }} •
+            {{
+              calculateStructurePercentage(structure) | number: "1.0-4"
+            }}%</span
+          >
+          <span class="units-label badge-long">
+            {{
+              "condominium.createStructure.structureOwnershipShare"
+                | transloco
+                  : {
+                      units: structure.properties.length,
+                      fee:
+                        calculateStructurePercentage(structure)
+                        | number: "1.0-4",
+                    }
+            }}
+          </span>
+        </ion-badge>
+      </ion-item>
+      <div slot="content">
+        <ion-list>
+          @for (property of structure.properties; track property.number) {
+            <ion-item>
+              <ion-icon name="person-outline" slot="start" />
+              <div class="property-container">
+                <span class="property-number clamp-text">
+                  {{ property.number }}
+                  @if (property.ownerName) {
+                    - {{ property.ownerName }}
+                  }
+                </span>
+                <span class="text-secondary property-fee">
+                  {{
+                    "condominium.createStructure.fee"
+                      | transloco: { value: property.fee | number: "1.0-4" }
+                  }}
+                </span>
+              </div>
+            </ion-item>
+          }
+        </ion-list>
+      </div>
+    </ion-accordion>
+  }
+</ion-accordion-group>

@@ -1,7 +1,18 @@
 import { Component } from '@angular/core';
 import { IonApp, IonRouterOutlet } from '@ionic/angular/standalone';
 import { addIcons } from 'ionicons';
-import { add, chevronForward, languageOutline } from 'ionicons/icons';
+import {
+  add,
+  businessOutline,
+  cameraOutline,
+  chatbubblesOutline,
+  chevronForward,
+  documentOutline,
+  languageOutline,
+  menu,
+  personOutline,
+  trashOutline,
+} from 'ionicons/icons';
 
 @Component({
   selector: 'app-root',
@@ -10,6 +21,17 @@ import { add, chevronForward, languageOutline } from 'ionicons/icons';
 })
 export class AppComponent {
   constructor() {
-    addIcons({ languageOutline, chevronForward, add });
+    addIcons({
+      languageOutline,
+      chevronForward,
+      add,
+      cameraOutline,
+      businessOutline,
+      chatbubblesOutline,
+      personOutline,
+      documentOutline,
+      trashOutline,
+      menu,
+    });
   }
 }

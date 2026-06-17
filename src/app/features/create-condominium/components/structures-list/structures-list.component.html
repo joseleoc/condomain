@@ -1,0 +1,29 @@
+<section class="container">
+  <div class="title-container">
+    <h4>{{ "condominium.structuresList.title" | transloco }}</h4>
+    <p>{{ "condominium.structuresList.description" | transloco }}</p>
+  </div>
+
+  <ion-button fill="outline" expand="block" (click)="addStructure.emit()">
+    <ion-icon name="add" slot="start"></ion-icon>
+    {{ "condominium.createStructure.addNewStructure" | transloco }}
+  </ion-button>
+
+  <ion-list class="structures-list">
+    @for (structure of structures(); track structure.name) {
+      <ion-item>
+        <ion-icon name="business-outline" slot="start" />
+        <span class="structure-name">
+          {{ structure.name }}
+        </span>
+        <ion-button
+          fill="clear"
+          (click)="deleteStructure(structure.name)"
+          slot="end"
+        >
+          <ion-icon name="trash-outline" color="danger" size="small" />
+        </ion-button>
+      </ion-item>
+    }
+  </ion-list>
+</section>

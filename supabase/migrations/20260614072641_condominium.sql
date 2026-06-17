@@ -90,11 +90,11 @@ declare
 begin
     select r.id into v_owner_role_id
     from public.roles r
-    where r.name = 'resident_owner'
+    where r.name = 'condominium_admin'
     limit 1;
 
     if v_owner_role_id is null then
-        raise exception 'Role resident_owner not found in public.roles';
+        raise exception 'Role condominium_admin not found in public.roles';
     end if;
 
     insert into public.profile_condominiums (profile_id, condominium_id, role_id)

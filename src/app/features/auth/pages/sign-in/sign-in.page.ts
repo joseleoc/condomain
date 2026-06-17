@@ -38,9 +38,10 @@ export class SignInPage {
       );
       await this.router.navigate(['/home'], { replaceUrl: true });
     } catch (error) {
+      const message = (error as any)?.translationKey || 'auth.signInError';
       const alert = await this.alertController.create({
         header: this.translocoService.translate('common.error'),
-        message: this.translocoService.translate('auth.signInError'),
+        message: this.translocoService.translate(message),
         buttons: [
           {
             text: this.translocoService.translate('common.ok'),

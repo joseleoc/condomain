@@ -1,0 +1,17 @@
+@switch (creationProcessSelected()) {
+  @case (null) {
+    <app-creation-process-selector
+      (onSelectionSubmitted)="creationProcessSelected.set($event)"
+    />
+  }
+  @case ("simple") {
+    <app-simple-creation-process />
+  }
+
+  @case ("massive") {
+    <app-massive-creation-process />
+  }
+  @case ("ai") {
+    <app-ai-creation-process />
+  }
+}

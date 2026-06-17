@@ -1,9 +1,8 @@
 img {
-    object-fit: contain;
+    object-fit: cover;
     color: var(--ion-color-primary);
     fill: var(--ion-color-primary);
     background-color: var(--ion-color-light);
-    padding: 0.5rem;
 }
 
 @media (prefers-color-scheme: dark) {

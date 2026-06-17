@@ -1,0 +1,25 @@
+<ion-footer>
+  <ion-toolbar>
+    <ion-buttons slot="start">
+      <ion-button fill="clear" color="secondary"  (click)="triggerBack()">
+        {{ backLabel() | transloco }}
+      </ion-button>
+    </ion-buttons>
+
+    <ion-buttons slot="end">
+      <ion-button
+        type="submit"
+        fill="solid"
+        color="primary"
+        [disabled]="loading()"
+        (click)="triggerClick()"
+      >
+        @if (loading()) {
+          <ion-spinner name="crescent"></ion-spinner>
+        } @else {
+          {{ buttonLabel() | transloco }}
+        }
+      </ion-button>
+    </ion-buttons>
+  </ion-toolbar>
+</ion-footer>

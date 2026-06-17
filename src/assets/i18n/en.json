@@ -7,7 +7,21 @@
     "delete": "Delete",
     "error": "Error",
     "ok": "Ok",
-    "sent": "Sent"
+    "sent": "Sent",
+    "back": "Back",
+    "dismiss": "Dismiss",
+    "loading": "Loading...",
+    "uploading": "Uploading...",
+    "next": "Next",
+    "added": "Added",
+    "total": "Total"
+  },
+  "general": {
+    "changeImage": "Change Image",
+    "selectImage": "Select Image",
+    "removeImage": "Remove Image",
+    "selectFile": "Select File",
+    "units": "Units"
   },
   "i18n": {
     "selectLanguage": "Select Language",
@@ -15,18 +29,77 @@
     "spanish": "Spanish"
   },
   "condominium": {
+    "creationSuccess": "Condominium created successfully!",
     "hub": {
       "title": "Condominium Hub",
       "newButton": "Create Condominium",
       "noCondominiums": "No condominiums found. Please create one to get started."
     },
+    "wizard": {
+      "step1Description": "Create a new condominium",
+      "step2Description": "Create the structures",
+      "step3Description": "Create the units"
+    },
     "createForm": {
       "newCondominium": "New Condominium",
       "title": "Create Condominium",
-      "name": "Name",
+      "name": "Name*",
       "address": "Address",
-      "currency": "Currency",
-      "createButton": "Create Condominium"
+      "currency": "Currency*",
+      "createButton": "Create Condominium",
+      "createSuccessfully": "Condominium created successfully!",
+      "createError": "An error occurred while creating the condominium. Please try again later."
+    },
+    "createStructure": {
+      "title": "Add Structure",
+      "description": "Define a new building, tower or block within the condominium to manage its specific units and settings.",
+      "noStructuresAdded": "No structures added yet.",
+      "noStructuresAddedDescription": "Divide your complex into Towers, Blocks, or Sectors to keep things organized.",
+      "addNewStructure": "Add New Structure",
+      "structureName": "Structure Name (e.g., Tower A)*",
+      "structureDescription": "Description (optional)",
+      "structureAlreadyExists": "A structure with name {{name}} already exists. Please choose a different name.",
+      "deleteStructureAlertMessage": "Are you sure you want to delete the structure \"{{name}}\"?",
+      "structureNotFound": "Structure not found. Please try again.",
+      "propertyAlreadyExists": "A unit with number {{number}} already exists in {{structure}}. Please choose a different number.",
+      "fee": "Ownership: {{value}}%",
+      "totalFeeExceeds100": "Total ownership fee cannot exceed 100%.",
+      "creationFailed": "Failed to create structure. Please try again.",
+      "noStructuresToCreate": "No structures to create. Please add at least one structure before proceeding.",
+      "invalidTotalFee": "Total ownership fee is not 100%.",
+      "continueWithoutValidFeeMessage": "Do you want to continue without a valid total ownership fee? You can adjust the fees later.",
+      "totalOwnershipFee": "Total ownership fee: {{value}}%",
+      "structureOwnershipShare": "{{properties}} Prop. (Total ownership: {{fee}}%)"
+    },
+    "structuresList": {
+      "title": "Condominium Structures",
+      "description": "Define the primary structures within your condominium to help organize units.",
+      "addAtLeastOneStructure": "Please add at least one structure to continue."
+    },
+    "createProperty": {
+      "createProperty": "Add New Unit",
+      "propertyNumber": "Unit Number*",
+      "feePercentage": "Ownership Fee (%)*",
+      "structure": "Structure*",
+      "createButton": "Create Unit",
+      "noPropertiesAdded": "No units added yet.",
+      "noPropertiesAddedDescription": "Start adding units to your structures to manage them effectively.",
+      "deletePropertyAlertMessage": "Are you sure you want to delete unit {{number}}",
+      "addNewProperty": "Add New Unit",
+      "description": "Define condo properties, such as apartments, commercial spaces, or parking spots, and assign them to their corresponding structures.",
+      "ownerName": "Owner Name",
+      "ownerEmail": "Owner Email",
+      "optionalData": "Optional data"
+    },
+    "setUp": {
+      "title": "How do you want to create your condominium?",
+      "subtitle": "Select the method that best suits your needs to start organizing your property.",
+      "simpleCreation": "Simple Creation",
+      "simpleCreationDescription": "Create structures and properties one by one manually. Ideal for small condominiums or specific adjustments.",
+      "massiveCreation": "Massive Creation",
+      "massiveCreationDescription": "Define naming rules and generate multiple towers and units in a few steps. The fastest option for large complexes.",
+      "aiAssistantCreation": "I Assistant",
+      "aiAssistantCreationDescription": "Chat with our AI to describe your condominium and let us configure the structure for you. Perfect for those who prefer a guided and intelligent approach."
     }
   },
   "validation": {
@@ -34,6 +107,8 @@
     "email": "Please enter a valid email address",
     "minLength": "Minimum length is {{length}} characters",
     "maxLength": "Maximum length is {{length}} characters",
+    "min": "Minimum value is {{value}}",
+    "max": "Maximum value is {{value}}",
     "passwordMismatch": "Passwords do not match"
   },
   "auth": {
@@ -44,6 +119,10 @@
     "goToLogin": "Already have an account? Login",
     "goToForgotPassword": "Forgot your password?",
     "signOut": "Sign Out",
+    "signUpError": "An error occurred during sign up.",
+    "emailInUse": "This email is already in use. Please use a different email.",
+    "invalidCredentials": "Invalid email or password. Please try again.",
+    "userNotFound": "No account found with that email. Please check your email or register for a new account.",
     "signIn": {
       "title": "Sign In",
       "submitButton": "Sign In",
@@ -74,8 +153,19 @@
       "updatePasswordSuccess": "Your password has been updated successfully."
     }
   },
+
+  "authError": {
+    "signUpError": "An error occurred during sign up.",
+    "signInError": "An error occurred during sign in.",
+    "emailInUse": "This email is already in use. Please use a different email.",
+    "invalidCredentials": "Invalid email or password. Please try again.",
+    "userNotFound": "No account found with that email. Please check your email or register for a new account.",
+    "samePassword": "The new password cannot be the same as the previous one. Please choose a different password.",
+    "emailNotConfirmed": "The email has not been confirmed. Please check your inbox to confirm your email.",
+    "userAlreadyExists": "An account with this email already exists. Please sign in or use a different email to register."
+  },
   "currency": {
-    "selectCurrency": "Select Currency",
+    "selectCurrency": "Currency",
     "loadingCurrencies": "Loading currencies...",
     "noCurrencies": "No currencies available",
     "VES": "Venezuelan Bolívar",

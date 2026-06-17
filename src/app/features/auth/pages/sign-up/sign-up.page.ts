@@ -48,9 +48,10 @@ export class SignUpPage implements OnInit {
         await this.router.navigate(['/home']);
       }
     } catch (error) {
+      const message = (error as any)?.translationKey || 'auth.signUpError';
       const alert = await this.alertController.create({
         header: this.translocoService.translate('common.error'),
-        message: this.translocoService.translate('auth.signUpError'),
+        message: this.translocoService.translate(message),
         buttons: [
           {
             text: this.translocoService.translate('common.ok'),

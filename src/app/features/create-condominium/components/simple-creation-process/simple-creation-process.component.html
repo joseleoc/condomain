@@ -1,0 +1,49 @@
+@if (structures()?.length === 0) {
+  <app-structures-list-empty (addStructure)="openAddStructureModal()" />
+} @else {
+  <app-structures-list (addStructure)="openAddStructureModal()" />
+}
+
+<ion-modal
+  [isOpen]="isOpenAddStructureModal()"
+  (ionModalDidDismiss)="closeAddStructureModal()"
+>
+  <ng-template>
+    <ion-header>
+      <ion-toolbar>
+        <ion-title>{{
+          "condominium.createStructure.title" | transloco
+        }}</ion-title>
+        <ion-buttons slot="end">
+          <ion-button
+            fill="clear"
+            color="secondary"
+            (click)="closeAddStructureModal()"
+          >
+            {{ "common.cancel" | transloco }}
+          </ion-button>
+        </ion-buttons>
+      </ion-toolbar>
+    </ion-header>
+
+    <ion-content class="ion-padding">
+      <p class="text-secondary structure-modal-description ion-padding-bottom">
+        {{ "condominium.createStructure.description" | transloco }}
+      </p>
+      <app-add-structure-form />
+    </ion-content>
+    <ion-footer>
+      <ion-toolbar>
+        <ion-buttons slot="end">
+          <ion-button
+            fill="solid"
+            color="primary"
+            (click)="submitAddStructureForm()"
+          >
+            {{ "common.save" | transloco }}
+          </ion-button>
+        </ion-buttons>
+      </ion-toolbar>
+    </ion-footer>
+  </ng-template>
+</ion-modal>

@@ -1,5 +1,12 @@
 import { AsyncPipe } from '@angular/common';
-import { Component, inject, output } from '@angular/core';
+import {
+  Component,
+  effect,
+  inject,
+  input,
+  output,
+  signal,
+} from '@angular/core';
 import {
   FormControl,
   FormGroup,
@@ -8,15 +15,24 @@ import {
 } from '@angular/forms';
 import { CreateCondominiumData } from '@core/services/condominium/condominium.types';
 import { Profile } from '@core/services/profile/profile';
-import { IonInput, IonButton, IonTextarea } from '@ionic/angular/standalone';
+import {
+  IonInput,
+  IonButton,
+  IonTextarea,
+  IonSpinner,
+  IonItem,
+} from '@ionic/angular/standalone';
 import { TranslocoModule, TranslocoService } from '@jsverse/transloco';
+import { AvatarUploaderComponent } from '@shared/components/avatar-uploader/avatar-uploader.component';
 import { CurrencySelectorComponent } from '@shared/components/currency-selector/currency-selector.component';
 import { map } from 'rxjs/internal/operators/map';
+import { Wizard } from '@features/create-condominium/services/wizard/wizard';
 
 interface CreateCondominiumFormControls {
   name: FormControl<string>;
   address?: FormControl<string | null>;
   currency: FormControl<string>;
+  avatar: FormControl<File | null | undefined>;
 }
 
 @Component({
@@ -31,30 +47,44 @@ interface CreateCondominiumFormControls {
     TranslocoModule,
     AsyncPipe,
     CurrencySelectorComponent,
+    AvatarUploaderComponent,
+    IonSpinner,
+    IonItem,
   ],
 })
 export class CreateCondominiumFormComponent {
   // --- Dependencies ---
   private translocoService = inject(TranslocoService);
   private profileService = inject(Profile);
+  private wizardService = inject(Wizard);
+
+  // -- Inputs ---
+  defaultValues = this.wizardService.createdCondominium;
+
+  loading = input<boolean>(false);
+  showSubmitButton = input<boolean>(true);
 
   // --- Outputs ---
   submitCreateCondominiumForm = output<CreateCondominiumData>();
 
   // --- Form ---
   createCondominiumForm = new FormGroup<CreateCondominiumFormControls>({
-    name: new FormControl('', {
+    name: new FormControl(this.defaultValues()?.name || '', {
       validators: [Validators.required, Validators.minLength(3)],
       nonNullable: true,
     }),
-    address: new FormControl(''),
-    currency: new FormControl('USD', {
+    address: new FormControl(this.defaultValues()?.address || null),
+    currency: new FormControl(this.defaultValues()?.currency || 'USD', {
       validators: [Validators.required],
       nonNullable: true,
     }),
+    avatar: new FormControl<File | null | undefined>(null),
   });
 
   //--- Properties ---
+
+  fileBuffer = signal<string | ArrayBuffer | null>(null);
+
   nameError$ = this.createCondominiumForm.controls.name.statusChanges.pipe(
     map(() => {
       const nameControl = this.createCondominiumForm.controls.name;
@@ -81,24 +111,63 @@ export class CreateCondominiumFormComponent {
       }),
     );
 
+  constructor() {
+    effect(async () => {
+      const file = this.wizardService.updatedFileAvatar();
+
+      if (!file) {
+        this.fileBuffer.set(null);
+        return;
+      }
+
+      const reader = new FileReader();
+      reader.onload = () => {
+        this.fileBuffer.set(reader.result);
+      };
+      reader.onerror = () => {
+        this.fileBuffer.set(null);
+      };
+
+      reader.readAsArrayBuffer(file);
+    });
+  }
+
   // --- Methods ---
-  onSubmit() {
+  /** Returns true if the form is successfully submitted, false otherwise */
+  onSubmit(): CreateCondominiumData | null {
+    if (this.loading()) return null;
+
     const profileId = this.profileService.profile$.getValue()?.id;
     if (profileId == undefined) {
       throw new Error('Profile ID is required to create a condominium');
     }
 
+    const avatarFile: File | null | undefined =
+      this.createCondominiumForm.controls.avatar.value || null;
     if (this.createCondominiumForm.valid) {
-      this.submitCreateCondominiumForm.emit({
+      const valueToEmit = {
         ...this.createCondominiumForm.getRawValue(),
+        avatar: avatarFile,
         owner_id: profileId,
-      });
+      };
+      this.submitCreateCondominiumForm.emit(valueToEmit);
+
+      return valueToEmit;
     } else {
       Object.values(this.createCondominiumForm.controls).forEach((control) => {
         control.markAsTouched();
         control.markAsDirty();
         control.updateValueAndValidity();
       });
+      return null;
+    }
+  }
+
+  selectAvatar(file: File | null) {
+    if (file) {
+      this.createCondominiumForm.controls.avatar.setValue(file);
+    } else {
+      this.createCondominiumForm.controls.avatar.setValue(null);
     }
   }
 }
