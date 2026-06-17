@@ -1,11 +1,9 @@
-import { Component, computed, inject, signal, viewChild } from '@angular/core';
+import { Component, computed, inject, viewChild } from '@angular/core';
 import { TranslocoModule, TranslocoPipe } from '@jsverse/transloco';
 import {
   IonContent,
   IonHeader,
   IonToolbar,
-  IonButtons,
-  IonBackButton,
   IonProgressBar,
   IonText,
   IonTitle,
@@ -26,8 +24,6 @@ import { Step3Component } from './components/step-3/step-3.component';
     IonContent,
     IonHeader,
     IonToolbar,
-    IonButtons,
-    IonBackButton,
     IonProgressBar,
     TranslocoPipe,
     IonText,

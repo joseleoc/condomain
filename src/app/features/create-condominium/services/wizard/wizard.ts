@@ -46,13 +46,7 @@ export class Wizard {
   buttonLabel = signal('common.next');
   backLabel = signal('common.back');
 
-  structures$ = new BehaviorSubject<LocalStructure[]>([
-    {
-      name: 'Prueba 1',
-      description: '',
-      properties: [],
-    },
-  ]);
+  structures$ = new BehaviorSubject<LocalStructure[]>([]);
 
   // --- Methods ---
 
