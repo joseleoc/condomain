@@ -6,7 +6,6 @@ import { MassiveCreationProcessComponent } from '../massive-creation-process/mas
 import { AiCreationProcessComponent } from '../ai-creation-process/ai-creation-process.component';
 import { Subscription } from 'rxjs';
 import { Wizard } from '@features/create-condominium/services/wizard/wizard';
-import { Structures } from '@features/create-condominium/services/structures/structures';
 import { TranslocoService } from '@jsverse/transloco';
 import { Toast } from '@core/services/toast/toast';
 

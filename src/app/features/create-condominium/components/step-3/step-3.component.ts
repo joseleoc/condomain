@@ -8,11 +8,7 @@ import {
   IonCardTitle,
 } from '@ionic/angular/standalone';
 import { TranslocoPipe } from '@jsverse/transloco';
-import { Structures } from '@features/create-condominium/services/structures/structures';
-import {
-  CreatePropertyFormData,
-  LocalStructure,
-} from '@features/create-condominium/create-condominium.types';
+import { CreatePropertyFormData } from '@features/create-condominium/create-condominium.types';
 import { Subscription } from 'rxjs';
 import { Wizard } from '@features/create-condominium/services/wizard/wizard';
 
@@ -33,7 +29,6 @@ import { Wizard } from '@features/create-condominium/services/wizard/wizard';
 export class Step3Component implements OnInit, OnDestroy {
   // --- Dependencies ---
   private wizardService = inject(Wizard);
-  private structuresService = inject(Structures);
 
   // --- Properties ---
   private nextSubscription!: Subscription;
@@ -44,7 +39,7 @@ export class Step3Component implements OnInit, OnDestroy {
   ngOnInit() {
     this.nextSubscription = this.wizardService.nextStep$.subscribe(
       async (currentStep) => {
-        this.structuresService.createStructuresAndProperties();
+        this.wizardService.createStructuresAndProperties();
       },
     );
   }
@@ -56,7 +51,7 @@ export class Step3Component implements OnInit, OnDestroy {
 
   // --- Methods ---
   handleCreateProperty(values: CreatePropertyFormData) {
-    this.structuresService.addPropertyToStructure(values.structure, values);
+    this.wizardService.addPropertyToStructure(values.structure, values);
     this.structureSelected.set(values.structure);
   }
 }
