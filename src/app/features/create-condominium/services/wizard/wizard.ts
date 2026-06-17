@@ -36,7 +36,7 @@ export class Wizard {
   nextStep$ = this.nextStepSource.asObservable();
   backStep$ = this.backStepSource.asObservable();
 
-  step = signal(3);
+  step = signal(1);
   loading = signal(false);
   createdCondominium = signal<TCondominium | null>(null);
   updatedFileAvatar = signal<File | null>(null);
@@ -285,6 +285,8 @@ export class Wizard {
           share_percentage: property.fee,
           structure_id: structure.id!,
           condominium_id,
+          owner_name: property.ownerName,
+          owner_email: property.ownerEmail,
         }));
       });
 

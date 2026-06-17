@@ -6,7 +6,12 @@ import {
   ReactiveFormsModule,
   Validators,
 } from '@angular/forms';
-import { IonInput, IonTextarea, IonIcon } from '@ionic/angular/standalone';
+import {
+  IonInput,
+  IonTextarea,
+  IonIcon,
+  IonItem,
+} from '@ionic/angular/standalone';
 import { TranslocoPipe, TranslocoService } from '@jsverse/transloco';
 import { map } from 'rxjs';
 
@@ -30,6 +35,7 @@ interface AddStructureFormValue {
     IonIcon,
     TranslocoPipe,
     AsyncPipe,
+    IonItem,
   ],
 })
 export class AddStructureFormComponent {

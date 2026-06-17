@@ -8,26 +8,30 @@
       (fileSelected)="selectAvatar($event)"
       [imagePreview]="fileBuffer()"
     />
-    <ion-input
-      formControlName="name"
-      [placeholder]="t('condominium.createForm.name')"
-      [errorText]="nameError$ | async"
-      required
-    ></ion-input>
 
-    <ion-textarea
-      formControlName="address"
-      [label]="t('condominium.createForm.address')"
-      [placeholder]="t('condominium.createForm.address')"
-    ></ion-textarea>
+    <ion-item>
+      <ion-input
+        formControlName="name"
+        [placeholder]="t('condominium.createForm.name')"
+        [errorText]="nameError$ | async"
+      ></ion-input>
+    </ion-item>
 
-    <app-currency-selector
-      formControlName="currency"
-      [label]="t('condominium.createForm.currency')"
-      [placeholder]="t('condominium.createForm.currency')"
-      [errorText]="currencyError$ | async"
-    ></app-currency-selector>
+    <ion-item >
+      <ion-textarea
+        formControlName="address"
+        [placeholder]="t('condominium.createForm.address')"
+      ></ion-textarea>
+    </ion-item>
 
+    <ion-item>
+      <app-currency-selector
+        formControlName="currency"
+        [label]="t('condominium.createForm.currency')"
+        [placeholder]="t('condominium.createForm.currency')"
+        [errorText]="currencyError$ | async"
+      ></app-currency-selector>
+    </ion-item>
     @if (showSubmitButton()) {
       <ion-button
         type="submit"

@@ -20,6 +20,7 @@ import {
   IonButton,
   IonTextarea,
   IonSpinner,
+  IonItem,
 } from '@ionic/angular/standalone';
 import { TranslocoModule, TranslocoService } from '@jsverse/transloco';
 import { AvatarUploaderComponent } from '@shared/components/avatar-uploader/avatar-uploader.component';
@@ -48,6 +49,7 @@ interface CreateCondominiumFormControls {
     CurrencySelectorComponent,
     AvatarUploaderComponent,
     IonSpinner,
+    IonItem,
   ],
 })
 export class CreateCondominiumFormComponent {

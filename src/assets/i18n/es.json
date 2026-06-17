@@ -21,7 +21,7 @@
     "selectImage": "Seleccionar imagen",
     "removeImage": "Eliminar imagen",
     "selectFile": "Seleccionar archivo",
-    "units": "Unidades"
+    "units": "propiedades"
   },
   "i18n": {
     "selectLanguage": "Seleccionar idioma",
@@ -37,54 +37,58 @@
     "wizard": {
       "step1Description": "Crea un nuevo condominio",
       "step2Description": "Crear estrucuras",
-      "step3Description": "Crear las unidades"
+      "step3Description": "Crear las propiedades"
     },
     "createForm": {
       "newCondominium": "Nuevo Condominio",
       "title": "Crear Condominio",
-      "name": "Nombre",
+      "name": "Nombre*",
       "address": "Dirección",
-      "currency": "Moneda",
+      "currency": "Moneda*",
       "createButton": "Crear Condominio",
       "createSuccessfully": "¡Condominio creado exitosamente!",
       "createError": "Ocurrió un error al crear el condominio. Por favor, inténtalo de nuevo más tarde."
     },
     "createStructure": {
       "title": "Añadir Estructura",
-      "description": "Define un nuevo edificio, torre o bloque dentro del condominio para gestionar sus unidades y configuraciones específicas.",
+      "description": "Define un nuevo edificio, torre o bloque dentro del condominio para gestionar sus propiedades y configuraciones específicas.",
       "noStructuresAdded": "No se han agregado estructuras aún.",
       "noStructuresAddedDescription": "Divide tu complejo en Torres, Bloques o Sectores para mantener todo organizado.",
       "addNewStructure": "Agregar nueva estructura",
-      "structureName": "Nombre de la estructura (ej. Torre A)",
+      "structureName": "Nombre de la estructura (ej. Torre A)*",
       "structureDescription": "Descripción (opcional)",
       "structureAlreadyExists": "Una estructura con el nombre {{name}} ya existe. Por favor, elige un nombre diferente.",
       "deleteStructureAlertMessage": "¿Estás seguro de que deseas eliminar la estructura \"{{name}}\"?",
       "structureNotFound": "Estructura no encontrada. Por favor, inténtalo de nuevo.",
-      "propertyAlreadyExists": "Una unidad con el número {{number}} ya existe en {{structure}}. Por favor, elige un número diferente.",
-      "fee": "Propiedad: {{value}}%",
+      "propertyAlreadyExists": "Una propiedad con el número {{number}} ya existe en {{structure}}. Por favor, elige un número diferente.",
+      "fee": "Alícuota: {{value}}%",
       "totalFeeExceeds100": "La cuota total de propiedad no puede exceder el 100%.",
       "creationFailed": "Error al crear la estructura. Por favor, inténtalo de nuevo",
       "noStructuresToCreate": "No hay estructuras para crear. Por favor, agrega al menos una estructura antes de continuar.",
       "creationSuccess": "¡Estructura creada exitosamente!",
       "invalidTotalFee": "La alícuota total de propiedad no es 100%.",
-      "continueWithoutValidFeeMessage": "¿Deseas continuar sin una cuota total de propiedad válida? Puedes ajustar las cuotas más tarde."
+      "continueWithoutValidFeeMessage": "¿Deseas continuar sin una cuota total de propiedad válida? Puedes ajustar las cuotas más tarde.",
+      "totalOwnershipFee": "Total alícuota: {{value}}%",
+      "structureOwnershipShare": "{{units}} Prop. (Total alíc: {{fee}}%)"
     },
     "structuresList": {
       "title": "Estructuras del Condominio",
-      "description": "Define un nuevo edificio, torre o bloque dentro del condominio para gestionar sus unidades y configuraciones específicas.",
+      "description": "Define un nuevo edificio, torre o bloque dentro del condominio para gestionar sus propiedades y configuraciones específicas.",
       "addAtLeastOneStructure": "Por favor, agrega al menos una estructura para continuar."
     },
     "createProperty": {
-      "createProperty": "Agregar nueva unidad",
-      "propertyNumber": "Número de unidad",
-      "feePercentage": "Cuota de propiedad (%)",
-      "structure": "Estructura",
-      "createButton": "Crear unidad",
-      "noPropertiesAdded": "No se han agregado unidades aún.",
-      "noPropertiesAddedDescription": "Comienza a agregar unidades a tus estructuras para gestionarlas de manera efectiva.",
-      "deletePropertyAlertMessage": "¿Estás seguro de que deseas eliminar la unidad {{number}}?",
-      "addNewProperty": "Agregar nueva unidad",
-      "description": "Define las propiedades del condominio, como departamentos, locales comerciales o estacionamientos, asignándolos a las estructuras correspondientes."
+      "createProperty": "Agregar nueva propiedad",
+      "propertyNumber": "Número de propiedad*",
+      "feePercentage": "Cuota de propiedad (%)*",
+      "structure": "Estructura*",
+      "createButton": "Crear propiedad",
+      "noPropertiesAdded": "No se han agregado propiedades aún.",
+      "noPropertiesAddedDescription": "Comienza a agregar propiedades a tus estructuras para gestionarlas de manera efectiva.",
+      "deletePropertyAlertMessage": "¿Estás seguro de que deseas eliminar la propiedad {{number}}?",
+      "addNewProperty": "Agregar nueva propiedad",
+      "description": "Define las propiedades del condominio, como departamentos, locales comerciales o estacionamientos, asignándolos a las estructuras correspondientes.",
+      "ownerName": "Nombre del propietario",
+      "ownerEmail": "Correo electrónico del propietario"
     },
     "setUp": {
       "title": "¿Cómo quieres crear tu condominio?",
@@ -92,7 +96,7 @@
       "simpleCreation": "Creación simple",
       "simpleCreationDescription": "Crea estructuras y propiedades una por una manualmente. Ideal para condominios pequeños o ajustes específicos.",
       "massiveCreation": "Creación masiva",
-      "massiveCreationDescription": "Define reglas de nomenclatura y genera múltiples torres y unidades en pocos pasos. La opción más rápida para grandes comlejos.",
+      "massiveCreationDescription": "Define reglas de nomenclatura y genera múltiples torres y propiedades en pocos pasos. La opción más rápida para grandes comlejos.",
       "aiAssistantCreation": "Asistente IA",
       "aiAssistantCreationDescription": "Conversa con nuestra IA para describir tu condominio y deja que nosotros configuremos la estructura por ti. Perfecto para quienes prefieren un enfoque guiado e inteligente."
     }

@@ -99,6 +99,8 @@
   --text-secondary: #555555;
   --text-medium: #6a7282;
   --text-light: #fffafa;
+
+  --custom-background-color: #fffafa;
 }
 
 @media (prefers-color-scheme: dark) {
@@ -141,5 +143,7 @@
     --text-secondary: #aaaaaa;
     --text-medium: #cccccc;
     --text-light: #1e1e1e;
+
+    --custom-background-color: #121212;
   }
 }

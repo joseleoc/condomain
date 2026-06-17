@@ -18,6 +18,8 @@ export class Properties {
         share_percentage: property.share_percentage,
         condominium_id: property.condominium_id,
         structure_id: property.structure_id,
+        owner_name: property.owner_name,
+        owner_email: property.owner_email,
       }));
       const { error, data } = await this.client
         .from('properties')

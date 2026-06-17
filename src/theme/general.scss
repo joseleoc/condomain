@@ -1,9 +1,10 @@
 :root {
-  background-color: var(--background);
+  background-color: var(--custom-background-color);
 }
 
 ion-content {
-  --background: var(--background);
+  --background: var(--custom-background-color);
+  background-color: var(--custom-background-color);
 }
 
 ion-card {
@@ -11,7 +12,23 @@ ion-card {
 }
 
 ion-toolbar {
-  --background: var(--background);
+  --background: var(--custom-background-color);
+  background-color: var(--custom-background-color);
+}
+
+ion-header {
+  --background: var(--custom-background-color);
+  background-color: var(--custom-background-color);
+}
+
+ion-footer {
+  --background: var(--custom-background-color);
+  background-color: var(--custom-background-color);
+}
+
+ion-toolbar > .toolbar-background {
+  --background: var(--custom-background-color);
+  background-color: var(--custom-background-color);
 }
 
 h1,

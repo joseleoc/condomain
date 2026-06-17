@@ -1,17 +1,23 @@
 <form [formGroup]="addStructureForm" (ngSubmit)="submitAddStructureForm()">
-  <ion-input
-    formControlName="name"
-    [placeholder]="'condominium.createStructure.structureName' | transloco"
-    [errorText]="nameErrors$ | async | transloco"
-  >
-  </ion-input>
+  <ion-item>
+    <ion-input
+      formControlName="name"
+      [placeholder]="'condominium.createStructure.structureName' | transloco"
+      [errorText]="nameErrors$ | async | transloco"
+    >
+    </ion-input>
+  </ion-item>
 
-  <ion-textarea
-    formControlName="description"
-    [placeholder]="'condominium.createStructure.structureDescription' | transloco"
-    [counter]="true"
-    [errorText]="descriptionErrors$ | async"
-    maxlength="120"
-  >
-  /></ion-textarea>
+  <ion-item>
+    <ion-textarea
+      formControlName="description"
+      [placeholder]="
+        'condominium.createStructure.structureDescription' | transloco
+      "
+      [errorText]="descriptionErrors$ | async"
+      maxlength="120"
+    >
+      /></ion-textarea
+    >
+  </ion-item>
 </form>

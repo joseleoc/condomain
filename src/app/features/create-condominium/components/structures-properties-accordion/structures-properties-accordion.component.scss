@@ -34,11 +34,36 @@
   .structure-name {
     font-size: 0.8rem;
   }
-
 }
 
-@media(max-width: 450px) {
+@media (max-width: 450px) {
   .structure-name {
     font-size: 1rem;
+  }
+
+  .property-number {
+    font-size: 0.9rem;
+  }
+
+  .property-fee {
+    font-size: 0.75rem;
+  }
+}
+
+.badge-short {
+  display: inline;
+}
+
+.badge-long {
+  display: none;
+}
+
+@media (min-width: 375px) {
+  .badge-short {
+    display: none;
+  }
+
+  .badge-long {
+    display: inline;
   }
 }

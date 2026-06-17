@@ -42,9 +42,9 @@
     "createForm": {
       "newCondominium": "New Condominium",
       "title": "Create Condominium",
-      "name": "Name",
+      "name": "Name*",
       "address": "Address",
-      "currency": "Currency",
+      "currency": "Currency*",
       "createButton": "Create Condominium",
       "createSuccessfully": "Condominium created successfully!",
       "createError": "An error occurred while creating the condominium. Please try again later."
@@ -55,7 +55,7 @@
       "noStructuresAdded": "No structures added yet.",
       "noStructuresAddedDescription": "Divide your complex into Towers, Blocks, or Sectors to keep things organized.",
       "addNewStructure": "Add New Structure",
-      "structureName": "Structure Name (e.g., Tower A)",
+      "structureName": "Structure Name (e.g., Tower A)*",
       "structureDescription": "Description (optional)",
       "structureAlreadyExists": "A structure with name {{name}} already exists. Please choose a different name.",
       "deleteStructureAlertMessage": "Are you sure you want to delete the structure \"{{name}}\"?",
@@ -67,7 +67,9 @@
       "noStructuresToCreate": "No structures to create. Please add at least one structure before proceeding.",
       "creationSuccess": "Structure created successfully!",
       "invalidTotalFee": "Total ownership fee is not 100%.",
-      "continueWithoutValidFeeMessage": "Do you want to continue without a valid total ownership fee? You can adjust the fees later."
+      "continueWithoutValidFeeMessage": "Do you want to continue without a valid total ownership fee? You can adjust the fees later.",
+      "totalOwnershipFee": "Total ownership fee: {{value}}%",
+      "structureOwnershipShare": "{{properties}} Prop. (Total ownership: {{fee}}%)"
     },
     "structuresList": {
       "title": "Condominium Structures",
@@ -76,15 +78,17 @@
     },
     "createProperty": {
       "createProperty": "Add New Unit",
-      "propertyNumber": "Unit Number",
-      "feePercentage": "Ownership Fee (%)",
-      "structure": "Structure",
+      "propertyNumber": "Unit Number*",
+      "feePercentage": "Ownership Fee (%)*",
+      "structure": "Structure*",
       "createButton": "Create Unit",
       "noPropertiesAdded": "No units added yet.",
       "noPropertiesAddedDescription": "Start adding units to your structures to manage them effectively.",
       "deletePropertyAlertMessage": "Are you sure you want to delete unit {{number}}",
       "addNewProperty": "Add New Unit",
-      "description": "Define condo properties, such as apartments, commercial spaces, or parking spots, and assign them to their corresponding structures."
+      "description": "Define condo properties, such as apartments, commercial spaces, or parking spots, and assign them to their corresponding structures.",
+      "ownerName": "Owner Name",
+      "ownerEmail": "Owner Email"
     },
     "setUp": {
       "title": "How do you want to create your condominium?",

@@ -3,8 +3,8 @@ export interface Property {
   condominium_id: string;
   structure_id: string;
   name: string;
-  owner_name: string | null;
-  owner_email: string | null;
+  owner_name?: string | null;
+  owner_email?: string | null;
   description: string | null;
   share_percentage: number;
   deleted_at: string | null;
@@ -14,5 +14,10 @@ export interface Property {
 
 export type CreatePropertyData = Pick<
   Property,
-  'name' | 'share_percentage' | 'condominium_id' | 'structure_id'
+  | 'name'
+  | 'share_percentage'
+  | 'condominium_id'
+  | 'structure_id'
+  | 'owner_name'
+  | 'owner_email'
 >;
