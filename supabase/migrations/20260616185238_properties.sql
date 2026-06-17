@@ -1,22 +1,22 @@
-alter table public.structure_groups add constraint structures_id_condominium_unique unique (id, condominium_id);
+alter table public.structures add constraint structures_id_condominium_unique unique (id, condominium_id);
 
 create table
     if not exists public.properties (
         id uuid primary key default gen_random_uuid (),
         condominium_id uuid not null references public.condominiums (id) on delete cascade,
-        structure_group_id uuid not null references public.structure_groups (id) on delete cascade,
-        property_number text not null,
-        share_percentage numeric(5, 4) not null,
+        structure_id uuid not null references public.structures (id) on delete cascade,
+        name text not null,
+        share_percentage numeric(7, 4) not null,
         created_at timestamptz not null default clock_timestamp (),
         updated_at timestamptz not null default clock_timestamp (),
         deleted_at timestamptz,
-        -- prevent empty or whitespace-only property numbers
+        -- prevent empty or whitespace-only property names
         constraint properties_number_not_empty check (
             char_length(
                 trim(
                     both
                     from
-                        property_number
+                        name
                 )
             ) > 0
         ),
@@ -25,10 +25,10 @@ create table
             share_percentage >= 0
             and share_percentage <= 100
         ),
-        -- Integrity Constraint: The structure_group_id must belong to the same condominium_id to maintain data consistency
-        constraint properties_structure_condominium_fk foreign key (structure_group_id, condominium_id) references public.structure_groups (id, condominium_id) on delete cascade,
-        -- Unicity: No two properties can have the same property_number within the same structure_group_id (building)
-        constraint properties_unique_number_per_structure unique (structure_group_id, property_number)
+        -- Integrity Constraint: The structure_id must belong to the same condominium_id to maintain data consistency
+        constraint properties_structure_condominium_fk foreign key (structure_id, condominium_id) references public.structures (id, condominium_id) on delete cascade,
+        -- Unicity: No two properties can have the same name within the same structure_id (building)
+        constraint properties_unique_number_per_structure unique (structure_id, name)
     );
 
 -- =========================================================================
@@ -36,16 +36,16 @@ create table
 -- =========================================================================
 create index if not exists properties_condominium_id_idx on public.properties (condominium_id);
 
-create index if not exists properties_structure_group_id_idx on public.properties (structure_group_id);
+create index if not exists properties_structure_id_idx on public.properties (structure_id);
 
 -- Optimiza la carga de todas las propiedades de un condominio
 create index if not exists properties_condominium_id_idx on public.properties (condominium_id);
 
 -- Optimiza la carga de propiedades filtradas por su grupo/estructura (Torre A, Bloque B)
-create index if not exists properties_structure_group_id_idx on public.properties (structure_group_id);
+create index if not exists properties_structure_id_idx on public.properties (structure_id);
 
 -- Optimiza las búsquedas de propiedades activas excluyendo las borradas lógicamente
-create index if not exists properties_active_lookup_idx on public.properties (condominium_id, property_number)
+create index if not exists properties_active_lookup_idx on public.properties (condominium_id, name)
 where
     deleted_at is null;
 
@@ -175,4 +175,20 @@ comment on table public.properties is 'The smallest billable unit within a condo
 
 comment on column public.properties.share_percentage is 'The coefficient (alícuota) used to calculate maintenance fees and voting weight (exact numeric decimal).';
 
-comment on column public.properties.structure_group_id is 'Foreign key linking the property to its specific building tower, housing block, or sector.';
+comment on column public.properties.structure_id is 'Foreign key linking the property to its specific building tower, housing block, or sector.';
+
+-- =========================================================================
+-- GRANTS CONFIGURATION (Permisos de Acceso API)
+-- =========================================================================
+grant
+select
+,
+    insert,
+update,
+delete on table public.properties to authenticated;
+
+grant
+select
+    on table public.properties to anon;
+
+grant all on table public.properties to service_role;

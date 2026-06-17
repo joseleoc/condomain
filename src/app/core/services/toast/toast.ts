@@ -33,7 +33,7 @@ export class Toast {
       buttons: dismissButton
         ? [
             {
-              text: this.translocoService.translate('Dismiss'),
+              text: this.translocoService.translate('common.dismiss'),
               role: 'cancel',
             },
             ...(buttons ?? []),

@@ -56,7 +56,13 @@
       "deleteStructureAlertMessage": "¿Estás seguro de que deseas eliminar la estructura \"{{name}}\"?",
       "structureNotFound": "Estructura no encontrada. Por favor, inténtalo de nuevo.",
       "propertyAlreadyExists": "Una unidad con el número {{number}} ya existe en {{structure}}. Por favor, elige un número diferente.",
-      "fee": "Ownership: {{value}} %"
+      "fee": "Propiedad: {{value}}%",
+      "totalFeeExceeds100": "La cuota total de propiedad no puede exceder el 100%.",
+      "creationFailed": "Error al crear la estructura. Por favor, inténtalo de nuevo",
+      "noStructuresToCreate": "No hay estructuras para crear. Por favor, agrega al menos una estructura antes de continuar.",
+      "creationSuccess": "¡Estructura creada exitosamente!",
+      "invalidTotalFee": "La alícuota total de propiedad no es 100%.",
+      "continueWithoutValidFeeMessage": "¿Deseas continuar sin una cuota total de propiedad válida? Puedes ajustar las cuotas más tarde."
     },
     "structuresList": {
       "title": "Estructuras del Condominio",

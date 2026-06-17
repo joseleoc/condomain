@@ -26,7 +26,7 @@ export class Wizard {
   nextStep$ = this.nextStepSource.asObservable();
   backStep$ = this.backStepSource.asObservable();
 
-  step = signal(3);
+  step = signal(1);
   loading = signal(false);
   createdCondominium = signal<TCondominium | null>(null);
   updatedFileAvatar = signal<File | null>(null);
@@ -43,11 +43,6 @@ export class Wizard {
       if (res) {
         this.createdCondominium.set(res);
         this.updatedFileAvatar.set(data.avatar || null);
-        this.toast.present({
-          message: this.translocoService.translate(
-            'condominium.createForm.createSuccessfully',
-          ),
-        });
       }
     } catch (error) {
       this.toast.present({

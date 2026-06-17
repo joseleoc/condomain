@@ -1,7 +1,7 @@
 export interface Property {
   id: string;
   condominium_id: string;
-  structure_group_id: string;
+  structure_id: string;
   property_number: string;
   share_percentage: number;
   deleted_at: string | null;

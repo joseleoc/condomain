@@ -9,6 +9,7 @@ import {
   chevronForward,
   documentOutline,
   languageOutline,
+  menu,
   personOutline,
   trashOutline,
 } from 'ionicons/icons';
@@ -30,6 +31,7 @@ export class AppComponent {
       personOutline,
       documentOutline,
       trashOutline,
+      menu,
     });
   }
 }

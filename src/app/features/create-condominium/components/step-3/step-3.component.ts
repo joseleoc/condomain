@@ -1,4 +1,4 @@
-import { Component, inject, signal } from '@angular/core';
+import { Component, inject, OnDestroy, OnInit, signal } from '@angular/core';
 import { StructuresPropertiesAccordionComponent } from '../structures-properties-accordion/structures-properties-accordion.component';
 import { CreatePropertyFormComponent } from '../create-property-form/create-property-form.component';
 import {
@@ -13,6 +13,8 @@ import {
   CreatePropertyFormData,
   LocalStructure,
 } from '@features/create-condominium/create-condominium.types';
+import { Subscription } from 'rxjs';
+import { Wizard } from '@features/create-condominium/services/wizard/wizard';
 
 @Component({
   selector: 'app-step-3',
@@ -28,10 +30,29 @@ import {
     TranslocoPipe,
   ],
 })
-export class Step3Component {
+export class Step3Component implements OnInit, OnDestroy {
+  // --- Dependencies ---
+  private wizardService = inject(Wizard);
   private structuresService = inject(Structures);
 
+  // --- Properties ---
+  private nextSubscription!: Subscription;
+
   structureSelected = signal<string | null>(null);
+
+  // --- Lifecycle Methods ---
+  ngOnInit() {
+    this.nextSubscription = this.wizardService.nextStep$.subscribe(
+      async (currentStep) => {
+        this.structuresService.createStructuresAndProperties();
+      },
+    );
+  }
+  ngOnDestroy(): void {
+    if (this.nextSubscription) {
+      this.nextSubscription.unsubscribe();
+    }
+  }
 
   // --- Methods ---
   handleCreateProperty(values: CreatePropertyFormData) {

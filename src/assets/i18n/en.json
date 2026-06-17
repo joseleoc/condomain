@@ -56,7 +56,13 @@
       "deleteStructureAlertMessage": "Are you sure you want to delete the structure \"{{name}}\"?",
       "structureNotFound": "Structure not found. Please try again.",
       "propertyAlreadyExists": "A unit with number {{number}} already exists in {{structure}}. Please choose a different number.",
-      "fee": "Ownership: {{value}} %"
+      "fee": "Ownership: {{value}}%",
+      "totalFeeExceeds100": "Total ownership fee cannot exceed 100%.",
+      "creationFailed": "Failed to create structure. Please try again.",
+      "noStructuresToCreate": "No structures to create. Please add at least one structure before proceeding.",
+      "creationSuccess": "Structure created successfully!",
+      "invalidTotalFee": "Total ownership fee is not 100%.",
+      "continueWithoutValidFeeMessage": "Do you want to continue without a valid total ownership fee? You can adjust the fees later."
     },
     "structuresList": {
       "title": "Condominium Structures",
