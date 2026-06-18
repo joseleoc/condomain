@@ -48,26 +48,27 @@ export class CreatePropertyFormComponent {
   private wizardService = inject(Wizard);
 
   // --- Inputs ---
+  selectedProperty = this.wizardService.selectedProperty;
   showButton = input(true);
 
   // --- Form ---
   createPropertyForm = new FormGroup<CreatePropertyFromControls>({
-    number: new FormControl('', {
+    number: new FormControl(this.selectedProperty()?.number || '', {
       validators: [Validators.required, Validators.maxLength(64)],
       nonNullable: true,
     }),
-    fee: new FormControl(null, {
+    fee: new FormControl(this.selectedProperty()?.fee || null, {
       validators: [Validators.required, Validators.min(0)],
       nonNullable: true,
     }),
-    structure: new FormControl('', {
+    structure: new FormControl(this.selectedProperty()?.structure || '', {
       validators: [Validators.required],
       nonNullable: true,
     }),
-    ownerName: new FormControl(null, {
+    ownerName: new FormControl(this.selectedProperty()?.ownerName || null, {
       validators: [Validators.maxLength(50)],
     }),
-    ownerEmail: new FormControl(null, {
+    ownerEmail: new FormControl(this.selectedProperty()?.ownerEmail || null, {
       validators: [Validators.email],
     }),
   });

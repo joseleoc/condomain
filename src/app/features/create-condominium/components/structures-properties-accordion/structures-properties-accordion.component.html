@@ -40,7 +40,10 @@
       <div slot="content">
         <ion-list>
           @for (property of structure.properties; track property.number) {
-            <ion-item>
+            <ion-item
+              class="pointer"
+              (click)="emitSelectProperty(property, structure.name)"
+            >
               <ion-icon name="person-outline" slot="start" />
               <div class="property-container">
                 <span class="property-number clamp-text">

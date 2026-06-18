@@ -1,12 +1,14 @@
 @if (structures()?.length === 0) {
   <app-structures-list-empty (addStructure)="openAddStructureModal()" />
 } @else {
-  <app-structures-list (addStructure)="openAddStructureModal()" />
+  <app-structures-list (addStructure)="openAddStructureModal()" (selectStructure)="editStructure($event)"/>
 }
 
 <ion-modal
   [isOpen]="isOpenAddStructureModal()"
   (ionModalDidDismiss)="closeAddStructureModal()"
+  (didDismiss)="clearSelectedStructure()"
+  [backdropDismiss]="false"
 >
   <ng-template>
     <ion-header>

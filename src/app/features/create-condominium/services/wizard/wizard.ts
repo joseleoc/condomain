@@ -11,6 +11,7 @@ import { AlertController } from '@ionic/angular/standalone';
 import {
   CreatePropertyFormData,
   LocalStructure,
+  PropertyWithStructure,
 } from '@features/create-condominium/create-condominium.types';
 import { Structures } from '@core/services/structures/structures';
 import { Properties } from '@core/services/properties/properties';
@@ -38,7 +39,7 @@ export class Wizard {
   nextStep$ = this.nextStepSource.asObservable();
   backStep$ = this.backStepSource.asObservable();
 
-  step = signal(1);
+  step = signal(3);
   loading = signal(false);
   createdCondominium = signal<TCondominium | null>(null);
   updatedFileAvatar = signal<File | null>(null);
@@ -46,7 +47,48 @@ export class Wizard {
   buttonLabel = signal('common.next');
   backLabel = signal('common.back');
 
-  structures$ = new BehaviorSubject<LocalStructure[]>([]);
+  structures$ = new BehaviorSubject<LocalStructure[]>([
+    {
+      name: 'Estructura 1',
+      description: 'Descripción de la estructura 1',
+      properties: [
+        {
+          number: 'Propiedad 1',
+          fee: 1,
+          structure: 'Estructura 1',
+          ownerName: 'Juan Pérez',
+          ownerEmail: 'juan.perez@example.com',
+        },
+        {
+          number: 'Propiedad 2',
+          fee: 2,
+          structure: 'Estructura 1',
+          ownerName: 'Juan Pérez',
+          ownerEmail: 'juan.perez@example.com',
+        },
+        {
+          number: 'Propiedad 3',
+          fee: 3,
+          structure: 'Estructura 1',
+          ownerName: 'Juan Pérez',
+          ownerEmail: 'juan.perez@example.com',
+        },
+      ],
+    },
+    {
+      name: 'Estructura 2',
+      description: 'Descripción de la estructura 2',
+      properties: [],
+    },
+    {
+      name: 'Estructura 3',
+      description: 'Descripción de la estructura 3',
+      properties: [],
+    },
+  ]);
+
+  selectedStructure = signal<LocalStructure | null>(null);
+  selectedProperty = signal<PropertyWithStructure | null>(null);
 
   // --- Methods ---
 
@@ -127,21 +169,34 @@ export class Wizard {
 
   saveStructureLocally(structure: LocalStructure): boolean {
     const currentStructures = this.structures$.getValue();
-    if (currentStructures.some((s) => s.name === structure.name)) {
-      this.toast.present({
-        message: this.translocoService.translate(
-          'condominium.createStructure.structureAlreadyExists',
-          { name: structure.name },
-        ),
-        dismissButton: true,
-      });
-      return false;
+    const structuresToSave = [...currentStructures];
+
+    // If there is not a selected structure, we are creating a new one, so we need to check if the name already exists
+    if (this.selectedStructure() == null) {
+      if (currentStructures.some((s) => s.name === structure.name)) {
+        this.toast.present({
+          message: this.translocoService.translate(
+            'condominium.createStructure.structureAlreadyExists',
+            { name: structure.name },
+          ),
+          dismissButton: true,
+        });
+        return false;
+      }
+    }
+    // If there is a selected structure, we are editing/updating it
+    else {
+      const selected = this.selectedStructure();
+      const foundStructureIndex = this.structures$
+        .getValue()
+        .findIndex((s) => s.name === selected?.name);
+      if (foundStructureIndex != -1) {
+        structuresToSave.splice(foundStructureIndex, 1);
+      }
     }
 
-    const structuresToSave = [...currentStructures, structure].sort((a, b) =>
-      a.name.localeCompare(b.name),
-    );
-
+    structuresToSave.push(structure);
+    structuresToSave.sort((a, b) => a.name.localeCompare(b.name));
     this.structures$.next(structuresToSave);
     return true;
   }
@@ -208,6 +263,74 @@ export class Wizard {
 
     this.structures$.next(updatedStructures);
     return true;
+  }
+
+  editPropertyInStructure(property: PropertyWithStructure) {
+    if (this.selectedProperty() == null) {
+      throw new Error('No property selected');
+    }
+    const currentStructures = new Map(
+      this.structures$.getValue().map((s) => [s.name, s]),
+    );
+
+    const currentStructure = currentStructures.get(
+      this.selectedProperty()!.structureName,
+    );
+    const targetStructure = currentStructures.get(property.structure);
+
+    const targetIndex = targetStructure?.properties.findIndex(
+      (p) => p.number === property.number,
+    );
+
+    // In case we want to move a property to another structure and there is already a property with the same number in the target structure, we show an error message and do not allow the move
+    if (targetIndex != -1 && currentStructure !== targetStructure) {
+      this.toast.present({
+        message: this.translocoService.translate(
+          'condominium.createStructure.propertyAlreadyExists',
+          { number: property.number, structure: targetStructure?.name },
+        ),
+        dismissButton: true,
+        duration: 5000,
+      });
+
+      return;
+    }
+
+    if (
+      targetIndex &&
+      targetIndex != -1 &&
+      // If is different that itself
+      targetStructure?.properties[targetIndex].number !==
+        this.selectedProperty()!.number &&
+      currentStructure === targetStructure
+    ) {
+      this.toast.present({
+        message: this.translocoService.translate(
+          'condominium.createStructure.propertyAlreadyExists',
+          { number: property.number, structure: targetStructure?.name },
+        ),
+        dismissButton: true,
+        duration: 5000,
+      });
+
+      return;
+    }
+
+    const currentIndex = currentStructure?.properties.findIndex(
+      (p) => p.number === this.selectedProperty()!.number,
+    );
+    if (currentIndex != null) {
+      currentStructure?.properties.splice(currentIndex, 1);
+    }
+
+    targetStructure?.properties.push(property);
+    targetStructure?.properties.sort((a, b) =>
+      a.number.localeCompare(b.number),
+    );
+
+    this.structures$.next(Array.from(currentStructures.values()));
+    this.selectedStructure.set(targetStructure || null);
+    this.selectedProperty.set(null);
   }
 
   /** Trigger the next step in the wizard, the event occurs when the user clicks on the footer button */

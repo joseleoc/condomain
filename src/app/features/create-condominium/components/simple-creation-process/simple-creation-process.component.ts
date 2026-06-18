@@ -22,6 +22,7 @@ import { AddStructureFormComponent } from '../add-structure-form/add-structure-f
 import { toSignal } from '@angular/core/rxjs-interop';
 import { StructuresListComponent } from '../structures-list/structures-list.component';
 import { Wizard } from '@features/create-condominium/services/wizard/wizard';
+import { LocalStructure } from '@features/create-condominium/create-condominium.types';
 
 @Component({
   selector: 'app-simple-creation-process',
@@ -77,5 +78,14 @@ export class SimpleCreationProcessComponent implements OnInit {
         }
       }
     }
+  }
+
+  editStructure(structure: LocalStructure) {
+    this.wizardService.selectedStructure.set(structure);
+    this.openAddStructureModal();
+  }
+
+  clearSelectedStructure() {
+    this.wizardService.selectedStructure.set(null);
   }
 }

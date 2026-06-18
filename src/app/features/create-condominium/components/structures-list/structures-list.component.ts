@@ -9,6 +9,7 @@ import {
   IonButton,
 } from '@ionic/angular/standalone';
 import { Wizard } from '@features/create-condominium/services/wizard/wizard';
+import { LocalStructure } from '@features/create-condominium/create-condominium.types';
 
 @Component({
   selector: 'app-structures-list',
@@ -24,6 +25,7 @@ export class StructuresListComponent {
 
   // --- Outputs ---
   addStructure = output<void>();
+  selectStructure = output<LocalStructure>();
 
   // --- Properties ---
   structures = computed(toSignal(this.wizardService.structures$));
@@ -38,7 +40,8 @@ export class StructuresListComponent {
   }
 
   // --- Methods ---
-  deleteStructure(structureName: string) {
+  deleteStructure(event: Event, structureName: string) {
+    event.stopPropagation();
     this.alertController
       .create({
         message: this.translocoService.translate(
@@ -60,5 +63,9 @@ export class StructuresListComponent {
         ],
       })
       .then((alert) => alert.present());
+  }
+
+  emitSelectStructure(structure: LocalStructure) {
+    this.selectStructure.emit(structure);
   }
 }

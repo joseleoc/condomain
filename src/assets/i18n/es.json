@@ -61,6 +61,7 @@
       "structureAlreadyExists": "Una estructura con el nombre {{name}} ya existe. Por favor, elige un nombre diferente.",
       "deleteStructureAlertMessage": "¿Estás seguro de que deseas eliminar la estructura \"{{name}}\"?",
       "structureNotFound": "Estructura no encontrada. Por favor, inténtalo de nuevo.",
+      "propertyNotFound": "Propiedad no encontrada. Por favor, inténtalo de nuevo.",
       "propertyAlreadyExists": "Una propiedad con el número {{number}} ya existe en {{structure}}. Por favor, elige un número diferente.",
       "fee": "Alícuota: {{value}}%",
       "totalFeeExceeds100": "La cuota total de propiedad no puede exceder el 100%.",

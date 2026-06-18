@@ -14,3 +14,7 @@ export type LocalStructure = Pick<Structure, 'name' | 'description'> & {
   properties: CreatePropertyFormData[];
   id?: string;
 };
+
+export interface PropertyWithStructure extends CreatePropertyFormData {
+  structureName: string;
+}

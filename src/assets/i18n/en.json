@@ -61,6 +61,7 @@
       "structureAlreadyExists": "A structure with name {{name}} already exists. Please choose a different name.",
       "deleteStructureAlertMessage": "Are you sure you want to delete the structure \"{{name}}\"?",
       "structureNotFound": "Structure not found. Please try again.",
+      "propertyNotFound": "Property not found. Please try again.",
       "propertyAlreadyExists": "A unit with number {{number}} already exists in {{structure}}. Please choose a different number.",
       "fee": "Ownership: {{value}}%",
       "totalFeeExceeds100": "Total ownership fee cannot exceed 100%.",

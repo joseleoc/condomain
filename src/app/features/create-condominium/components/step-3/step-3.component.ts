@@ -1,5 +1,6 @@
 import {
   Component,
+  computed,
   inject,
   OnDestroy,
   OnInit,
@@ -23,6 +24,7 @@ import { TranslocoPipe } from '@jsverse/transloco';
 import { Subscription } from 'rxjs';
 import { Wizard } from '@features/create-condominium/services/wizard/wizard';
 import { PropertiesListEmptyComponent } from '../properties-list-empty/properties-list-empty.component';
+import { PropertyWithStructure } from '@features/create-condominium/create-condominium.types';
 
 @Component({
   selector: 'app-step-3',
@@ -54,7 +56,9 @@ export class Step3Component implements OnInit, OnDestroy {
   // --- Properties ---
   private nextSubscription!: Subscription;
   private structuresSubscription!: Subscription;
-  structureSelected = signal<string | null>(null);
+  structureSelected = computed(
+    () => this.wizardService.selectedStructure()?.name || null,
+  );
   hasProperties = signal(false);
   isPropertiesModalOpen = signal(false);
 
@@ -86,16 +90,34 @@ export class Step3Component implements OnInit, OnDestroy {
   handleCreateProperty() {
     const formData = this.createPropertyFormComponent()?.submit();
     if (formData) {
-      this.wizardService.addPropertyToStructure(formData.structure, formData);
-      this.structureSelected.set(formData.structure);
+      // If there's a selected property, it means we're editing an existing one, so we call the edit method. Otherwise, we add a new property.
+      if (this.wizardService.selectedProperty()) {
+        this.wizardService.editPropertyInStructure({
+          ...formData,
+          structureName: formData.structure,
+        });
+      } else {
+        this.wizardService.addPropertyToStructure(formData.structure, formData);
+      }
+
+      const structure = this.wizardService.structures$
+        .getValue()
+        .find((s) => s.name === formData.structure);
+      this.wizardService.selectedStructure.set(structure || null);
       this.closeModal();
     }
   }
 
   closeModal() {
     this.isPropertiesModalOpen.set(false);
+    this.wizardService.selectedProperty.set(null);
   }
   openModal() {
     this.isPropertiesModalOpen.set(true);
+  }
+
+  editProperty(property: PropertyWithStructure) {
+    this.wizardService.selectedProperty.set(property);
+    this.openModal();
   }
 }

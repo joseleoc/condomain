@@ -1,7 +1,12 @@
 import { DecimalPipe } from '@angular/common';
-import { Component, inject, computed, input } from '@angular/core';
+import { Component, inject, computed, input, output } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
-import { LocalStructure } from '@features/create-condominium/create-condominium.types';
+import { CreatePropertyData } from '@app-types/property';
+import {
+  CreatePropertyFormData,
+  LocalStructure,
+  PropertyWithStructure,
+} from '@features/create-condominium/create-condominium.types';
 import { Wizard } from '@features/create-condominium/services/wizard/wizard';
 import {
   IonAccordionGroup,
@@ -35,6 +40,9 @@ export class StructuresPropertiesAccordionComponent {
   // --- Inputs ---
   structureSelected = input<string | null>(null);
 
+  // --- Outputs ---
+  selectProperty = output<PropertyWithStructure>();
+
   // --- Properties ---
   structures = toSignal(this.wizardService.structures$);
   totalPercentage = computed(
@@ -54,5 +62,9 @@ export class StructuresPropertiesAccordionComponent {
     return (
       structure.properties.reduce((acc, property) => acc + property.fee, 0) ?? 0
     );
+  }
+
+  emitSelectProperty(property: CreatePropertyFormData, structureName: string) {
+    this.selectProperty.emit({ ...property, structureName });
   }
 }

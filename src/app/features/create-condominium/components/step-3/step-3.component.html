@@ -8,6 +8,7 @@
     </ion-button>
     <app-structures-properties-accordion
       [structureSelected]="structureSelected()"
+      (selectProperty)="editProperty($event)"
     />
   }
 </section>
@@ -15,6 +16,7 @@
 <ion-modal
   [isOpen]="isPropertiesModalOpen()"
   (ionModalDidDismiss)="closeModal()"
+  [backdropDismiss]="false"
 >
   <ng-template>
     <ion-header>

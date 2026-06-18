@@ -6,12 +6,8 @@ import {
   ReactiveFormsModule,
   Validators,
 } from '@angular/forms';
-import {
-  IonInput,
-  IonTextarea,
-  IonIcon,
-  IonItem,
-} from '@ionic/angular/standalone';
+import { Wizard } from '@features/create-condominium/services/wizard/wizard';
+import { IonInput, IonTextarea, IonItem } from '@ionic/angular/standalone';
 import { TranslocoPipe, TranslocoService } from '@jsverse/transloco';
 import { map } from 'rxjs';
 
@@ -32,7 +28,6 @@ interface AddStructureFormValue {
     ReactiveFormsModule,
     IonInput,
     IonTextarea,
-    IonIcon,
     TranslocoPipe,
     AsyncPipe,
     IonItem,
@@ -41,16 +36,19 @@ interface AddStructureFormValue {
 export class AddStructureFormComponent {
   // --- Dependencies ---
   private translocoService = inject(TranslocoService);
+  private wizardService = inject(Wizard);
   // --- Outputs ---
   submitForm = output<AddStructureFormValue>();
 
+  selectedStructure = this.wizardService.selectedStructure;
+
   // --- Form ---
   addStructureForm = new FormGroup<AddStructureFormControls>({
-    name: new FormControl('', {
+    name: new FormControl(this.selectedStructure()?.name || '', {
       validators: [Validators.required, Validators.maxLength(50)],
       nonNullable: true,
     }),
-    description: new FormControl('', {
+    description: new FormControl(this.selectedStructure()?.description || '', {
       validators: [Validators.maxLength(120)],
     }),
   });
