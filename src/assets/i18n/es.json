@@ -20,8 +20,7 @@
     "changeImage": "Cambiar imagen",
     "selectImage": "Seleccionar imagen",
     "removeImage": "Eliminar imagen",
-    "selectFile": "Seleccionar archivo",
-    "units": "propiedades"
+    "selectFile": "Seleccionar archivo"
   },
   "i18n": {
     "selectLanguage": "Seleccionar idioma",
@@ -90,7 +89,9 @@
       "description": "Define las propiedades del condominio, como departamentos, locales comerciales o estacionamientos, asignándolos a las estructuras correspondientes.",
       "ownerName": "Nombre del propietario",
       "ownerEmail": "Correo electrónico del propietario",
-      "optionalData": "Datos opcionales"
+      "optionalData": "Datos opcionales",
+      "confirmDeleteTitle": "Eliminar propiedad",
+      "confirmDeleteMessage": "¿Estás seguro de que deseas eliminar la propiedad {{number}}?"
     },
     "setUp": {
       "title": "¿Cómo quieres crear tu condominio?",

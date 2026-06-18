@@ -16,7 +16,8 @@ import {
   IonList,
   IonBadge,
 } from '@ionic/angular/standalone';
-import { TranslocoPipe } from '@jsverse/transloco';
+import { TranslocoPipe, TranslocoService } from '@jsverse/transloco';
+import { AlertController } from '@ionic/angular/standalone';
 
 @Component({
   selector: 'app-structures-properties-accordion',
@@ -36,6 +37,8 @@ import { TranslocoPipe } from '@jsverse/transloco';
 export class StructuresPropertiesAccordionComponent {
   // --- Dependencies ---
   private wizardService = inject(Wizard);
+  private alertController = inject(AlertController);
+  private translocoService = inject(TranslocoService);
 
   // --- Inputs ---
   structureSelected = input<string | null>(null);
@@ -66,5 +69,41 @@ export class StructuresPropertiesAccordionComponent {
 
   emitSelectProperty(property: CreatePropertyFormData, structureName: string) {
     this.selectProperty.emit({ ...property, structureName });
+  }
+
+  async deleteProperty(
+    event: Event,
+    property: CreatePropertyFormData,
+    structureName: string,
+  ) {
+    event.stopPropagation();
+
+    const alert = await this.alertController.create({
+      header: this.translocoService.translate(
+        'condominium.createProperty.confirmDeleteTitle',
+      ),
+      message: this.translocoService.translate(
+        'condominium.createProperty.confirmDeleteMessage',
+        { number: property.number },
+      ),
+      buttons: [
+        {
+          text: this.translocoService.translate('common.cancel'),
+          role: 'cancel',
+        },
+        {
+          text: this.translocoService.translate('common.delete'),
+          cssClass: 'text-danger',
+          role: 'destructive',
+          handler: () => {
+            this.wizardService.deletePropertyFromStructure(
+              structureName,
+              property.number,
+            );
+          },
+        },
+      ],
+    });
+    await alert.present();
   }
 }

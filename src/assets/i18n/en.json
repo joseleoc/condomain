@@ -20,8 +20,7 @@
     "changeImage": "Change Image",
     "selectImage": "Select Image",
     "removeImage": "Remove Image",
-    "selectFile": "Select File",
-    "units": "Units"
+    "selectFile": "Select File"
   },
   "i18n": {
     "selectLanguage": "Select Language",
@@ -38,7 +37,7 @@
     "wizard": {
       "step1Description": "Create a new condominium",
       "step2Description": "Create the structures",
-      "step3Description": "Create the units"
+      "step3Description": "Create the properties"
     },
     "createForm": {
       "newCondominium": "New Condominium",
@@ -52,7 +51,7 @@
     },
     "createStructure": {
       "title": "Add Structure",
-      "description": "Define a new building, tower or block within the condominium to manage its specific units and settings.",
+      "description": "Define a new building, tower or block within the condominium to manage its specific properties and settings.",
       "noStructuresAdded": "No structures added yet.",
       "noStructuresAddedDescription": "Divide your complex into Towers, Blocks, or Sectors to keep things organized.",
       "addNewStructure": "Add New Structure",
@@ -62,7 +61,7 @@
       "deleteStructureAlertMessage": "Are you sure you want to delete the structure \"{{name}}\"?",
       "structureNotFound": "Structure not found. Please try again.",
       "propertyNotFound": "Property not found. Please try again.",
-      "propertyAlreadyExists": "A unit with number {{number}} already exists in {{structure}}. Please choose a different number.",
+      "propertyAlreadyExists": "A property with number {{number}} already exists in {{structure}}. Please choose a different number.",
       "fee": "Ownership: {{value}}%",
       "totalFeeExceeds100": "Total ownership fee cannot exceed 100%.",
       "creationFailed": "Failed to create structure. Please try again.",
@@ -74,23 +73,25 @@
     },
     "structuresList": {
       "title": "Condominium Structures",
-      "description": "Define the primary structures within your condominium to help organize units.",
+      "description": "Define the primary structures within your condominium to help organize properties.",
       "addAtLeastOneStructure": "Please add at least one structure to continue."
     },
     "createProperty": {
-      "createProperty": "Add New Unit",
-      "propertyNumber": "Unit Number*",
+      "createProperty": "Add New Property",
+      "propertyNumber": "Property Number*",
       "feePercentage": "Ownership Fee (%)*",
       "structure": "Structure*",
-      "createButton": "Create Unit",
-      "noPropertiesAdded": "No units added yet.",
-      "noPropertiesAddedDescription": "Start adding units to your structures to manage them effectively.",
-      "deletePropertyAlertMessage": "Are you sure you want to delete unit {{number}}",
-      "addNewProperty": "Add New Unit",
+      "createButton": "Create Property",
+      "noPropertiesAdded": "No properties added yet.",
+      "noPropertiesAddedDescription": "Start adding properties to your structures to manage them effectively.",
+      "deletePropertyAlertMessage": "Are you sure you want to delete property {{number}}",
+      "addNewProperty": "Add New Property",
       "description": "Define condo properties, such as apartments, commercial spaces, or parking spots, and assign them to their corresponding structures.",
       "ownerName": "Owner Name",
       "ownerEmail": "Owner Email",
-      "optionalData": "Optional data"
+      "optionalData": "Optional data",
+      "confirmDeleteTitle": "Delete property",
+      "confirmDeleteMessage": "Are you sure you want to delete property {{number}}?"
     },
     "setUp": {
       "title": "How do you want to create your condominium?",
@@ -98,7 +99,7 @@
       "simpleCreation": "Simple Creation",
       "simpleCreationDescription": "Create structures and properties one by one manually. Ideal for small condominiums or specific adjustments.",
       "massiveCreation": "Massive Creation",
-      "massiveCreationDescription": "Define naming rules and generate multiple towers and units in a few steps. The fastest option for large complexes.",
+      "massiveCreationDescription": "Define naming rules and generate multiple towers and properties in a few steps. The fastest option for large complexes.",
       "aiAssistantCreation": "I Assistant",
       "aiAssistantCreationDescription": "Chat with our AI to describe your condominium and let us configure the structure for you. Perfect for those who prefer a guided and intelligent approach."
     }

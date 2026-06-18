@@ -355,6 +355,22 @@ export class Wizard {
     this.location.back();
   }
 
+  deletePropertyFromStructure(structureName: string, propertyNumber: string) {
+    const currentStructures = new Map(
+      this.structures$.getValue().map((s) => [s.name, s]),
+    );
+    const structure = currentStructures.get(structureName);
+    if (!structure) return;
+
+    const propertyIndex = structure.properties.findIndex(
+      (p) => p.number === propertyNumber,
+    );
+    if (propertyIndex === -1) return;
+
+    structure.properties.splice(propertyIndex, 1);
+    this.structures$.next(Array.from(currentStructures.values()));
+  }
+
   // --- Private Methods ---
   private async uploadStructuresToBackend(structures: LocalStructure[]) {
     const condominium_id = this.createdCondominium()?.id;

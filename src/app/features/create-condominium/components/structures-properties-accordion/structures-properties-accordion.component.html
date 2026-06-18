@@ -59,6 +59,13 @@
                   }}
                 </span>
               </div>
+              <ion-icon
+                name="trash-outline"
+                size="small"
+                slot="end"
+                color="danger"
+                (click)="deleteProperty($event, property, structure.name)"
+              />
             </ion-item>
           }
         </ion-list>
