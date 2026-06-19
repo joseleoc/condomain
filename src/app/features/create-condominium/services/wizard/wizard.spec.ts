@@ -482,6 +482,54 @@ describe('Wizard', () => {
       expect(structure.properties[0].fee).toBe(75);
     });
 
+    it('should allow editing a property without changing its number', () => {
+      service.selectedProperty.set(fakePropertyWithStructure);
+
+      service.editPropertyInStructure({ ...fakePropertyWithStructure, fee: 90, ownerName: 'Updated Owner' });
+
+      const structure = service.structures$.getValue()[0];
+      expect(structure.properties[0].number).toBe('Apt 101');
+      expect(structure.properties[0].fee).toBe(90);
+      expect(structure.properties[0].ownerName).toBe('Updated Owner');
+      expect(structure.properties.length).toBe(1);
+    });
+
+    it('should allow editing a property and changing to a new unique number within the same structure', () => {
+      service.selectedProperty.set(fakePropertyWithStructure);
+
+      service.editPropertyInStructure({ ...fakePropertyWithStructure, number: 'Apt 202' });
+
+      const structure = service.structures$.getValue()[0];
+      expect(structure.properties[0].number).toBe('Apt 202');
+      expect(structure.properties.length).toBe(1);
+    });
+
+    it('should reject editing a property to a number already taken by another property in the same structure', () => {
+      service.addPropertyToStructure('Tower A', { ...fakeProperty, number: 'Apt 102', fee: 30 });
+      service.selectedProperty.set(fakePropertyWithStructure);
+
+      service.editPropertyInStructure({ ...fakePropertyWithStructure, number: 'Apt 102' });
+
+      expect(toastSpy.present).toHaveBeenCalled();
+      const towerA = service.structures$.getValue().find((s) => s.name === 'Tower A')!;
+      expect(towerA.properties.length).toBe(2);
+      expect(towerA.properties.find((p) => p.number === 'Apt 101')).toBeDefined();
+      expect(towerA.properties.find((p) => p.number === 'Apt 102')).toBeDefined();
+    });
+
+    it('should reject editing when the duplicate property is at index 0', () => {
+      const propA = { number: 'Apt 100', fee: 30, structure: 'Tower A', ownerName: null, ownerEmail: null };
+      const propB = { ...fakeProperty, number: 'Apt 101' };
+      service.addPropertyToStructure('Tower A', propA);
+      service.addPropertyToStructure('Tower A', propB);
+      service.selectedProperty.set({ ...fakePropertyWithStructure, number: 'Apt 101' });
+
+      service.editPropertyInStructure({ ...fakePropertyWithStructure, number: 'Apt 100' });
+
+      expect(toastSpy.present).toHaveBeenCalled();
+      expect(service.structures$.getValue()[0].properties.length).toBe(2);
+    });
+
     it('should move a property to a different structure', () => {
       service.saveStructureLocally({ name: 'Tower B', description: '', properties: [] });
       service.selectedProperty.set(fakePropertyWithStructure);

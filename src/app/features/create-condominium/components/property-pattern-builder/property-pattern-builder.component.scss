@@ -1,8 +1,8 @@
 .section-header {
   display: flex;
   flex-direction: column;
-  gap: 2px;
-  margin-bottom: 8px;
+  gap: 4px;
+  margin-bottom: 12px;
 
   ion-label {
     font-size: 0.875rem;
@@ -15,6 +15,7 @@
   align-items: center;
   justify-content: center;
   padding: 12px;
+  margin-bottom: 12px;
   background: var(--ion-background-color);
   border-radius: 8px;
   border: 1px dashed var(--ion-color-medium-tint);
@@ -32,13 +33,39 @@
 .component-toggles {
   display: flex;
   flex-wrap: wrap;
-  gap: 4px;
+  gap: 6px;
+}
+
+.toggle-chips-row {
+  display: flex;
+  justify-content: center;
+  margin-top: 8px;
+}
+
+.toggle-chips-chip {
+  font-size: 0.8rem;
+}
+
+.extra-fields {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  margin-top: 12px;
+}
+
+.custom-input-item {
+  --padding-start: 0;
+  --inner-padding-end: 0;
+  --background: transparent;
+  --border-color: var(--ion-color-medium-tint);
+  font-size: 0.825rem;
 }
 
 .separator-row {
   display: flex;
   flex-direction: column;
-  gap: 6px;
+  gap: 8px;
+  margin-top: 12px;
 }
 
 .separator-label {
@@ -61,9 +88,5 @@
 
   .pattern-preview-text {
     font-size: 1.1rem;
-  }
-
-  .component-toggles {
-    gap: 6px;
   }
 }

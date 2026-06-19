@@ -368,7 +368,7 @@ export class Wizard {
     }
 
     if (
-      targetIndex &&
+      targetIndex != null &&
       targetIndex != -1 &&
       targetStructure?.properties[targetIndex].number !==
         this.selectedProperty()!.number &&

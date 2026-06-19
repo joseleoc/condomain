@@ -80,12 +80,10 @@ describe('MassivePropertyCreationComponent', () => {
   });
 
   it('should generate names using toggled parts and separator', () => {
-    component.includeName.set(true);
-    component.includeShort.set(true);
-    component.includeNum.set(true);
+    component.patternOrder.set(['name', 'short', 'num']);
     component.customSeparator.set(' - ');
     component.countPerStructure.set(2);
-    component.startAt.set(1);
+    component.startAtNum.set(1);
     component.digits.set(2);
 
     const names = component['generateNames']('Torre A');
@@ -97,7 +95,7 @@ describe('MassivePropertyCreationComponent', () => {
 
   it('should generate names with only short and number by default', () => {
     component.countPerStructure.set(2);
-    component.startAt.set(1);
+    component.startAtNum.set(1);
     component.digits.set(2);
 
     const names = component['generateNames']('Edificio Central');
@@ -108,11 +106,9 @@ describe('MassivePropertyCreationComponent', () => {
   });
 
   it('should include first word in generated names', () => {
-    component.includeFirstWord.set(true);
-    component.includeShort.set(true);
-    component.includeNum.set(true);
+    component.patternOrder.set(['firstword', 'short', 'num']);
     component.countPerStructure.set(1);
-    component.startAt.set(1);
+    component.startAtNum.set(1);
 
     const names = component['generateNames']('Torre A');
 
@@ -120,11 +116,9 @@ describe('MassivePropertyCreationComponent', () => {
   });
 
   it('should include first letter in generated names', () => {
-    component.includeFirstLetter.set(true);
-    component.includeShort.set(true);
-    component.includeNum.set(true);
+    component.patternOrder.set(['firstletter', 'short', 'num']);
     component.countPerStructure.set(1);
-    component.startAt.set(1);
+    component.startAtNum.set(1);
 
     const names = component['generateNames']('Edificio Central');
 
@@ -132,10 +126,9 @@ describe('MassivePropertyCreationComponent', () => {
   });
 
   it('should generate letter-based sequential names', () => {
-    component.includeLetter.set(true);
-    component.includeShort.set(true);
+    component.patternOrder.set(['letter', 'short']);
     component.countPerStructure.set(3);
-    component.startAt.set(1);
+    component.startAtNum.set(1);
 
     const names = component['generateNames']('Torre A');
 
@@ -162,18 +155,18 @@ describe('MassivePropertyCreationComponent', () => {
     expect(component.nameTemplate()).toBe('{short}{num}');
 
     component.togglePart('name');
-    expect(component.nameTemplate()).toBe('{name}{short}{num}');
+    expect(component.nameTemplate()).toBe('{short}{num}{name}');
 
     component.togglePart('short');
-    expect(component.nameTemplate()).toBe('{name}{num}');
+    expect(component.nameTemplate()).toBe('{num}{name}');
   });
 
   it('should apply separator in nameTemplate', () => {
     component.customSeparator.set(' ');
     expect(component.nameTemplate()).toBe('{short} {num}');
 
-    component.includeName.set(true);
-    expect(component.nameTemplate()).toBe('{name} {short} {num}');
+    component.togglePart('name');
+    expect(component.nameTemplate()).toBe('{short} {num} {name}');
   });
 
   it('should cap fee at maxFee', () => {

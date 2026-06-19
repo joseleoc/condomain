@@ -12,54 +12,66 @@
 </div>
 
 <div class="component-toggles">
-  <ion-chip
-    [color]="includeName() ? 'primary' : 'medium'"
-    [outline]="!includeName()"
-    (click)="togglePart.emit('name')"
-  >
-    <ion-icon [name]="includeName() ? 'checkmark-circle' : 'add-circle-outline'" slot="start" />
-    {{ "condominium.massiveProperty.componentName" | transloco }}
-  </ion-chip>
-  <ion-chip
-    [color]="includeFirstWord() ? 'primary' : 'medium'"
-    [outline]="!includeFirstWord()"
-    (click)="togglePart.emit('firstword')"
-  >
-    <ion-icon [name]="includeFirstWord() ? 'checkmark-circle' : 'add-circle-outline'" slot="start" />
-    {{ "condominium.massiveProperty.componentFirstWord" | transloco }}
-  </ion-chip>
-  <ion-chip
-    [color]="includeShort() ? 'primary' : 'medium'"
-    [outline]="!includeShort()"
-    (click)="togglePart.emit('short')"
-  >
-    <ion-icon [name]="includeShort() ? 'checkmark-circle' : 'add-circle-outline'" slot="start" />
-    {{ "condominium.massiveProperty.componentShort" | transloco }}
-  </ion-chip>
-  <ion-chip
-    [color]="includeFirstLetter() ? 'primary' : 'medium'"
-    [outline]="!includeFirstLetter()"
-    (click)="togglePart.emit('firstletter')"
-  >
-    <ion-icon [name]="includeFirstLetter() ? 'checkmark-circle' : 'add-circle-outline'" slot="start" />
-    {{ "condominium.massiveProperty.componentFirstLetter" | transloco }}
-  </ion-chip>
-  <ion-chip
-    [color]="includeNum() ? 'primary' : 'medium'"
-    [outline]="!includeNum()"
-    (click)="togglePart.emit('num')"
-  >
-    <ion-icon [name]="includeNum() ? 'checkmark-circle' : 'add-circle-outline'" slot="start" />
-    {{ "condominium.massiveProperty.componentSequenceNum" | transloco }}
-  </ion-chip>
-  <ion-chip
-    [color]="includeLetter() ? 'primary' : 'medium'"
-    [outline]="!includeLetter()"
-    (click)="togglePart.emit('letter')"
-  >
-    <ion-icon [name]="includeLetter() ? 'checkmark-circle' : 'add-circle-outline'" slot="start" />
-    {{ "condominium.massiveProperty.componentSequenceLetter" | transloco }}
-  </ion-chip>
+  @for (chip of visibleChips(); track chip.part) {
+    <ion-chip
+      [color]="includeForPart(chip.part) ? 'primary' : 'medium'"
+      [outline]="!includeForPart(chip.part)"
+      (click)="togglePart.emit(chip.part)"
+    >
+      <ion-icon [name]="includeForPart(chip.part) ? 'checkmark-circle' : 'add-circle-outline'" slot="start" />
+      {{ chip.labelKey | transloco }}
+    </ion-chip>
+  }
+</div>
+
+@if (hasHidden()) {
+  <div class="toggle-chips-row">
+    <ion-chip
+      outline
+      color="medium"
+      size="small"
+      (click)="toggleExpanded()"
+      class="toggle-chips-chip"
+    >
+      <ion-icon [name]="expanded() ? 'chevron-up-circle-outline' : 'ellipsis-horizontal-circle-outline'" slot="start" />
+      {{ (expanded() ? 'condominium.massiveProperty.showLess' : 'condominium.massiveProperty.showAll') | transloco }}
+    </ion-chip>
+  </div>
+}
+
+@if (includeCustom()) {
+  <div class="extra-fields">
+    <ion-item class="custom-input-item">
+      <ion-input
+        [value]="customWord()"
+        (ionChange)="customWordChange.emit($event.detail.value ?? '')"
+        [label]="'condominium.massiveProperty.customWordLabel' | transloco"
+        labelPlacement="stacked"
+        [placeholder]="'condominium.massiveProperty.customWordPlaceholder' | transloco"
+      />
+    </ion-item>
+  </div>
+}
+
+<div class="extra-fields">
+  <ion-item class="custom-input-item">
+    <ion-input
+      [value]="prefix()"
+      (ionChange)="prefixChange.emit($event.detail.value ?? '')"
+      [label]="'condominium.massiveProperty.prefixLabel' | transloco"
+      labelPlacement="stacked"
+      [placeholder]="'condominium.massiveProperty.prefixPlaceholder' | transloco"
+    />
+  </ion-item>
+  <ion-item class="custom-input-item">
+    <ion-input
+      [value]="suffix()"
+      (ionChange)="suffixChange.emit($event.detail.value ?? '')"
+      [label]="'condominium.massiveProperty.suffixLabel' | transloco"
+      labelPlacement="stacked"
+      [placeholder]="'condominium.massiveProperty.suffixPlaceholder' | transloco"
+    />
+  </ion-item>
 </div>
 
 <div class="separator-row">
