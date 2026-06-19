@@ -11,7 +11,6 @@ import { FormsModule } from '@angular/forms';
 import {
   IonSegment,
   IonSegmentButton,
-  IonInput,
   IonTextarea,
   IonLabel,
   IonIcon,
@@ -45,7 +44,6 @@ import { Toast } from '@core/services/toast/toast';
     FormsModule,
     IonSegment,
     IonSegmentButton,
-    IonInput,
     IonTextarea,
     IonLabel,
     IonIcon,
