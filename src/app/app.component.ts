@@ -3,6 +3,7 @@ import { IonApp, IonRouterOutlet } from '@ionic/angular/standalone';
 import { addIcons } from 'ionicons';
 import {
   add,
+  addCircleOutline,
   businessOutline,
   cameraOutline,
   chatbubblesOutline,
@@ -11,6 +12,7 @@ import {
   languageOutline,
   menu,
   personOutline,
+  remove,
   trashOutline,
 } from 'ionicons/icons';
 
@@ -32,6 +34,8 @@ export class AppComponent {
       documentOutline,
       trashOutline,
       menu,
+      addCircleOutline,
+      remove,
     });
   }
 }

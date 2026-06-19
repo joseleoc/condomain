@@ -1,6 +1,10 @@
 .structure-name {
   font-weight: 500;
-  font-size: 1.5rem;
+  font-size: 1.125rem;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  max-width: 180px;
 }
 
 .property-container {
@@ -10,12 +14,12 @@
 }
 
 .property-number {
-  font-size: 1.125rem;
+  font-size: 1rem;
   font-weight: 500;
 }
 
 .property-fee {
-  font-size: 0.875rem;
+  font-size: 0.8rem;
 }
 
 .total-percentage-container {
@@ -26,30 +30,6 @@
   padding-right: 1rem;
 }
 
-@media (max-width: 350px) {
-  .units-label {
-    display: none;
-  }
-
-  .structure-name {
-    font-size: 0.8rem;
-  }
-}
-
-@media (max-width: 450px) {
-  .structure-name {
-    font-size: 1rem;
-  }
-
-  .property-number {
-    font-size: 0.9rem;
-  }
-
-  .property-fee {
-    font-size: 0.75rem;
-  }
-}
-
 .badge-short {
   display: inline;
 }
@@ -58,7 +38,24 @@
   display: none;
 }
 
-@media (min-width: 375px) {
+.text-danger {
+  color: var(--ion-color-danger);
+}
+
+@media (min-width: 600px) {
+  .structure-name {
+    font-size: 1.25rem;
+    max-width: 300px;
+  }
+
+  .property-number {
+    font-size: 1.125rem;
+  }
+
+  .property-fee {
+    font-size: 0.875rem;
+  }
+
   .badge-short {
     display: none;
   }
@@ -68,7 +65,9 @@
   }
 }
 
-
-.text-danger {
-  color: var(--ion-color-danger);
+@media (min-width: 900px) {
+  .structure-name {
+    font-size: 1.5rem;
+    max-width: none;
+  }
 }

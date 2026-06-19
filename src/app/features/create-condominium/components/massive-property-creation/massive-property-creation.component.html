@@ -1,0 +1,161 @@
+@if (showingGenerator()) {
+  <div class="generator-section">
+    <div class="title-container">
+      <h4>{{ "condominium.massiveProperty.title" | transloco }}</h4>
+      <p>{{ "condominium.massiveProperty.description" | transloco }}</p>
+      <ion-note class="edit-note">
+        {{ "condominium.massiveProperty.editLaterNote" | transloco }}
+      </ion-note>
+    </div>
+
+    <div class="pattern-section card-section">
+      <app-property-pattern-builder
+        [includeName]="includeName()"
+        [includeFirstWord]="includeFirstWord()"
+        [includeShort]="includeShort()"
+        [includeFirstLetter]="includeFirstLetter()"
+        [includeNum]="includeNum()"
+        [includeLetter]="includeLetter()"
+        [customSeparator]="customSeparator()"
+        [displayPattern]="displayPattern()"
+        (togglePart)="togglePart($event)"
+        (separatorChange)="customSeparator.set($event)"
+      />
+    </div>
+
+    <div class="pattern-config-row">
+      <div class="config-chip-group">
+        <span class="config-label-inline">
+          {{ "condominium.massiveProperty.digitsLabel" | transloco }}
+        </span>
+        <div class="chip-row">
+          <ion-chip [outline]="digits() !== 1" color="primary" (click)="handleDigitsChange(1)">1</ion-chip>
+          <ion-chip [outline]="digits() !== 2" color="primary" (click)="handleDigitsChange(2)">01</ion-chip>
+          <ion-chip [outline]="digits() !== 3" color="primary" (click)="handleDigitsChange(3)">001</ion-chip>
+        </div>
+      </div>
+
+      <div class="startat-group">
+        <span class="config-label-inline">
+          {{ "condominium.massiveProperty.startAtLabel" | transloco }}
+        </span>
+        <div class="startat-controls">
+          <ion-chip outline color="primary" (click)="handleDecrementStartAt()">
+            <ion-icon name="remove" />
+          </ion-chip>
+          <ion-item class="startat-input-item">
+            <ion-input type="number" min="1" [value]="startAt()" (ionChange)="handleStartAtChange($event.detail.value)" />
+          </ion-item>
+          <ion-chip outline color="primary" (click)="handleIncrementStartAt()">
+            <ion-icon name="add" />
+          </ion-chip>
+        </div>
+      </div>
+    </div>
+
+    <div class="config-grid">
+      <div class="config-field">
+        <ion-item>
+          <ion-input
+            type="number"
+            labelPlacement="stacked"
+            min="1"
+            [value]="countPerStructure()"
+            (ionChange)="setCount($event.detail.value)"
+            [label]="'condominium.massiveProperty.countLabel' | transloco"
+          />
+        </ion-item>
+        <ion-note class="field-help">
+          {{ "condominium.massiveProperty.countHelp" | transloco }}
+        </ion-note>
+      </div>
+
+      <div class="config-field">
+        <ion-item>
+          <ion-input
+            type="number"
+            labelPlacement="stacked"
+            min="0"
+            [max]="maxFee()"
+            [value]="fee()"
+            (ionChange)="setFee($event.detail.value)"
+            [disabled]="splitEqually()"
+            [label]="'condominium.massiveProperty.feeLabel' | transloco"
+          />
+        </ion-item>
+        <div class="fee-actions">
+          <ion-note class="field-help">
+            {{ "condominium.massiveProperty.feeHelp" | transloco }}
+          </ion-note>
+          <ion-chip
+            [color]="splitEqually() ? 'primary' : 'medium'"
+            [outline]="!splitEqually()"
+            (click)="toggleSplitEqually()"
+            size="small"
+          >
+            <ion-icon [name]="splitEqually() ? 'checkmark-circle' : 'calculator'" slot="start" />
+            {{ "condominium.massiveProperty.splitEqually" | transloco }}
+          </ion-chip>
+        </div>
+      </div>
+    </div>
+
+    <app-property-preview
+      [previewGroups]="preview()"
+      [totalCount]="totalPropertyCount()"
+    />
+  </div>
+}
+
+@if (!showingGenerator()) {
+  <div class="result-section">
+    <p class="review-description">
+      {{ "condominium.massiveProperty.reviewDescription" | transloco }}
+    </p>
+
+    <ion-button fill="outline" expand="block" (click)="showingGenerator.set(true)">
+      <ion-icon name="add-circle-outline" slot="start" />
+      {{ "condominium.massiveProperty.addMore" | transloco }}
+    </ion-button>
+
+    <app-structures-properties-accordion
+      [structureSelected]="firstStructureName()"
+      (selectProperty)="editProperty($event)"
+    />
+  </div>
+}
+
+<ion-modal
+  [isOpen]="isEditModalOpen()"
+  (ionModalDidDismiss)="closeEditModal()"
+  [backdropDismiss]="false"
+>
+  <ng-template>
+    <ion-header>
+      <ion-toolbar>
+        <ion-title>{{ "condominium.createProperty.createProperty" | transloco }}</ion-title>
+        <ion-buttons slot="end">
+          <ion-button fill="clear" color="secondary" (click)="closeEditModal()">
+            {{ "common.cancel" | transloco }}
+          </ion-button>
+        </ion-buttons>
+      </ion-toolbar>
+    </ion-header>
+
+    <ion-content class="ion-padding">
+      <p class="text-secondary structure-modal-description ion-padding-bottom">
+        {{ "condominium.createProperty.description" | transloco }}
+      </p>
+      <app-create-property-form [showButton]="false" />
+    </ion-content>
+    <ion-footer>
+      <ion-toolbar>
+        <ion-buttons slot="end">
+          <ion-button fill="solid" color="primary" (click)="handleSaveProperty()">
+            {{ "common.save" | transloco }}
+          </ion-button>
+        </ion-buttons>
+      </ion-toolbar>
+    </ion-footer>
+  </ng-template>
+</ion-modal>

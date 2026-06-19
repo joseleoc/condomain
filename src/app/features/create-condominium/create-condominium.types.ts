@@ -18,3 +18,5 @@ export type LocalStructure = Pick<Structure, 'name' | 'description'> & {
 export interface PropertyWithStructure extends CreatePropertyFormData {
   structureName: string;
 }
+
+export type EnumeratorType = 'letter' | 'number';

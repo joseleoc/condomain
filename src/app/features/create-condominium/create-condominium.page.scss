@@ -1,13 +1,23 @@
-
-
 .stepper-container {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    gap: 0.5rem;
-    max-width: 22rem;
-    width: 100%;
-    margin: auto;
-    margin-bottom: 2rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  max-width: 22rem;
+  width: 100%;
+  margin: auto;
+  margin-bottom: 2rem;
+}
+
+@media (min-width: 600px) {
+  .stepper-container {
+    max-width: 32rem;
+  }
+}
+
+@media (min-width: 900px) {
+  .stepper-container {
+    max-width: 48rem;
+  }
 }
