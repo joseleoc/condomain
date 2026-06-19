@@ -7,6 +7,8 @@ import {
 } from '@ionic/angular/standalone';
 import { TranslocoPipe } from '@jsverse/transloco';
 
+export type PatternPart = 'name' | 'firstword' | 'short' | 'firstletter' | 'num' | 'letter';
+
 @Component({
   selector: 'app-property-pattern-builder',
   templateUrl: './property-pattern-builder.component.html',
@@ -16,11 +18,14 @@ import { TranslocoPipe } from '@jsverse/transloco';
 })
 export class PropertyPatternBuilderComponent {
   readonly includeName = input(false);
+  readonly includeFirstWord = input(false);
   readonly includeShort = input(true);
+  readonly includeFirstLetter = input(false);
   readonly includeNum = input(true);
+  readonly includeLetter = input(false);
   readonly customSeparator = input('');
   readonly displayPattern = input('');
 
-  readonly togglePart = output<'name' | 'short' | 'num'>();
+  readonly togglePart = output<PatternPart>();
   readonly separatorChange = output<string>();
 }

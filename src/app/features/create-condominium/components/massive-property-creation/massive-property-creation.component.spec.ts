@@ -4,7 +4,7 @@ import { TranslocoService } from '@jsverse/transloco';
 import { Wizard } from '@features/create-condominium/services/wizard/wizard';
 import { Toast } from '@core/services/toast/toast';
 import { MassivePropertyCreationComponent } from './massive-property-creation.component';
-import { BehaviorSubject, of } from 'rxjs';
+import { BehaviorSubject } from 'rxjs';
 
 describe('MassivePropertyCreationComponent', () => {
   let component: MassivePropertyCreationComponent;
@@ -54,8 +54,11 @@ describe('MassivePropertyCreationComponent', () => {
 
   it('should toggle parts on and off', () => {
     expect(component.includeName()).toBeFalse();
+    expect(component.includeFirstWord()).toBeFalse();
     expect(component.includeShort()).toBeTrue();
+    expect(component.includeFirstLetter()).toBeFalse();
     expect(component.includeNum()).toBeTrue();
+    expect(component.includeLetter()).toBeFalse();
 
     component.togglePart('name');
     expect(component.includeName()).toBeTrue();
@@ -65,6 +68,15 @@ describe('MassivePropertyCreationComponent', () => {
 
     component.togglePart('num');
     expect(component.includeNum()).toBeFalse();
+
+    component.togglePart('firstword');
+    expect(component.includeFirstWord()).toBeTrue();
+
+    component.togglePart('firstletter');
+    expect(component.includeFirstLetter()).toBeTrue();
+
+    component.togglePart('letter');
+    expect(component.includeLetter()).toBeTrue();
   });
 
   it('should generate names using toggled parts and separator', () => {
@@ -74,7 +86,6 @@ describe('MassivePropertyCreationComponent', () => {
     component.customSeparator.set(' - ');
     component.countPerStructure.set(2);
     component.startAt.set(1);
-    component.enumeratorType.set('number');
     component.digits.set(2);
 
     const names = component['generateNames']('Torre A');
@@ -87,7 +98,6 @@ describe('MassivePropertyCreationComponent', () => {
   it('should generate names with only short and number by default', () => {
     component.countPerStructure.set(2);
     component.startAt.set(1);
-    component.enumeratorType.set('number');
     component.digits.set(2);
 
     const names = component['generateNames']('Edificio Central');
@@ -97,9 +107,34 @@ describe('MassivePropertyCreationComponent', () => {
     expect(names[1]).toBe('Central02');
   });
 
-  it('should generate letter-based enumerators', () => {
+  it('should include first word in generated names', () => {
+    component.includeFirstWord.set(true);
+    component.includeShort.set(true);
+    component.includeNum.set(true);
+    component.countPerStructure.set(1);
+    component.startAt.set(1);
+
+    const names = component['generateNames']('Torre A');
+
+    expect(names[0]).toContain('Torre');
+  });
+
+  it('should include first letter in generated names', () => {
+    component.includeFirstLetter.set(true);
+    component.includeShort.set(true);
+    component.includeNum.set(true);
+    component.countPerStructure.set(1);
+    component.startAt.set(1);
+
+    const names = component['generateNames']('Edificio Central');
+
+    expect(names[0]).toContain('E');
+  });
+
+  it('should generate letter-based sequential names', () => {
+    component.includeLetter.set(true);
+    component.includeShort.set(true);
     component.countPerStructure.set(3);
-    component.enumeratorType.set('letter');
     component.startAt.set(1);
 
     const names = component['generateNames']('Torre A');
@@ -139,5 +174,23 @@ describe('MassivePropertyCreationComponent', () => {
 
     component.includeName.set(true);
     expect(component.nameTemplate()).toBe('{name} {short} {num}');
+  });
+
+  it('should cap fee at maxFee', () => {
+    component.countPerStructure.set(2);
+    component.setFee(200);
+    expect(component.fee()).toBe(component.maxFee());
+  });
+
+  it('should toggle split equally and apply calculation', () => {
+    component.countPerStructure.set(2);
+    component.toggleSplitEqually();
+    expect(component.splitEqually()).toBeTrue();
+    expect(component.fee()).toBeGreaterThan(0);
+  });
+
+  it('should disable fee input when split equally is active', () => {
+    component.toggleSplitEqually();
+    expect(component.splitEqually()).toBeTrue();
   });
 });

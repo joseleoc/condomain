@@ -3,18 +3,54 @@
     <div class="title-container">
       <h4>{{ "condominium.massiveProperty.title" | transloco }}</h4>
       <p>{{ "condominium.massiveProperty.description" | transloco }}</p>
+      <ion-note class="edit-note">
+        {{ "condominium.massiveProperty.editLaterNote" | transloco }}
+      </ion-note>
     </div>
 
     <div class="pattern-section card-section">
       <app-property-pattern-builder
         [includeName]="includeName()"
+        [includeFirstWord]="includeFirstWord()"
         [includeShort]="includeShort()"
+        [includeFirstLetter]="includeFirstLetter()"
         [includeNum]="includeNum()"
+        [includeLetter]="includeLetter()"
         [customSeparator]="customSeparator()"
         [displayPattern]="displayPattern()"
         (togglePart)="togglePart($event)"
         (separatorChange)="customSeparator.set($event)"
       />
+    </div>
+
+    <div class="pattern-config-row">
+      <div class="config-chip-group">
+        <span class="config-label-inline">
+          {{ "condominium.massiveProperty.digitsLabel" | transloco }}
+        </span>
+        <div class="chip-row">
+          <ion-chip [outline]="digits() !== 1" color="primary" (click)="handleDigitsChange(1)">1</ion-chip>
+          <ion-chip [outline]="digits() !== 2" color="primary" (click)="handleDigitsChange(2)">01</ion-chip>
+          <ion-chip [outline]="digits() !== 3" color="primary" (click)="handleDigitsChange(3)">001</ion-chip>
+        </div>
+      </div>
+
+      <div class="startat-group">
+        <span class="config-label-inline">
+          {{ "condominium.massiveProperty.startAtLabel" | transloco }}
+        </span>
+        <div class="startat-controls">
+          <ion-chip outline color="primary" (click)="handleDecrementStartAt()">
+            <ion-icon name="remove" />
+          </ion-chip>
+          <ion-item class="startat-input-item">
+            <ion-input type="number" min="1" [value]="startAt()" (ionChange)="handleStartAtChange($event.detail.value)" />
+          </ion-item>
+          <ion-chip outline color="primary" (click)="handleIncrementStartAt()">
+            <ion-icon name="add" />
+          </ion-chip>
+        </div>
+      </div>
     </div>
 
     <div class="config-grid">
@@ -40,29 +76,28 @@
             type="number"
             labelPlacement="stacked"
             min="0"
-            max="100"
+            [max]="maxFee()"
             [value]="fee()"
             (ionChange)="setFee($event.detail.value)"
+            [disabled]="splitEqually()"
             [label]="'condominium.massiveProperty.feeLabel' | transloco"
           />
         </ion-item>
-        <ion-note class="field-help">
-          {{ "condominium.massiveProperty.feeHelp" | transloco }}
-        </ion-note>
+        <div class="fee-actions">
+          <ion-note class="field-help">
+            {{ "condominium.massiveProperty.feeHelp" | transloco }}
+          </ion-note>
+          <ion-chip
+            [color]="splitEqually() ? 'primary' : 'medium'"
+            [outline]="!splitEqually()"
+            (click)="toggleSplitEqually()"
+            size="small"
+          >
+            <ion-icon [name]="splitEqually() ? 'checkmark-circle' : 'calculator'" slot="start" />
+            {{ "condominium.massiveProperty.splitEqually" | transloco }}
+          </ion-chip>
+        </div>
       </div>
-    </div>
-
-    <div class="enumeration-section card-section">
-      <app-property-enumerator-config
-        [enumeratorType]="enumeratorType()"
-        [digits]="digits()"
-        [startAt]="startAt()"
-        (enumeratorTypeChange)="enumeratorType.set($event)"
-        (digitsChange)="handleDigitsChange($event)"
-        (startAtChange)="handleStartAtChange($event)"
-        (incrementStartAt)="handleIncrementStartAt()"
-        (decrementStartAt)="handleDecrementStartAt()"
-      />
     </div>
 
     <app-property-preview

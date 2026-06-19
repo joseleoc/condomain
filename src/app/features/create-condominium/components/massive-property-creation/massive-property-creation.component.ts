@@ -9,7 +9,6 @@ import {
 import { FormsModule } from '@angular/forms';
 import {
   IonInput,
-  IonLabel,
   IonNote,
   IonIcon,
   IonChip,
@@ -20,10 +19,8 @@ import { TranslocoPipe, TranslocoService } from '@jsverse/transloco';
 import { Subscription } from 'rxjs';
 import { Wizard } from '../../services/wizard/wizard';
 import { StructuresPropertiesAccordionComponent } from '../structures-properties-accordion/structures-properties-accordion.component';
-import { PropertyPatternBuilderComponent } from '../property-pattern-builder/property-pattern-builder.component';
-import { PropertyEnumeratorConfigComponent } from '../property-enumerator-config/property-enumerator-config.component';
+import { PropertyPatternBuilderComponent, PatternPart } from '../property-pattern-builder/property-pattern-builder.component';
 import { PropertyPreviewComponent } from '../property-preview/property-preview.component';
-import type { EnumeratorType } from '@features/create-condominium/create-condominium.types';
 import { Toast } from '@core/services/toast/toast';
 
 interface PropertyPreviewGroup {
@@ -40,7 +37,6 @@ interface PropertyPreviewGroup {
   imports: [
     FormsModule,
     IonInput,
-    IonLabel,
     IonNote,
     IonIcon,
     IonChip,
@@ -49,7 +45,6 @@ interface PropertyPreviewGroup {
     TranslocoPipe,
     StructuresPropertiesAccordionComponent,
     PropertyPatternBuilderComponent,
-    PropertyEnumeratorConfigComponent,
     PropertyPreviewComponent,
   ],
 })
@@ -59,35 +54,49 @@ export class MassivePropertyCreationComponent implements OnInit, OnDestroy {
   private translocoService = inject(TranslocoService);
   private nextSubscription!: Subscription;
 
-  enumeratorType = signal<EnumeratorType>('number');
   digits = signal(2);
   countPerStructure = signal(2);
   fee = signal(0);
   startAt = signal(1);
+  splitEqually = signal(false);
 
   includeName = signal(false);
+  includeFirstWord = signal(false);
   includeShort = signal(true);
+  includeFirstLetter = signal(false);
   includeNum = signal(true);
+  includeLetter = signal(false);
   customSeparator = signal('');
 
   nameTemplate = computed(() => {
     const parts: string[] = [];
     if (this.includeName()) parts.push('{name}');
+    if (this.includeFirstWord()) parts.push('{firstword}');
     if (this.includeShort()) parts.push('{short}');
+    if (this.includeFirstLetter()) parts.push('{firstletter}');
     if (this.includeNum()) parts.push('{num}');
+    if (this.includeLetter()) parts.push('{letter}');
     return parts.join(this.customSeparator());
   });
 
   hasPart = computed(() => ({
     name: this.includeName(),
+    firstWord: this.includeFirstWord(),
     short: this.includeShort(),
+    firstLetter: this.includeFirstLetter(),
     num: this.includeNum(),
+    letter: this.includeLetter(),
   }));
 
   displayPattern = computed(() => {
     const structures = this.structures();
     const name = structures.length > 0 ? structures[0].name : 'Estructura';
     return this.generateNames(name)[0] || '';
+  });
+
+  maxFee = computed(() => {
+    const count = this.totalPropertyCount();
+    return count > 0 ? Math.floor(100 / count) : 100;
   });
 
   structures = computed(() => this.wizardService.structures$.getValue());
@@ -107,47 +116,6 @@ export class MassivePropertyCreationComponent implements OnInit, OnDestroy {
 
     return result;
   });
-
-  private getShortName(name: string): string {
-    const parts = name.trim().split(/\s+/);
-    return parts.length > 1 ? parts[parts.length - 1] : name;
-  }
-
-  private formatEnum(index: number): string {
-    const num = this.startAt() + index;
-    return this.enumeratorType() === 'letter'
-      ? this.numberToLetters(num)
-      : String(num).padStart(this.digits(), '0');
-  }
-
-  private numberToLetters(n: number): string {
-    let label = '';
-    let num = n;
-    do {
-      num--;
-      label = String.fromCharCode(65 + (num % 26)) + label;
-      num = Math.floor(num / 26);
-    } while (num > 0);
-    return label;
-  }
-
-  private generateNames(structureName: string): string[] {
-    const names: string[] = [];
-    const shortName = this.getShortName(structureName);
-    const count = this.countPerStructure();
-
-    for (let i = 0; i < count; i++) {
-      const enumStr = this.formatEnum(i);
-      const name = this.nameTemplate()
-        .replace(/{name}/g, structureName)
-        .replace(/{short}/g, shortName)
-        .replace(/{num}/g, enumStr);
-
-      names.push(name);
-    }
-
-    return names;
-  }
 
   totalPropertyCount = computed(() => {
     return this.preview().reduce((acc, g) => acc + g.names.length, 0);
@@ -198,26 +166,91 @@ export class MassivePropertyCreationComponent implements OnInit, OnDestroy {
     return this.structures().some((s) => s.properties.length > 0);
   }
 
+  private getParts(name: string): { firstWord: string; lastWord: string; firstLetter: string } {
+    const words = name.trim().split(/\s+/);
+    return {
+      firstWord: words[0],
+      lastWord: words.length > 1 ? words[words.length - 1] : name,
+      firstLetter: name.trim().charAt(0).toUpperCase(),
+    };
+  }
+
+  private numberToLetters(n: number): string {
+    let label = '';
+    let num = n;
+    do {
+      num--;
+      label = String.fromCharCode(65 + (num % 26)) + label;
+      num = Math.floor(num / 26);
+    } while (num > 0);
+    return label;
+  }
+
+  private formatEnum(index: number): { num: string; letter: string } {
+    const n = this.startAt() + index;
+    return {
+      num: String(n).padStart(this.digits(), '0'),
+      letter: this.numberToLetters(n),
+    };
+  }
+
+  private generateNames(structureName: string): string[] {
+    const names: string[] = [];
+    const { firstWord, lastWord, firstLetter } = this.getParts(structureName);
+    const count = this.countPerStructure();
+
+    for (let i = 0; i < count; i++) {
+      const { num, letter } = this.formatEnum(i);
+      const name = this.nameTemplate()
+        .replace(/{name}/g, structureName)
+        .replace(/{firstword}/g, firstWord)
+        .replace(/{short}/g, lastWord)
+        .replace(/{firstletter}/g, firstLetter)
+        .replace(/{num}/g, num)
+        .replace(/{letter}/g, letter);
+
+      names.push(name);
+    }
+
+    return names;
+  }
+
   setFee(value: unknown): void {
-    this.fee.set(Number(value) || 0);
+    this.fee.set(Math.min(this.maxFee(), Number(value) || 0));
   }
 
   setCount(value: unknown): void {
     this.countPerStructure.set(Math.max(1, Number(value) || 1));
+    if (this.splitEqually()) {
+      this.applySplitEqually();
+    }
   }
 
-  togglePart(part: 'name' | 'short' | 'num'): void {
+  togglePart(part: PatternPart): void {
     switch (part) {
-      case 'name':
-        this.includeName.update((v) => !v);
-        break;
-      case 'short':
-        this.includeShort.update((v) => !v);
-        break;
-      case 'num':
-        this.includeNum.update((v) => !v);
-        break;
+      case 'name': this.includeName.update((v) => !v); break;
+      case 'firstword': this.includeFirstWord.update((v) => !v); break;
+      case 'short': this.includeShort.update((v) => !v); break;
+      case 'firstletter': this.includeFirstLetter.update((v) => !v); break;
+      case 'num': this.includeNum.update((v) => !v); break;
+      case 'letter': this.includeLetter.update((v) => !v); break;
     }
+  }
+
+  toggleSplitEqually(): void {
+    this.splitEqually.update((v) => !v);
+    if (this.splitEqually()) {
+      this.applySplitEqually();
+    }
+  }
+
+  private applySplitEqually(): void {
+    const fee = Math.floor(100 / Math.max(1, this.totalPropertyCount()));
+    this.fee.set(Math.min(fee, this.maxFee()));
+  }
+
+  handleDigitsChange(value: number): void {
+    this.digits.set(Math.max(1, Math.min(5, value)));
   }
 
   handleStartAtChange(value: unknown): void {
@@ -230,9 +263,5 @@ export class MassivePropertyCreationComponent implements OnInit, OnDestroy {
 
   handleDecrementStartAt(): void {
     this.startAt.update((v) => Math.max(1, v - 1));
-  }
-
-  handleDigitsChange(value: number): void {
-    this.digits.set(Math.max(1, Math.min(5, value)));
   }
 }

@@ -21,6 +21,14 @@
     {{ "condominium.massiveProperty.componentName" | transloco }}
   </ion-chip>
   <ion-chip
+    [color]="includeFirstWord() ? 'primary' : 'medium'"
+    [outline]="!includeFirstWord()"
+    (click)="togglePart.emit('firstword')"
+  >
+    <ion-icon [name]="includeFirstWord() ? 'checkmark-circle' : 'add-circle-outline'" slot="start" />
+    {{ "condominium.massiveProperty.componentFirstWord" | transloco }}
+  </ion-chip>
+  <ion-chip
     [color]="includeShort() ? 'primary' : 'medium'"
     [outline]="!includeShort()"
     (click)="togglePart.emit('short')"
@@ -29,12 +37,28 @@
     {{ "condominium.massiveProperty.componentShort" | transloco }}
   </ion-chip>
   <ion-chip
+    [color]="includeFirstLetter() ? 'primary' : 'medium'"
+    [outline]="!includeFirstLetter()"
+    (click)="togglePart.emit('firstletter')"
+  >
+    <ion-icon [name]="includeFirstLetter() ? 'checkmark-circle' : 'add-circle-outline'" slot="start" />
+    {{ "condominium.massiveProperty.componentFirstLetter" | transloco }}
+  </ion-chip>
+  <ion-chip
     [color]="includeNum() ? 'primary' : 'medium'"
     [outline]="!includeNum()"
     (click)="togglePart.emit('num')"
   >
     <ion-icon [name]="includeNum() ? 'checkmark-circle' : 'add-circle-outline'" slot="start" />
-    {{ "condominium.massiveProperty.componentNum" | transloco }}
+    {{ "condominium.massiveProperty.componentSequenceNum" | transloco }}
+  </ion-chip>
+  <ion-chip
+    [color]="includeLetter() ? 'primary' : 'medium'"
+    [outline]="!includeLetter()"
+    (click)="togglePart.emit('letter')"
+  >
+    <ion-icon [name]="includeLetter() ? 'checkmark-circle' : 'add-circle-outline'" slot="start" />
+    {{ "condominium.massiveProperty.componentSequenceLetter" | transloco }}
   </ion-chip>
 </div>
 

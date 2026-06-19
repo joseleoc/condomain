@@ -19,10 +19,64 @@
   }
 }
 
+.edit-note {
+  display: block;
+  margin-top: 8px;
+  font-size: 0.8rem;
+  font-style: italic;
+  color: var(--ion-color-primary);
+}
+
 .card-section {
   padding: 14px;
   border-radius: 10px;
   background: var(--background);
+}
+
+.pattern-config-row {
+  display: flex;
+  align-items: flex-start;
+  gap: 16px;
+  flex-wrap: wrap;
+}
+
+.config-chip-group {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.config-label-inline {
+  font-size: 0.8rem;
+  font-weight: 500;
+  color: var(--ion-color-medium);
+}
+
+.chip-row {
+  display: flex;
+  gap: 6px;
+}
+
+.startat-group {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.startat-controls {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.startat-input-item {
+  --min-height: 32px;
+  width: 64px;
+
+  ion-input {
+    text-align: center;
+    font-size: 0.9rem;
+  }
 }
 
 .config-grid {
@@ -45,6 +99,14 @@
   font-size: 0.75rem;
   margin: 0 0 0 16px;
   padding: 0;
+}
+
+.fee-actions {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+  margin-top: 4px;
 }
 
 .result-section {
