@@ -4,7 +4,6 @@ import {
   OnInit,
   signal,
   viewChild,
-  computed,
 } from '@angular/core';
 import { StructuresListEmptyComponent } from '../structures-list-empty/structures-list-empty.component';
 import {
@@ -50,7 +49,7 @@ export class SimpleCreationProcessComponent implements OnInit {
   addStructureFormComponent = viewChild(AddStructureFormComponent);
   // --- Properties ---
   isOpenAddStructureModal = signal(false);
-  structures = computed(toSignal(this.wizardService.structures$));
+  structures = toSignal(this.wizardService.structures$);
 
   constructor() {}
 

@@ -1,6 +1,17 @@
 .structure-modal-description {
-    width: 100%;
-    max-width: 25rem;
-    text-align: center;
-    margin: auto;
+  width: 100%;
+  max-width: 25rem;
+  text-align: center;
+  margin: auto;
+}
+
+:host {
+  display: block;
+  width: 100%;
+}
+
+@media (min-width: 600px) {
+  .structure-modal-description {
+    max-width: 30rem;
+  }
 }

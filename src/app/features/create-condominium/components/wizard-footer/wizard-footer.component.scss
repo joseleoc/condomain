@@ -1,0 +1,23 @@
+ion-footer {
+  ion-toolbar {
+    --background: var(--ion-background-color);
+    --border-color: var(--ion-color-light-shade);
+    --min-height: 52px;
+
+    padding-bottom: var(--ion-safe-area-bottom, 0);
+
+    ion-buttons {
+      padding: 0 8px;
+    }
+  }
+}
+
+@media (min-width: 600px) {
+  ion-footer ion-toolbar {
+    --min-height: 56px;
+
+    ion-buttons {
+      padding: 0 16px;
+    }
+  }
+}
