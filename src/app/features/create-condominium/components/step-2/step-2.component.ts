@@ -34,7 +34,9 @@ export class Step2Component implements OnInit, OnDestroy {
   // --- Lifecycle Hooks ---
   ngOnInit() {
     this.nextSubscription = this.wizardService.nextStep$.subscribe(
-      async (currentStep) => {
+      async () => {
+        if (this.creationProcessSelected() === 'massive') return;
+
         const structures = this.wizardService.structures$.getValue();
         if (structures.length > 0 && this.creationProcessSelected() != null) {
           this.wizardService.setStep(3);

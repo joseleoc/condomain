@@ -1,3 +1,178 @@
-<p>
-  massive-creation-process works!
-</p>
+@if (showingGenerator()) {
+  <div class="generator-section">
+    <div class="title-container">
+      <h4>{{ "condominium.massive.title" | transloco }}</h4>
+      <p>{{ "condominium.massive.description" | transloco }}</p>
+    </div>
+
+    <ion-segment [value]="mode()" (ionChange)="setMode($event.detail.value)">
+      <ion-segment-button value="pattern">
+        <ion-label>{{ "condominium.massive.patternTab" | transloco }}</ion-label>
+      </ion-segment-button>
+      <ion-segment-button value="custom">
+        <ion-label>{{ "condominium.massive.customTab" | transloco }}</ion-label>
+      </ion-segment-button>
+    </ion-segment>
+
+    @if (mode() === 'pattern') {
+      <p class="text-secondary mode-description">
+        {{ "condominium.massive.patternDescription" | transloco }}
+      </p>
+
+      <div class="pattern-builder">
+        <div class="pattern-row">
+          <ion-item class="pattern-part">
+            <ion-input
+              labelPlacement="stacked"
+              [value]="patternPrefix()"
+              (ionChange)="patternPrefix.set($event.detail.value ?? '')"
+              [label]="'condominium.massive.prefixLabel' | transloco"
+            />
+          </ion-item>
+
+          <div class="enumerator-selector">
+            <ion-label class="enumerator-label">
+              {{ "condominium.massive.enumeratorLabel" | transloco }}
+            </ion-label>
+            <div class="enumerator-options">
+              <ion-chip
+                [outline]="patternEnumerator() !== 'letter'"
+                color="primary"
+                (click)="patternEnumerator.set('letter')"
+              >
+                A, B, C
+              </ion-chip>
+              <ion-chip
+                [outline]="patternEnumerator() !== 'number'"
+                color="primary"
+                (click)="patternEnumerator.set('number')"
+              >
+                1, 2, 3
+              </ion-chip>
+            </div>
+          </div>
+
+          <ion-item class="pattern-part">
+            <ion-input
+              labelPlacement="stacked"
+              [value]="patternSuffix()"
+              (ionChange)="patternSuffix.set($event.detail.value ?? '')"
+              [label]="'condominium.massive.suffixLabel' | transloco"
+            />
+          </ion-item>
+        </div>
+
+        <ion-item>
+          <ion-input
+            type="number"
+            labelPlacement="stacked"
+            min="1"
+            max="100"
+            [value]="patternCount()"
+            (ionChange)="patternCount.set(parseCount($event.detail.value))"
+            [label]="'condominium.massive.countLabel' | transloco"
+          />
+        </ion-item>
+      </div>
+    }
+
+    @if (mode() === 'custom') {
+      <p class="text-secondary mode-description">
+        {{ "condominium.massive.customDescription" | transloco }}
+      </p>
+
+      <div class="custom-section">
+        <ion-item>
+          <ion-textarea
+            labelPlacement="stacked"
+            autoGrow="true"
+            rows="6"
+            [value]="customInput()"
+            (ionChange)="customInput.set($event.detail.value ?? '')"
+            [label]="'condominium.massive.customPlaceholder' | transloco"
+          />
+        </ion-item>
+      </div>
+    }
+
+    @if (preview().length > 0) {
+      <div class="preview-section">
+        <ion-label class="preview-label">
+          {{ "condominium.massive.previewLabel" | transloco }}
+          <span class="preview-count">({{ preview().length }})</span>
+        </ion-label>
+
+        <div class="preview-list">
+          @for (name of preview().slice(0, 20); track name) {
+            <ion-chip>
+              <ion-label>{{ name }}</ion-label>
+            </ion-chip>
+          }
+          @if (preview().length > 20) {
+            <ion-chip color="medium">
+              <ion-label>
+                {{ "condominium.massive.andMore" | transloco: { count: preview().length - 20 } }}
+              </ion-label>
+            </ion-chip>
+          }
+        </div>
+      </div>
+    }
+
+    @if (preview().length === 0 && mode() === 'custom') {
+      <p class="text-secondary ion-text-center">
+        {{ "condominium.massive.customHint" | transloco }}
+      </p>
+    }
+  </div>
+}
+
+@if (!showingGenerator()) {
+  <div class="result-section">
+    <ion-button fill="outline" expand="block" (click)="showingGenerator.set(true)">
+      <ion-icon name="add-circle-outline" slot="start" />
+      {{ "condominium.massive.addMore" | transloco }}
+    </ion-button>
+
+    <app-structures-list
+      (addStructure)="openAddStructureModal()"
+      (selectStructure)="editStructure($event)"
+    />
+  </div>
+}
+
+<ion-modal
+  [isOpen]="isOpenAddStructureModal()"
+  (ionModalDidDismiss)="closeAddStructureModal()"
+  (didDismiss)="clearSelectedStructure()"
+  [backdropDismiss]="false"
+>
+  <ng-template>
+    <ion-header>
+      <ion-toolbar>
+        <ion-title>{{ "condominium.createStructure.title" | transloco }}</ion-title>
+        <ion-buttons slot="end">
+          <ion-button fill="clear" color="secondary" (click)="closeAddStructureModal()">
+            {{ "common.cancel" | transloco }}
+          </ion-button>
+        </ion-buttons>
+      </ion-toolbar>
+    </ion-header>
+
+    <ion-content class="ion-padding">
+      <p class="text-secondary structure-modal-description ion-padding-bottom">
+        {{ "condominium.createStructure.description" | transloco }}
+      </p>
+      <app-add-structure-form />
+    </ion-content>
+    <ion-footer>
+      <ion-toolbar>
+        <ion-buttons slot="end">
+          <ion-button fill="solid" color="primary" (click)="submitAddStructureForm()">
+            {{ "common.save" | transloco }}
+          </ion-button>
+        </ion-buttons>
+      </ion-toolbar>
+    </ion-footer>
+  </ng-template>
+</ion-modal>

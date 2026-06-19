@@ -106,6 +106,24 @@
       "massiveCreationDescription": "Define reglas de nomenclatura y genera múltiples torres y propiedades en pocos pasos. La opción más rápida para grandes comlejos.",
       "aiAssistantCreation": "Asistente IA",
       "aiAssistantCreationDescription": "Conversa con nuestra IA para describir tu condominio y deja que nosotros configuremos la estructura por ti. Perfecto para quienes prefieren un enfoque guiado e inteligente."
+    },
+    "massive": {
+      "title": "Creación masiva de estructuras",
+      "description": "Define un patrón de nombres o ingresa nombres personalizados para generar múltiples estructuras a la vez.",
+      "patternTab": "Patrón",
+      "patternDescription": "Elige un prefijo (ej. Torre), el tipo de numeración (letras o números) y un sufijo opcional. El sistema generará automáticamente los nombres combinando las partes.",
+      "customTab": "Personalizado",
+      "customDescription": "Escribe los nombres exactos que quieras, uno por línea. Ideal cuando las estructuras no siguen un patrón definido.",
+      "customHint": "Escribe al menos un nombre para continuar",
+      "emptyPreview": "Configura un patrón o ingresa nombres antes de continuar",
+      "addMore": "Agregar más estructuras",
+      "prefixLabel": "Prefijo",
+      "enumeratorLabel": "Numeración",
+      "suffixLabel": "Sufijo",
+      "countLabel": "Cantidad de estructuras",
+      "customPlaceholder": "Ingresa un nombre por línea\nEjemplo:\nMaría Paulina\nMaría Carolina\nMaría José",
+      "previewLabel": "Vista previa",
+      "andMore": "y {{count}} más..."
     }
   },
   "validation": {
