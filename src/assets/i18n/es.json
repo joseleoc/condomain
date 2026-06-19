@@ -123,6 +123,7 @@
       "customDescription": "Ingresa los nombres exactos que deseas, uno por línea. Ideal cuando las estructuras no siguen un patrón definido.",
       "customHint": "Ingresa al menos un nombre para continuar",
       "emptyPreview": "Configura un patrón o ingresa nombres antes de continuar",
+      "addSingleStructure": "Agregar estructura individual",
       "addMore": "Agregar más estructuras",
       "prefixLabel": "Texto del prefijo",
       "prefixPlaceholder": "Ej: Torre ",
@@ -172,6 +173,8 @@
       "previewLabel": "Vista previa",
       "previewHelp": "Así se verán los nombres de las propiedades al generarse.",
       "emptyPreview": "Configura un patrón antes de continuar",
+      "addSingleProperty": "Agregar propiedad individual",
+      "editProperty": "Editar propiedad",
       "addMore": "Agregar más propiedades",
       "reviewDescription": "Revisa, edita o elimina las propiedades generadas. Toca una propiedad para editar sus detalles.",
       "andMore": "y {{count}} más..."

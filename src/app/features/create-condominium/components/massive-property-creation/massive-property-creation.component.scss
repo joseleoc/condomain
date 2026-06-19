@@ -114,6 +114,16 @@
   gap: 16px;
 }
 
+.result-actions {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+
+  ion-button {
+    flex: 1;
+  }
+}
+
 .review-description {
   font-size: 0.8rem;
   color: var(--ion-color-medium);

@@ -123,6 +123,7 @@
       "customDescription": "Enter the exact names you want, one per line. Ideal when structures don't follow a defined pattern.",
       "customHint": "Enter at least one name to continue",
       "emptyPreview": "Set up a pattern or enter names before continuing",
+      "addSingleStructure": "Add single structure",
       "addMore": "Add more structures",
       "prefixLabel": "Prefix text",
       "prefixPlaceholder": "e.g. Tower ",
@@ -172,6 +173,8 @@
       "previewLabel": "Preview",
       "previewHelp": "This is how the property names will look when generated.",
       "emptyPreview": "Set up a pattern before continuing",
+      "addSingleProperty": "Add single property",
+      "editProperty": "Edit property",
       "addMore": "Add more properties",
       "reviewDescription": "Review, edit or delete the generated properties. Tap a property to edit its details.",
       "andMore": "and {{count}} more..."

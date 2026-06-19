@@ -76,6 +76,7 @@ export class MassivePropertyCreationComponent implements OnInit, OnDestroy {
   createPropertyFormComponent = viewChild(CreatePropertyFormComponent);
 
   isEditModalOpen = signal(false);
+  isAdding = signal(false);
 
   digits = signal(2);
   countPerStructure = signal(2);
@@ -313,7 +314,14 @@ export class MassivePropertyCreationComponent implements OnInit, OnDestroy {
   }
 
   editProperty(property: PropertyWithStructure): void {
+    this.isAdding.set(false);
     this.wizardService.selectedProperty.set(property);
+    this.isEditModalOpen.set(true);
+  }
+
+  openAddPropertyModal(): void {
+    this.isAdding.set(true);
+    this.wizardService.selectedProperty.set(null);
     this.isEditModalOpen.set(true);
   }
 
@@ -325,10 +333,20 @@ export class MassivePropertyCreationComponent implements OnInit, OnDestroy {
   handleSaveProperty(): void {
     const formData = this.createPropertyFormComponent()?.submit();
     if (formData) {
-      this.wizardService.editPropertyInStructure({
-        ...formData,
-        structureName: formData.structure,
-      });
+      if (this.isAdding()) {
+        this.wizardService.addPropertyToStructure(formData.structure, {
+          number: formData.number,
+          fee: formData.fee,
+          structure: formData.structure,
+          ownerName: formData.ownerName,
+          ownerEmail: formData.ownerEmail,
+        });
+      } else {
+        this.wizardService.editPropertyInStructure({
+          ...formData,
+          structureName: formData.structure,
+        });
+      }
       this.closeEditModal();
     }
   }

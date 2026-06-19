@@ -127,6 +127,16 @@
   gap: 16px;
 }
 
+.result-actions {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+
+  ion-button {
+    flex: 1;
+  }
+}
+
 @media (min-width: 600px) {
   .generator-section {
     gap: 1.25rem;

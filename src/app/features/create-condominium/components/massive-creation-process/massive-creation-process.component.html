@@ -158,14 +158,22 @@
 
 @if (!showingGenerator()) {
   <div class="result-section">
-    <ion-button fill="outline" expand="block" (click)="showingGenerator.set(true)">
-      <ion-icon name="add-circle-outline" slot="start" />
-      {{ "condominium.massive.addMore" | transloco }}
-    </ion-button>
+    <div class="result-actions">
+      <ion-button fill="outline" (click)="openAddStructureModal()">
+        <ion-icon name="add" slot="start" />
+        {{ "condominium.massive.addSingleStructure" | transloco }}
+      </ion-button>
+
+      <ion-button fill="outline" (click)="showingGenerator.set(true)">
+        <ion-icon name="add-circle-outline" slot="start" />
+        {{ "condominium.massive.addMore" | transloco }}
+      </ion-button>
+    </div>
 
     <app-structures-list
       (addStructure)="openAddStructureModal()"
       (selectStructure)="editStructure($event)"
+      [showButton]="false"
     />
   </div>
 }

@@ -1,4 +1,4 @@
-import { Component, computed, inject, output } from '@angular/core';
+import { Component, computed, inject, input, output } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { TranslocoPipe, TranslocoService } from '@jsverse/transloco';
 import { AlertController } from '@ionic/angular/standalone';
@@ -23,6 +23,8 @@ export class StructuresListComponent {
   private alertController = inject(AlertController);
   private translocoService = inject(TranslocoService);
 
+  // --- Inputs ---
+  showButton = input(true);
   // --- Outputs ---
   addStructure = output<void>();
   selectStructure = output<LocalStructure>();

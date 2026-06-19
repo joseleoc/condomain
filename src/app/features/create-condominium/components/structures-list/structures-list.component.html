@@ -4,21 +4,23 @@
     <p>{{ "condominium.structuresList.description" | transloco }}</p>
   </div>
 
-  <ion-button fill="outline" expand="block" (click)="addStructure.emit()">
-    <ion-icon name="add" slot="start"></ion-icon>
-    {{ "condominium.createStructure.addNewStructure" | transloco }}
-  </ion-button>
+  @if (showButton()) {
+    <ion-button fill="outline" expand="block" (click)="addStructure.emit()">
+      <ion-icon name="add" slot="start"></ion-icon>
+      {{ "condominium.createStructure.addNewStructure" | transloco }}
+    </ion-button>
+  }
 
   <ion-list class="structures-list">
     @for (structure of structures(); track structure.name) {
-      <ion-item (click)="emitSelectStructure(structure)" class="pointer" >
+      <ion-item (click)="emitSelectStructure(structure)" class="pointer">
         <ion-icon name="business-outline" slot="start" />
         <span class="structure-name">
           {{ structure.name }}
         </span>
         <ion-button
           fill="clear"
-          (click)="deleteStructure($event,structure.name)"
+          (click)="deleteStructure($event, structure.name)"
           slot="end"
         >
           <ion-icon name="trash-outline" color="danger" size="small" />

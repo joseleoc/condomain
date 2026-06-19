@@ -140,15 +140,22 @@
 }
 
 @if (!showingGenerator()) {
-  <div class="result-section">
+    <div class="result-section">
     <p class="review-description">
       {{ "condominium.massiveProperty.reviewDescription" | transloco }}
     </p>
 
-    <ion-button fill="outline" expand="block" (click)="showingGenerator.set(true)">
-      <ion-icon name="add-circle-outline" slot="start" />
-      {{ "condominium.massiveProperty.addMore" | transloco }}
-    </ion-button>
+    <div class="result-actions">
+      <ion-button fill="outline" (click)="openAddPropertyModal()">
+        <ion-icon name="add" slot="start" />
+        {{ "condominium.massiveProperty.addSingleProperty" | transloco }}
+      </ion-button>
+
+      <ion-button fill="outline" (click)="showingGenerator.set(true)">
+        <ion-icon name="add-circle-outline" slot="start" />
+        {{ "condominium.massiveProperty.addMore" | transloco }}
+      </ion-button>
+    </div>
 
     <app-structures-properties-accordion
       [structureSelected]="firstStructureName()"
@@ -165,7 +172,7 @@
   <ng-template>
     <ion-header>
       <ion-toolbar>
-        <ion-title>{{ "condominium.createProperty.createProperty" | transloco }}</ion-title>
+        <ion-title>{{ (isAdding() ? 'condominium.massiveProperty.addSingleProperty' : 'condominium.createProperty.editProperty') | transloco }}</ion-title>
         <ion-buttons slot="end">
           <ion-button fill="clear" color="secondary" (click)="closeEditModal()">
             {{ "common.cancel" | transloco }}
