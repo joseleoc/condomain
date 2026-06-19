@@ -152,6 +152,7 @@
       "previewHelp": "Así se verán los nombres de las propiedades al generarse.",
       "emptyPreview": "Configura un patrón antes de continuar",
       "addMore": "Agregar más propiedades",
+      "reviewDescription": "Revisa, edita o elimina las propiedades generadas. Toca una propiedad para editar sus detalles.",
       "andMore": "y {{count}} más..."
     }
   },

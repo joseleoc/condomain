@@ -152,6 +152,7 @@
       "previewHelp": "This is how the property names will look when generated.",
       "emptyPreview": "Set up a pattern before continuing",
       "addMore": "Add more properties",
+      "reviewDescription": "Review, edit or delete the generated properties. Tap a property to edit its details.",
       "andMore": "and {{count}} more..."
     }
   },

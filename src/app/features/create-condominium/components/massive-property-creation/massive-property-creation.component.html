@@ -109,11 +109,53 @@
 
 @if (!showingGenerator()) {
   <div class="result-section">
+    <p class="review-description">
+      {{ "condominium.massiveProperty.reviewDescription" | transloco }}
+    </p>
+
     <ion-button fill="outline" expand="block" (click)="showingGenerator.set(true)">
       <ion-icon name="add-circle-outline" slot="start" />
       {{ "condominium.massiveProperty.addMore" | transloco }}
     </ion-button>
 
-    <app-structures-properties-accordion />
+    <app-structures-properties-accordion
+      [structureSelected]="firstStructureName()"
+      (selectProperty)="editProperty($event)"
+    />
   </div>
 }
+
+<ion-modal
+  [isOpen]="isEditModalOpen()"
+  (ionModalDidDismiss)="closeEditModal()"
+  [backdropDismiss]="false"
+>
+  <ng-template>
+    <ion-header>
+      <ion-toolbar>
+        <ion-title>{{ "condominium.createProperty.createProperty" | transloco }}</ion-title>
+        <ion-buttons slot="end">
+          <ion-button fill="clear" color="secondary" (click)="closeEditModal()">
+            {{ "common.cancel" | transloco }}
+          </ion-button>
+        </ion-buttons>
+      </ion-toolbar>
+    </ion-header>
+
+    <ion-content class="ion-padding">
+      <p class="text-secondary structure-modal-description ion-padding-bottom">
+        {{ "condominium.createProperty.description" | transloco }}
+      </p>
+      <app-create-property-form [showButton]="false" />
+    </ion-content>
+    <ion-footer>
+      <ion-toolbar>
+        <ion-buttons slot="end">
+          <ion-button fill="solid" color="primary" (click)="handleSaveProperty()">
+            {{ "common.save" | transloco }}
+          </ion-button>
+        </ion-buttons>
+      </ion-toolbar>
+    </ion-footer>
+  </ng-template>
+</ion-modal>

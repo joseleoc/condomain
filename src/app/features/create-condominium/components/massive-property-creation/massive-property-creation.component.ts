@@ -5,7 +5,9 @@ import {
   OnDestroy,
   OnInit,
   signal,
+  viewChild,
 } from '@angular/core';
+import { toSignal } from '@angular/core/rxjs-interop';
 import { FormsModule } from '@angular/forms';
 import {
   IonInput,
@@ -14,14 +16,23 @@ import {
   IonChip,
   IonButton,
   IonItem,
+  IonHeader,
+  IonModal,
+  IonToolbar,
+  IonTitle,
+  IonButtons,
+  IonContent,
+  IonFooter,
 } from '@ionic/angular/standalone';
 import { TranslocoPipe, TranslocoService } from '@jsverse/transloco';
 import { Subscription } from 'rxjs';
 import { Wizard } from '../../services/wizard/wizard';
+import { CreatePropertyFormComponent } from '../create-property-form/create-property-form.component';
 import { StructuresPropertiesAccordionComponent } from '../structures-properties-accordion/structures-properties-accordion.component';
 import { PropertyPatternBuilderComponent, PatternPart } from '../property-pattern-builder/property-pattern-builder.component';
 import { PropertyPreviewComponent } from '../property-preview/property-preview.component';
 import { Toast } from '@core/services/toast/toast';
+import { PropertyWithStructure } from '@features/create-condominium/create-condominium.types';
 
 interface PropertyPreviewGroup {
   structureName: string;
@@ -42,7 +53,15 @@ interface PropertyPreviewGroup {
     IonChip,
     IonButton,
     IonItem,
+    IonHeader,
+    IonModal,
+    IonToolbar,
+    IonTitle,
+    IonButtons,
+    IonContent,
+    IonFooter,
     TranslocoPipe,
+    CreatePropertyFormComponent,
     StructuresPropertiesAccordionComponent,
     PropertyPatternBuilderComponent,
     PropertyPreviewComponent,
@@ -53,6 +72,10 @@ export class MassivePropertyCreationComponent implements OnInit, OnDestroy {
   private toast = inject(Toast);
   private translocoService = inject(TranslocoService);
   private nextSubscription!: Subscription;
+
+  createPropertyFormComponent = viewChild(CreatePropertyFormComponent);
+
+  isEditModalOpen = signal(false);
 
   digits = signal(2);
   countPerStructure = signal(2);
@@ -99,7 +122,8 @@ export class MassivePropertyCreationComponent implements OnInit, OnDestroy {
     return count > 0 ? Math.floor(100 / count) : 100;
   });
 
-  structures = computed(() => this.wizardService.structures$.getValue());
+  structures = toSignal(this.wizardService.structures$, { initialValue: [] });
+  firstStructureName = computed(() => this.structures()[0]?.name ?? null);
   showingGenerator = signal(true);
 
   preview = computed(() => {
@@ -263,5 +287,26 @@ export class MassivePropertyCreationComponent implements OnInit, OnDestroy {
 
   handleDecrementStartAt(): void {
     this.startAt.update((v) => Math.max(1, v - 1));
+  }
+
+  editProperty(property: PropertyWithStructure): void {
+    this.wizardService.selectedProperty.set(property);
+    this.isEditModalOpen.set(true);
+  }
+
+  closeEditModal(): void {
+    this.isEditModalOpen.set(false);
+    this.wizardService.selectedProperty.set(null);
+  }
+
+  handleSaveProperty(): void {
+    const formData = this.createPropertyFormComponent()?.submit();
+    if (formData) {
+      this.wizardService.editPropertyInStructure({
+        ...formData,
+        structureName: formData.structure,
+      });
+      this.closeEditModal();
+    }
   }
 }
