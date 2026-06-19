@@ -60,17 +60,13 @@ p {
 
 ion-modal {
   --border-radius: 12px;
-  --width: fit-content;
   --min-width: 280px;
   --max-width: 90vw;
-  --height: auto;
-  --max-height: 85vh;
 }
 
 @media (min-width: 600px) {
   ion-modal {
     --max-width: 28rem;
-    --max-height: 80vh;
   }
 }
 

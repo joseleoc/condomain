@@ -149,3 +149,16 @@
     margin: 0 auto;
   }
 }
+
+.structure-modal-description {
+  width: 100%;
+  max-width: 25rem;
+  text-align: center;
+  margin: auto;
+}
+
+@media (min-width: 600px) {
+  .structure-modal-description {
+    max-width: 30rem;
+  }
+}
