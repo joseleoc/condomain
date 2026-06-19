@@ -130,6 +130,17 @@ export class CreateCondominiumFormComponent {
 
       reader.readAsArrayBuffer(file);
     });
+
+    effect(() => {
+      const values = this.defaultValues();
+      if (values) {
+        this.createCondominiumForm.patchValue({
+          name: values.name,
+          address: values.address,
+          currency: values.currency,
+        });
+      }
+    });
   }
 
   // --- Methods ---

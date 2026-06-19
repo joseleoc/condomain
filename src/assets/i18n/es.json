@@ -37,7 +37,11 @@
     "wizard": {
       "step1Description": "Crea un nuevo condominio",
       "step2Description": "Crear estrucuras",
-      "step3Description": "Crear las propiedades"
+      "step3Description": "Crear las propiedades",
+      "unsavedProgressTitle": "Proceso sin terminar",
+      "unsavedProgressMessage": "Tienes un proceso de creación de condominio sin terminar. ¿Deseas continuar donde lo dejaste o empezar de nuevo?",
+      "continueProgress": "Continuar",
+      "startFresh": "Empezar de nuevo"
     },
     "createForm": {
       "newCondominium": "Nuevo Condominio",
