@@ -5,3 +5,10 @@ export type CreateCondominiumData = Required<Pick<Condominium, 'name' | 'owner_i
     /** Avatar file to store */
     avatar?: File | null;
   };
+
+export type UpdateCondominiumData = Partial<
+  Pick<Condominium, 'name' | 'address' | 'currency'>
+> & {
+  /** Avatar file to store */
+  avatar?: File | null;
+};

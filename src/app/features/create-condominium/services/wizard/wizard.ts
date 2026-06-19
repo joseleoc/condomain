@@ -2,13 +2,17 @@ import { computed, inject, Injectable, signal } from '@angular/core';
 import { Condominium } from '@core/services/condominium/condominium';
 import { TranslocoService } from '@jsverse/transloco';
 import { Condominium as TCondominium } from '@app-types/condominium';
-import { CreateCondominiumData } from '@core/services/condominium/condominium.types';
+import {
+  CreateCondominiumData,
+  UpdateCondominiumData,
+} from '@core/services/condominium/condominium.types';
 import { MAX_STEPS } from '@features/create-condominium/create-condominium.constants';
 import { Location } from '@angular/common';
 import { BehaviorSubject, Subject } from 'rxjs';
 import { Toast } from '@core/services/toast/toast';
 import { AlertController } from '@ionic/angular/standalone';
 import {
+  CreateCondominiumProcessOptions,
   CreatePropertyFormData,
   LocalStructure,
   PropertyWithStructure,
@@ -16,6 +20,15 @@ import {
 import { Structures } from '@core/services/structures/structures';
 import { Properties } from '@core/services/properties/properties';
 import { Router } from '@angular/router';
+
+interface WizardStorage {
+  step: number;
+  createdCondominium: TCondominium | null;
+  structures: LocalStructure[];
+  creationProcessSelected: CreateCondominiumProcessOptions | null;
+}
+
+const STORAGE_KEY = 'condomain_wizard_state';
 
 @Injectable({
   providedIn: 'root',
@@ -34,63 +47,86 @@ export class Wizard {
   // --- Private Properties ---
   private nextStepSource = new Subject<number>();
   private backStepSource = new Subject<number>();
+  private _step = signal(1);
+  private savedWizardData: WizardStorage | null = null;
 
   // --- Properties ---
   nextStep$ = this.nextStepSource.asObservable();
   backStep$ = this.backStepSource.asObservable();
 
-  step = signal(3);
+  readonly step = this._step.asReadonly();
   loading = signal(false);
   createdCondominium = signal<TCondominium | null>(null);
   updatedFileAvatar = signal<File | null>(null);
   progressPercentage = computed(() => this.step() / MAX_STEPS);
   buttonLabel = signal('common.next');
   backLabel = signal('common.back');
+  creationProcessSelected = signal<CreateCondominiumProcessOptions | null>(null);
 
-  structures$ = new BehaviorSubject<LocalStructure[]>([
-    {
-      name: 'Estructura 1',
-      description: 'Descripción de la estructura 1',
-      properties: [
-        {
-          number: 'Propiedad 1',
-          fee: 1,
-          structure: 'Estructura 1',
-          ownerName: 'Juan Pérez',
-          ownerEmail: 'juan.perez@example.com',
-        },
-        {
-          number: 'Propiedad 2',
-          fee: 2,
-          structure: 'Estructura 1',
-          ownerName: 'Juan Pérez',
-          ownerEmail: 'juan.perez@example.com',
-        },
-        {
-          number: 'Propiedad 3',
-          fee: 3,
-          structure: 'Estructura 1',
-          ownerName: 'Juan Pérez',
-          ownerEmail: 'juan.perez@example.com',
-        },
-      ],
-    },
-    {
-      name: 'Estructura 2',
-      description: 'Descripción de la estructura 2',
-      properties: [],
-    },
-    {
-      name: 'Estructura 3',
-      description: 'Descripción de la estructura 3',
-      properties: [],
-    },
-  ]);
+  structures$ = new BehaviorSubject<LocalStructure[]>([]);
 
   selectedStructure = signal<LocalStructure | null>(null);
   selectedProperty = signal<PropertyWithStructure | null>(null);
 
+  constructor() {
+    this.savedWizardData = this.readFromStorage();
+  }
+
+  // --- Storage Methods ---
+
+  hasSavedWizard(): boolean {
+    return this.savedWizardData != null;
+  }
+
+  restoreFromStorage(): boolean {
+    if (!this.savedWizardData) return false;
+    this._step.set(this.savedWizardData.step);
+    this.createdCondominium.set(this.savedWizardData.createdCondominium);
+    this.structures$.next(this.savedWizardData.structures);
+    this.creationProcessSelected.set(this.savedWizardData.creationProcessSelected);
+    this.savedWizardData = null;
+    return true;
+  }
+
+  clearStorage(): void {
+    localStorage.removeItem(STORAGE_KEY);
+    this.savedWizardData = null;
+  }
+
+  private readFromStorage(): WizardStorage | null {
+    const raw = localStorage.getItem(STORAGE_KEY);
+    if (!raw) return null;
+    try {
+      const data: WizardStorage = JSON.parse(raw);
+      if (data.createdCondominium == null && data.structures.length === 0) {
+        return null;
+      }
+      return data;
+    } catch {
+      return null;
+    }
+  }
+
+  private saveToStorage(): void {
+    try {
+      const data: WizardStorage = {
+        step: this._step(),
+        createdCondominium: this.createdCondominium(),
+        structures: this.structures$.getValue(),
+        creationProcessSelected: this.creationProcessSelected(),
+      };
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
+    } catch {
+      // Silently fail — storage might be full or unavailable
+    }
+  }
+
   // --- Methods ---
+
+  setStep(value: number): void {
+    this._step.set(value);
+    this.saveToStorage();
+  }
 
   async createCondominium(data: CreateCondominiumData) {
     try {
@@ -99,6 +135,7 @@ export class Wizard {
       if (res) {
         this.createdCondominium.set(res);
         this.updatedFileAvatar.set(data.avatar || null);
+        this.saveToStorage();
       }
     } catch (error) {
       this.toast.present({
@@ -112,8 +149,32 @@ export class Wizard {
     }
   }
 
+  async updateCondominium(id: string, data: UpdateCondominiumData) {
+    try {
+      this.loading.set(true);
+      const res = await this.condominiumService.updateCondominium(id, data);
+      if (res) {
+        this.createdCondominium.set(res);
+        if (data.avatar) {
+          this.updatedFileAvatar.set(data.avatar);
+        }
+        this.saveToStorage();
+      }
+      return res;
+    } catch (error) {
+      this.toast.present({
+        message: this.translocoService.translate(
+          'condominium.createForm.createError',
+        ),
+      });
+      throw error;
+    } finally {
+      this.loading.set(false);
+    }
+  }
+
   /**
-   * Sends the local structures to the backend to create them in the database. After successful creation, it should clear the local structures and show a success message. If there's an error during creation, it should show an error message.
+   * Sends the local structures to the backend to create them in the database.
    */
   async createStructuresAndProperties() {
     try {
@@ -171,7 +232,6 @@ export class Wizard {
     const currentStructures = this.structures$.getValue();
     const structuresToSave = [...currentStructures];
 
-    // If there is not a selected structure, we are creating a new one, so we need to check if the name already exists
     if (this.selectedStructure() == null) {
       if (currentStructures.some((s) => s.name === structure.name)) {
         this.toast.present({
@@ -183,9 +243,7 @@ export class Wizard {
         });
         return false;
       }
-    }
-    // If there is a selected structure, we are editing/updating it
-    else {
+    } else {
       const selected = this.selectedStructure();
       const foundStructureIndex = this.structures$
         .getValue()
@@ -198,6 +256,7 @@ export class Wizard {
     structuresToSave.push(structure);
     structuresToSave.sort((a, b) => a.name.localeCompare(b.name));
     this.structures$.next(structuresToSave);
+    this.saveToStorage();
     return true;
   }
 
@@ -262,6 +321,7 @@ export class Wizard {
     updatedStructures[structureIndex] = updatedStructure;
 
     this.structures$.next(updatedStructures);
+    this.saveToStorage();
     return true;
   }
 
@@ -282,7 +342,6 @@ export class Wizard {
       (p) => p.number === property.number,
     );
 
-    // In case we want to move a property to another structure and there is already a property with the same number in the target structure, we show an error message and do not allow the move
     if (targetIndex != -1 && currentStructure !== targetStructure) {
       this.toast.present({
         message: this.translocoService.translate(
@@ -292,14 +351,12 @@ export class Wizard {
         dismissButton: true,
         duration: 5000,
       });
-
       return;
     }
 
     if (
       targetIndex &&
       targetIndex != -1 &&
-      // If is different that itself
       targetStructure?.properties[targetIndex].number !==
         this.selectedProperty()!.number &&
       currentStructure === targetStructure
@@ -312,7 +369,6 @@ export class Wizard {
         dismissButton: true,
         duration: 5000,
       });
-
       return;
     }
 
@@ -331,25 +387,25 @@ export class Wizard {
     this.structures$.next(Array.from(currentStructures.values()));
     this.selectedStructure.set(targetStructure || null);
     this.selectedProperty.set(null);
+    this.saveToStorage();
   }
 
-  /** Trigger the next step in the wizard, the event occurs when the user clicks on the footer button */
   triggerNextStep() {
     if (!this.loading()) {
-      this.nextStepSource.next(this.step());
+      this.nextStepSource.next(this._step());
     }
   }
 
-  /** Trigger the back step in the wizard, the event occurs when the user clicks on the footer button */
   triggerBackStep() {
     if (!this.loading()) {
-      this.backStepSource.next(this.step());
+      this.backStepSource.next(this._step());
     }
   }
 
   goBack() {
-    if (this.step() > 1) {
-      this.step.update((value) => value - 1);
+    if (this._step() > 1) {
+      this._step.update((value) => value - 1);
+      this.saveToStorage();
       return;
     }
     this.location.back();
@@ -369,6 +425,7 @@ export class Wizard {
 
     structure.properties.splice(propertyIndex, 1);
     this.structures$.next(Array.from(currentStructures.values()));
+    this.saveToStorage();
   }
 
   // --- Private Methods ---
@@ -442,6 +499,7 @@ export class Wizard {
       await this.uploadPropertiesToBackend(updatedStructures);
 
       this.structures$.next([]);
+      this.clearStorage();
       this.toast.present({
         message: this.translocoService.translate('condominium.creationSuccess'),
         color: 'success',

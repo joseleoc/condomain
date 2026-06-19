@@ -5,7 +5,10 @@ import {
   type Condominium as TCondominium,
 } from '@app-types/condominium';
 import { BehaviorSubject } from 'rxjs';
-import { type CreateCondominiumData } from './condominium.types';
+import {
+  type CreateCondominiumData,
+  type UpdateCondominiumData,
+} from './condominium.types';
 import { PaginatedRequest } from '@app-types/general';
 import { Profile } from '../profile/profile';
 import { Roles } from '../roles/roles';
@@ -102,6 +105,51 @@ export class Condominium {
       return data;
     } catch (error) {
       console.error('Error creating condominium:', error);
+      throw error;
+    }
+  }
+
+  async updateCondominium(
+    id: string,
+    values: UpdateCondominiumData,
+  ): Promise<TCondominium> {
+    try {
+      const valuesToUpdate: Record<string, unknown> = {
+        ...values,
+        updated_at: new Date().toISOString(),
+      };
+      delete valuesToUpdate['avatar'];
+
+      if (values.avatar != null) {
+        const avatarFilePath = await this.condominiumAvatarService.uploadAvatar(
+          values.avatar,
+        );
+        if (avatarFilePath) valuesToUpdate['avatar'] = avatarFilePath;
+      }
+
+      const { data, error } = await this.client
+        .from('condominiums')
+        .update(valuesToUpdate)
+        .eq('id', id)
+        .select()
+        .limit(1)
+        .single();
+
+      if (error) throw error;
+
+      const currentActive = this.activeCondominium$.getValue();
+      if (currentActive?.id === id) {
+        this.activeCondominium$.next({ ...currentActive, ...data });
+      }
+
+      const currentUserCondos = this.userCondominiums$.getValue();
+      this.userCondominiums$.next(
+        currentUserCondos.map((c) => (c.id === id ? { ...c, ...data } : c)),
+      );
+
+      return data;
+    } catch (error) {
+      console.error('Error updating condominium:', error);
       throw error;
     }
   }

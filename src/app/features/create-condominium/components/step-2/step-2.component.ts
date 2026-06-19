@@ -1,4 +1,4 @@
-import { Component, inject, OnDestroy, OnInit, signal } from '@angular/core';
+import { Component, inject, OnDestroy, OnInit } from '@angular/core';
 import { CreationProcessSelectorComponent } from '../creation-process-selector/creation-process-selector.component';
 import { CreateCondominiumProcessOptions } from '@features/create-condominium/create-condominium.types';
 import { SimpleCreationProcessComponent } from '../simple-creation-process/simple-creation-process.component';
@@ -29,9 +29,7 @@ export class Step2Component implements OnInit, OnDestroy {
   // --- Properties ---
   private nextSubscription!: Subscription;
   private showMinStructuresToast = false;
-  creationProcessSelected = signal<CreateCondominiumProcessOptions | null>(
-    null,
-  );
+  creationProcessSelected = this.wizardService.creationProcessSelected;
 
   // --- Lifecycle Hooks ---
   ngOnInit() {
@@ -39,10 +37,9 @@ export class Step2Component implements OnInit, OnDestroy {
       async (currentStep) => {
         const structures = this.wizardService.structures$.getValue();
         if (structures.length > 0 && this.creationProcessSelected() != null) {
-          this.wizardService.step.set(3);
+          this.wizardService.setStep(3);
         } else {
           if (!this.showMinStructuresToast) {
-            // Prevents showing the toast when we first enter the step, since at that moment there are no structures but we don't want to show the toast until the user tries to go to the next step without adding any structure
             this.showMinStructuresToast = true;
             return;
           }

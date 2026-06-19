@@ -37,7 +37,11 @@
     "wizard": {
       "step1Description": "Create a new condominium",
       "step2Description": "Create the structures",
-      "step3Description": "Create the properties"
+      "step3Description": "Create the properties",
+      "unsavedProgressTitle": "Unfinished process",
+      "unsavedProgressMessage": "You have an unfinished condominium creation process. Do you want to continue where you left off or start fresh?",
+      "continueProgress": "Continue",
+      "startFresh": "Start fresh"
     },
     "createForm": {
       "newCondominium": "New Condominium",
