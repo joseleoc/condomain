@@ -14,43 +14,75 @@
         [includeFirstWord]="includeFirstWord()"
         [includeShort]="includeShort()"
         [includeFirstLetter]="includeFirstLetter()"
+        [includeLastLetter]="includeLastLetter()"
+        [includeCustom]="includeCustom()"
         [includeNum]="includeNum()"
         [includeLetter]="includeLetter()"
         [customSeparator]="customSeparator()"
         [displayPattern]="displayPattern()"
+        [prefix]="prefix()"
+        [suffix]="suffix()"
+        [customWord]="customWord()"
+        [selectedParts]="patternOrder()"
         (togglePart)="togglePart($event)"
         (separatorChange)="customSeparator.set($event)"
+        (prefixChange)="prefix.set($event)"
+        (suffixChange)="suffix.set($event)"
+        (customWordChange)="customWord.set($event)"
       />
     </div>
 
     <div class="pattern-config-row">
-      <div class="config-chip-group">
-        <span class="config-label-inline">
-          {{ "condominium.massiveProperty.digitsLabel" | transloco }}
-        </span>
-        <div class="chip-row">
-          <ion-chip [outline]="digits() !== 1" color="primary" (click)="handleDigitsChange(1)">1</ion-chip>
-          <ion-chip [outline]="digits() !== 2" color="primary" (click)="handleDigitsChange(2)">01</ion-chip>
-          <ion-chip [outline]="digits() !== 3" color="primary" (click)="handleDigitsChange(3)">001</ion-chip>
+      @if (includeNum()) {
+        <div class="config-chip-group">
+          <span class="config-label-inline">
+            {{ "condominium.massiveProperty.digitsLabel" | transloco }}
+          </span>
+          <div class="chip-row">
+            <ion-chip [outline]="digits() !== 1" color="primary" (click)="handleDigitsChange(1)">1</ion-chip>
+            <ion-chip [outline]="digits() !== 2" color="primary" (click)="handleDigitsChange(2)">01</ion-chip>
+            <ion-chip [outline]="digits() !== 3" color="primary" (click)="handleDigitsChange(3)">001</ion-chip>
+          </div>
         </div>
-      </div>
+      }
 
-      <div class="startat-group">
-        <span class="config-label-inline">
-          {{ "condominium.massiveProperty.startAtLabel" | transloco }}
-        </span>
-        <div class="startat-controls">
-          <ion-chip outline color="primary" (click)="handleDecrementStartAt()">
-            <ion-icon name="remove" />
-          </ion-chip>
-          <ion-item class="startat-input-item">
-            <ion-input type="number" min="1" [value]="startAt()" (ionChange)="handleStartAtChange($event.detail.value)" />
-          </ion-item>
-          <ion-chip outline color="primary" (click)="handleIncrementStartAt()">
-            <ion-icon name="add" />
-          </ion-chip>
+      @if (includeNum()) {
+        <div class="startat-group">
+          <span class="config-label-inline">
+            {{ "condominium.massiveProperty.startAtNumLabel" | transloco }}
+          </span>
+          <div class="startat-controls">
+            <ion-chip outline color="primary" (click)="handleDecrementStartAtNum()">
+              <ion-icon name="remove" />
+            </ion-chip>
+            <ion-item class="startat-input-item">
+              <ion-input type="number" min="1" [value]="startAtNum()" (ionChange)="handleStartAtNumChange($event.detail.value)" />
+            </ion-item>
+            <ion-chip outline color="primary" (click)="handleIncrementStartAtNum()">
+              <ion-icon name="add" />
+            </ion-chip>
+          </div>
         </div>
-      </div>
+      }
+
+      @if (includeLetter()) {
+        <div class="startat-group">
+          <span class="config-label-inline">
+            {{ "condominium.massiveProperty.startAtLetterLabel" | transloco }}
+          </span>
+          <div class="startat-controls">
+            <ion-chip outline color="primary" (click)="handleDecrementStartAtLetter()">
+              <ion-icon name="remove" />
+            </ion-chip>
+            <ion-item class="startat-input-item">
+              <ion-input type="number" min="1" [value]="startAtLetter()" (ionChange)="handleStartAtLetterChange($event.detail.value)" />
+            </ion-item>
+            <ion-chip outline color="primary" (click)="handleIncrementStartAtLetter()">
+              <ion-icon name="add" />
+            </ion-chip>
+          </div>
+        </div>
+      }
     </div>
 
     <div class="config-grid">
@@ -108,15 +140,22 @@
 }
 
 @if (!showingGenerator()) {
-  <div class="result-section">
+    <div class="result-section">
     <p class="review-description">
       {{ "condominium.massiveProperty.reviewDescription" | transloco }}
     </p>
 
-    <ion-button fill="outline" expand="block" (click)="showingGenerator.set(true)">
-      <ion-icon name="add-circle-outline" slot="start" />
-      {{ "condominium.massiveProperty.addMore" | transloco }}
-    </ion-button>
+    <div class="result-actions">
+      <ion-button fill="outline" (click)="openAddPropertyModal()">
+        <ion-icon name="add" slot="start" />
+        {{ "condominium.massiveProperty.addSingleProperty" | transloco }}
+      </ion-button>
+
+      <ion-button fill="outline" (click)="showingGenerator.set(true)">
+        <ion-icon name="add-circle-outline" slot="start" />
+        {{ "condominium.massiveProperty.addMore" | transloco }}
+      </ion-button>
+    </div>
 
     <app-structures-properties-accordion
       [structureSelected]="firstStructureName()"
@@ -133,7 +172,7 @@
   <ng-template>
     <ion-header>
       <ion-toolbar>
-        <ion-title>{{ "condominium.createProperty.createProperty" | transloco }}</ion-title>
+        <ion-title>{{ (isAdding() ? 'condominium.massiveProperty.addSingleProperty' : 'condominium.createProperty.editProperty') | transloco }}</ion-title>
         <ion-buttons slot="end">
           <ion-button fill="clear" color="secondary" (click)="closeEditModal()">
             {{ "common.cancel" | transloco }}

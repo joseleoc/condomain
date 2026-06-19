@@ -3,7 +3,7 @@
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  gap: 1rem;
+  gap: 1.25rem;
   text-align: center;
   margin: auto;
   width: 100%;
@@ -12,18 +12,49 @@
 
 .icon-halo {
   padding: 1rem;
-  background-color: var(--ion-color-secondary);
+  background-color: color-mix(in srgb, var(--ion-color-primary) 12%, transparent);
   border-radius: 50%;
-  width: 4rem;
-  height: 4rem;
+  width: 4.5rem;
+  height: 4.5rem;
   display: flex;
   align-items: center;
   justify-content: center;
 }
 
 .text-spacing {
-    display: flex;
-    flex-direction: column;
-    gap: 0.5rem;
-    
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+h4 {
+  margin: 0;
+  font-size: 1rem;
+  font-weight: 600;
+}
+
+p {
+  margin: 0;
+  font-size: 0.85rem;
+  color: var(--ion-color-medium);
+  line-height: 1.4;
+}
+
+ion-button {
+  margin-top: 8px;
+}
+
+@media (min-width: 600px) {
+  .icon-halo {
+    width: 5rem;
+    height: 5rem;
+  }
+
+  h4 {
+    font-size: 1.1rem;
+  }
+
+  p {
+    font-size: 0.9rem;
+  }
 }

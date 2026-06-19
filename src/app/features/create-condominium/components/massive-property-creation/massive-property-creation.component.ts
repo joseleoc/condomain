@@ -76,40 +76,39 @@ export class MassivePropertyCreationComponent implements OnInit, OnDestroy {
   createPropertyFormComponent = viewChild(CreatePropertyFormComponent);
 
   isEditModalOpen = signal(false);
+  isAdding = signal(false);
 
   digits = signal(2);
   countPerStructure = signal(2);
   fee = signal(0);
-  startAt = signal(1);
+  startAtNum = signal(1);
+  startAtLetter = signal(1);
   splitEqually = signal(false);
 
-  includeName = signal(false);
-  includeFirstWord = signal(false);
-  includeShort = signal(true);
-  includeFirstLetter = signal(false);
-  includeNum = signal(true);
-  includeLetter = signal(false);
+  patternOrder = signal<PatternPart[]>(['short', 'num']);
   customSeparator = signal('');
+  prefix = signal('');
+  suffix = signal('');
+  customWord = signal('');
+
+  includeName = computed(() => this.patternOrder().includes('name'));
+  includeFirstWord = computed(() => this.patternOrder().includes('firstword'));
+  includeShort = computed(() => this.patternOrder().includes('short'));
+  includeFirstLetter = computed(() => this.patternOrder().includes('firstletter'));
+  includeLastLetter = computed(() => this.patternOrder().includes('lastletter'));
+  includeCustom = computed(() => this.patternOrder().includes('custom'));
+  includeNum = computed(() => this.patternOrder().includes('num'));
+  includeLetter = computed(() => this.patternOrder().includes('letter'));
 
   nameTemplate = computed(() => {
-    const parts: string[] = [];
-    if (this.includeName()) parts.push('{name}');
-    if (this.includeFirstWord()) parts.push('{firstword}');
-    if (this.includeShort()) parts.push('{short}');
-    if (this.includeFirstLetter()) parts.push('{firstletter}');
-    if (this.includeNum()) parts.push('{num}');
-    if (this.includeLetter()) parts.push('{letter}');
-    return parts.join(this.customSeparator());
+    const parts = this.patternOrder().map((p) => `{${p}}`);
+    const joined = parts.join(this.customSeparator());
+    const p = this.prefix();
+    const s = this.suffix();
+    return (p ? p + this.customSeparator() : '') + joined + (s ? this.customSeparator() + s : '');
   });
 
-  hasPart = computed(() => ({
-    name: this.includeName(),
-    firstWord: this.includeFirstWord(),
-    short: this.includeShort(),
-    firstLetter: this.includeFirstLetter(),
-    num: this.includeNum(),
-    letter: this.includeLetter(),
-  }));
+  hasPattern = computed(() => this.patternOrder().length > 0);
 
   displayPattern = computed(() => {
     const structures = this.structures();
@@ -117,9 +116,18 @@ export class MassivePropertyCreationComponent implements OnInit, OnDestroy {
     return this.generateNames(name)[0] || '';
   });
 
+  existingTotalFee = computed(() => {
+    return this.structures().reduce((total, s) => {
+      return total + s.properties.reduce((sum, p) => sum + (p.fee || 0), 0);
+    }, 0);
+  });
+
+  remainingFee = computed(() => Math.max(0, 100 - this.existingTotalFee()));
+
   maxFee = computed(() => {
     const count = this.totalPropertyCount();
-    return count > 0 ? Math.floor(100 / count) : 100;
+    if (count === 0) return 100;
+    return Math.floor(this.remainingFee() / count);
   });
 
   structures = toSignal(this.wizardService.structures$, { initialValue: [] });
@@ -153,7 +161,7 @@ export class MassivePropertyCreationComponent implements OnInit, OnDestroy {
         const preview = this.preview();
         const total = preview.reduce((acc, g) => acc + g.names.length, 0);
 
-        if (total === 0) {
+        if (!this.hasPattern() || total === 0) {
           this.toast.present({
             message: this.translocoService.translate(
               'condominium.massiveProperty.emptyPreview',
@@ -190,12 +198,14 @@ export class MassivePropertyCreationComponent implements OnInit, OnDestroy {
     return this.structures().some((s) => s.properties.length > 0);
   }
 
-  private getParts(name: string): { firstWord: string; lastWord: string; firstLetter: string } {
+  private getParts(name: string): { firstWord: string; lastWord: string; firstLetter: string; lastLetter: string } {
     const words = name.trim().split(/\s+/);
+    const trimmed = name.trim();
     return {
       firstWord: words[0],
       lastWord: words.length > 1 ? words[words.length - 1] : name,
-      firstLetter: name.trim().charAt(0).toUpperCase(),
+      firstLetter: trimmed.charAt(0).toUpperCase(),
+      lastLetter: trimmed.charAt(trimmed.length - 1).toUpperCase(),
     };
   }
 
@@ -211,16 +221,17 @@ export class MassivePropertyCreationComponent implements OnInit, OnDestroy {
   }
 
   private formatEnum(index: number): { num: string; letter: string } {
-    const n = this.startAt() + index;
+    const n = this.startAtNum() + index;
+    const l = this.startAtLetter() + index;
     return {
       num: String(n).padStart(this.digits(), '0'),
-      letter: this.numberToLetters(n),
+      letter: this.numberToLetters(l),
     };
   }
 
   private generateNames(structureName: string): string[] {
     const names: string[] = [];
-    const { firstWord, lastWord, firstLetter } = this.getParts(structureName);
+    const { firstWord, lastWord, firstLetter, lastLetter } = this.getParts(structureName);
     const count = this.countPerStructure();
 
     for (let i = 0; i < count; i++) {
@@ -230,6 +241,8 @@ export class MassivePropertyCreationComponent implements OnInit, OnDestroy {
         .replace(/{firstword}/g, firstWord)
         .replace(/{short}/g, lastWord)
         .replace(/{firstletter}/g, firstLetter)
+        .replace(/{lastletter}/g, lastLetter)
+        .replace(/{custom}/g, this.customWord())
         .replace(/{num}/g, num)
         .replace(/{letter}/g, letter);
 
@@ -251,14 +264,12 @@ export class MassivePropertyCreationComponent implements OnInit, OnDestroy {
   }
 
   togglePart(part: PatternPart): void {
-    switch (part) {
-      case 'name': this.includeName.update((v) => !v); break;
-      case 'firstword': this.includeFirstWord.update((v) => !v); break;
-      case 'short': this.includeShort.update((v) => !v); break;
-      case 'firstletter': this.includeFirstLetter.update((v) => !v); break;
-      case 'num': this.includeNum.update((v) => !v); break;
-      case 'letter': this.includeLetter.update((v) => !v); break;
-    }
+    this.patternOrder.update((order) => {
+      if (order.includes(part)) {
+        return order.filter((p) => p !== part);
+      }
+      return [...order, part];
+    });
   }
 
   toggleSplitEqually(): void {
@@ -269,7 +280,8 @@ export class MassivePropertyCreationComponent implements OnInit, OnDestroy {
   }
 
   private applySplitEqually(): void {
-    const fee = Math.floor(100 / Math.max(1, this.totalPropertyCount()));
+    const count = Math.max(1, this.totalPropertyCount());
+    const fee = Math.floor(this.remainingFee() / count);
     this.fee.set(Math.min(fee, this.maxFee()));
   }
 
@@ -277,20 +289,39 @@ export class MassivePropertyCreationComponent implements OnInit, OnDestroy {
     this.digits.set(Math.max(1, Math.min(5, value)));
   }
 
-  handleStartAtChange(value: unknown): void {
-    this.startAt.set(Math.max(1, Number(value) || 1));
+  handleStartAtNumChange(value: unknown): void {
+    this.startAtNum.set(Math.max(1, Number(value) || 1));
   }
 
-  handleIncrementStartAt(): void {
-    this.startAt.update((v) => v + 1);
+  handleIncrementStartAtNum(): void {
+    this.startAtNum.update((v) => v + 1);
   }
 
-  handleDecrementStartAt(): void {
-    this.startAt.update((v) => Math.max(1, v - 1));
+  handleDecrementStartAtNum(): void {
+    this.startAtNum.update((v) => Math.max(1, v - 1));
+  }
+
+  handleStartAtLetterChange(value: unknown): void {
+    this.startAtLetter.set(Math.max(1, Number(value) || 1));
+  }
+
+  handleIncrementStartAtLetter(): void {
+    this.startAtLetter.update((v) => v + 1);
+  }
+
+  handleDecrementStartAtLetter(): void {
+    this.startAtLetter.update((v) => Math.max(1, v - 1));
   }
 
   editProperty(property: PropertyWithStructure): void {
+    this.isAdding.set(false);
     this.wizardService.selectedProperty.set(property);
+    this.isEditModalOpen.set(true);
+  }
+
+  openAddPropertyModal(): void {
+    this.isAdding.set(true);
+    this.wizardService.selectedProperty.set(null);
     this.isEditModalOpen.set(true);
   }
 
@@ -302,10 +333,20 @@ export class MassivePropertyCreationComponent implements OnInit, OnDestroy {
   handleSaveProperty(): void {
     const formData = this.createPropertyFormComponent()?.submit();
     if (formData) {
-      this.wizardService.editPropertyInStructure({
-        ...formData,
-        structureName: formData.structure,
-      });
+      if (this.isAdding()) {
+        this.wizardService.addPropertyToStructure(formData.structure, {
+          number: formData.number,
+          fee: formData.fee,
+          structure: formData.structure,
+          ownerName: formData.ownerName,
+          ownerEmail: formData.ownerEmail,
+        });
+      } else {
+        this.wizardService.editPropertyInStructure({
+          ...formData,
+          structureName: formData.structure,
+        });
+      }
       this.closeEditModal();
     }
   }

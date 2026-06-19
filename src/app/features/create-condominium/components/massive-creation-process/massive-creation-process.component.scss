@@ -1,7 +1,7 @@
 .generator-section {
   display: flex;
   flex-direction: column;
-  gap: 1rem;
+  gap: 24px;
 }
 
 .title-container {
@@ -26,6 +26,73 @@
   font-size: 0.8rem;
   line-height: 1.5;
   margin: 0;
+}
+
+.card-section {
+  padding: 16px;
+  border-radius: 10px;
+  background: var(--background);
+}
+
+.pattern-config-row {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.config-chip-group {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.config-label-inline {
+  font-size: 0.8rem;
+  font-weight: 500;
+  color: var(--ion-color-medium);
+}
+
+.chip-row {
+  display: flex;
+  gap: 8px;
+}
+
+.startat-group {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.startat-controls {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.startat-input-item {
+  --min-height: 32px;
+  width: 64px;
+
+  ion-input {
+    text-align: center;
+    font-size: 0.9rem;
+  }
+}
+
+.config-grid {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.config-field {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+
+  ion-item {
+    --inner-padding-end: 0;
+  }
 }
 
 .custom-section {
@@ -57,7 +124,17 @@
 .result-section {
   display: flex;
   flex-direction: column;
-  gap: 1rem;
+  gap: 16px;
+}
+
+.result-actions {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+
+  ion-button {
+    flex: 1;
+  }
 }
 
 @media (min-width: 600px) {
@@ -74,6 +151,16 @@
     font-size: 0.875rem;
   }
 
+  .pattern-config-row {
+    flex-direction: row;
+    align-items: flex-start;
+    gap: 24px;
+  }
+
+  .config-grid {
+    max-width: 16rem;
+  }
+
   .preview-list {
     gap: 0.5rem;
   }
@@ -83,5 +170,18 @@
   .generator-section {
     max-width: 48rem;
     margin: 0 auto;
+  }
+}
+
+.structure-modal-description {
+  width: 100%;
+  max-width: 25rem;
+  text-align: center;
+  margin: auto;
+}
+
+@media (min-width: 600px) {
+  .structure-modal-description {
+    max-width: 30rem;
   }
 }

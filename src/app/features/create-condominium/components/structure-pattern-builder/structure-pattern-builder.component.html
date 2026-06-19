@@ -1,9 +1,9 @@
 <div class="section-header">
   <ion-label>
-    {{ "condominium.massiveProperty.patternLabel" | transloco }}
+    {{ "condominium.massive.patternLabel" | transloco }}
   </ion-label>
   <ion-note>
-    {{ "condominium.massiveProperty.patternHelp" | transloco }}
+    {{ "condominium.massive.patternHelp" | transloco }}
   </ion-note>
 </div>
 
@@ -39,41 +39,6 @@
   </div>
 }
 
-@if (includeCustom()) {
-  <div class="extra-fields">
-    <ion-item class="custom-input-item">
-      <ion-input
-        [value]="customWord()"
-        (ionChange)="customWordChange.emit($event.detail.value ?? '')"
-        [label]="'condominium.massiveProperty.customWordLabel' | transloco"
-        labelPlacement="stacked"
-        [placeholder]="'condominium.massiveProperty.customWordPlaceholder' | transloco"
-      />
-    </ion-item>
-  </div>
-}
-
-<div class="extra-fields">
-  <ion-item class="custom-input-item">
-    <ion-input
-      [value]="prefix()"
-      (ionChange)="prefixChange.emit($event.detail.value ?? '')"
-      [label]="'condominium.massiveProperty.prefixLabel' | transloco"
-      labelPlacement="stacked"
-      [placeholder]="'condominium.massiveProperty.prefixPlaceholder' | transloco"
-    />
-  </ion-item>
-  <ion-item class="custom-input-item">
-    <ion-input
-      [value]="suffix()"
-      (ionChange)="suffixChange.emit($event.detail.value ?? '')"
-      [label]="'condominium.massiveProperty.suffixLabel' | transloco"
-      labelPlacement="stacked"
-      [placeholder]="'condominium.massiveProperty.suffixPlaceholder' | transloco"
-    />
-  </ion-item>
-</div>
-
 <div class="separator-row">
   <span class="separator-label">
     {{ "condominium.massiveProperty.separatorLabel" | transloco }}
@@ -102,3 +67,45 @@
     </ion-chip>
   </div>
 </div>
+
+@if (includePrefix()) {
+  <div class="extra-fields">
+    <ion-item class="custom-input-item">
+      <ion-input
+        [value]="prefixText()"
+        (ionChange)="prefixTextChange.emit($event.detail.value ?? '')"
+        [label]="'condominium.massive.prefixLabel' | transloco"
+        labelPlacement="stacked"
+        [placeholder]="'condominium.massive.prefixPlaceholder' | transloco"
+      />
+    </ion-item>
+  </div>
+}
+
+@if (includeSuffix()) {
+  <div class="extra-fields">
+    <ion-item class="custom-input-item">
+      <ion-input
+        [value]="suffixText()"
+        (ionChange)="suffixTextChange.emit($event.detail.value ?? '')"
+        [label]="'condominium.massive.suffixLabel' | transloco"
+        labelPlacement="stacked"
+        [placeholder]="'condominium.massive.suffixPlaceholder' | transloco"
+      />
+    </ion-item>
+  </div>
+}
+
+@if (includeCustom()) {
+  <div class="extra-fields">
+    <ion-item class="custom-input-item">
+      <ion-input
+        [value]="customWord()"
+        (ionChange)="customWordChange.emit($event.detail.value ?? '')"
+        [label]="'condominium.massive.customWordLabel' | transloco"
+        labelPlacement="stacked"
+        [placeholder]="'condominium.massive.customWordPlaceholder' | transloco"
+      />
+    </ion-item>
+  </div>
+}

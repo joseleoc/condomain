@@ -7,17 +7,32 @@
   max-width: 22rem;
   width: 100%;
   margin: auto;
-  margin-bottom: 2rem;
+  margin-bottom: 1.5rem;
+}
+
+.content-container {
+  max-width: 22rem;
+  width: 100%;
+  margin: 0 auto;
 }
 
 @media (min-width: 600px) {
   .stepper-container {
+    max-width: 32rem;
+    margin-bottom: 2rem;
+  }
+
+  .content-container {
     max-width: 32rem;
   }
 }
 
 @media (min-width: 900px) {
   .stepper-container {
+    max-width: 48rem;
+  }
+
+  .content-container {
     max-width: 48rem;
   }
 }

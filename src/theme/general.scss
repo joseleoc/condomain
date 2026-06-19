@@ -57,3 +57,21 @@ p {
 .pointer {
   cursor: pointer;
 }
+
+ion-modal {
+  --border-radius: 12px;
+  --min-width: 280px;
+  --max-width: 90vw;
+}
+
+@media (min-width: 600px) {
+  ion-modal {
+    --max-width: 28rem;
+  }
+}
+
+@media (min-width: 900px) {
+  ion-modal {
+    --max-width: 32rem;
+  }
+}

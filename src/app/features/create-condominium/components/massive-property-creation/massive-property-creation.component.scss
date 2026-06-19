@@ -1,7 +1,7 @@
 .generator-section {
   display: flex;
   flex-direction: column;
-  gap: 20px;
+  gap: 24px;
 }
 
 .title-container {
@@ -28,7 +28,7 @@
 }
 
 .card-section {
-  padding: 14px;
+  padding: 16px;
   border-radius: 10px;
   background: var(--background);
 }
@@ -36,13 +36,13 @@
 .pattern-config-row {
   display: flex;
   flex-direction: column;
-  gap: 12px;
+  gap: 16px;
 }
 
 .config-chip-group {
   display: flex;
   flex-direction: column;
-  gap: 6px;
+  gap: 8px;
 }
 
 .config-label-inline {
@@ -53,19 +53,19 @@
 
 .chip-row {
   display: flex;
-  gap: 6px;
+  gap: 8px;
 }
 
 .startat-group {
   display: flex;
   flex-direction: column;
-  gap: 6px;
+  gap: 8px;
 }
 
 .startat-controls {
   display: flex;
   align-items: center;
-  gap: 4px;
+  gap: 6px;
 }
 
 .startat-input-item {
@@ -81,13 +81,13 @@
 .config-grid {
   display: flex;
   flex-direction: column;
-  gap: 8px;
+  gap: 16px;
 }
 
 .config-field {
   display: flex;
   flex-direction: column;
-  gap: 2px;
+  gap: 4px;
 
   ion-item {
     --inner-padding-end: 0;
@@ -105,13 +105,23 @@
   align-items: center;
   gap: 8px;
   flex-wrap: wrap;
-  margin-top: 4px;
+  margin-top: 8px;
 }
 
 .result-section {
   display: flex;
   flex-direction: column;
-  gap: 12px;
+  gap: 16px;
+}
+
+.result-actions {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+
+  ion-button {
+    flex: 1;
+  }
 }
 
 .review-description {
@@ -133,13 +143,13 @@
   .pattern-config-row {
     flex-direction: row;
     align-items: flex-start;
-    gap: 16px;
+    gap: 24px;
   }
 
   .config-grid {
     display: grid;
     grid-template-columns: 1fr 1fr;
-    gap: 12px;
+    gap: 16px;
   }
 }
 
@@ -147,5 +157,18 @@
   .generator-section {
     max-width: 48rem;
     margin: 0 auto;
+  }
+}
+
+.structure-modal-description {
+  width: 100%;
+  max-width: 25rem;
+  text-align: center;
+  margin: auto;
+}
+
+@media (min-width: 600px) {
+  .structure-modal-description {
+    max-width: 30rem;
   }
 }
