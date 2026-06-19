@@ -124,6 +124,33 @@
       "customPlaceholder": "Ingresa un nombre por línea\nEjemplo:\nMaría Paulina\nMaría Carolina\nMaría José",
       "previewLabel": "Vista previa",
       "andMore": "y {{count}} más..."
+    },
+    "massiveProperty": {
+      "title": "Creación masiva de propiedades",
+      "description": "Crea propiedades automáticamente para cada estructura usando un patrón de nombres.",
+      "patternLabel": "Patrón de nombre",
+      "patternHelp": "Elige las partes que componen el nombre de cada propiedad. Toca para agregar o quitarlas.",
+      "componentName": "Nombre de la estructura",
+      "componentShort": "Última palabra",
+      "componentNum": "Número secuencial",
+      "separatorLabel": "Separador entre partes",
+      "separatorNone": "Ninguno (A01)",
+      "separatorSpace": "Espacio (A 01)",
+      "separatorHyphen": "Guión (A - 01)",
+      "countLabel": "Propiedades por estructura",
+      "countHelp": "Cuántas propiedades crear para cada estructura.",
+      "feeLabel": "Cuota por defecto ($)",
+      "feeHelp": "Cuota mensual asignada a cada propiedad. Puedes editarla después.",
+      "enumerationSection": "Numeración secuencial",
+      "enumerationHelp": "Elige cómo se numerarán las propiedades dentro de cada estructura.",
+      "enumeratorLabel": "Tipo",
+      "digitsLabel": "Cifras",
+      "startAtLabel": "Empezar numeración en",
+      "previewLabel": "Vista previa",
+      "previewHelp": "Así se verán los nombres de las propiedades al generarse.",
+      "emptyPreview": "Configura un patrón antes de continuar",
+      "addMore": "Agregar más propiedades",
+      "andMore": "y {{count}} más..."
     }
   },
   "validation": {

@@ -124,6 +124,33 @@
       "customPlaceholder": "Enter one name per line\nExample:\nMaria Paulina\nMaria Carolina\nMaria Jose",
       "previewLabel": "Preview",
       "andMore": "and {{count}} more..."
+    },
+    "massiveProperty": {
+      "title": "Bulk property creation",
+      "description": "Automatically create properties for every structure using a name pattern.",
+      "patternLabel": "Name pattern",
+      "patternHelp": "Choose the parts that make up each property name. Tap to add or remove them.",
+      "componentName": "Structure name",
+      "componentShort": "Last word",
+      "componentNum": "Sequential number",
+      "separatorLabel": "Separator between parts",
+      "separatorNone": "None (A01)",
+      "separatorSpace": "Space (A 01)",
+      "separatorHyphen": "Hyphen (A - 01)",
+      "countLabel": "Properties per structure",
+      "countHelp": "How many properties to create for each structure.",
+      "feeLabel": "Default fee ($)",
+      "feeHelp": "Monthly fee assigned to each property. You can edit this later.",
+      "enumerationSection": "Sequential numbering",
+      "enumerationHelp": "Choose how properties are numbered within each structure.",
+      "enumeratorLabel": "Type",
+      "digitsLabel": "Digits",
+      "startAtLabel": "Start numbering at",
+      "previewLabel": "Preview",
+      "previewHelp": "This is how the property names will look when generated.",
+      "emptyPreview": "Set up a pattern before continuing",
+      "addMore": "Add more properties",
+      "andMore": "and {{count}} more..."
     }
   },
   "validation": {

@@ -1,17 +1,21 @@
-<section>
-  @if (!hasProperties()) {
-    <app-properties-list-empty (addProperty)="openModal()" />
-  } @else {
-    <ion-button fill="outline" expand="block" (click)="openModal()">
-      <ion-icon name="add" slot="start"></ion-icon>
-      {{ "condominium.createProperty.createProperty" | transloco }}
-    </ion-button>
-    <app-structures-properties-accordion
-      [structureSelected]="structureSelected()"
-      (selectProperty)="editProperty($event)"
-    />
-  }
-</section>
+@if (creationProcessSelected() === 'massive') {
+  <app-massive-property-creation />
+} @else {
+  <section>
+    @if (!hasProperties()) {
+      <app-properties-list-empty (addProperty)="openModal()" />
+    } @else {
+      <ion-button fill="outline" expand="block" (click)="openModal()">
+        <ion-icon name="add" slot="start"></ion-icon>
+        {{ "condominium.createProperty.createProperty" | transloco }}
+      </ion-button>
+      <app-structures-properties-accordion
+        [structureSelected]="structureSelected()"
+        (selectProperty)="editProperty($event)"
+      />
+    }
+  </section>
+}
 
 <ion-modal
   [isOpen]="isPropertiesModalOpen()"

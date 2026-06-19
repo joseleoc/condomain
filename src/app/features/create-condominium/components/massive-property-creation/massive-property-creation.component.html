@@ -1,0 +1,84 @@
+@if (showingGenerator()) {
+  <div class="generator-section">
+    <div class="title-container">
+      <h4>{{ "condominium.massiveProperty.title" | transloco }}</h4>
+      <p>{{ "condominium.massiveProperty.description" | transloco }}</p>
+    </div>
+
+    <div class="pattern-section card-section">
+      <app-property-pattern-builder
+        [includeName]="includeName()"
+        [includeShort]="includeShort()"
+        [includeNum]="includeNum()"
+        [customSeparator]="customSeparator()"
+        [displayPattern]="displayPattern()"
+        (togglePart)="togglePart($event)"
+        (separatorChange)="customSeparator.set($event)"
+      />
+    </div>
+
+    <div class="config-grid">
+      <div class="config-field">
+        <ion-item>
+          <ion-input
+            type="number"
+            labelPlacement="stacked"
+            min="1"
+            [value]="countPerStructure()"
+            (ionChange)="setCount($event.detail.value)"
+            [label]="'condominium.massiveProperty.countLabel' | transloco"
+          />
+        </ion-item>
+        <ion-note class="field-help">
+          {{ "condominium.massiveProperty.countHelp" | transloco }}
+        </ion-note>
+      </div>
+
+      <div class="config-field">
+        <ion-item>
+          <ion-input
+            type="number"
+            labelPlacement="stacked"
+            min="0"
+            max="100"
+            [value]="fee()"
+            (ionChange)="setFee($event.detail.value)"
+            [label]="'condominium.massiveProperty.feeLabel' | transloco"
+          />
+        </ion-item>
+        <ion-note class="field-help">
+          {{ "condominium.massiveProperty.feeHelp" | transloco }}
+        </ion-note>
+      </div>
+    </div>
+
+    <div class="enumeration-section card-section">
+      <app-property-enumerator-config
+        [enumeratorType]="enumeratorType()"
+        [digits]="digits()"
+        [startAt]="startAt()"
+        (enumeratorTypeChange)="enumeratorType.set($event)"
+        (digitsChange)="handleDigitsChange($event)"
+        (startAtChange)="handleStartAtChange($event)"
+        (incrementStartAt)="handleIncrementStartAt()"
+        (decrementStartAt)="handleDecrementStartAt()"
+      />
+    </div>
+
+    <app-property-preview
+      [previewGroups]="preview()"
+      [totalCount]="totalPropertyCount()"
+    />
+  </div>
+}
+
+@if (!showingGenerator()) {
+  <div class="result-section">
+    <ion-button fill="outline" expand="block" (click)="showingGenerator.set(true)">
+      <ion-icon name="add-circle-outline" slot="start" />
+      {{ "condominium.massiveProperty.addMore" | transloco }}
+    </ion-button>
+
+    <app-structures-properties-accordion />
+  </div>
+}

@@ -1,0 +1,33 @@
+@if (totalCount() > 0) {
+  <div class="preview-section">
+    <div class="preview-header">
+      <ion-label class="preview-label">
+        {{ "condominium.massiveProperty.previewLabel" | transloco }}
+        <span class="preview-count">({{ totalCount() }})</span>
+      </ion-label>
+      <ion-note>
+        {{ "condominium.massiveProperty.previewHelp" | transloco }}
+      </ion-note>
+    </div>
+
+    @for (group of previewGroups(); track group.structureName) {
+      <div class="preview-group">
+        <span class="preview-structure-name">{{ group.structureName }}</span>
+        <div class="preview-list">
+          @for (name of group.names.slice(0, 10); track name) {
+            <ion-chip>
+              <ion-label>{{ name }}</ion-label>
+            </ion-chip>
+          }
+          @if (group.names.length > 10) {
+            <ion-chip color="medium">
+              <ion-label>
+                {{ "condominium.massiveProperty.andMore" | transloco: { count: group.names.length - 10 } }}
+              </ion-label>
+            </ion-chip>
+          }
+        </div>
+      </div>
+    }
+  </div>
+}

@@ -19,61 +19,16 @@
         {{ "condominium.massive.patternDescription" | transloco }}
       </p>
 
-      <div class="pattern-builder">
-        <div class="pattern-row">
-          <ion-item class="pattern-part">
-            <ion-input
-              labelPlacement="stacked"
-              [value]="patternPrefix()"
-              (ionChange)="patternPrefix.set($event.detail.value ?? '')"
-              [label]="'condominium.massive.prefixLabel' | transloco"
-            />
-          </ion-item>
-
-          <div class="enumerator-selector">
-            <ion-label class="enumerator-label">
-              {{ "condominium.massive.enumeratorLabel" | transloco }}
-            </ion-label>
-            <div class="enumerator-options">
-              <ion-chip
-                [outline]="patternEnumerator() !== 'letter'"
-                color="primary"
-                (click)="patternEnumerator.set('letter')"
-              >
-                A, B, C
-              </ion-chip>
-              <ion-chip
-                [outline]="patternEnumerator() !== 'number'"
-                color="primary"
-                (click)="patternEnumerator.set('number')"
-              >
-                1, 2, 3
-              </ion-chip>
-            </div>
-          </div>
-
-          <ion-item class="pattern-part">
-            <ion-input
-              labelPlacement="stacked"
-              [value]="patternSuffix()"
-              (ionChange)="patternSuffix.set($event.detail.value ?? '')"
-              [label]="'condominium.massive.suffixLabel' | transloco"
-            />
-          </ion-item>
-        </div>
-
-        <ion-item>
-          <ion-input
-            type="number"
-            labelPlacement="stacked"
-            min="1"
-            max="100"
-            [value]="patternCount()"
-            (ionChange)="patternCount.set(parseCount($event.detail.value))"
-            [label]="'condominium.massive.countLabel' | transloco"
-          />
-        </ion-item>
-      </div>
+      <app-structure-pattern-form
+        [prefix]="patternPrefix()"
+        [enumerator]="patternEnumerator()"
+        [suffix]="patternSuffix()"
+        [count]="patternCount()"
+        (prefixChange)="patternPrefix.set($event)"
+        (enumeratorChange)="patternEnumerator.set($event)"
+        (suffixChange)="patternSuffix.set($event)"
+        (countChange)="patternCount.set(+$event || 1)"
+      />
     }
 
     @if (mode() === 'custom') {

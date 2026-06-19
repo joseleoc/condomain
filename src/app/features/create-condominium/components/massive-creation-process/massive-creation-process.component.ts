@@ -31,6 +31,7 @@ import { Subscription } from 'rxjs';
 import { Wizard } from '../../services/wizard/wizard';
 import { StructuresListComponent } from '../structures-list/structures-list.component';
 import { AddStructureFormComponent } from '../add-structure-form/add-structure-form.component';
+import { StructurePatternFormComponent } from '../structure-pattern-form/structure-pattern-form.component';
 import { LocalStructure } from '@features/create-condominium/create-condominium.types';
 import type { EnumeratorType } from '@features/create-condominium/create-condominium.types';
 import { Toast } from '@core/services/toast/toast';
@@ -61,6 +62,7 @@ import { Toast } from '@core/services/toast/toast';
     TranslocoPipe,
     StructuresListComponent,
     AddStructureFormComponent,
+    StructurePatternFormComponent,
   ],
 })
 export class MassiveCreationProcessComponent implements OnInit, OnDestroy {
@@ -121,10 +123,6 @@ export class MassiveCreationProcessComponent implements OnInit, OnDestroy {
     if (value === 'pattern' || value === 'custom') {
       this.mode.set(value);
     }
-  }
-
-  parseCount(value: unknown): number {
-    return Number(value) || 1;
   }
 
   preview = computed(() => {

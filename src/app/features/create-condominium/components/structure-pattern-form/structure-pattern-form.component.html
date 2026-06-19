@@ -1,0 +1,55 @@
+<div class="pattern-builder">
+  <div class="pattern-row">
+    <ion-item class="pattern-part">
+      <ion-input
+        labelPlacement="stacked"
+        [value]="prefix()"
+        (ionChange)="prefixChange.emit($event.detail.value ?? '')"
+        [label]="'condominium.massive.prefixLabel' | transloco"
+      />
+    </ion-item>
+
+    <div class="enumerator-selector">
+      <ion-label class="enumerator-label">
+        {{ "condominium.massive.enumeratorLabel" | transloco }}
+      </ion-label>
+      <div class="enumerator-options">
+        <ion-chip
+          [outline]="enumerator() !== 'letter'"
+          color="primary"
+          (click)="enumeratorChange.emit('letter')"
+        >
+          A, B, C
+        </ion-chip>
+        <ion-chip
+          [outline]="enumerator() !== 'number'"
+          color="primary"
+          (click)="enumeratorChange.emit('number')"
+        >
+          1, 2, 3
+        </ion-chip>
+      </div>
+    </div>
+
+    <ion-item class="pattern-part">
+      <ion-input
+        labelPlacement="stacked"
+        [value]="suffix()"
+        (ionChange)="suffixChange.emit($event.detail.value ?? '')"
+        [label]="'condominium.massive.suffixLabel' | transloco"
+      />
+    </ion-item>
+  </div>
+
+  <ion-item>
+    <ion-input
+      type="number"
+      labelPlacement="stacked"
+      min="1"
+      max="100"
+      [value]="count()"
+      (ionChange)="countChange.emit($event.detail.value ?? '1')"
+      [label]="'condominium.massive.countLabel' | transloco"
+    />
+  </ion-item>
+</div>

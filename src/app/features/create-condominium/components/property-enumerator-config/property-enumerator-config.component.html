@@ -1,0 +1,76 @@
+<div class="section-header">
+  <ion-label>
+    {{ "condominium.massiveProperty.enumerationSection" | transloco }}
+  </ion-label>
+  <ion-note>
+    {{ "condominium.massiveProperty.enumerationHelp" | transloco }}
+  </ion-note>
+</div>
+
+<div class="enumerator-row">
+  <ion-chip
+    [outline]="enumeratorType() !== 'number'"
+    color="primary"
+    (click)="enumeratorTypeChange.emit('number')"
+  >
+    <ion-icon name="hash" slot="start" />
+    1, 2, 3
+  </ion-chip>
+  <ion-chip
+    [outline]="enumeratorType() !== 'letter'"
+    color="primary"
+    (click)="enumeratorTypeChange.emit('letter')"
+  >
+    <ion-icon name="text" slot="start" />
+    A, B, C
+  </ion-chip>
+</div>
+
+<div class="enumerator-details">
+  @if (enumeratorType() === 'number') {
+    <div class="digits-row">
+      <span class="config-label-inline">
+        {{ "condominium.massiveProperty.digitsLabel" | transloco }}
+      </span>
+      <div class="digits-options">
+        <ion-chip
+          [outline]="digits() !== 1"
+          color="primary"
+          (click)="digitsChange.emit(1)"
+        >1</ion-chip>
+        <ion-chip
+          [outline]="digits() !== 2"
+          color="primary"
+          (click)="digitsChange.emit(2)"
+        >01</ion-chip>
+        <ion-chip
+          [outline]="digits() !== 3"
+          color="primary"
+          (click)="digitsChange.emit(3)"
+        >001</ion-chip>
+      </div>
+    </div>
+  }
+
+  <div class="startat-row">
+    <span class="config-label-inline">
+      {{ "condominium.massiveProperty.startAtLabel" | transloco }}
+    </span>
+    <div class="startat-controls">
+      <ion-chip outline color="primary" (click)="decrementStartAt.emit()">
+        <ion-icon name="remove" />
+      </ion-chip>
+      <ion-item class="startat-input-item">
+        <ion-input
+          type="number"
+          min="1"
+          [value]="startAt()"
+          (ionChange)="startAtChange.emit($event.detail.value ?? '1')"
+        />
+      </ion-item>
+      <ion-chip outline color="primary" (click)="incrementStartAt.emit()">
+        <ion-icon name="add" />
+      </ion-chip>
+    </div>
+  </div>
+</div>

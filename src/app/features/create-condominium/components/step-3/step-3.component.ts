@@ -24,6 +24,7 @@ import { TranslocoPipe } from '@jsverse/transloco';
 import { Subscription } from 'rxjs';
 import { Wizard } from '@features/create-condominium/services/wizard/wizard';
 import { PropertiesListEmptyComponent } from '../properties-list-empty/properties-list-empty.component';
+import { MassivePropertyCreationComponent } from '../massive-property-creation/massive-property-creation.component';
 import { PropertyWithStructure } from '@features/create-condominium/create-condominium.types';
 
 @Component({
@@ -35,6 +36,7 @@ import { PropertyWithStructure } from '@features/create-condominium/create-condo
     CreatePropertyFormComponent,
     TranslocoPipe,
     PropertiesListEmptyComponent,
+    MassivePropertyCreationComponent,
     IonHeader,
     IonModal,
     IonToolbar,
@@ -61,11 +63,13 @@ export class Step3Component implements OnInit, OnDestroy {
   );
   hasProperties = signal(false);
   isPropertiesModalOpen = signal(false);
+  creationProcessSelected = this.wizardService.creationProcessSelected;
 
   // --- Lifecycle Methods ---
   ngOnInit() {
     this.nextSubscription = this.wizardService.nextStep$.subscribe(
-      async (currentStep) => {
+      async () => {
+        if (this.creationProcessSelected() === 'massive') return;
         this.wizardService.createStructuresAndProperties();
       },
     );

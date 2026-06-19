@@ -1,0 +1,68 @@
+<div class="section-header">
+  <ion-label>
+    {{ "condominium.massiveProperty.patternLabel" | transloco }}
+  </ion-label>
+  <ion-note>
+    {{ "condominium.massiveProperty.patternHelp" | transloco }}
+  </ion-note>
+</div>
+
+<div class="pattern-visual">
+  <span class="pattern-preview-text">{{ displayPattern() }}</span>
+</div>
+
+<div class="component-toggles">
+  <ion-chip
+    [color]="includeName() ? 'primary' : 'medium'"
+    [outline]="!includeName()"
+    (click)="togglePart.emit('name')"
+  >
+    <ion-icon [name]="includeName() ? 'checkmark-circle' : 'add-circle-outline'" slot="start" />
+    {{ "condominium.massiveProperty.componentName" | transloco }}
+  </ion-chip>
+  <ion-chip
+    [color]="includeShort() ? 'primary' : 'medium'"
+    [outline]="!includeShort()"
+    (click)="togglePart.emit('short')"
+  >
+    <ion-icon [name]="includeShort() ? 'checkmark-circle' : 'add-circle-outline'" slot="start" />
+    {{ "condominium.massiveProperty.componentShort" | transloco }}
+  </ion-chip>
+  <ion-chip
+    [color]="includeNum() ? 'primary' : 'medium'"
+    [outline]="!includeNum()"
+    (click)="togglePart.emit('num')"
+  >
+    <ion-icon [name]="includeNum() ? 'checkmark-circle' : 'add-circle-outline'" slot="start" />
+    {{ "condominium.massiveProperty.componentNum" | transloco }}
+  </ion-chip>
+</div>
+
+<div class="separator-row">
+  <span class="separator-label">
+    {{ "condominium.massiveProperty.separatorLabel" | transloco }}
+  </span>
+  <div class="separator-options">
+    <ion-chip
+      [color]="customSeparator() === '' ? 'primary' : 'medium'"
+      [outline]="customSeparator() !== ''"
+      (click)="separatorChange.emit('')"
+    >
+      {{ "condominium.massiveProperty.separatorNone" | transloco }}
+    </ion-chip>
+    <ion-chip
+      [color]="customSeparator() === ' ' ? 'primary' : 'medium'"
+      [outline]="customSeparator() !== ' '"
+      (click)="separatorChange.emit(' ')"
+    >
+      {{ "condominium.massiveProperty.separatorSpace" | transloco }}
+    </ion-chip>
+    <ion-chip
+      [color]="customSeparator() === ' - ' ? 'primary' : 'medium'"
+      [outline]="customSeparator() !== ' - '"
+      (click)="separatorChange.emit(' - ')"
+    >
+      {{ "condominium.massiveProperty.separatorHyphen" | transloco }}
+    </ion-chip>
+  </div>
+</div>

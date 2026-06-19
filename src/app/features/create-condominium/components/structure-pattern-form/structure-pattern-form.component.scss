@@ -1,0 +1,36 @@
+.pattern-builder {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.pattern-row {
+  display: flex;
+  gap: 8px;
+  align-items: flex-end;
+  flex-wrap: wrap;
+}
+
+.pattern-part {
+  flex: 1;
+  min-width: 120px;
+}
+
+.enumerator-selector {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  min-width: 100px;
+}
+
+.enumerator-label {
+  font-size: 0.75rem;
+  color: var(--ion-color-medium);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.enumerator-options {
+  display: flex;
+  gap: 4px;
+}
