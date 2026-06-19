@@ -85,11 +85,9 @@ export class MassivePropertyCreationComponent implements OnInit, OnDestroy {
   }));
 
   displayPattern = computed(() => {
-    const labels: string[] = [];
-    if (this.includeName()) labels.push('...');
-    if (this.includeShort()) labels.push('---');
-    if (this.includeNum()) labels.push('#');
-    return labels.join(this.customSeparator() || ' + ');
+    const structures = this.structures();
+    const name = structures.length > 0 ? structures[0].name : 'Estructura';
+    return this.generateNames(name)[0] || '';
   });
 
   structures = computed(() => this.wizardService.structures$.getValue());
