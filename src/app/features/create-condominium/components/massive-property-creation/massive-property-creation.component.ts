@@ -115,9 +115,18 @@ export class MassivePropertyCreationComponent implements OnInit, OnDestroy {
     return this.generateNames(name)[0] || '';
   });
 
+  existingTotalFee = computed(() => {
+    return this.structures().reduce((total, s) => {
+      return total + s.properties.reduce((sum, p) => sum + (p.fee || 0), 0);
+    }, 0);
+  });
+
+  remainingFee = computed(() => Math.max(0, 100 - this.existingTotalFee()));
+
   maxFee = computed(() => {
     const count = this.totalPropertyCount();
-    return count > 0 ? Math.floor(100 / count) : 100;
+    if (count === 0) return 100;
+    return Math.floor(this.remainingFee() / count);
   });
 
   structures = toSignal(this.wizardService.structures$, { initialValue: [] });
@@ -270,7 +279,8 @@ export class MassivePropertyCreationComponent implements OnInit, OnDestroy {
   }
 
   private applySplitEqually(): void {
-    const fee = Math.floor(100 / Math.max(1, this.totalPropertyCount()));
+    const count = Math.max(1, this.totalPropertyCount());
+    const fee = Math.floor(this.remainingFee() / count);
     this.fee.set(Math.min(fee, this.maxFee()));
   }
 

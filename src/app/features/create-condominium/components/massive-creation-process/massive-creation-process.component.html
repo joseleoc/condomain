@@ -15,20 +15,94 @@
     </ion-segment>
 
     @if (mode() === 'pattern') {
-      <p class="text-secondary mode-description">
-        {{ "condominium.massive.patternDescription" | transloco }}
-      </p>
+      <div class="pattern-section card-section">
+        <app-structure-pattern-builder
+          [includePrefix]="includePrefix()"
+          [includeNum]="includeNum()"
+          [includeLetter]="includeLetter()"
+          [includeSuffix]="includeSuffix()"
+          [includeCustom]="includeCustom()"
+          [displayPattern]="displayPattern()"
+          [prefixText]="prefixText()"
+          [suffixText]="suffixText()"
+          [customWord]="customWord()"
+          [customSeparator]="customSeparator()"
+          [selectedParts]="patternOrder()"
+          (togglePart)="togglePart($event)"
+          (separatorChange)="customSeparator.set($event)"
+          (prefixTextChange)="prefixText.set($event)"
+          (suffixTextChange)="suffixText.set($event)"
+          (customWordChange)="customWord.set($event)"
+        />
+      </div>
 
-      <app-structure-pattern-form
-        [prefix]="patternPrefix()"
-        [enumerator]="patternEnumerator()"
-        [suffix]="patternSuffix()"
-        [count]="patternCount()"
-        (prefixChange)="patternPrefix.set($event)"
-        (enumeratorChange)="patternEnumerator.set($event)"
-        (suffixChange)="patternSuffix.set($event)"
-        (countChange)="patternCount.set(+$event || 1)"
-      />
+      <div class="pattern-config-row">
+        @if (includeNum()) {
+          <div class="config-chip-group">
+            <span class="config-label-inline">
+              {{ "condominium.massiveProperty.digitsLabel" | transloco }}
+            </span>
+            <div class="chip-row">
+              <ion-chip [outline]="digits() !== 1" color="primary" (click)="handleDigitsChange(1)">1</ion-chip>
+              <ion-chip [outline]="digits() !== 2" color="primary" (click)="handleDigitsChange(2)">01</ion-chip>
+              <ion-chip [outline]="digits() !== 3" color="primary" (click)="handleDigitsChange(3)">001</ion-chip>
+            </div>
+          </div>
+        }
+
+        @if (includeNum()) {
+          <div class="startat-group">
+            <span class="config-label-inline">
+              {{ "condominium.massiveProperty.startAtNumLabel" | transloco }}
+            </span>
+            <div class="startat-controls">
+              <ion-chip outline color="primary" (click)="handleDecrementStartAtNum()">
+                <ion-icon name="remove" />
+              </ion-chip>
+              <ion-item class="startat-input-item">
+                <ion-input type="number" min="1" [value]="startAtNum()" (ionChange)="handleStartAtNumChange($event.detail.value)" />
+              </ion-item>
+              <ion-chip outline color="primary" (click)="handleIncrementStartAtNum()">
+                <ion-icon name="add" />
+              </ion-chip>
+            </div>
+          </div>
+        }
+
+        @if (includeLetter()) {
+          <div class="startat-group">
+            <span class="config-label-inline">
+              {{ "condominium.massiveProperty.startAtLetterLabel" | transloco }}
+            </span>
+            <div class="startat-controls">
+              <ion-chip outline color="primary" (click)="handleDecrementStartAtLetter()">
+                <ion-icon name="remove" />
+              </ion-chip>
+              <ion-item class="startat-input-item">
+                <ion-input type="number" min="1" [value]="startAtLetter()" (ionChange)="handleStartAtLetterChange($event.detail.value)" />
+              </ion-item>
+              <ion-chip outline color="primary" (click)="handleIncrementStartAtLetter()">
+                <ion-icon name="add" />
+              </ion-chip>
+            </div>
+          </div>
+        }
+      </div>
+
+      <div class="config-grid">
+        <div class="config-field">
+          <ion-item>
+            <ion-input
+              type="number"
+              labelPlacement="stacked"
+              min="1"
+              [value]="count()"
+              (ionChange)="setCount($event.detail.value)"
+              [label]="'condominium.massive.countLabel' | transloco"
+            />
+          </ion-item>
+        </div>
+      </div>
     }
 
     @if (mode() === 'custom') {
