@@ -1,5 +1,6 @@
 import { Component, computed, inject } from '@angular/core';
 import { TranslocoModule, TranslocoPipe, TranslocoService } from '@jsverse/transloco';
+import { firstValueFrom } from 'rxjs';
 import {
   IonContent,
   IonHeader,
@@ -56,27 +57,42 @@ export class CreateCondominiumPage {
   private async checkSavedWizard() {
     if (!this.wizardService.hasSavedWizard()) return;
 
+    const [header, message, startFresh, continueProgress] = await Promise.all([
+      firstValueFrom(
+        this.translocoService.selectTranslate(
+          'condominium.wizard.unsavedProgressTitle',
+        ),
+      ),
+      firstValueFrom(
+        this.translocoService.selectTranslate(
+          'condominium.wizard.unsavedProgressMessage',
+        ),
+      ),
+      firstValueFrom(
+        this.translocoService.selectTranslate(
+          'condominium.wizard.startFresh',
+        ),
+      ),
+      firstValueFrom(
+        this.translocoService.selectTranslate(
+          'condominium.wizard.continueProgress',
+        ),
+      ),
+    ]);
+
     const alert = await this.alertController.create({
-      header: this.translocoService.translate(
-        'condominium.wizard.unsavedProgressTitle',
-      ),
-      message: this.translocoService.translate(
-        'condominium.wizard.unsavedProgressMessage',
-      ),
+      header,
+      message,
       buttons: [
         {
-          text: this.translocoService.translate(
-            'condominium.wizard.startFresh',
-          ),
+          text: startFresh,
           role: 'cancel',
           handler: () => {
             this.wizardService.clearStorage();
           },
         },
         {
-          text: this.translocoService.translate(
-            'condominium.wizard.continueProgress',
-          ),
+          text: continueProgress,
           role: 'confirm',
           handler: () => {
             this.wizardService.restoreFromStorage();
