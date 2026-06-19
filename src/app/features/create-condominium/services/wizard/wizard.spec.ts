@@ -388,6 +388,20 @@ describe('Wizard', () => {
       const saved = JSON.parse(localStorage.getItem(STORAGE_KEY)!);
       expect(saved.structures.length).toBe(1);
     });
+
+    it('should reject structure with empty name', () => {
+      const result = service.saveStructureLocally({ name: '', description: '', properties: [] });
+
+      expect(result).toBe(false);
+      expect(service.structures$.getValue().length).toBe(0);
+    });
+
+    it('should reject structure with whitespace-only name', () => {
+      const result = service.saveStructureLocally({ name: '   ', description: '', properties: [] });
+
+      expect(result).toBe(false);
+      expect(service.structures$.getValue().length).toBe(0);
+    });
   });
 
   describe('addPropertyToStructure', () => {
@@ -432,6 +446,20 @@ describe('Wizard', () => {
 
       const saved = JSON.parse(localStorage.getItem(STORAGE_KEY)!);
       expect(saved.structures[0].properties.length).toBe(1);
+    });
+
+    it('should reject property with empty number', () => {
+      const result = service.addPropertyToStructure('Tower A', { ...fakeProperty, number: '' });
+
+      expect(result).toBe(false);
+      expect(service.structures$.getValue()[0].properties.length).toBe(0);
+    });
+
+    it('should reject property with whitespace-only number', () => {
+      const result = service.addPropertyToStructure('Tower A', { ...fakeProperty, number: '   ' });
+
+      expect(result).toBe(false);
+      expect(service.structures$.getValue()[0].properties.length).toBe(0);
     });
   });
 
@@ -485,6 +513,24 @@ describe('Wizard', () => {
 
       const saved = JSON.parse(localStorage.getItem(STORAGE_KEY)!);
       expect(saved.structures[0].properties[0].fee).toBe(80);
+    });
+
+    it('should reject edit with empty property number', () => {
+      service.selectedProperty.set(fakePropertyWithStructure);
+      const structuresBefore = service.structures$.getValue()[0].properties.length;
+
+      service.editPropertyInStructure({ ...fakePropertyWithStructure, number: '' });
+
+      expect(service.structures$.getValue()[0].properties.length).toBe(structuresBefore);
+    });
+
+    it('should reject edit with whitespace-only property number', () => {
+      service.selectedProperty.set(fakePropertyWithStructure);
+      const structuresBefore = service.structures$.getValue()[0].properties.length;
+
+      service.editPropertyInStructure({ ...fakePropertyWithStructure, number: '   ' });
+
+      expect(service.structures$.getValue()[0].properties.length).toBe(structuresBefore);
     });
   });
 

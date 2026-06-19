@@ -229,6 +229,10 @@ export class Wizard {
   }
 
   saveStructureLocally(structure: LocalStructure): boolean {
+    if (!structure.name || structure.name.trim().length === 0) {
+      return false;
+    }
+
     const currentStructures = this.structures$.getValue();
     const structuresToSave = [...currentStructures];
 
@@ -264,6 +268,10 @@ export class Wizard {
     structureName: string,
     property: CreatePropertyFormData,
   ) {
+    if (!property.number || property.number.trim().length === 0) {
+      return false;
+    }
+
     const currentStructures = this.structures$.getValue();
     const structureIndex = currentStructures.findIndex(
       (s) => s.name === structureName,
@@ -329,6 +337,11 @@ export class Wizard {
     if (this.selectedProperty() == null) {
       throw new Error('No property selected');
     }
+
+    if (!property.number || property.number.trim().length === 0) {
+      return;
+    }
+
     const currentStructures = new Map(
       this.structures$.getValue().map((s) => [s.name, s]),
     );
