@@ -22,6 +22,8 @@ import { toSignal } from '@angular/core/rxjs-interop';
 import { StructuresListComponent } from '../structures-list/structures-list.component';
 import { Wizard } from '@features/create-condominium/services/wizard/wizard';
 import { LocalStructure } from '@features/create-condominium/create-condominium.types';
+import { TelemetryService } from '@core/services/telemetry';
+import { TelemetryEvents } from '@core/services/telemetry/telemetry.types';
 
 @Component({
   selector: 'app-simple-creation-process',
@@ -45,6 +47,7 @@ import { LocalStructure } from '@features/create-condominium/create-condominium.
 export class SimpleCreationProcessComponent implements OnInit {
   // --- Dependencies ---
   private wizardService = inject(Wizard);
+  private telemetry = inject(TelemetryService);
   // --- Components ---
   addStructureFormComponent = viewChild(AddStructureFormComponent);
   // --- Properties ---
@@ -73,6 +76,14 @@ export class SimpleCreationProcessComponent implements OnInit {
           properties: [],
         });
         if (success) {
+          try {
+            this.telemetry.track(TelemetryEvents.STRUCTURE_ADDED, {
+              mode: 'simple',
+              structures_count: this.wizardService.structures$.getValue().length,
+            });
+          } catch {
+            // Telemetry must never break wizard flow
+          }
           this.closeAddStructureModal();
         }
       }
@@ -82,6 +93,14 @@ export class SimpleCreationProcessComponent implements OnInit {
   editStructure(structure: LocalStructure) {
     this.wizardService.selectedStructure.set(structure);
     this.openAddStructureModal();
+    try {
+      this.telemetry.track(TelemetryEvents.STRUCTURE_EDITED, {
+        mode: 'simple',
+        structures_count: this.wizardService.structures$.getValue().length,
+      });
+    } catch {
+      // Telemetry must never break wizard flow
+    }
   }
 
   clearSelectedStructure() {

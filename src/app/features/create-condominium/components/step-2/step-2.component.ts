@@ -8,6 +8,8 @@ import { Subscription } from 'rxjs';
 import { Wizard } from '@features/create-condominium/services/wizard/wizard';
 import { TranslocoService } from '@jsverse/transloco';
 import { Toast } from '@core/services/toast/toast';
+import { TelemetryService } from '@core/services/telemetry';
+import { TelemetryEvents } from '@core/services/telemetry/telemetry.types';
 
 @Component({
   selector: 'app-step-2',
@@ -25,6 +27,7 @@ export class Step2Component implements OnInit, OnDestroy {
   private wizardService = inject(Wizard);
   private toast = inject(Toast);
   private translocoService = inject(TranslocoService);
+  private telemetry = inject(TelemetryService);
 
   // --- Properties ---
   private nextSubscription!: Subscription;
@@ -52,6 +55,16 @@ export class Step2Component implements OnInit, OnDestroy {
             ),
             dismissButton: true,
           });
+
+          try {
+            this.telemetry.track(TelemetryEvents.WIZARD_ERROR, {
+              error_type: 'validation',
+              step: 2,
+              message: 'No structures and no mode selected',
+            });
+          } catch {
+            // Telemetry must never break wizard flow
+          }
         }
       },
     );

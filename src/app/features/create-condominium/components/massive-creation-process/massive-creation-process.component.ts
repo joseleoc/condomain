@@ -34,6 +34,8 @@ import { AddStructureFormComponent } from '../add-structure-form/add-structure-f
 import { StructurePatternBuilderComponent, StructurePatternPart } from '../structure-pattern-builder/structure-pattern-builder.component';
 import { LocalStructure } from '@features/create-condominium/create-condominium.types';
 import { Toast } from '@core/services/toast/toast';
+import { TelemetryService } from '@core/services/telemetry';
+import { TelemetryEvents } from '@core/services/telemetry/telemetry.types';
 
 @Component({
   selector: 'app-massive-creation-process',
@@ -68,6 +70,7 @@ export class MassiveCreationProcessComponent implements OnInit, OnDestroy {
   private wizardService = inject(Wizard);
   private toast = inject(Toast);
   private translocoService = inject(TranslocoService);
+  private telemetry = inject(TelemetryService);
   private nextSubscription!: Subscription;
 
   mode = signal<'pattern' | 'custom'>('pattern');
@@ -133,6 +136,15 @@ export class MassiveCreationProcessComponent implements OnInit, OnDestroy {
             description: '',
             properties: [],
           });
+        }
+
+        try {
+          this.telemetry.track(TelemetryEvents.STRUCTURE_GENERATION_COMPLETED, {
+            count: names.length,
+            mode: 'massive',
+          });
+        } catch {
+          // Telemetry must never break wizard flow
         }
 
         this.showingGenerator.set(false);
