@@ -1,6 +1,7 @@
 import { inject, Injectable, OnDestroy } from '@angular/core';
 import { Router } from '@angular/router';
 import { Supabase } from '@core/services/supabase/supabase';
+import { TelemetryService } from '@core/services/telemetry';
 import {
   AuthError,
   isAuthApiError,
@@ -18,6 +19,7 @@ export class Auth implements OnDestroy {
   // --- Properties ---
   private client = inject(Supabase).client;
   private router = inject(Router);
+  private telemetry = inject(TelemetryService);
   private authStateSubscription: Subscription;
 
   // --- Properties ---
@@ -65,6 +67,12 @@ export class Auth implements OnDestroy {
         throw { ...error, translationKey: errorKey };
       }
       this.session$.next(data.session);
+      if (data.user) {
+        this.telemetry.identify(data.user.id, {
+          email: data.user.email || '',
+          role: '',
+        });
+      }
       return data;
     } catch (error) {
       console.error(error);
@@ -84,6 +92,12 @@ export class Auth implements OnDestroy {
         throw { ...error, translationKey: errorKey };
       }
       this.session$.next(data.session);
+      if (data.user) {
+        this.telemetry.identify(data.user.id, {
+          email: data.user.email || '',
+          role: '',
+        });
+      }
       return data;
     } catch (error) {
       console.error(error);
@@ -100,6 +114,7 @@ export class Auth implements OnDestroy {
         const errorKey = this.getTranslationErrorKey(error);
         throw { ...error, translationKey: errorKey };
       }
+      this.telemetry.reset();
       this.session$.next(null);
       await this.router.navigate(['/auth/sign-in'], { replaceUrl: true });
     } catch (error) {
