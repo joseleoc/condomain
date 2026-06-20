@@ -10,6 +10,8 @@ import { Router } from '@angular/router';
 import { Location } from '@angular/common';
 import { MAX_STEPS } from '@features/create-condominium/create-condominium.constants';
 import { LocalStructure, PropertyWithStructure } from '@features/create-condominium/create-condominium.types';
+import { TelemetryService } from '@core/services/telemetry';
+import { TelemetryEvents } from '@core/services/telemetry/telemetry.types';
 
 const STORAGE_KEY = 'condomain_wizard_state';
 const fakeCondo = { id: 'condo-1', name: 'Test Condo', currency: 'USD', owner_id: 'user-1', active: true, created_at: '', updated_at: '', deleted_at: null };
@@ -33,6 +35,7 @@ describe('Wizard', () => {
   let propertiesServiceSpy: jasmine.SpyObj<Properties>;
   let routerSpy: jasmine.SpyObj<Router>;
   let locationSpy: jasmine.SpyObj<Location>;
+  let telemetrySpy: jasmine.SpyObj<TelemetryService>;
 
   function setupConfirmAlert() {
     let confirmHandler: Function | undefined;
@@ -59,6 +62,7 @@ describe('Wizard', () => {
     const propertiesSpy = jasmine.createSpyObj('Properties', ['createProperties']);
     const routerSpyObj = jasmine.createSpyObj('Router', ['navigate']);
     const locationSpyObj = jasmine.createSpyObj('Location', ['back']);
+    const telemetrySpyObj = jasmine.createSpyObj('TelemetryService', ['track']);
 
     translocoSpy.translate.and.callFake((key: string) => key);
 
@@ -70,6 +74,7 @@ describe('Wizard', () => {
     propertiesServiceSpy = propertiesSpy;
     routerSpy = routerSpyObj;
     locationSpy = locationSpyObj;
+    telemetrySpy = telemetrySpyObj;
 
     TestBed.configureTestingModule({
       providers: [
@@ -82,6 +87,7 @@ describe('Wizard', () => {
         { provide: Properties, useValue: propertiesSpy },
         { provide: Router, useValue: routerSpyObj },
         { provide: Location, useValue: locationSpyObj },
+        { provide: TelemetryService, useValue: telemetrySpyObj },
       ],
     });
 
@@ -753,6 +759,189 @@ describe('Wizard', () => {
       service.backStep$.subscribe(spy);
       service.triggerBackStep();
       expect(spy).toHaveBeenCalledWith(1);
+    });
+  });
+
+  describe('telemetry tracking', () => {
+    it('should track wizard_step_completed when setStep is called', () => {
+      service.setStep(2);
+
+      expect(telemetrySpy.track).toHaveBeenCalledWith(
+        TelemetryEvents.WIZARD_STEP_COMPLETED,
+        jasmine.objectContaining({
+          from_step: 1,
+          to_step: 2,
+          time_spent_ms: jasmine.any(Number),
+        }),
+      );
+    });
+
+    it('should include creation_mode in wizard_step_completed', () => {
+      service.creationProcessSelected.set('simple');
+      service.setStep(2);
+
+      expect(telemetrySpy.track).toHaveBeenCalledWith(
+        TelemetryEvents.WIZARD_STEP_COMPLETED,
+        jasmine.objectContaining({
+          creation_mode: 'simple',
+        }),
+      );
+    });
+
+    it('should track wizard_restored when restoreFromStorage succeeds', () => {
+      // Set localStorage before the service reads it in constructor
+      localStorage.setItem(STORAGE_KEY, JSON.stringify({
+        step: 3,
+        createdCondominium: fakeCondo,
+        structures: [fakeStructure],
+        creationProcessSelected: 'simple',
+      }));
+
+      // Manually set savedWizardData to simulate a fresh service reading storage
+      (service as any).savedWizardData = JSON.parse(localStorage.getItem(STORAGE_KEY)!);
+      service.restoreFromStorage();
+
+      expect(telemetrySpy.track).toHaveBeenCalledWith(
+        TelemetryEvents.WIZARD_RESTORED,
+        jasmine.objectContaining({
+          step: 3,
+          creation_mode: 'simple',
+        }),
+      );
+    });
+
+    it('should not track wizard_restored when no saved data', () => {
+      telemetrySpy.track.calls.reset();
+      const result = service.restoreFromStorage();
+
+      expect(result).toBe(false);
+      expect(telemetrySpy.track).not.toHaveBeenCalled();
+    });
+
+    it('should track wizard_creation_completed on successful upload', async () => {
+      service.createdCondominium.set(fakeCondo as any);
+      service.structures$.next([
+        { name: 'A', description: '', properties: [{ number: 'P1', fee: 50, structure: 'A', ownerName: null, ownerEmail: null }] },
+      ]);
+      service.creationProcessSelected.set('simple');
+      const createdStructure = {
+        id: 'struct-1', name: 'A', description: '', condominium_id: 'condo-1',
+        created_at: '', updated_at: '', deleted_at: null,
+      };
+      structuresServiceSpy.createStructures.and.resolveTo([createdStructure as any]);
+      propertiesServiceSpy.createProperties.and.resolveTo([{
+        id: 'prop-1', condominium_id: 'condo-1', structure_id: 'struct-1',
+        name: 'P1', description: null, share_percentage: 50,
+        owner_name: null, owner_email: null,
+        created_at: '', updated_at: '', deleted_at: null,
+      } as any]);
+      routerSpy.navigate.and.resolveTo(true as any);
+
+      // Set up alert to capture and invoke the confirm handler
+      let confirmHandler: (() => void) | undefined;
+      const mockAlert = { present: jasmine.createSpy('present').and.resolveTo() };
+      (alertControllerSpy.create as jasmine.Spy).and.callFake(async (opts: unknown) => {
+        const buttons = (opts as { buttons?: { role?: string; handler?: () => void }[] }).buttons;
+        const btn = buttons?.find((b) => b.role === 'confirm');
+        confirmHandler = btn?.handler;
+        return mockAlert as unknown as HTMLIonAlertElement;
+      });
+
+      await service.createStructuresAndProperties();
+
+      // Invoke the confirm handler which calls uploadStructuresAndProperties
+      if (confirmHandler) {
+        await confirmHandler();
+      }
+
+      expect(telemetrySpy.track).toHaveBeenCalledWith(
+        TelemetryEvents.WIZARD_CREATION_COMPLETED,
+        jasmine.objectContaining({
+          structures_count: 1,
+          properties_count: 1,
+          creation_mode: 'simple',
+        }),
+      );
+    });
+
+    it('should track structure_added when saveStructureLocally succeeds for new structure', () => {
+      service.saveStructureLocally(fakeStructure);
+
+      expect(telemetrySpy.track).toHaveBeenCalledWith(
+        TelemetryEvents.STRUCTURE_ADDED,
+        jasmine.objectContaining({
+          structures_count: 1,
+        }),
+      );
+    });
+
+    it('should track structure_edited when saveStructureLocally succeeds for existing structure', () => {
+      service.saveStructureLocally(fakeStructure);
+      service.selectedStructure.set(fakeStructure);
+      telemetrySpy.track.calls.reset();
+
+      const edited = { ...fakeStructure, description: 'Updated' };
+      service.saveStructureLocally(edited);
+
+      expect(telemetrySpy.track).toHaveBeenCalledWith(
+        TelemetryEvents.STRUCTURE_EDITED,
+        jasmine.any(Object),
+      );
+    });
+
+    it('should track property_added when addPropertyToStructure succeeds', () => {
+      service.saveStructureLocally(fakeStructure);
+      telemetrySpy.track.calls.reset();
+
+      service.addPropertyToStructure('Tower A', fakeProperty);
+
+      expect(telemetrySpy.track).toHaveBeenCalledWith(
+        TelemetryEvents.PROPERTY_ADDED,
+        jasmine.objectContaining({
+          structure_name: 'Tower A',
+          has_owner: true,
+          fee: 50,
+        }),
+      );
+    });
+
+    it('should track property_edited when editPropertyInStructure succeeds', () => {
+      service.saveStructureLocally(fakeStructure);
+      service.addPropertyToStructure('Tower A', fakeProperty);
+      service.selectedProperty.set(fakePropertyWithStructure);
+      telemetrySpy.track.calls.reset();
+
+      service.editPropertyInStructure({ ...fakePropertyWithStructure, fee: 75 });
+
+      expect(telemetrySpy.track).toHaveBeenCalledWith(
+        TelemetryEvents.PROPERTY_EDITED,
+        jasmine.objectContaining({
+          structure_name: 'Tower A',
+          fee: 75,
+        }),
+      );
+    });
+
+    it('should track property_deleted when deletePropertyFromStructure succeeds', () => {
+      service.saveStructureLocally(fakeStructure);
+      service.addPropertyToStructure('Tower A', fakeProperty);
+      telemetrySpy.track.calls.reset();
+
+      service.deletePropertyFromStructure('Tower A', 'Apt 101');
+
+      expect(telemetrySpy.track).toHaveBeenCalledWith(
+        TelemetryEvents.PROPERTY_DELETED,
+        jasmine.objectContaining({
+          structure_name: 'Tower A',
+        }),
+      );
+    });
+
+    it('should not break wizard flow when telemetry throws', () => {
+      telemetrySpy.track.and.throwError(new Error('Telemetry unavailable'));
+
+      expect(() => service.setStep(2)).not.toThrow();
+      expect(service.step()).toBe(2);
     });
   });
 });

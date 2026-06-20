@@ -20,6 +20,8 @@ import {
 import { Structures } from '@core/services/structures/structures';
 import { Properties } from '@core/services/properties/properties';
 import { Router } from '@angular/router';
+import { TelemetryService } from '@core/services/telemetry';
+import { TelemetryEvents } from '@core/services/telemetry/telemetry.types';
 
 interface WizardStorage {
   step: number;
@@ -43,12 +45,14 @@ export class Wizard {
   private structuresService = inject(Structures);
   private propertiesService = inject(Properties);
   private router = inject(Router);
+  private telemetry = inject(TelemetryService);
 
   // --- Private Properties ---
   private nextStepSource = new Subject<number>();
   private backStepSource = new Subject<number>();
   private _step = signal(1);
   private savedWizardData: WizardStorage | null = null;
+  private stepStartTime = Date.now();
 
   // --- Properties ---
   nextStep$ = this.nextStepSource.asObservable();
@@ -85,6 +89,14 @@ export class Wizard {
     this.structures$.next(this.savedWizardData.structures);
     this.creationProcessSelected.set(this.savedWizardData.creationProcessSelected);
     this.savedWizardData = null;
+    try {
+      this.telemetry.track(TelemetryEvents.WIZARD_RESTORED, {
+        step: this._step(),
+        creation_mode: this.creationProcessSelected(),
+      });
+    } catch {
+      // Telemetry must never break wizard flow
+    }
     return true;
   }
 
@@ -124,8 +136,21 @@ export class Wizard {
   // --- Methods ---
 
   setStep(value: number): void {
+    const timeSpent = Date.now() - this.stepStartTime;
+    const previousStep = this._step();
     this._step.set(value);
     this.saveToStorage();
+    this.stepStartTime = Date.now();
+    try {
+      this.telemetry.track(TelemetryEvents.WIZARD_STEP_COMPLETED, {
+        from_step: previousStep,
+        to_step: value,
+        time_spent_ms: timeSpent,
+        creation_mode: this.creationProcessSelected(),
+      });
+    } catch {
+      // Telemetry must never break wizard flow
+    }
   }
 
   async createCondominium(data: CreateCondominiumData) {
@@ -235,8 +260,9 @@ export class Wizard {
 
     const currentStructures = this.structures$.getValue();
     const structuresToSave = [...currentStructures];
+    const isEdit = this.selectedStructure() != null;
 
-    if (this.selectedStructure() == null) {
+    if (!isEdit) {
       if (currentStructures.some((s) => s.name === structure.name)) {
         this.toast.present({
           message: this.translocoService.translate(
@@ -261,6 +287,19 @@ export class Wizard {
     structuresToSave.sort((a, b) => a.name.localeCompare(b.name));
     this.structures$.next(structuresToSave);
     this.saveToStorage();
+
+    try {
+      this.telemetry.track(
+        isEdit ? TelemetryEvents.STRUCTURE_EDITED : TelemetryEvents.STRUCTURE_ADDED,
+        {
+          mode: this.creationProcessSelected(),
+          structures_count: structuresToSave.length,
+        },
+      );
+    } catch {
+      // Telemetry must never break wizard flow
+    }
+
     return true;
   }
 
@@ -330,6 +369,17 @@ export class Wizard {
 
     this.structures$.next(updatedStructures);
     this.saveToStorage();
+
+    try {
+      this.telemetry.track(TelemetryEvents.PROPERTY_ADDED, {
+        structure_name: structureName,
+        has_owner: property.ownerName != null,
+        fee: property.fee,
+      });
+    } catch {
+      // Telemetry must never break wizard flow
+    }
+
     return true;
   }
 
@@ -401,6 +451,16 @@ export class Wizard {
     this.selectedStructure.set(targetStructure || null);
     this.selectedProperty.set(null);
     this.saveToStorage();
+
+    try {
+      this.telemetry.track(TelemetryEvents.PROPERTY_EDITED, {
+        structure_name: property.structure,
+        has_owner: property.ownerName != null,
+        fee: property.fee,
+      });
+    } catch {
+      // Telemetry must never break wizard flow
+    }
   }
 
   triggerNextStep() {
@@ -439,6 +499,14 @@ export class Wizard {
     structure.properties.splice(propertyIndex, 1);
     this.structures$.next(Array.from(currentStructures.values()));
     this.saveToStorage();
+
+    try {
+      this.telemetry.track(TelemetryEvents.PROPERTY_DELETED, {
+        structure_name: structureName,
+      });
+    } catch {
+      // Telemetry must never break wizard flow
+    }
   }
 
   // --- Private Methods ---
@@ -510,6 +578,21 @@ export class Wizard {
         await this.uploadStructuresToBackend(structures);
 
       await this.uploadPropertiesToBackend(updatedStructures);
+
+      const totalProperties = updatedStructures.reduce(
+        (acc, s) => acc + s.properties.length,
+        0,
+      );
+
+      try {
+        this.telemetry.track(TelemetryEvents.WIZARD_CREATION_COMPLETED, {
+          structures_count: updatedStructures.length,
+          properties_count: totalProperties,
+          creation_mode: this.creationProcessSelected(),
+        });
+      } catch {
+        // Telemetry must never break wizard flow
+      }
 
       this.structures$.next([]);
       this.clearStorage();
