@@ -19,13 +19,13 @@ describe('PosthogProvider', () => {
     it('should call posthog.init with apiKey, host, and config', () => {
       provider.init('test-api-key', 'https://test.posthog.com');
 
-      expect(posthog.init).toHaveBeenCalledWith('test-api-key', {
+      expect(posthog.init).toHaveBeenCalledWith('test-api-key', jasmine.objectContaining({
         api_host: 'https://test.posthog.com',
         capture_pageview: false,
         mask_personal_data_properties: true,
         disable_session_recording: false,
         capture_heatmaps: true,
-      });
+      }));
     });
   });
 

@@ -5,6 +5,7 @@ import { Wizard } from '@features/create-condominium/services/wizard/wizard';
 import { Toast } from '@core/services/toast/toast';
 import { MassivePropertyCreationComponent } from './massive-property-creation.component';
 import { BehaviorSubject } from 'rxjs';
+import { SharedTestingModule } from '@testing/shared-testing.module';
 
 describe('MassivePropertyCreationComponent', () => {
   let component: MassivePropertyCreationComponent;
@@ -31,7 +32,7 @@ describe('MassivePropertyCreationComponent', () => {
     } as unknown as jasmine.SpyObj<TranslocoService>;
 
     await TestBed.configureTestingModule({
-      imports: [IonicModule.forRoot(), MassivePropertyCreationComponent],
+      imports: [SharedTestingModule, IonicModule.forRoot(), MassivePropertyCreationComponent],
       providers: [
         { provide: Wizard, useValue: wizardMock },
         { provide: Toast, useValue: toastMock },

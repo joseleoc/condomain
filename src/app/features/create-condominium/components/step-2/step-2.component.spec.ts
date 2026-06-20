@@ -1,4 +1,4 @@
-import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
+import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { IonicModule } from '@ionic/angular';
 import { BehaviorSubject, Subject } from 'rxjs';
 import { Wizard } from '@features/create-condominium/services/wizard/wizard';
@@ -6,6 +6,7 @@ import { Toast } from '@core/services/toast/toast';
 import { TranslocoService } from '@jsverse/transloco';
 import { TelemetryService } from '@core/services/telemetry';
 import { TelemetryEvents } from '@core/services/telemetry/telemetry.types';
+import { SharedTestingModule } from '@testing/shared-testing.module';
 
 import { Step2Component } from './step-2.component';
 
@@ -18,7 +19,7 @@ describe('Step2Component', () => {
   let telemetryMock: jasmine.SpyObj<TelemetryService>;
   let nextStepSubject: Subject<number>;
 
-  beforeEach(waitForAsync(() => {
+  beforeEach(async () => {
     nextStepSubject = new Subject<number>();
     wizardMock = jasmine.createSpyObj('Wizard', ['setStep'], {
       nextStep$: nextStepSubject.asObservable(),
@@ -34,8 +35,8 @@ describe('Step2Component', () => {
     } as unknown as jasmine.SpyObj<TranslocoService>;
     telemetryMock = jasmine.createSpyObj('TelemetryService', ['track']);
 
-    TestBed.configureTestingModule({
-      imports: [IonicModule.forRoot(), Step2Component],
+    await TestBed.configureTestingModule({
+      imports: [SharedTestingModule, IonicModule.forRoot(), Step2Component],
       providers: [
         { provide: Wizard, useValue: wizardMock },
         { provide: Toast, useValue: toastMock },
@@ -47,7 +48,7 @@ describe('Step2Component', () => {
     fixture = TestBed.createComponent(Step2Component);
     component = fixture.componentInstance;
     fixture.detectChanges();
-  }));
+  });
 
   it('should create', () => {
     expect(component).toBeTruthy();

@@ -3,6 +3,7 @@ import { Router } from '@angular/router';
 import { Auth } from './auth';
 import { Supabase } from '@core/services/supabase/supabase';
 import { TelemetryService } from '@core/services/telemetry';
+import { SharedTestingModule } from '@testing/shared-testing.module';
 
 describe('Auth', () => {
   let service: Auth;
@@ -42,6 +43,7 @@ describe('Auth', () => {
     ]);
 
     TestBed.configureTestingModule({
+      imports: [SharedTestingModule],
       providers: [
         Auth,
         { provide: Supabase, useValue: { client: mockSupabaseClient } },

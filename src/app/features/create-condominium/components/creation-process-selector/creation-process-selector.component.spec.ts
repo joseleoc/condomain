@@ -1,10 +1,11 @@
-import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
+import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { IonicModule } from '@ionic/angular';
 import { BehaviorSubject } from 'rxjs';
 import { Wizard } from '@features/create-condominium/services/wizard/wizard';
 import { TranslocoService } from '@jsverse/transloco';
 import { TelemetryService } from '@core/services/telemetry';
 import { TelemetryEvents } from '@core/services/telemetry/telemetry.types';
+import { SharedTestingModule } from '@testing/shared-testing.module';
 
 import { CreationProcessSelectorComponent } from './creation-process-selector.component';
 
@@ -15,7 +16,7 @@ describe('CreationProcessSelectorComponent', () => {
   let translocoMock: jasmine.SpyObj<TranslocoService>;
   let telemetryMock: jasmine.SpyObj<TelemetryService>;
 
-  beforeEach(waitForAsync(() => {
+  beforeEach(async () => {
     wizardMock = jasmine.createSpyObj('Wizard', [], {
       nextStep$: new BehaviorSubject<void>(undefined),
     });
@@ -27,8 +28,8 @@ describe('CreationProcessSelectorComponent', () => {
     } as unknown as jasmine.SpyObj<TranslocoService>;
     telemetryMock = jasmine.createSpyObj('TelemetryService', ['track']);
 
-    TestBed.configureTestingModule({
-      imports: [IonicModule.forRoot(), CreationProcessSelectorComponent],
+    await TestBed.configureTestingModule({
+      imports: [SharedTestingModule, IonicModule.forRoot(), CreationProcessSelectorComponent],
       providers: [
         { provide: Wizard, useValue: wizardMock },
         { provide: TranslocoService, useValue: translocoMock },
@@ -39,7 +40,7 @@ describe('CreationProcessSelectorComponent', () => {
     fixture = TestBed.createComponent(CreationProcessSelectorComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
-  }));
+  });
 
   it('should create', () => {
     expect(component).toBeTruthy();

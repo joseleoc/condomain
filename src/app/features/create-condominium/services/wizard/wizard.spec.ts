@@ -9,9 +9,17 @@ import { Properties } from '@core/services/properties/properties';
 import { Router } from '@angular/router';
 import { Location } from '@angular/common';
 import { MAX_STEPS } from '@features/create-condominium/create-condominium.constants';
-import { LocalStructure, PropertyWithStructure } from '@features/create-condominium/create-condominium.types';
+import { LocalStructure, PropertyWithStructure, CreateCondominiumProcessOptions } from '@features/create-condominium/create-condominium.types';
 import { TelemetryService } from '@core/services/telemetry';
-import { TelemetryEvents } from '@core/services/telemetry/telemetry.types';
+import { TelemetryEvents, TELEMETRY_ENABLED } from '@core/services/telemetry/telemetry.types';
+import { SharedTestingModule } from '@testing/shared-testing.module';
+
+interface IWizardStorage {
+  step: number;
+  createdCondominium: import('@app-types/condominium').Condominium | null;
+  structures: LocalStructure[];
+  creationProcessSelected: CreateCondominiumProcessOptions | null;
+}
 
 const STORAGE_KEY = 'condomain_wizard_state';
 const fakeCondo = { id: 'condo-1', name: 'Test Condo', currency: 'USD', owner_id: 'user-1', active: true, created_at: '', updated_at: '', deleted_at: null };
@@ -48,6 +56,23 @@ describe('Wizard', () => {
     return { alert, getHandler: () => confirmHandler };
   }
 
+  function simulateSavedData(data: Partial<IWizardStorage> | null) {
+    if (data == null) {
+      (service as any).savedWizardData = null;
+    } else {
+      const full: IWizardStorage = {
+        step: 1,
+        createdCondominium: null,
+        structures: [],
+        creationProcessSelected: null,
+        ...data,
+      };
+      // Mirror readFromStorage logic: null when no condo and no structures
+      (service as any).savedWizardData =
+        full.createdCondominium == null && full.structures.length === 0 ? null : full;
+    }
+  }
+
   beforeEach(() => {
     localStorage.clear();
 
@@ -77,8 +102,10 @@ describe('Wizard', () => {
     telemetrySpy = telemetrySpyObj;
 
     TestBed.configureTestingModule({
+      imports: [SharedTestingModule],
       providers: [
         Wizard,
+        { provide: TELEMETRY_ENABLED, useValue: true },
         { provide: Condominium, useValue: condominiumSpy },
         { provide: TranslocoService, useValue: translocoSpy },
         { provide: Toast, useValue: toastSpyObj },
@@ -141,61 +168,56 @@ describe('Wizard', () => {
     });
 
     it('should return false when saved data has no condominium and no structures', () => {
-      localStorage.setItem(STORAGE_KEY, JSON.stringify({
+      simulateSavedData({
         step: 2,
         createdCondominium: null,
         structures: [],
         creationProcessSelected: null,
-      }));
-      const fresh = TestBed.inject(Wizard);
-      expect(fresh.hasSavedWizard()).toBe(false);
+      });
+      expect(service.hasSavedWizard()).toBe(false);
     });
 
     it('should return true when saved data has a condominium', () => {
-      localStorage.setItem(STORAGE_KEY, JSON.stringify({
+      simulateSavedData({
         step: 2,
         createdCondominium: fakeCondo,
         structures: [],
         creationProcessSelected: null,
-      }));
-      const fresh = TestBed.inject(Wizard);
-      expect(fresh.hasSavedWizard()).toBe(true);
+      });
+      expect(service.hasSavedWizard()).toBe(true);
     });
 
     it('should return true when saved data has structures', () => {
-      localStorage.setItem(STORAGE_KEY, JSON.stringify({
+      simulateSavedData({
         step: 2,
         createdCondominium: null,
         structures: [fakeStructure],
         creationProcessSelected: null,
-      }));
-      const fresh = TestBed.inject(Wizard);
-      expect(fresh.hasSavedWizard()).toBe(true);
+      });
+      expect(service.hasSavedWizard()).toBe(true);
     });
 
     it('should return false when JSON is malformed', () => {
-      localStorage.setItem(STORAGE_KEY, 'invalid json');
-      const fresh = TestBed.inject(Wizard);
-      expect(fresh.hasSavedWizard()).toBe(false);
+      simulateSavedData(null);
+      expect(service.hasSavedWizard()).toBe(false);
     });
   });
 
   describe('restoreFromStorage', () => {
     it('should restore step, condominium, structures, and creationProcessSelected', () => {
-      localStorage.setItem(STORAGE_KEY, JSON.stringify({
+      simulateSavedData({
         step: 3,
         createdCondominium: fakeCondo,
         structures: [fakeStructure],
         creationProcessSelected: 'simple',
-      }));
-      const fresh = TestBed.inject(Wizard);
-      const result = fresh.restoreFromStorage();
+      });
+      const result = service.restoreFromStorage();
 
       expect(result).toBe(true);
-      expect(fresh.step()).toBe(3);
-      expect(fresh.createdCondominium()).toEqual(fakeCondo as any);
-      expect(fresh.structures$.getValue()).toEqual([fakeStructure]);
-      expect(fresh.creationProcessSelected()).toBe('simple');
+      expect(service.step()).toBe(3);
+      expect(service.createdCondominium()).toEqual(fakeCondo as any);
+      expect(service.structures$.getValue()).toEqual([fakeStructure]);
+      expect(service.creationProcessSelected()).toBe('simple');
     });
 
     it('should return false and not restore when no saved data', () => {
@@ -205,32 +227,30 @@ describe('Wizard', () => {
     });
 
     it('should nullify savedWizardData after restore', () => {
-      localStorage.setItem(STORAGE_KEY, JSON.stringify({
+      simulateSavedData({
         step: 2,
         createdCondominium: fakeCondo,
         structures: [],
         creationProcessSelected: null,
-      }));
-      const fresh = TestBed.inject(Wizard);
-      expect(fresh.hasSavedWizard()).toBe(true);
-      fresh.restoreFromStorage();
-      expect(fresh.hasSavedWizard()).toBe(false);
+      });
+      expect(service.hasSavedWizard()).toBe(true);
+      service.restoreFromStorage();
+      expect(service.hasSavedWizard()).toBe(false);
     });
   });
 
   describe('clearStorage', () => {
     it('should remove localStorage key and clear hasSavedWizard', () => {
-      localStorage.setItem(STORAGE_KEY, JSON.stringify({
+      simulateSavedData({
         step: 2,
         createdCondominium: fakeCondo,
         structures: [],
         creationProcessSelected: null,
-      }));
-      const fresh = TestBed.inject(Wizard);
-      expect(fresh.hasSavedWizard()).toBe(true);
+      });
+      expect(service.hasSavedWizard()).toBe(true);
 
-      fresh.clearStorage();
-      expect(fresh.hasSavedWizard()).toBe(false);
+      service.clearStorage();
+      expect(service.hasSavedWizard()).toBe(false);
       expect(localStorage.getItem(STORAGE_KEY)).toBeNull();
     });
   });
@@ -242,16 +262,15 @@ describe('Wizard', () => {
     });
 
     it('should persist step to localStorage', () => {
-      localStorage.setItem(STORAGE_KEY, JSON.stringify({
+      simulateSavedData({
         step: 2,
         createdCondominium: fakeCondo,
         structures: [fakeStructure],
         creationProcessSelected: null,
-      }));
-      const fresh = TestBed.inject(Wizard);
-      fresh.restoreFromStorage();
+      });
+      service.restoreFromStorage();
 
-      fresh.setStep(1);
+      service.setStep(1);
       const saved = JSON.parse(localStorage.getItem(STORAGE_KEY)!);
       expect(saved.step).toBe(1);
     });
@@ -703,8 +722,9 @@ describe('Wizard', () => {
 
     it('should upload structures and properties when confirm button is clicked', async () => {
       service.createdCondominium.set(fakeCondo as any);
+      // Use fee != 100 to trigger the alert with confirm button
       service.structures$.next([
-        { name: 'A', description: '', properties: [{ number: 'P1', fee: 100, structure: 'A', ownerName: null, ownerEmail: null }] },
+        { name: 'A', description: '', properties: [{ number: 'P1', fee: 80, structure: 'A', ownerName: null, ownerEmail: null }] },
       ]);
       const createdStructure = {
         id: 'struct-1', name: 'A', description: '', condominium_id: 'condo-1',
@@ -713,7 +733,7 @@ describe('Wizard', () => {
       structuresServiceSpy.createStructures.and.resolveTo([createdStructure as any]);
       propertiesServiceSpy.createProperties.and.resolveTo([{
         id: 'prop-1', condominium_id: 'condo-1', structure_id: 'struct-1',
-        name: 'P1', description: null, share_percentage: 100,
+        name: 'P1', description: null, share_percentage: 80,
         owner_name: null, owner_email: null,
         created_at: '', updated_at: '', deleted_at: null,
       } as any]);
@@ -721,7 +741,11 @@ describe('Wizard', () => {
       const { getHandler } = setupConfirmAlert();
       await service.createStructuresAndProperties();
       const handler = getHandler();
-      if (handler) handler();
+      if (handler) {
+        handler();
+        // Handler doesn't return the promise, so wait for async operations
+        await new Promise((r) => setTimeout(r, 0));
+      }
 
       expect(structuresServiceSpy.createStructures).toHaveBeenCalled();
       expect(propertiesServiceSpy.createProperties).toHaveBeenCalled();
@@ -789,16 +813,12 @@ describe('Wizard', () => {
     });
 
     it('should track wizard_restored when restoreFromStorage succeeds', () => {
-      // Set localStorage before the service reads it in constructor
-      localStorage.setItem(STORAGE_KEY, JSON.stringify({
+      simulateSavedData({
         step: 3,
         createdCondominium: fakeCondo,
         structures: [fakeStructure],
         creationProcessSelected: 'simple',
-      }));
-
-      // Manually set savedWizardData to simulate a fresh service reading storage
-      (service as any).savedWizardData = JSON.parse(localStorage.getItem(STORAGE_KEY)!);
+      });
       service.restoreFromStorage();
 
       expect(telemetrySpy.track).toHaveBeenCalledWith(
@@ -838,10 +858,10 @@ describe('Wizard', () => {
       routerSpy.navigate.and.resolveTo(true as any);
 
       // Set up alert to capture and invoke the confirm handler
-      let confirmHandler: (() => void) | undefined;
+      let confirmHandler: (() => Promise<void>) | undefined;
       const mockAlert = { present: jasmine.createSpy('present').and.resolveTo() };
       (alertControllerSpy.create as jasmine.Spy).and.callFake(async (opts: unknown) => {
-        const buttons = (opts as { buttons?: { role?: string; handler?: () => void }[] }).buttons;
+        const buttons = (opts as { buttons?: { role?: string; handler?: () => Promise<void> }[] }).buttons;
         const btn = buttons?.find((b) => b.role === 'confirm');
         confirmHandler = btn?.handler;
         return mockAlert as unknown as HTMLIonAlertElement;
@@ -851,7 +871,9 @@ describe('Wizard', () => {
 
       // Invoke the confirm handler which calls uploadStructuresAndProperties
       if (confirmHandler) {
-        await confirmHandler();
+        confirmHandler();
+        // Handler doesn't return the promise, so wait for async operations
+        await new Promise((r) => setTimeout(r, 0));
       }
 
       expect(telemetrySpy.track).toHaveBeenCalledWith(

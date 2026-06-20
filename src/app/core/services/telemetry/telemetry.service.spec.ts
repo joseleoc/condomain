@@ -9,6 +9,7 @@ import {
 } from './telemetry.types';
 import { Router, NavigationEnd } from '@angular/router';
 import { Subject } from 'rxjs';
+import { SharedTestingModule } from '@testing/shared-testing.module';
 
 describe('TelemetryService', () => {
   let service: TelemetryService;
@@ -33,6 +34,7 @@ describe('TelemetryService', () => {
     });
 
     TestBed.configureTestingModule({
+      imports: [SharedTestingModule],
       providers: [
         TelemetryService,
         { provide: TELEMETRY_PROVIDER, useValue: mockProvider },
