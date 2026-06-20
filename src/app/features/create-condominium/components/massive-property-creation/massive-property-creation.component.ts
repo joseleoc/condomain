@@ -33,6 +33,8 @@ import { PropertyPatternBuilderComponent, PatternPart } from '../property-patter
 import { PropertyPreviewComponent } from '../property-preview/property-preview.component';
 import { Toast } from '@core/services/toast/toast';
 import { PropertyWithStructure } from '@features/create-condominium/create-condominium.types';
+import { TelemetryService } from '@core/services/telemetry';
+import { TelemetryEvents } from '@core/services/telemetry/telemetry.types';
 
 interface PropertyPreviewGroup {
   structureName: string;
@@ -71,6 +73,7 @@ export class MassivePropertyCreationComponent implements OnInit, OnDestroy {
   private wizardService = inject(Wizard);
   private toast = inject(Toast);
   private translocoService = inject(TranslocoService);
+  private telemetry = inject(TelemetryService);
   private nextSubscription!: Subscription;
 
   createPropertyFormComponent = viewChild(CreatePropertyFormComponent);
@@ -181,6 +184,16 @@ export class MassivePropertyCreationComponent implements OnInit, OnDestroy {
               ownerEmail: null,
             });
           }
+        }
+
+        try {
+          const totalGenerated = preview.reduce((acc, g) => acc + g.names.length, 0);
+          this.telemetry.track(TelemetryEvents.PROPERTY_GENERATION_COMPLETED, {
+            count: totalGenerated,
+            mode: 'massive',
+          });
+        } catch {
+          // Telemetry must never break wizard flow
         }
 
         this.showingGenerator.set(false);

@@ -26,6 +26,8 @@ import { Wizard } from '@features/create-condominium/services/wizard/wizard';
 import { PropertiesListEmptyComponent } from '../properties-list-empty/properties-list-empty.component';
 import { MassivePropertyCreationComponent } from '../massive-property-creation/massive-property-creation.component';
 import { PropertyWithStructure } from '@features/create-condominium/create-condominium.types';
+import { TelemetryService } from '@core/services/telemetry';
+import { TelemetryEvents } from '@core/services/telemetry/telemetry.types';
 
 @Component({
   selector: 'app-step-3',
@@ -51,6 +53,7 @@ import { PropertyWithStructure } from '@features/create-condominium/create-condo
 export class Step3Component implements OnInit, OnDestroy {
   // --- Dependencies ---
   private wizardService = inject(Wizard);
+  private telemetry = inject(TelemetryService);
 
   // --- Components ---
   createPropertyFormComponent = viewChild(CreatePropertyFormComponent);
@@ -100,8 +103,26 @@ export class Step3Component implements OnInit, OnDestroy {
           ...formData,
           structureName: formData.structure,
         });
+        try {
+          this.telemetry.track(TelemetryEvents.PROPERTY_EDITED, {
+            structure_name: formData.structure,
+            has_owner: formData.ownerName != null,
+            fee: formData.fee,
+          });
+        } catch {
+          // Telemetry must never break wizard flow
+        }
       } else {
         this.wizardService.addPropertyToStructure(formData.structure, formData);
+        try {
+          this.telemetry.track(TelemetryEvents.PROPERTY_ADDED, {
+            structure_name: formData.structure,
+            has_owner: formData.ownerName != null,
+            fee: formData.fee,
+          });
+        } catch {
+          // Telemetry must never break wizard flow
+        }
       }
 
       const structure = this.wizardService.structures$
