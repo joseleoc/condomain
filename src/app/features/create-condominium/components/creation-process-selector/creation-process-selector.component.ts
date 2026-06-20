@@ -12,6 +12,8 @@ import {
 import { Subscription } from 'rxjs/internal/Subscription';
 import { Wizard } from '@features/create-condominium/services/wizard/wizard';
 import { CreateCondominiumProcessOptions } from '@features/create-condominium/create-condominium.types';
+import { TelemetryService } from '@core/services/telemetry';
+import { TelemetryEvents } from '@core/services/telemetry/telemetry.types';
 @Component({
   selector: 'app-creation-process-selector',
   templateUrl: './creation-process-selector.component.html',
@@ -30,6 +32,7 @@ import { CreateCondominiumProcessOptions } from '@features/create-condominium/cr
 export class CreationProcessSelectorComponent implements OnInit {
   // --- Dependencies ---
   private wizardService = inject(Wizard);
+  private telemetry = inject(TelemetryService);
 
   // --- Output ---
   onSelectionSubmitted = output<CreateCondominiumProcessOptions | null>();
@@ -55,6 +58,16 @@ export class CreationProcessSelectorComponent implements OnInit {
   }
 
   handleSubmit() {
-    this.onSelectionSubmitted.emit(this.selectedOption());
+    const option = this.selectedOption();
+    this.onSelectionSubmitted.emit(option);
+    try {
+      if (option) {
+        this.telemetry.track(TelemetryEvents.WIZARD_MODE_SELECTED, {
+          mode: option,
+        });
+      }
+    } catch {
+      // Telemetry must never break wizard flow
+    }
   }
 }

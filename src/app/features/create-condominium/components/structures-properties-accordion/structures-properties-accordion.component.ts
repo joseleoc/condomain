@@ -18,6 +18,8 @@ import {
 } from '@ionic/angular/standalone';
 import { TranslocoPipe, TranslocoService } from '@jsverse/transloco';
 import { AlertController } from '@ionic/angular/standalone';
+import { TelemetryService } from '@core/services/telemetry';
+import { TelemetryEvents } from '@core/services/telemetry/telemetry.types';
 
 @Component({
   selector: 'app-structures-properties-accordion',
@@ -39,6 +41,7 @@ export class StructuresPropertiesAccordionComponent {
   private wizardService = inject(Wizard);
   private alertController = inject(AlertController);
   private translocoService = inject(TranslocoService);
+  private telemetry = inject(TelemetryService);
 
   // --- Inputs ---
   structureSelected = input<string | null>(null);
@@ -100,6 +103,13 @@ export class StructuresPropertiesAccordionComponent {
               structureName,
               property.number,
             );
+            try {
+              this.telemetry.track(TelemetryEvents.PROPERTY_DELETED, {
+                structure_name: structureName,
+              });
+            } catch {
+              // Telemetry must never break wizard flow
+            }
           },
         },
       ],

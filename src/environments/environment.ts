@@ -7,6 +7,8 @@ export const environment = {
   appUrl: 'http://localhost:8100',
   supabaseUrl: 'http://127.0.0.1:54321',
   supabasePublishableKey: 'sb_publishable_ACJWlzQHlZjBrEguHvfOxg_3BJgxAaH',
+  posthogApiKey: 'phc_rH8tUcfLgziyEVZnFRLJ3cz9t7Xd2aFV9Y9p95DNHX3D',
+  posthogHost: 'https://us.i.posthog.com',
 };
 
 /*

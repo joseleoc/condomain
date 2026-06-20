@@ -8,6 +8,7 @@ import { provideHttpClient } from '@angular/common/http';
 import { isDevMode } from '@angular/core';
 import { TranslocoHttpLoader } from './transloco-loader';
 import { provideTransloco } from '@jsverse/transloco';
+import { provideTelemetry } from './app/core/services/telemetry';
 
 bootstrapApplication(AppComponent, {
   providers: [
@@ -24,5 +25,6 @@ bootstrapApplication(AppComponent, {
       },
       loader: TranslocoHttpLoader,
     }),
+    provideTelemetry(),
   ],
 });

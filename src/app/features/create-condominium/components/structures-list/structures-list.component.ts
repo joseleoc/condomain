@@ -10,6 +10,8 @@ import {
 } from '@ionic/angular/standalone';
 import { Wizard } from '@features/create-condominium/services/wizard/wizard';
 import { LocalStructure } from '@features/create-condominium/create-condominium.types';
+import { TelemetryService } from '@core/services/telemetry';
+import { TelemetryEvents } from '@core/services/telemetry/telemetry.types';
 
 @Component({
   selector: 'app-structures-list',
@@ -22,6 +24,7 @@ export class StructuresListComponent {
   private wizardService = inject(Wizard);
   private alertController = inject(AlertController);
   private translocoService = inject(TranslocoService);
+  private telemetry = inject(TelemetryService);
 
   // --- Inputs ---
   showButton = input(true);
@@ -39,6 +42,14 @@ export class StructuresListComponent {
       (s) => s.name !== structureName,
     );
     this.wizardService.structures$.next(updatedStructures);
+
+    try {
+      this.telemetry.track(TelemetryEvents.STRUCTURE_DELETED, {
+        structures_count: updatedStructures.length,
+      });
+    } catch {
+      // Telemetry must never break wizard flow
+    }
   }
 
   // --- Methods ---

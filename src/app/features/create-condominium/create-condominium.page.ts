@@ -1,4 +1,4 @@
-import { Component, computed, inject } from '@angular/core';
+import { Component, computed, inject, OnDestroy } from '@angular/core';
 import { TranslocoModule, TranslocoPipe, TranslocoService } from '@jsverse/transloco';
 import { firstValueFrom } from 'rxjs';
 import {
@@ -15,6 +15,8 @@ import { Step2Component } from './components/step-2/step-2.component';
 import { WizardFooterComponent } from './components/wizard-footer/wizard-footer.component';
 import { Step3Component } from './components/step-3/step-3.component';
 import { AlertController } from '@ionic/angular/standalone';
+import { TelemetryService } from '@core/services/telemetry';
+import { TelemetryEvents } from '@core/services/telemetry/telemetry.types';
 
 @Component({
   selector: 'app-create-condominium',
@@ -36,11 +38,12 @@ import { AlertController } from '@ionic/angular/standalone';
     Step3Component,
   ],
 })
-export class CreateCondominiumPage {
+export class CreateCondominiumPage implements OnDestroy {
   // --- Dependencies ---
   private wizardService = inject(Wizard);
   private alertController = inject(AlertController);
   private translocoService = inject(TranslocoService);
+  private telemetry = inject(TelemetryService);
 
   // --- Properties ---
   step = this.wizardService.step;
@@ -51,7 +54,32 @@ export class CreateCondominiumPage {
   );
 
   constructor() {
+    this.trackWizardStarted();
     this.checkSavedWizard();
+  }
+
+  ngOnDestroy(): void {
+    this.trackWizardAbandoned();
+  }
+
+  private trackWizardStarted(): void {
+    try {
+      this.telemetry.track(TelemetryEvents.WIZARD_STARTED, {
+        step: 1,
+      });
+    } catch {
+      // Telemetry must never block page load
+    }
+  }
+
+  private trackWizardAbandoned(): void {
+    try {
+      this.telemetry.track(TelemetryEvents.WIZARD_ABANDONED, {
+        step: this.step(),
+      });
+    } catch {
+      // Telemetry must never block navigation
+    }
   }
 
   private async checkSavedWizard() {
