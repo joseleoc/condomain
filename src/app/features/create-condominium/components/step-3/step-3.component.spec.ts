@@ -1,9 +1,10 @@
-import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
+import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { IonicModule } from '@ionic/angular';
 import { BehaviorSubject } from 'rxjs';
 import { Wizard } from '@features/create-condominium/services/wizard/wizard';
 import { TelemetryService } from '@core/services/telemetry';
 import { TelemetryEvents } from '@core/services/telemetry/telemetry.types';
+import { SharedTestingModule } from '@testing/shared-testing.module';
 
 import { Step3Component } from './step-3.component';
 
@@ -13,7 +14,7 @@ describe('Step3Component', () => {
   let wizardMock: jasmine.SpyObj<Wizard>;
   let telemetryMock: jasmine.SpyObj<TelemetryService>;
 
-  beforeEach(waitForAsync(() => {
+  beforeEach(async () => {
     wizardMock = jasmine.createSpyObj('Wizard', [
       'addPropertyToStructure',
       'editPropertyInStructure',
@@ -30,8 +31,8 @@ describe('Step3Component', () => {
     wizardMock.addPropertyToStructure.and.returnValue(true);
     telemetryMock = jasmine.createSpyObj('TelemetryService', ['track']);
 
-    TestBed.configureTestingModule({
-      imports: [IonicModule.forRoot(), Step3Component],
+    await TestBed.configureTestingModule({
+      imports: [SharedTestingModule, IonicModule.forRoot(), Step3Component],
       providers: [
         { provide: Wizard, useValue: wizardMock },
         { provide: TelemetryService, useValue: telemetryMock },
@@ -41,7 +42,7 @@ describe('Step3Component', () => {
     fixture = TestBed.createComponent(Step3Component);
     component = fixture.componentInstance;
     fixture.detectChanges();
-  }));
+  });
 
   it('should create', () => {
     expect(component).toBeTruthy();

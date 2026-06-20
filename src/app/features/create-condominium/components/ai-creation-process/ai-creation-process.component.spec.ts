@@ -1,5 +1,6 @@
-import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
+import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { IonicModule } from '@ionic/angular';
+import { SharedTestingModule } from '@testing/shared-testing.module';
 
 import { AiCreationProcessComponent } from './ai-creation-process.component';
 
@@ -7,16 +8,15 @@ describe('AiCreationProcessComponent', () => {
   let component: AiCreationProcessComponent;
   let fixture: ComponentFixture<AiCreationProcessComponent>;
 
-  beforeEach(waitForAsync(() => {
-    TestBed.configureTestingModule({
-      declarations: [ AiCreationProcessComponent ],
-      imports: [IonicModule.forRoot()]
+  beforeEach(async () => {
+    await TestBed.configureTestingModule({
+      imports: [SharedTestingModule, IonicModule.forRoot(), AiCreationProcessComponent],
     }).compileComponents();
 
     fixture = TestBed.createComponent(AiCreationProcessComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
-  }));
+  });
 
   it('should create', () => {
     expect(component).toBeTruthy();

@@ -11,7 +11,8 @@
       "@shared/*": ["src/app/shared/*"],
       "@features/*": ["src/app/features/*"],
       "@assets/*": ["src/assets/*"],
-      "@app-types/*": ["src/app-types/*"]
+      "@app-types/*": ["src/app-types/*"],
+      "@testing/*": ["src/testing/*"]
     },
     "outDir": "./dist/out-tsc",
     "forceConsistentCasingInFileNames": true,

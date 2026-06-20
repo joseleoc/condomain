@@ -1,4 +1,4 @@
-import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
+import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { IonicModule } from '@ionic/angular';
 import { BehaviorSubject } from 'rxjs';
 import { Wizard } from '@features/create-condominium/services/wizard/wizard';
@@ -6,6 +6,7 @@ import { TranslocoService } from '@jsverse/transloco';
 import { AlertController } from '@ionic/angular/standalone';
 import { TelemetryService } from '@core/services/telemetry';
 import { TelemetryEvents } from '@core/services/telemetry/telemetry.types';
+import { SharedTestingModule } from '@testing/shared-testing.module';
 
 import { StructuresPropertiesAccordionComponent } from './structures-properties-accordion.component';
 
@@ -17,7 +18,7 @@ describe('StructuresPropertiesAccordionComponent', () => {
   let alertControllerMock: jasmine.SpyObj<AlertController>;
   let telemetryMock: jasmine.SpyObj<TelemetryService>;
 
-  beforeEach(waitForAsync(() => {
+  beforeEach(async () => {
     wizardMock = jasmine.createSpyObj('Wizard', ['deletePropertyFromStructure'], {
       structures$: new BehaviorSubject([]),
     });
@@ -30,8 +31,8 @@ describe('StructuresPropertiesAccordionComponent', () => {
     alertControllerMock = jasmine.createSpyObj('AlertController', ['create']);
     telemetryMock = jasmine.createSpyObj('TelemetryService', ['track']);
 
-    TestBed.configureTestingModule({
-      imports: [IonicModule.forRoot(), StructuresPropertiesAccordionComponent],
+    await TestBed.configureTestingModule({
+      imports: [SharedTestingModule, IonicModule.forRoot(), StructuresPropertiesAccordionComponent],
       providers: [
         { provide: Wizard, useValue: wizardMock },
         { provide: TranslocoService, useValue: translocoMock },
@@ -43,7 +44,7 @@ describe('StructuresPropertiesAccordionComponent', () => {
     fixture = TestBed.createComponent(StructuresPropertiesAccordionComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
-  }));
+  });
 
   it('should create', () => {
     expect(component).toBeTruthy();

@@ -6,6 +6,7 @@ import { Toast } from '@core/services/toast/toast';
 import { TranslocoService } from '@jsverse/transloco';
 import { TelemetryService } from '@core/services/telemetry';
 import { TelemetryEvents } from '@core/services/telemetry/telemetry.types';
+import { SharedTestingModule } from '@testing/shared-testing.module';
 
 import { MassiveCreationProcessComponent } from './massive-creation-process.component';
 
@@ -36,7 +37,7 @@ describe('MassiveCreationProcessComponent', () => {
     telemetryMock = jasmine.createSpyObj('TelemetryService', ['track']);
 
     await TestBed.configureTestingModule({
-      imports: [IonicModule.forRoot(), MassiveCreationProcessComponent],
+      imports: [SharedTestingModule, IonicModule.forRoot(), MassiveCreationProcessComponent],
       providers: [
         { provide: Wizard, useValue: wizardMock },
         { provide: Toast, useValue: toastMock },

@@ -18,13 +18,13 @@ describe('provideTelemetry()', () => {
       }).not.toThrow();
     });
 
-    it('should set TELEMETRY_ENABLED to false in dev mode', () => {
+    it('should set TELEMETRY_ENABLED to true when API key is configured', () => {
       TestBed.configureTestingModule({
         providers: [provideTelemetry()],
       });
 
       const enabled = TestBed.inject(TELEMETRY_ENABLED);
-      expect(enabled).toBe(false);
+      expect(enabled).toBe(true);
     });
 
     it('should provide a TelemetryProvider that implements all methods', () => {
