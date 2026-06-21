@@ -41,7 +41,18 @@
       "unsavedProgressTitle": "Unfinished process",
       "unsavedProgressMessage": "You have an unfinished condominium creation process. Do you want to continue where you left off or start fresh?",
       "continueProgress": "Continue",
-      "startFresh": "Start fresh"
+      "startFresh": "Start fresh",
+      "help": {
+        "buttonLabel": "Help",
+        "step1Title": "What is a condominium?",
+        "step1Body": "A condominium is the complete set of your property: the building, common areas, shared spaces, and everything that makes it work. It's like the identity of your community.\n\nIn this step, you'll give your condominium a name, address, and main currency. This information is the foundation for everything that comes next, so make sure it's correct.",
+        "step2Title": "What are structures?",
+        "step2Body": "A structure is anything that contains properties within your condominium: a building, a block, a tower, or even a section. If your condominium only has one building, you can create just one structure without any problem.\n\nHere you can add structures in three ways:\n• Simple: one by one, manually.\n• Massive: generating several at once with a naming pattern.\n• With AI: describing your condominium and letting the AI configure it for you.",
+        "step3Title": "What are properties?",
+        "step3Body": "A property is each individual unit within a structure: an apartment, a house, a commercial space, a parking spot, or any space that has an owner or a specific use.\n\nIn this step, you'll create the properties that belong to each structure. You can do it manually or generate several at once with a naming pattern. Each property can be edited later if you need to adjust anything.",
+        "processSelectorTitle": "How to create your condominium?",
+        "processSelectorBody": "Before you start, choose how you want to create the structures and properties for your condominium. You have three options:\n\n• Simple Creation: Create each structure and its properties individually, one at a time. It's perfect if you have a small condominium with few towers or if you prefer to have full control over every detail.\n\n• Massive Creation: Generate many structures and properties at once using naming patterns. For example, you can automatically create \"Tower A\", \"Tower B\", \"Tower C\" and all their properties in just a few steps. Ideal for large condominiums.\n\n• AI Assistant: Describe your condominium in your own words and our artificial intelligence will take care of creating the entire structure for you. You can tell it things like \"I have a 5-story building with 4 apartments per floor\" and the AI will automatically generate everything."
+      }
     },
     "createForm": {
       "newCondominium": "New Condominium",
@@ -102,10 +113,13 @@
       "subtitle": "Select the method that best suits your needs to start organizing your property.",
       "simpleCreation": "Simple Creation",
       "simpleCreationDescription": "Create structures and properties one by one manually. Ideal for small condominiums or specific adjustments.",
+      "simpleCreationDetails": "This method allows you to create each structure and its properties individually, one at a time. It's perfect if you have a small condominium with few towers or if you prefer to have full control over every detail. Simply add a structure, define its properties, and repeat the process until everything is complete.",
       "massiveCreation": "Massive Creation",
       "massiveCreationDescription": "Define naming rules and generate multiple towers and properties in a few steps. The fastest option for large complexes.",
-      "aiAssistantCreation": "I Assistant",
-      "aiAssistantCreationDescription": "Chat with our AI to describe your condominium and let us configure the structure for you. Perfect for those who prefer a guided and intelligent approach."
+      "massiveCreationDetails": "With this method you can generate many structures and properties at once using naming patterns. For example, you can automatically create \"Tower A\", \"Tower B\", \"Tower C\" and all their properties in just a few steps. It's the ideal option for large condominiums with many towers or repetitive units. You define the pattern and we do the rest.",
+      "aiAssistantCreation": "AI Assistant",
+      "aiAssistantCreationDescription": "Chat with our AI to describe your condominium and let us configure the structure for you. Perfect for those who prefer a guided and intelligent approach.",
+      "aiAssistantCreationDetails": "Simply describe your condominium in your own words and our artificial intelligence will take care of creating the entire structure for you. You can tell it things like \"I have a 5-story building with 4 apartments per floor\" and the AI will automatically generate the towers, apartments, and corresponding fees. It's like having a personal assistant that understands what you need."
     },
     "massive": {
       "title": "Bulk structure creation",

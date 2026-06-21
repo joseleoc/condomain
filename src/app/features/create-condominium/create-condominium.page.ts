@@ -1,4 +1,4 @@
-import { Component, computed, inject, OnDestroy } from '@angular/core';
+import { Component, computed, inject, OnDestroy, signal } from '@angular/core';
 import { TranslocoModule, TranslocoPipe, TranslocoService } from '@jsverse/transloco';
 import { firstValueFrom } from 'rxjs';
 import {
@@ -8,6 +8,10 @@ import {
   IonProgressBar,
   IonText,
   IonTitle,
+  IonModal,
+  IonButtons,
+  IonButton,
+  IonIcon,
 } from '@ionic/angular/standalone';
 import { Wizard } from './services/wizard/wizard';
 import { Step1Component } from './components/step-1/step-1.component';
@@ -32,6 +36,10 @@ import { TelemetryEvents } from '@core/services/telemetry/telemetry.types';
     TranslocoPipe,
     IonText,
     IonTitle,
+    IonModal,
+    IonButtons,
+    IonButton,
+    IonIcon,
     Step1Component,
     Step2Component,
     WizardFooterComponent,
@@ -52,6 +60,20 @@ export class CreateCondominiumPage implements OnDestroy {
   stepLabel = computed(
     () => `condominium.wizard.step${this.step()}Description`,
   );
+  isHelpModalOpen = signal(false);
+
+  helpTitle = computed(() => {
+    if (this.step() === 2 && this.wizardService.creationProcessSelected() === null) {
+      return 'condominium.wizard.help.processSelectorTitle';
+    }
+    return `condominium.wizard.help.step${this.step()}Title`;
+  });
+  helpBody = computed(() => {
+    if (this.step() === 2 && this.wizardService.creationProcessSelected() === null) {
+      return 'condominium.wizard.help.processSelectorBody';
+    }
+    return `condominium.wizard.help.step${this.step()}Body`;
+  });
 
   constructor() {
     this.trackWizardStarted();
@@ -111,6 +133,7 @@ export class CreateCondominiumPage implements OnDestroy {
     const alert = await this.alertController.create({
       header,
       message,
+      backdropDismiss: false,
       buttons: [
         {
           text: startFresh,
@@ -129,5 +152,13 @@ export class CreateCondominiumPage implements OnDestroy {
       ],
     });
     await alert.present();
+  }
+
+  openHelpModal() {
+    this.isHelpModalOpen.set(true);
+  }
+
+  closeHelpModal() {
+    this.isHelpModalOpen.set(false);
   }
 }

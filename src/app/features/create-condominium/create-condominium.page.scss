@@ -36,3 +36,10 @@
     max-width: 48rem;
   }
 }
+
+.help-modal-body {
+  white-space: pre-line;
+  line-height: 1.6;
+  font-size: 0.95rem;
+  color: var(--ion-color-medium);
+}
