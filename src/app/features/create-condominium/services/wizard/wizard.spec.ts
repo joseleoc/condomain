@@ -686,6 +686,50 @@ describe('Wizard', () => {
       const saved = JSON.parse(localStorage.getItem(STORAGE_KEY)!);
       expect(saved.step).toBe(2);
     });
+
+    it('should reset creationProcessSelected when on step 2 with a process selected', () => {
+      service.setStep(2);
+      service.creationProcessSelected.set('massive');
+
+      service.goBack();
+
+      expect(service.step()).toBe(2);
+      expect(service.creationProcessSelected()).toBeNull();
+    });
+
+    it('should decrement step when on step 2 with no process selected', () => {
+      service.setStep(2);
+      service.creationProcessSelected.set(null);
+
+      service.goBack();
+
+      expect(service.step()).toBe(1);
+    });
+
+    it('should do nothing when backHandled flag is set', () => {
+      service.setStep(2);
+      service.creationProcessSelected.set('simple');
+      service.markBackHandled();
+
+      service.goBack();
+
+      expect(service.step()).toBe(2);
+      expect(service.creationProcessSelected()).toBe('simple');
+    });
+
+    it('should reset backHandled flag when triggerBackStep is called', () => {
+      service.setStep(2);
+      service.creationProcessSelected.set('simple');
+      service.markBackHandled();
+
+      service.triggerBackStep();
+      service.goBack();
+
+      // backHandled was reset by triggerBackStep, so goBack should proceed normally
+      // and reset creationProcessSelected since we're on step 2
+      expect(service.step()).toBe(2);
+      expect(service.creationProcessSelected()).toBeNull();
+    });
   });
 
   describe('createStructuresAndProperties', () => {

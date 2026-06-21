@@ -75,6 +75,7 @@ export class MassivePropertyCreationComponent implements OnInit, OnDestroy {
   private translocoService = inject(TranslocoService);
   private telemetry = inject(TelemetryService);
   private nextSubscription!: Subscription;
+  private backSubscription!: Subscription;
 
   createPropertyFormComponent = viewChild(CreatePropertyFormComponent);
 
@@ -201,10 +202,18 @@ export class MassivePropertyCreationComponent implements OnInit, OnDestroy {
         this.wizardService.createStructuresAndProperties();
       }
     });
+
+    this.backSubscription = this.wizardService.backStep$.subscribe(() => {
+      if (!this.showingGenerator()) {
+        this.showingGenerator.set(true);
+        this.wizardService.markBackHandled();
+      }
+    });
   }
 
   ngOnDestroy(): void {
     this.nextSubscription?.unsubscribe();
+    this.backSubscription?.unsubscribe();
   }
 
   private hasAnyProperties(): boolean {

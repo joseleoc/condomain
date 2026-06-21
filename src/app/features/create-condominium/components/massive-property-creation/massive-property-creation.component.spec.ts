@@ -4,7 +4,7 @@ import { TranslocoService } from '@jsverse/transloco';
 import { Wizard } from '@features/create-condominium/services/wizard/wizard';
 import { Toast } from '@core/services/toast/toast';
 import { MassivePropertyCreationComponent } from './massive-property-creation.component';
-import { BehaviorSubject } from 'rxjs';
+import { BehaviorSubject, Subject } from 'rxjs';
 import { SharedTestingModule } from '@testing/shared-testing.module';
 
 describe('MassivePropertyCreationComponent', () => {
@@ -18,9 +18,11 @@ describe('MassivePropertyCreationComponent', () => {
     wizardMock = jasmine.createSpyObj('Wizard', [
       'addPropertyToStructure',
       'createStructuresAndProperties',
+      'markBackHandled',
     ], {
       structures$: new BehaviorSubject([]),
       nextStep$: new BehaviorSubject<void>(undefined),
+      backStep$: new Subject<void>(),
     });
 
     toastMock = jasmine.createSpyObj('Toast', ['present']);

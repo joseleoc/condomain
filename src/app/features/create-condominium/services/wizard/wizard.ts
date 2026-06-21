@@ -463,6 +463,8 @@ export class Wizard {
     }
   }
 
+  private backHandled = false;
+
   triggerNextStep() {
     if (!this.loading()) {
       this.nextStepSource.next(this._step());
@@ -470,12 +472,23 @@ export class Wizard {
   }
 
   triggerBackStep() {
+    this.backHandled = false;
     if (!this.loading()) {
       this.backStepSource.next(this._step());
     }
   }
 
+  markBackHandled() {
+    this.backHandled = true;
+  }
+
   goBack() {
+    if (this.backHandled) return;
+    if (this._step() === 2 && this.creationProcessSelected() !== null) {
+      this.creationProcessSelected.set(null);
+      this.saveToStorage();
+      return;
+    }
     if (this._step() > 1) {
       this._step.update((value) => value - 1);
       this.saveToStorage();
