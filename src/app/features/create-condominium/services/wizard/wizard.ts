@@ -261,9 +261,10 @@ export class Wizard {
     const currentStructures = this.structures$.getValue();
     const structuresToSave = [...currentStructures];
     const isEdit = this.selectedStructure() != null;
+    const normalizedName = structure.name.trim().toLowerCase();
 
     if (!isEdit) {
-      if (currentStructures.some((s) => s.name === structure.name)) {
+      if (currentStructures.some((s) => s.name.toLowerCase() === normalizedName)) {
         this.toast.present({
           message: this.translocoService.translate(
             'condominium.createStructure.structureAlreadyExists',
@@ -278,9 +279,26 @@ export class Wizard {
       const foundStructureIndex = this.structures$
         .getValue()
         .findIndex((s) => s.name === selected?.name);
-      if (foundStructureIndex != -1) {
-        structuresToSave.splice(foundStructureIndex, 1);
+      if (foundStructureIndex === -1) {
+        return false;
       }
+
+      // Check if the new name conflicts with a DIFFERENT existing structure
+      const nameConflict = currentStructures.some(
+        (s, idx) => idx !== foundStructureIndex && s.name.toLowerCase() === normalizedName,
+      );
+      if (nameConflict) {
+        this.toast.present({
+          message: this.translocoService.translate(
+            'condominium.createStructure.structureAlreadyExists',
+            { name: structure.name },
+          ),
+          dismissButton: true,
+        });
+        return false;
+      }
+
+      structuresToSave.splice(foundStructureIndex, 1);
     }
 
     structuresToSave.push(structure);

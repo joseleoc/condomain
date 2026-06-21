@@ -1,5 +1,9 @@
 import { Component, computed, inject, OnDestroy, signal } from '@angular/core';
-import { TranslocoModule, TranslocoPipe, TranslocoService } from '@jsverse/transloco';
+import {
+  TranslocoModule,
+  TranslocoPipe,
+  TranslocoService,
+} from '@jsverse/transloco';
 import { firstValueFrom } from 'rxjs';
 import {
   IonContent,
@@ -13,7 +17,13 @@ import {
   IonButton,
   IonIcon,
 } from '@ionic/angular/standalone';
-import { trigger, state, transition, style, animate } from '@angular/animations';
+import {
+  trigger,
+  state,
+  transition,
+  style,
+  animate,
+} from '@angular/animations';
 import { Wizard } from './services/wizard/wizard';
 import { Step1Component } from './components/step-1/step-1.component';
 import { Step2Component } from './components/step-2/step-2.component';
@@ -22,6 +32,7 @@ import { Step3Component } from './components/step-3/step-3.component';
 import { AlertController } from '@ionic/angular/standalone';
 import { TelemetryService } from '@core/services/telemetry';
 import { TelemetryEvents } from '@core/services/telemetry/telemetry.types';
+import { provideNoopAnimations } from '@angular/platform-browser/animations';
 
 @Component({
   selector: 'app-create-condominium',
@@ -46,16 +57,6 @@ import { TelemetryEvents } from '@core/services/telemetry/telemetry.types';
     WizardFooterComponent,
     Step3Component,
   ],
-  animations: [
-    trigger('helpPulse', [
-      state('void', style({ transform: 'scale(1)' })),
-      state('*', style({ transform: 'scale(1)' })),
-      transition('* => *', [
-        animate('300ms ease-in-out', style({ transform: 'scale(1.15)', opacity: 0.7 })),
-        animate('300ms ease-in-out', style({ transform: 'scale(1)', opacity: 1 })),
-      ]),
-    ]),
-  ],
 })
 export class CreateCondominiumPage implements OnDestroy {
   // --- Dependencies ---
@@ -74,13 +75,19 @@ export class CreateCondominiumPage implements OnDestroy {
   isHelpModalOpen = signal(false);
 
   helpTitle = computed(() => {
-    if (this.step() === 2 && this.wizardService.creationProcessSelected() === null) {
+    if (
+      this.step() === 2 &&
+      this.wizardService.creationProcessSelected() === null
+    ) {
       return 'condominium.wizard.help.processSelectorTitle';
     }
     return `condominium.wizard.help.step${this.step()}Title`;
   });
   helpBody = computed(() => {
-    if (this.step() === 2 && this.wizardService.creationProcessSelected() === null) {
+    if (
+      this.step() === 2 &&
+      this.wizardService.creationProcessSelected() === null
+    ) {
       return 'condominium.wizard.help.processSelectorBody';
     }
     return `condominium.wizard.help.step${this.step()}Body`;
@@ -130,9 +137,7 @@ export class CreateCondominiumPage implements OnDestroy {
         ),
       ),
       firstValueFrom(
-        this.translocoService.selectTranslate(
-          'condominium.wizard.startFresh',
-        ),
+        this.translocoService.selectTranslate('condominium.wizard.startFresh'),
       ),
       firstValueFrom(
         this.translocoService.selectTranslate(

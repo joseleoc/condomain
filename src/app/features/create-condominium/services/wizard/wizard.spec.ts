@@ -427,6 +427,53 @@ describe('Wizard', () => {
       expect(result).toBe(false);
       expect(service.structures$.getValue().length).toBe(0);
     });
+
+    it('should reject duplicate names case-insensitively when creating', () => {
+      service.saveStructureLocally(fakeStructure); // "Tower A"
+
+      const result = service.saveStructureLocally({
+        name: 'tower a',
+        description: 'Different case',
+        properties: [],
+      });
+
+      expect(result).toBe(false);
+      expect(toastSpy.present).toHaveBeenCalled();
+      expect(service.structures$.getValue().length).toBe(1);
+    });
+
+    it('should reject duplicate names when editing (renaming to existing)', () => {
+      service.saveStructureLocally({ name: 'Tower A', description: '', properties: [] });
+      service.saveStructureLocally({ name: 'Tower B', description: '', properties: [] });
+      const towerA = service.structures$.getValue().find((s) => s.name === 'Tower A')!;
+      service.selectedStructure.set(towerA);
+
+      const result = service.saveStructureLocally({
+        name: 'Tower B',
+        description: 'Renamed to conflict',
+        properties: [],
+      });
+
+      expect(result).toBe(false);
+      expect(toastSpy.present).toHaveBeenCalled();
+      expect(service.structures$.getValue().length).toBe(2);
+    });
+
+    it('should reject duplicate names case-insensitively when editing', () => {
+      service.saveStructureLocally({ name: 'Tower A', description: '', properties: [] });
+      service.saveStructureLocally({ name: 'Tower B', description: '', properties: [] });
+      const towerA = service.structures$.getValue().find((s) => s.name === 'Tower A')!;
+      service.selectedStructure.set(towerA);
+
+      const result = service.saveStructureLocally({
+        name: 'tower b',
+        description: 'Renamed to conflict with Tower B',
+        properties: [],
+      });
+
+      expect(result).toBe(false);
+      expect(toastSpy.present).toHaveBeenCalled();
+    });
   });
 
   describe('addPropertyToStructure', () => {
