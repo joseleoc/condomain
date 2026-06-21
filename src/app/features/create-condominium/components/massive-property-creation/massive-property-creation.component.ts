@@ -132,9 +132,10 @@ export class MassivePropertyCreationComponent implements OnInit, OnDestroy {
   });
 
   existingTotalFee = computed(() => {
-    return this.structures().reduce((total, s) => {
+    const totalFee = this.structures().reduce((total, s) => {
       return total + s.properties.reduce((sum, p) => sum + (p.fee || 0), 0);
     }, 0);
+    return parseFloat(totalFee.toFixed(4));
   });
 
   remainingFee = computed(() => Math.max(0, 100 - this.existingTotalFee()));

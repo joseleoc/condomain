@@ -13,6 +13,7 @@ import {
   IonButton,
   IonIcon,
 } from '@ionic/angular/standalone';
+import { trigger, state, transition, style, animate } from '@angular/animations';
 import { Wizard } from './services/wizard/wizard';
 import { Step1Component } from './components/step-1/step-1.component';
 import { Step2Component } from './components/step-2/step-2.component';
@@ -45,10 +46,20 @@ import { TelemetryEvents } from '@core/services/telemetry/telemetry.types';
     WizardFooterComponent,
     Step3Component,
   ],
+  animations: [
+    trigger('helpPulse', [
+      state('void', style({ transform: 'scale(1)' })),
+      state('*', style({ transform: 'scale(1)' })),
+      transition('* => *', [
+        animate('300ms ease-in-out', style({ transform: 'scale(1.15)', opacity: 0.7 })),
+        animate('300ms ease-in-out', style({ transform: 'scale(1)', opacity: 1 })),
+      ]),
+    ]),
+  ],
 })
 export class CreateCondominiumPage implements OnDestroy {
   // --- Dependencies ---
-  private wizardService = inject(Wizard);
+  wizardService = inject(Wizard);
   private alertController = inject(AlertController);
   private translocoService = inject(TranslocoService);
   private telemetry = inject(TelemetryService);
