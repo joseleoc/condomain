@@ -41,7 +41,18 @@
       "unsavedProgressTitle": "Proceso sin terminar",
       "unsavedProgressMessage": "Tienes un proceso de creación de condominio sin terminar. ¿Deseas continuar donde lo dejaste o empezar de nuevo?",
       "continueProgress": "Continuar",
-      "startFresh": "Empezar de nuevo"
+      "startFresh": "Empezar de nuevo",
+      "help": {
+        "buttonLabel": "Ayuda",
+        "step1Title": "¿Qué es un condominio?",
+        "step1Body": "Un condominio es el conjunto completo de tu propiedad: el edificio, las áreas comunes, los espacios compartidos y todo lo que lo hace funcionar. Es como la identidad de tu comunidad.\n\nEn este paso vas a darle nombre, dirección y moneda principal a tu condominio. Esta información es la base para todo lo que viene después, así que asegúrate de que esté correcta.",
+        "step2Title": "¿Qué son las estructuras?",
+        "step2Body": "Una estructura es cualquier cosa que contenga propiedades dentro de tu condominio: un edificio, un bloque, una torre, o incluso un sector. Si tu condominio solo tiene un edificio, puedes crear una sola estructura sin problema.\n\nAquí puedes agregar las estructuras de tres formas:\n• Simple: una por una, manualmente.\n• Masiva: generando varias a la vez con un patrón de nombres.\n• Con IA: describiendo tu condominio y dejando que la IA lo configure por ti.",
+        "step3Title": "¿Qué son las propiedades?",
+        "step3Body": "Una propiedad es cada unidad individual dentro de una estructura: un apartamento, una casa, un local comercial, un estacionamiento, o cualquier espacio que tenga un dueño o un uso específico.\n\nEn este paso vas a crear las propiedades que pertenecen a cada estructura. Puedes hacerlo de forma manual o generar varias a la vez con un patrón de nombres. Cada propiedad se puede editar después si necesitas ajustar algo.",
+        "processSelectorTitle": "¿Cómo crear tu condominio?",
+        "processSelectorBody": "Antes de empezar, elige cómo quieres crear las estructuras y propiedades de tu condominio. Tienes tres opciones:\n\n• Creación simple: Crea cada estructura y sus propiedades de forma individual, una a la vez. Es perfecto si tienes un condominio pequeño con pocas torres o si prefieres tener control total sobre cada detalle.\n\n• Creación masiva: Genera muchas estructuras y propiedades a la vez usando patrones de nombres. Por ejemplo, puedes crear automáticamente \"Torre A\", \"Torre B\", \"Torre C\" y todas sus propiedades en solo unos pasos. Ideal para condominios grandes.\n\n• Asistente IA: Describe tu condominio en tus propias palabras y nuestra inteligencia artificial se encargará de crear toda la estructura por ti. Puedes decirle cosas como \"tengo un edificio de 5 pisos con 4 apartamentos por piso\" y la IA generará automáticamente todo."
+      }
     },
     "createForm": {
       "newCondominium": "Nuevo Condominio",
@@ -102,10 +113,13 @@
       "subtitle": "Seleccione el método que mejor se adapte a tus necesidades para empezar a organizar tu propiedad.",
       "simpleCreation": "Creación simple",
       "simpleCreationDescription": "Crea estructuras y propiedades una por una manualmente. Ideal para condominios pequeños o ajustes específicos.",
+      "simpleCreationDetails": "Este método te permite crear cada estructura y sus propiedades de forma individual, una a la vez. Es perfecto si tienes un condominio pequeño con pocas torres o si prefieres tener control total sobre cada detalle. Simplemente agrega una estructura, define sus propiedades y repite el proceso hasta completar todo.",
       "massiveCreation": "Creación masiva",
       "massiveCreationDescription": "Define reglas de nomenclatura y genera múltiples torres y propiedades en pocos pasos. La opción más rápida para grandes comlejos.",
+      "massiveCreationDetails": "Con este método puedes generar muchas estructuras y propiedades a la vez usando patrones de nombres. Por ejemplo, puedes crear automáticamente \"Torre A\", \"Torre B\", \"Torre C\" y todas sus propiedades en solo unos pasos. Es la opción ideal para condominios grandes con muchas torres o unidades repetitivas. Tú defines el patrón y nosotros hacemos el resto.",
       "aiAssistantCreation": "Asistente IA",
-      "aiAssistantCreationDescription": "Conversa con nuestra IA para describir tu condominio y deja que nosotros configuremos la estructura por ti. Perfecto para quienes prefieren un enfoque guiado e inteligente."
+      "aiAssistantCreationDescription": "Conversa con nuestra IA para describir tu condominio y deja que nosotros configuremos la estructura por ti. Perfecto para quienes prefieren un enfoque guiado e inteligente.",
+      "aiAssistantCreationDetails": "Simplemente describe tu condominio en tus propias palabras y nuestra inteligencia artificial se encargará de crear toda la estructura por ti. Puedes decirle cosas como \"tengo un edificio de 5 pisos con 4 apartamentos por piso\" y la IA generará automáticamente las torres, apartamentos y alícuotas correspondientes. Es como tener un asistente personal que entiende lo que necesitas."
     },
     "massive": {
       "title": "Creación masiva de estructuras",

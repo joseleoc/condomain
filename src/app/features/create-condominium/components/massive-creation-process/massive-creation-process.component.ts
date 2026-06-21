@@ -72,6 +72,7 @@ export class MassiveCreationProcessComponent implements OnInit, OnDestroy {
   private translocoService = inject(TranslocoService);
   private telemetry = inject(TelemetryService);
   private nextSubscription!: Subscription;
+  private backSubscription!: Subscription;
 
   mode = signal<'pattern' | 'custom'>('pattern');
   customInput = signal('');
@@ -152,10 +153,18 @@ export class MassiveCreationProcessComponent implements OnInit, OnDestroy {
         this.wizardService.setStep(3);
       }
     });
+
+    this.backSubscription = this.wizardService.backStep$.subscribe(() => {
+      if (!this.showingGenerator()) {
+        this.showingGenerator.set(true);
+        this.wizardService.markBackHandled();
+      }
+    });
   }
 
   ngOnDestroy(): void {
     this.nextSubscription?.unsubscribe();
+    this.backSubscription?.unsubscribe();
   }
 
   setMode(value: unknown): void {

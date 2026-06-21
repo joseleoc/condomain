@@ -21,9 +21,10 @@ describe('MassiveCreationProcessComponent', () => {
 
   beforeEach(async () => {
     nextStepSubject = new Subject<number>();
-    wizardMock = jasmine.createSpyObj('Wizard', ['saveStructureLocally', 'setStep', 'selectedStructure'], {
+    wizardMock = jasmine.createSpyObj('Wizard', ['saveStructureLocally', 'setStep', 'selectedStructure', 'markBackHandled'], {
       structures$: new BehaviorSubject([]),
       nextStep$: nextStepSubject.asObservable(),
+      backStep$: new Subject<void>(),
       creationProcessSelected: () => 'massive',
     });
     wizardMock.saveStructureLocally.and.returnValue(true);
