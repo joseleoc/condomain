@@ -1,7 +1,6 @@
 import { DecimalPipe } from '@angular/common';
 import { Component, inject, computed, input, output } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
-import { CreatePropertyData } from '@app-types/property';
 import {
   CreatePropertyFormData,
   LocalStructure,
@@ -80,7 +79,7 @@ export class StructuresPropertiesAccordionComponent {
     structureName: string,
   ) {
     event.stopPropagation();
-
+console.log(this.structures());
     const alert = await this.alertController.create({
       header: this.translocoService.translate(
         'condominium.createProperty.confirmDeleteTitle',

@@ -29,7 +29,10 @@ import { Subscription } from 'rxjs';
 import { Wizard } from '../../services/wizard/wizard';
 import { CreatePropertyFormComponent } from '../create-property-form/create-property-form.component';
 import { StructuresPropertiesAccordionComponent } from '../structures-properties-accordion/structures-properties-accordion.component';
-import { PropertyPatternBuilderComponent, PatternPart } from '../property-pattern-builder/property-pattern-builder.component';
+import {
+  PropertyPatternBuilderComponent,
+  PatternPart,
+} from '../property-pattern-builder/property-pattern-builder.component';
 import { PropertyPreviewComponent } from '../property-preview/property-preview.component';
 import { Toast } from '@core/services/toast/toast';
 import { PropertyWithStructure } from '@features/create-condominium/create-condominium.types';
@@ -87,7 +90,7 @@ export class MassivePropertyCreationComponent implements OnInit, OnDestroy {
   fee = signal(0);
   startAtNum = signal(1);
   startAtLetter = signal(1);
-  splitEqually = signal(false);
+  splitEqually = signal(true);
 
   patternOrder = signal<PatternPart[]>(['short', 'num']);
   customSeparator = signal('');
@@ -98,8 +101,12 @@ export class MassivePropertyCreationComponent implements OnInit, OnDestroy {
   includeName = computed(() => this.patternOrder().includes('name'));
   includeFirstWord = computed(() => this.patternOrder().includes('firstword'));
   includeShort = computed(() => this.patternOrder().includes('short'));
-  includeFirstLetter = computed(() => this.patternOrder().includes('firstletter'));
-  includeLastLetter = computed(() => this.patternOrder().includes('lastletter'));
+  includeFirstLetter = computed(() =>
+    this.patternOrder().includes('firstletter'),
+  );
+  includeLastLetter = computed(() =>
+    this.patternOrder().includes('lastletter'),
+  );
   includeCustom = computed(() => this.patternOrder().includes('custom'));
   includeNum = computed(() => this.patternOrder().includes('num'));
   includeLetter = computed(() => this.patternOrder().includes('letter'));
@@ -109,7 +116,11 @@ export class MassivePropertyCreationComponent implements OnInit, OnDestroy {
     const joined = parts.join(this.customSeparator());
     const p = this.prefix();
     const s = this.suffix();
-    return (p ? p + this.customSeparator() : '') + joined + (s ? this.customSeparator() + s : '');
+    return (
+      (p ? p + this.customSeparator() : '') +
+      joined +
+      (s ? this.customSeparator() + s : '')
+    );
   });
 
   hasPattern = computed(() => this.patternOrder().length > 0);
@@ -192,7 +203,10 @@ export class MassivePropertyCreationComponent implements OnInit, OnDestroy {
         }
 
         try {
-          const totalGenerated = preview.reduce((acc, g) => acc + g.names.length, 0);
+          const totalGenerated = preview.reduce(
+            (acc, g) => acc + g.names.length,
+            0,
+          );
           this.telemetry.track(TelemetryEvents.PROPERTY_GENERATION_COMPLETED, {
             count: totalGenerated,
             mode: 'massive',
@@ -228,14 +242,10 @@ export class MassivePropertyCreationComponent implements OnInit, OnDestroy {
     preview: PropertyPreviewGroup[],
     totalProperties: number,
   ): void {
-    const baseFee = Math.floor(100 / totalProperties);
-    let remainder = 100 - baseFee * totalProperties;
-
+    const baseFee = 100 / totalProperties;
     for (const group of preview) {
       for (const name of group.names) {
-        const fee = remainder > 0 ? baseFee + 1 : baseFee;
-        remainder--;
-
+        const fee = baseFee;
         this.wizardService.addPropertyToStructure(group.structureName, {
           number: name,
           fee,
@@ -247,7 +257,12 @@ export class MassivePropertyCreationComponent implements OnInit, OnDestroy {
     }
   }
 
-  private getParts(name: string): { firstWord: string; lastWord: string; firstLetter: string; lastLetter: string } {
+  private getParts(name: string): {
+    firstWord: string;
+    lastWord: string;
+    firstLetter: string;
+    lastLetter: string;
+  } {
     const words = name.trim().split(/\s+/);
     const trimmed = name.trim();
     return {
@@ -280,7 +295,8 @@ export class MassivePropertyCreationComponent implements OnInit, OnDestroy {
 
   private generateNames(structureName: string): string[] {
     const names: string[] = [];
-    const { firstWord, lastWord, firstLetter, lastLetter } = this.getParts(structureName);
+    const { firstWord, lastWord, firstLetter, lastLetter } =
+      this.getParts(structureName);
     const count = this.countPerStructure();
 
     for (let i = 0; i < count; i++) {

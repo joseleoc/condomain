@@ -9,6 +9,7 @@ import {
   chatbubblesOutline,
   chevronForward,
   documentOutline,
+  helpCircleOutline,
   languageOutline,
   menu,
   personOutline,
@@ -36,6 +37,7 @@ export class AppComponent {
       menu,
       addCircleOutline,
       remove,
+      helpCircleOutline,
     });
   }
 }
