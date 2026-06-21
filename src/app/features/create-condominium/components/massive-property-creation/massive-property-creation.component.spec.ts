@@ -189,4 +189,96 @@ describe('MassivePropertyCreationComponent', () => {
     component.toggleSplitEqually();
     expect(component.splitEqually()).toBeTrue();
   });
+
+  describe('split equally fee distribution', () => {
+    let nextStepSubject: Subject<void>;
+
+    beforeEach(() => {
+      nextStepSubject = new Subject<void>();
+      wizardMock = jasmine.createSpyObj('Wizard', [
+        'addPropertyToStructure',
+        'createStructuresAndProperties',
+        'markBackHandled',
+      ], {
+        structures$: new BehaviorSubject([
+          { name: 'Tower A', description: '', properties: [] },
+          { name: 'Tower B', description: '', properties: [] },
+        ]),
+        nextStep$: nextStepSubject.asObservable(),
+        backStep$: new Subject<void>(),
+      });
+      wizardMock.addPropertyToStructure.and.returnValue(true);
+
+      TestBed.resetTestingModule();
+      TestBed.configureTestingModule({
+        imports: [SharedTestingModule, IonicModule.forRoot(), MassivePropertyCreationComponent],
+        providers: [
+          { provide: Wizard, useValue: wizardMock },
+          { provide: Toast, useValue: toastMock },
+          { provide: TranslocoService, useValue: translocoMock },
+        ],
+      }).compileComponents();
+
+      fixture = TestBed.createComponent(MassivePropertyCreationComponent);
+      component = fixture.componentInstance;
+      fixture.detectChanges();
+    });
+
+    it('should distribute fee equally when splitEqually is active and count divides 100 evenly', () => {
+      component.countPerStructure.set(2);
+      component.splitEqually.set(true);
+
+      nextStepSubject.next();
+
+      expect(wizardMock.addPropertyToStructure).toHaveBeenCalledTimes(4);
+      const calls = wizardMock.addPropertyToStructure.calls.all();
+      for (const call of calls) {
+        expect(call.args[1].fee).toBe(25);
+      }
+    });
+
+    it('should distribute fee with remainder when count does not divide 100 evenly', () => {
+      component.countPerStructure.set(3);
+      component.splitEqually.set(true);
+
+      nextStepSubject.next();
+
+      expect(wizardMock.addPropertyToStructure).toHaveBeenCalledTimes(6);
+      const calls = wizardMock.addPropertyToStructure.calls.all();
+      const fees = calls.map((c) => c.args[1].fee);
+      const totalFee = fees.reduce((sum, f) => sum + f, 0);
+      expect(totalFee).toBe(100);
+    });
+
+    it('should distribute fee correctly when total properties exceed 100', () => {
+      component.countPerStructure.set(51);
+      component.splitEqually.set(true);
+
+      nextStepSubject.next();
+
+      expect(wizardMock.addPropertyToStructure).toHaveBeenCalledTimes(102);
+      const calls = wizardMock.addPropertyToStructure.calls.all();
+      const fees = calls.map((c) => c.args[1].fee);
+      const totalFee = fees.reduce((sum, f) => sum + f, 0);
+      expect(totalFee).toBe(100);
+      const zeroFees = fees.filter((f) => f === 0).length;
+      const oneFees = fees.filter((f) => f === 1).length;
+      expect(zeroFees + oneFees).toBe(102);
+      expect(oneFees).toBe(100);
+    });
+
+    it('should use group fee when splitEqually is not active', () => {
+      component.countPerStructure.set(2);
+      component.fee.set(30);
+      component.splitEqually.set(false);
+
+      nextStepSubject.next();
+
+      expect(wizardMock.addPropertyToStructure).toHaveBeenCalledTimes(4);
+      const calls = wizardMock.addPropertyToStructure.calls.all();
+      for (const call of calls) {
+        expect(call.args[1].fee).toBe(30);
+      }
+    });
+  });
 });

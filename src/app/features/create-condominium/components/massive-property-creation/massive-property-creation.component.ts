@@ -175,15 +175,19 @@ export class MassivePropertyCreationComponent implements OnInit, OnDestroy {
           return;
         }
 
-        for (const group of preview) {
-          for (const name of group.names) {
-            this.wizardService.addPropertyToStructure(group.structureName, {
-              number: name,
-              fee: group.fee,
-              structure: group.structureName,
-              ownerName: null,
-              ownerEmail: null,
-            });
+        if (this.splitEqually()) {
+          this.createPropertiesWithEqualFee(preview, total);
+        } else {
+          for (const group of preview) {
+            for (const name of group.names) {
+              this.wizardService.addPropertyToStructure(group.structureName, {
+                number: name,
+                fee: group.fee,
+                structure: group.structureName,
+                ownerName: null,
+                ownerEmail: null,
+              });
+            }
           }
         }
 
@@ -218,6 +222,29 @@ export class MassivePropertyCreationComponent implements OnInit, OnDestroy {
 
   private hasAnyProperties(): boolean {
     return this.structures().some((s) => s.properties.length > 0);
+  }
+
+  private createPropertiesWithEqualFee(
+    preview: PropertyPreviewGroup[],
+    totalProperties: number,
+  ): void {
+    const baseFee = Math.floor(100 / totalProperties);
+    let remainder = 100 - baseFee * totalProperties;
+
+    for (const group of preview) {
+      for (const name of group.names) {
+        const fee = remainder > 0 ? baseFee + 1 : baseFee;
+        remainder--;
+
+        this.wizardService.addPropertyToStructure(group.structureName, {
+          number: name,
+          fee,
+          structure: group.structureName,
+          ownerName: null,
+          ownerEmail: null,
+        });
+      }
+    }
   }
 
   private getParts(name: string): { firstWord: string; lastWord: string; firstLetter: string; lastLetter: string } {
