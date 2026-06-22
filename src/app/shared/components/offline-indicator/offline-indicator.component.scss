@@ -1,0 +1,19 @@
+.offline-banner {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 9999;
+  display: flex;
+  justify-content: center;
+  padding: 0.5rem;
+  pointer-events: none;
+}
+
+.offline-chip {
+  --background: var(--ion-color-warning);
+  --color: var(--ion-color-warning-contrast);
+  font-size: 0.8rem;
+  pointer-events: auto;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+}
