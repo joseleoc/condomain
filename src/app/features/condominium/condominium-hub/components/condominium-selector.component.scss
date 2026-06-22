@@ -1,0 +1,45 @@
+.context-bar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 1rem;
+  padding: 1rem;
+  background: var(--ion-background-color);
+  border-bottom: 1px solid var(--ion-color-light);
+}
+
+.active-condominium-data {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 0.75rem;
+  flex: 1;
+  min-width: 0;
+}
+
+.condo-info {
+  min-width: 0;
+
+  h4 {
+    margin: 0;
+    font-size: 1.1rem;
+    font-weight: 600;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  .condo-address {
+    margin: 0;
+    font-size: 0.8rem;
+    color: var(--ion-color-medium);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+}
+
+ion-select {
+  max-width: 160px;
+  flex-shrink: 0;
+}

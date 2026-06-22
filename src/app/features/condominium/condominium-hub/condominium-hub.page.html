@@ -2,29 +2,125 @@
   <ion-header>
     <ion-toolbar>
       <ion-buttons slot="start">
-        <ion-back-button defaultHref="/" />
+        <ion-back-button defaultHref="/home" />
+      </ion-buttons>
+
+      <ion-title>{{ t('condominium.hub.title') }}</ion-title>
+
+      <ion-buttons slot="end">
+        <app-context-status
+          [isAdmin]="isAdmin()"
+          [isOnline]="isOnline()"
+        />
       </ion-buttons>
     </ion-toolbar>
   </ion-header>
 
-  <ion-content [fullscreen]="true" class="ion-padding">
-    <div class="condominium-hub-header">
-      <div class="active-condominium-data">
-        <app-avatar
-          [src]="
-              activeCondominium()?.avatar ||
-              '../../../../../assets/icon/home-outline.svg'
-            "
-          size="small"
-          alt="Profile Picture"
-        />
-        <h4>{{activeCondominium()?.name}}</h4>
-      </div>
+  <ion-content [fullscreen]="true">
+    <!-- Context Selector -->
+    <app-condominium-selector
+      [activeCondominium]="activeCondominium()"
+      [userCondominiums]="userCondominiums()"
+      [isSwitchingContext]="isSwitchingContext()"
+      (condominiumChange)="onCondominiumChange($event)"
+    />
 
-      <ion-button size="small" href="/create-condominium">
-        {{ t('condominium.createForm.newCondominium') }}
-        <ion-icon name="add" slot="end" />
+    <!-- Context switching overlay -->
+    <div class="context-switching-overlay" *ngIf="isSwitchingContext()">
+      <ion-skeleton-text [animated]="true" style="width: 60%; height: 20px; margin: 0 auto;" />
+      <p class="switching-text">{{ t('condominium.hub.contextSelector.switching') }}</p>
+    </div>
+
+    <!-- No condominiums state -->
+    <div class="empty-state" *ngIf="!activeCondominium() && !isSwitchingContext()">
+      <ion-icon name="home-outline" size="large" />
+      <h3>{{ t('condominium.hub.noCondominiums') }}</h3>
+      <ion-button routerLink="/create-condominium">
+        {{ t('condominium.hub.newButton') }}
+        <ion-icon [name]="addIcon" slot="end" />
       </ion-button>
     </div>
+
+    <!-- Tabs + Content -->
+    <ng-container *ngIf="activeCondominium() && !isSwitchingContext()">
+      <!-- Tab Selector -->
+      <ion-segment [value]="activeTab()" (ionChange)="onTabChange($event)">
+        <ion-segment-button value="structures">
+          <ion-icon [name]="buildingIcon" />
+          <ion-label>{{ t('condominium.hub.tabs.structures') }}</ion-label>
+        </ion-segment-button>
+        <ion-segment-button value="properties">
+          <ion-icon [name]="homeIcon" />
+          <ion-label>{{ t('condominium.hub.tabs.properties') }}</ion-label>
+        </ion-segment-button>
+      </ion-segment>
+
+      <!-- Structures Tab -->
+      <div class="tab-content" *ngIf="activeTab() === 'structures'">
+        <app-structures-list
+          [structures]="structuresQuery.data() ?? []"
+          [isLoading]="structuresQuery.isLoading()"
+          [error]="structuresQuery.error()"
+          [isAdmin]="isAdmin()"
+          [isOnline]="isOnline()"
+          (deleteStructure)="confirmDeleteStructure($event)"
+          (refresh)="onStructuresRefresh($event)"
+        />
+
+        <!-- Add button (admin only) -->
+        <div class="fab-container" *ngIf="isAdmin()">
+          <ion-button expand="block" color="primary" class="add-button">
+            <ion-icon [name]="addIcon" slot="start" />
+            {{ t('condominium.hub.structures.addButton') }}
+          </ion-button>
+        </div>
+      </div>
+
+      <!-- Properties Tab -->
+      <div class="tab-content" *ngIf="activeTab() === 'properties'">
+        <app-properties-list
+          [properties]="propertiesQuery.data() ?? []"
+          [isLoading]="propertiesQuery.isLoading()"
+          [error]="propertiesQuery.error()"
+          [isAdmin]="isAdmin()"
+          [isOnline]="isOnline()"
+          [structureNameMap]="structureNameMap()"
+          (deleteProperty)="confirmDeleteProperty($event)"
+          (refresh)="onPropertiesRefresh($event)"
+        />
+
+        <!-- Add button (admin only) -->
+        <div class="fab-container" *ngIf="isAdmin()">
+          <ion-button expand="block" color="primary" class="add-button">
+            <ion-icon [name]="addIcon" slot="start" />
+            {{ t('condominium.hub.properties.addButton') }}
+          </ion-button>
+        </div>
+      </div>
+    </ng-container>
   </ion-content>
+
+  <!-- Delete confirmation alert -->
+  <ion-alert
+    [isOpen]="!!deleteTarget()"
+    [header]="deleteTarget()?.type === 'structure'
+      ? t('condominium.hub.structures.deleteConfirmTitle')
+      : t('condominium.hub.properties.deleteConfirmTitle')"
+    [message]="deleteTarget()?.type === 'structure'
+      ? t('condominium.hub.structures.deleteConfirmMessage', { name: deleteTarget()?.item?.name })
+      : t('condominium.hub.properties.deleteConfirmMessage', { name: deleteTarget()?.item?.name })"
+    [buttons]="[
+      { text: t('common.cancel'), role: 'cancel' },
+      { text: t('common.delete'), role: 'confirm', handler: executeDelete.bind(this) }
+    ]"
+  />
+
+  <!-- Toast notifications -->
+  <ion-toast
+    [isOpen]="showToast()"
+    [message]="toastMessage"
+    [duration]="3000"
+    position="bottom"
+    (didDismiss)="showToast.set(false)"
+  />
 </ng-container>

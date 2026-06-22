@@ -1,0 +1,32 @@
+<ng-container *transloco="let t">
+  <div class="context-bar">
+    <div class="active-condominium-data">
+      <app-avatar
+        [src]="activeCondominium()?.avatar || 'assets/icon/home-outline.svg'"
+        size="small"
+        alt="Condominium avatar"
+      />
+      <div class="condo-info">
+        <h4>{{ activeCondominium()?.name }}</h4>
+        <p class="condo-address" *ngIf="activeCondominium()?.address">
+          {{ activeCondominium()?.address }}
+        </p>
+      </div>
+    </div>
+
+    <ion-select
+      [interface]="'popover'"
+      [placeholder]="t('condominium.hub.contextSelector.placeholder')"
+      [value]="activeCondominium()?.id"
+      (ionChange)="onCondominiumSelected($event)"
+      [disabled]="isSwitchingContext()"
+    >
+      <ion-select-option
+        *ngFor="let condo of userCondominiums()"
+        [value]="condo.id"
+      >
+        {{ condo.name }}
+      </ion-select-option>
+    </ion-select>
+  </div>
+</ng-container>
