@@ -79,6 +79,20 @@ export class LocalRepository {
   }
 
   /**
+   * Get all entities of a given type from the generic entities store.
+   * Filters out soft-deleted entries.
+   */
+  async getEntitiesByType(
+    entityType: string,
+  ): Promise<LocalDBSchema['entities']['value'][]> {
+    const db = await getLocalDB();
+    const tx = db.transaction('entities', 'readonly');
+    const index = tx.store.index('by_entity_type');
+    const results = await index.getAll(entityType);
+    return results.filter((e) => (e.data['deleted_at'] as string | null) === null);
+  }
+
+  /**
    * Get a single entity by its type and ID from the generic entities store.
    * Returns undefined if the entity does not exist locally.
    */
