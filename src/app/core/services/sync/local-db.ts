@@ -35,6 +35,23 @@ export interface LocalDBSchema extends DBSchema {
       timestamp: number;
     };
   };
+  entities: {
+    key: string; // format: "entityType:entityId"
+    value: {
+      key: string;
+      entity_type: string;
+      entity_id: string;
+      data: Record<string, unknown>;
+      version: number;
+      _local_status: 'synced' | 'pending' | 'conflict';
+      updated_at: string;
+    };
+    indexes: {
+      'by_entity_type': string;
+      'by_entity_id': string;
+      'by_status': string;
+    };
+  };
 }
 
 const DEFAULT_DB_NAME = 'condomain-local';
@@ -66,6 +83,12 @@ export function getLocalDB(): Promise<IDBPDatabase<LocalDBSchema>> {
 
         // Query cache store (for TanStack Query persistence)
         db.createObjectStore('query_cache', { keyPath: 'key' });
+
+        // Generic entities store (any entity type, keyed by "entityType:entityId")
+        const entityStore = db.createObjectStore('entities', { keyPath: 'key' });
+        entityStore.createIndex('by_entity_type', 'entity_type');
+        entityStore.createIndex('by_entity_id', 'entity_id');
+        entityStore.createIndex('by_status', '_local_status');
       },
     });
   }

@@ -49,11 +49,11 @@ Chain strategy: feature-branch-chain
 
 ## Phase 3: Sync Engine
 
-- [ ] 3.1 Create `services/sync/conflict-resolver.ts` — server-wins for data conflicts, conflict log, `manual_required` flag
-- [ ] 3.2 Create `services/sync/sync-service.ts` — network listener, `enqueueMutation()`, outbox dispatch with exponential backoff (2^n × 1s, max 5), query invalidation
-- [ ] 3.3 Create `services/sync/sync-orchestrator.ts` — `sync(entityType, condoId)`: delta fetch → conflict detect → resolve → apply → update sync timestamp → invalidate
-- [ ] 3.4 Create `services/sync/index.ts` — barrel exports
-- [ ] 3.5 Write tests: ConflictResolver scenarios, SyncService outbox dispatch + backoff, SyncOrchestrator delta + conflict detection (min 80% coverage)
+- [x] 3.1 Create `services/sync/conflict-resolver.ts` — server-wins for data conflicts, conflict log, `manual_required` flag
+- [x] 3.2 Create `services/sync/sync-service.ts` — network listener, `enqueueMutation()`, outbox dispatch with exponential backoff (2^n × 1s, max 5), query invalidation
+- [x] 3.3 Create `services/sync/sync-orchestrator.ts` — `sync(entityType, condoId)`: delta fetch → conflict detect → resolve → apply → update sync timestamp → invalidate
+- [x] 3.4 Create `services/sync/index.ts` — barrel exports
+- [x] 3.5 Write tests: ConflictResolver scenarios, SyncService outbox dispatch + backoff, SyncOrchestrator delta + conflict detection (min 80% coverage)
 
 ## Phase 4: Service Wiring
 

@@ -77,4 +77,41 @@ export class LocalRepository {
       sync_status: 'idle',
     });
   }
+
+  /**
+   * Get a single entity by its type and ID from the generic entities store.
+   * Returns undefined if the entity does not exist locally.
+   */
+  async getById(
+    entityType: string,
+    entityId: string,
+  ): Promise<Record<string, unknown> | undefined> {
+    const db = await getLocalDB();
+    const key = `${entityType}:${entityId}`;
+    const record = await db.get('entities', key);
+    return record?.data;
+  }
+
+  /**
+   * Upsert an entity into the generic entities store.
+   * Creates or replaces the entity with the given data.
+   */
+  async upsert(
+    entityType: string,
+    entityData: Record<string, unknown> & { _local_status?: 'synced' | 'pending' | 'conflict' },
+  ): Promise<void> {
+    const db = await getLocalDB();
+    const entityId = entityData['id'] as string;
+    const key = `${entityType}:${entityId}`;
+
+    await db.put('entities', {
+      key,
+      entity_type: entityType,
+      entity_id: entityId,
+      data: entityData,
+      version: (entityData['version'] as number) ?? 1,
+      _local_status: entityData._local_status ?? 'synced',
+      updated_at: new Date().toISOString(),
+    });
+  }
 }
