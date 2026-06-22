@@ -63,6 +63,42 @@ const queryClient = new QueryClient({
 });
 
 /**
+ * Wire IndexedDB persistence to the QueryClient.
+ * Restores cached state on init and persists on every cache update.
+ * Call this once during app initialization.
+ */
+export async function initQueryPersistence(): Promise<void> {
+  const persister = createIndexedDBPersister();
+
+  // Restore cached data on startup
+  const restored = await persister.restoreClient();
+  if (restored) {
+    const cacheData = (restored as Record<string, unknown>)['cache'];
+    if (cacheData && typeof cacheData === 'object') {
+      // Restore individual query data from persisted cache
+      for (const [key, value] of Object.entries(
+        cacheData as Record<string, unknown>,
+      )) {
+        try {
+          queryClient.setQueryData(JSON.parse(key), value);
+        } catch {
+          // Skip malformed cache entries
+        }
+      }
+    }
+  }
+
+  // Persist on every cache change (debounced to avoid excessive writes)
+  let persistTimeout: ReturnType<typeof setTimeout> | null = null;
+  queryClient.getQueryCache().subscribe(() => {
+    if (persistTimeout) clearTimeout(persistTimeout);
+    persistTimeout = setTimeout(() => {
+      persister.persistClient(queryClient);
+    }, 500);
+  });
+}
+
+/**
  * Provide TanStack Query to the application.
  * Add to `bootstrapApplication` providers in main.ts.
  */

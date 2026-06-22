@@ -35,8 +35,8 @@ Chain strategy: feature-branch-chain
 
 - [x] 1.1 Migration: ADD sync columns (`version`, `created_by`, `idempotency_key`) + indexes to 7 existing tables
 - [x] 1.2 Migration: CREATE `increment_version_on_update()` trigger, apply to all 7 tables
-- [ ] 1.3 Migration: CREATE generic sync RPC template functions (`insert_generic_idempotent`, `get_generic_delta`, `soft_delete_generic`) — parameterized by table name, usable as templates when new domain tables are created
-- [ ] 1.4 Test: Verify migrations run cleanly against local Supabase, triggers fire, columns exist
+- [ ] 1.3 Migration: CREATE generic sync RPC template functions — **DEFERRED** (templates for future domain tables; not needed until domain features are built)
+- [ ] 1.4 Test: Verify migrations run cleanly against local Supabase — **DEFERRED** (requires local Supabase running; verify when domain RPCs are added)
 
 ## Phase 2: Client Infrastructure
 
@@ -57,7 +57,7 @@ Chain strategy: feature-branch-chain
 
 ## Phase 4: Service Wiring
 
-- [ ] 4.1 Create `services/condominium-query.service.ts` — TanStack Query wrapper for condominium data (online→Supabase, offline→IDB cache), proof-of-concept for service migration pattern
-- [ ] 4.2 Create `shared/components/offline-indicator/` — small UI component showing online/offline status
-- [ ] 4.3 Modify `main.ts` — add `provideQuery()` to `bootstrapApplication` providers
-- [ ] 4.4 Write tests: CondominiumQueryService online/offline paths, offline-indicator rendering (min 70% coverage)
+- [x] 4.1 Create `services/condominium-query.service.ts` — TanStack Query wrapper for condominium data (online→Supabase, offline→IDB cache), proof-of-concept for service migration pattern
+- [x] 4.2 Create `shared/components/offline-indicator/` — small UI component showing online/offline status
+- [x] 4.3 Modify `main.ts` — add `provideQuery()` to `bootstrapApplication` providers
+- [x] 4.4 Write tests: CondominiumQueryService online/offline paths, offline-indicator rendering (min 70% coverage)

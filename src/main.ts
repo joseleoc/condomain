@@ -9,7 +9,7 @@ import { isDevMode } from '@angular/core';
 import { TranslocoHttpLoader } from './transloco-loader';
 import { provideTransloco } from '@jsverse/transloco';
 import { provideTelemetry } from './app/core/services/telemetry';
-import { provideQuery } from './app/core/providers/query.provider';
+import { provideQuery, initQueryPersistence } from './app/core/providers/query.provider';
 
 bootstrapApplication(AppComponent, {
   providers: [
@@ -30,3 +30,6 @@ bootstrapApplication(AppComponent, {
     provideQuery(),
   ],
 });
+
+// Wire IndexedDB persistence for TanStack Query cache
+initQueryPersistence();

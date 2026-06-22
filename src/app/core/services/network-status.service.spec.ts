@@ -1,4 +1,4 @@
-import { TestBed, fakeAsync, tick } from '@angular/core/testing';
+import { TestBed, fakeAsync, tick, waitForAsync } from '@angular/core/testing';
 import { SharedTestingModule } from '@testing/shared-testing.module';
 
 import { NetworkStatusService } from './network-status.service';
@@ -6,13 +6,15 @@ import { NetworkStatusService } from './network-status.service';
 describe('NetworkStatusService', () => {
   let service: NetworkStatusService;
 
-  beforeEach(() => {
+  beforeEach(waitForAsync(async () => {
     TestBed.configureTestingModule({
       imports: [SharedTestingModule],
       providers: [NetworkStatusService],
     });
     service = TestBed.inject(NetworkStatusService);
-  });
+    // Wait for async Capacitor initialization to complete
+    await new Promise((resolve) => setTimeout(resolve, 50));
+  }));
 
   describe('isOnline signal', () => {
     it('should be injectable and return a boolean', () => {
