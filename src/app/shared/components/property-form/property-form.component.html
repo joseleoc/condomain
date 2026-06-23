@@ -1,0 +1,56 @@
+<form [formGroup]="propertyForm" (ngSubmit)="submit()">
+  <ion-item>
+    <ion-input
+      formControlName="name"
+      [placeholder]="'condominium.createProperty.propertyNumber' | transloco"
+      [errorText]="nameErrors$ | async"
+    ></ion-input>
+  </ion-item>
+
+  <ion-item>
+    <ion-input
+      type="number"
+      step="0.0001"
+      formControlName="share_percentage"
+      [max]="100"
+      [min]="0"
+      [placeholder]="'condominium.createProperty.feePercentage' | transloco"
+      [errorText]="sharePercentageErrors$ | async"
+    ></ion-input>
+  </ion-item>
+
+  <ion-item>
+    <ion-select
+      interface="popover"
+      formControlName="structure_id"
+      [placeholder]="'condominium.createProperty.structure' | transloco"
+      [errorText]="structureErrors$ | async"
+    >
+      @for (structure of structureOptions(); track structure.id) {
+        <ion-select-option [value]="structure.id">
+          {{ structure.name }}
+        </ion-select-option>
+      }
+    </ion-select>
+  </ion-item>
+
+  <div class="optional-section-header">
+    <span>{{ 'condominium.createProperty.optionalData' | transloco }}</span>
+  </div>
+
+  <ion-item>
+    <ion-input
+      formControlName="owner_name"
+      [placeholder]="'condominium.createProperty.ownerName' | transloco"
+      [errorText]="ownerNameErrors$ | async"
+    ></ion-input>
+  </ion-item>
+
+  <ion-item>
+    <ion-input
+      formControlName="owner_email"
+      [placeholder]="'condominium.createProperty.ownerEmail' | transloco"
+      [errorText]="ownerEmailErrors$ | async"
+    ></ion-input>
+  </ion-item>
+</form>
