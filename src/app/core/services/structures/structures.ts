@@ -6,6 +6,11 @@ import { LocalRepository } from '../sync/local-repository';
 import { SyncService } from '../sync/sync-service';
 import { v4 as uuidv4 } from 'uuid';
 
+export interface UpdateStructureData {
+  name?: string;
+  description?: string | null;
+}
+
 @Injectable({
   providedIn: 'root',
 })
@@ -117,6 +122,54 @@ export class Structures {
         id,
         { id },
         `delete-structures-${id}-${Date.now()}`,
+      );
+    }
+  }
+
+  /**
+   * Update a structure's name and/or description.
+   * Online: updates on Supabase.
+   * Offline: updates local cache and queues mutation for sync.
+   */
+  async updateStructure(id: string, data: UpdateStructureData): Promise<void> {
+    // Optimistic local update
+    const existing = await this.#localRepo.getById('structures', id);
+    if (existing) {
+      const updated = {
+        ...existing,
+        ...(data.name !== undefined && { name: data.name }),
+        ...(data.description !== undefined && { description: data.description }),
+        updated_at: new Date().toISOString(),
+      };
+      await this.#localRepo.upsert('structures', updated);
+    }
+
+    if (this.#networkStatus.isOnline()) {
+      const updateData: Record<string, unknown> = {
+        updated_at: new Date().toISOString(),
+      };
+      if (data.name !== undefined) updateData['name'] = data.name;
+      if (data.description !== undefined) updateData['description'] = data.description;
+
+      const { error } = await this.client
+        .from('structures')
+        .update(updateData)
+        .eq('id', id);
+
+      if (error) {
+        // Revert optimistic update on failure
+        if (existing) {
+          await this.#localRepo.upsert('structures', existing);
+        }
+        throw error;
+      }
+    } else {
+      await this.#syncService.enqueueMutation(
+        'update',
+        'structures',
+        id,
+        data as unknown as Record<string, unknown>,
+        `update-structures-${id}-${Date.now()}`,
       );
     }
   }

@@ -6,6 +6,14 @@ import { LocalRepository } from '../sync/local-repository';
 import { SyncService } from '../sync/sync-service';
 import { v4 as uuidv4 } from 'uuid';
 
+export interface UpdatePropertyData {
+  name?: string;
+  share_percentage?: number;
+  owner_name?: string | null;
+  owner_email?: string | null;
+  structure_id?: string;
+}
+
 @Injectable({
   providedIn: 'root',
 })
@@ -147,6 +155,60 @@ export class Properties {
         id,
         { id },
         `delete-properties-${id}-${Date.now()}`,
+      );
+    }
+  }
+
+  /**
+   * Update a property's fields.
+   * Online: updates on Supabase.
+   * Offline: updates local cache and queues mutation for sync.
+   */
+  async updateProperty(id: string, data: UpdatePropertyData): Promise<void> {
+    // Optimistic local update
+    const existing = await this.#localRepo.getById('properties', id);
+    if (existing) {
+      const updated = {
+        ...existing,
+        ...(data.name !== undefined && { name: data.name }),
+        ...(data.share_percentage !== undefined && { share_percentage: data.share_percentage }),
+        ...(data.owner_name !== undefined && { owner_name: data.owner_name }),
+        ...(data.owner_email !== undefined && { owner_email: data.owner_email }),
+        ...(data.structure_id !== undefined && { structure_id: data.structure_id }),
+        updated_at: new Date().toISOString(),
+      };
+      await this.#localRepo.upsert('properties', updated);
+    }
+
+    if (this.#networkStatus.isOnline()) {
+      const updateData: Record<string, unknown> = {
+        updated_at: new Date().toISOString(),
+      };
+      if (data.name !== undefined) updateData['name'] = data.name;
+      if (data.share_percentage !== undefined) updateData['share_percentage'] = data.share_percentage;
+      if (data.owner_name !== undefined) updateData['owner_name'] = data.owner_name;
+      if (data.owner_email !== undefined) updateData['owner_email'] = data.owner_email;
+      if (data.structure_id !== undefined) updateData['structure_id'] = data.structure_id;
+
+      const { error } = await this.client
+        .from('properties')
+        .update(updateData)
+        .eq('id', id);
+
+      if (error) {
+        // Revert optimistic update on failure
+        if (existing) {
+          await this.#localRepo.upsert('properties', existing);
+        }
+        throw error;
+      }
+    } else {
+      await this.#syncService.enqueueMutation(
+        'update',
+        'properties',
+        id,
+        data as unknown as Record<string, unknown>,
+        `update-properties-${id}-${Date.now()}`,
       );
     }
   }
