@@ -8,9 +8,6 @@ import {
   IonIcon,
   IonButton,
   IonTitle,
-  IonSegment,
-  IonSegmentButton,
-  IonLabel,
   IonAlert,
   IonToast,
   IonSkeletonText,
@@ -30,8 +27,10 @@ import type { Property } from '@app-types/property';
 import {
   ContextStatusComponent,
   CondominiumSelectorComponent,
-  StructuresListComponent,
-  PropertiesListComponent,
+  CondoDashboardCardComponent,
+  HubStructuresAccordionComponent,
+  StructureFormModalComponent,
+  PropertyFormModalComponent,
 } from './components';
 
 @Component({
@@ -51,11 +50,10 @@ import {
     IonTitle,
     ContextStatusComponent,
     CondominiumSelectorComponent,
-    IonSegment,
-    IonSegmentButton,
-    IonLabel,
-    StructuresListComponent,
-    PropertiesListComponent,
+    CondoDashboardCardComponent,
+    HubStructuresAccordionComponent,
+    StructureFormModalComponent,
+    PropertyFormModalComponent,
     IonAlert,
     IonToast,
     IonSkeletonText,
@@ -79,8 +77,14 @@ export class CondominiumHubPage {
   isOnline = this.networkStatus.isOnline;
 
   // --- UI state ---
-  activeTab = signal<'structures' | 'properties'>('structures');
   isSwitchingContext = signal(false);
+
+  // --- Modal state ---
+  isStructureFormModalOpen = signal(false);
+  structureToEdit = signal<Structure | null>(null);
+  isPropertyFormModalOpen = signal(false);
+  propertyToEdit = signal<Property | null>(null);
+  preSelectedStructureId = signal<string | null>(null);
 
   // --- Delete confirmation state ---
   deleteTarget = signal<{
@@ -148,16 +152,6 @@ export class CondominiumHubPage {
     },
   }));
 
-  // --- Computed: Structure name lookup for properties ---
-  structureNameMap = computed(() => {
-    const map = new Map<string, string>();
-    const structures = this.structuresQuery.data() ?? [];
-    for (const structure of structures) {
-      map.set(structure.id, structure.name);
-    }
-    return map;
-  });
-
   // --- React to context ready ---
   contextReadyEffect = effect(() => {
     if (this.isReady()) {
@@ -166,13 +160,6 @@ export class CondominiumHubPage {
   });
 
   // --- Event Handlers ---
-
-  onTabChange(event: any) {
-    const value = event.detail.value;
-    if (value === 'structures' || value === 'properties') {
-      this.activeTab.set(value);
-    }
-  }
 
   async onCondominiumChange(condominiumId: string) {
     if (!condominiumId || condominiumId === this.activeCondominium()?.id)
@@ -189,12 +176,7 @@ export class CondominiumHubPage {
     }
   }
 
-  async onStructuresRefresh(event: Event) {
-    await this.#invalidateAndPrefetch();
-    (event as any).target?.complete?.();
-  }
-
-  async onPropertiesRefresh(event: Event) {
+  async onRefresh(event: Event) {
     await this.#invalidateAndPrefetch();
     (event as any).target?.complete?.();
   }
@@ -209,6 +191,43 @@ export class CondominiumHubPage {
     } catch (error) {
       console.error('Failed to refresh:', error);
     }
+  }
+
+  // --- Structure Form Modal ---
+
+  openAddStructureModal() {
+    this.structureToEdit.set(null);
+    this.isStructureFormModalOpen.set(true);
+  }
+
+  openEditStructureModal(structure: Structure) {
+    this.structureToEdit.set(structure);
+    this.isStructureFormModalOpen.set(true);
+  }
+
+  closeStructureFormModal() {
+    this.isStructureFormModalOpen.set(false);
+    this.structureToEdit.set(null);
+  }
+
+  // --- Property Form Modal ---
+
+  openAddPropertyModal(structureId: string) {
+    this.propertyToEdit.set(null);
+    this.preSelectedStructureId.set(structureId);
+    this.isPropertyFormModalOpen.set(true);
+  }
+
+  openEditPropertyModal(property: Property) {
+    this.propertyToEdit.set(property);
+    this.preSelectedStructureId.set(null);
+    this.isPropertyFormModalOpen.set(true);
+  }
+
+  closePropertyFormModal() {
+    this.isPropertyFormModalOpen.set(false);
+    this.propertyToEdit.set(null);
+    this.preSelectedStructureId.set(null);
   }
 
   // --- Delete flow ---

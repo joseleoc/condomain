@@ -1,4 +1,4 @@
-import { Component, inject, input, viewChild } from '@angular/core';
+import { Component, inject, input, output, viewChild } from '@angular/core';
 import {
   IonModal,
   IonHeader,
@@ -54,11 +54,12 @@ export class StructureFormModalComponent {
   /** Whether the modal is open */
   isOpen = input(false);
 
+  // --- Outputs ---
+  /** Emitted when the modal should close */
+  isOpenChange = output<boolean>();
+
   // --- View Child ---
   structureFormComponent = viewChild(StructureFormComponent);
-
-  // --- Outputs (via modal dismiss) ---
-  // The parent handles modal dismissal via isOpen input
 
   // --- Computed ---
   isEditMode = () => this.structure() !== null;
@@ -142,6 +143,9 @@ export class StructureFormModalComponent {
 
       // Invalidate queries to refresh the list
       this.queryClient.invalidateQueries({ queryKey: ['structures'] });
+      
+      // Close the modal
+      this.isOpenChange.emit(false);
     } catch (error) {
       console.error('Failed to save structure:', error);
       this.toast.present({

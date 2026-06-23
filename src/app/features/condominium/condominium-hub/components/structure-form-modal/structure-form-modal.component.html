@@ -1,6 +1,7 @@
 <ion-modal
   [isOpen]="isOpen()"
   [backdropDismiss]="false"
+  (didDismiss)="isOpenChange.emit(false)"
 >
   <ng-template>
     <ion-header>
@@ -9,7 +10,7 @@
           {{ (isEditMode() ? 'condominium.hub.structures.editTitle' : 'condominium.hub.structures.addTitle') | transloco }}
         </ion-title>
         <ion-buttons slot="end">
-          <ion-button fill="clear" color="secondary" (click)="isOpen.set(false)">
+          <ion-button fill="clear" color="secondary" (click)="isOpenChange.emit(false)">
             {{ "common.cancel" | transloco }}
           </ion-button>
         </ion-buttons>

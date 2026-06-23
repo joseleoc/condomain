@@ -1,4 +1,4 @@
-import { Component, inject, input, viewChild } from '@angular/core';
+import { Component, inject, input, output, viewChild } from '@angular/core';
 import {
   IonModal,
   IonHeader,
@@ -60,6 +60,10 @@ export class PropertyFormModalComponent {
   existingProperties = input<Property[]>([]);
   /** Whether the modal is open */
   isOpen = input(false);
+
+  // --- Outputs ---
+  /** Emitted when the modal should close */
+  isOpenChange = output<boolean>();
 
   // --- View Child ---
   propertyFormComponent = viewChild(PropertyFormComponent);
@@ -221,6 +225,9 @@ export class PropertyFormModalComponent {
 
       // Invalidate queries to refresh the list
       this.queryClient.invalidateQueries({ queryKey: ['properties'] });
+      
+      // Close the modal
+      this.isOpenChange.emit(false);
     } catch (error) {
       console.error('Failed to save property:', error);
       this.toast.present({

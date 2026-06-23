@@ -1,0 +1,190 @@
+.accordion-container {
+  padding: 0.5rem 1rem;
+}
+
+.add-structure-container {
+  margin-bottom: 1rem;
+}
+
+.empty-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 3rem 1.5rem;
+  text-align: center;
+  gap: 0.75rem;
+
+  ion-icon {
+    font-size: 3rem;
+    color: var(--ion-color-medium);
+  }
+
+  h3 {
+    margin: 0;
+    font-size: 1.1rem;
+    font-weight: 600;
+    color: var(--ion-text-color);
+  }
+
+  p {
+    margin: 0;
+    font-size: 0.9rem;
+    color: var(--ion-color-medium);
+  }
+}
+
+.structure-info {
+  display: flex;
+  flex-direction: column;
+  gap: 0.125rem;
+  flex: 1;
+  min-width: 0;
+}
+
+.structure-name {
+  font-weight: 500;
+  font-size: 1rem;
+}
+
+.structure-description {
+  font-size: 0.8rem;
+  color: var(--ion-color-medium);
+}
+
+.clamp-text {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  display: block;
+}
+
+.clickable {
+  cursor: pointer;
+
+  &:hover {
+    --background: var(--ion-color-light);
+  }
+
+  &:active {
+    --background: var(--ion-color-light-shade);
+  }
+}
+
+.delete-icon {
+  margin-left: 0.5rem;
+  font-size: 1.25rem;
+  cursor: pointer;
+
+  &:hover {
+    opacity: 0.7;
+  }
+}
+
+.property-info {
+  display: flex;
+  flex-direction: column;
+  gap: 0.125rem;
+  flex: 1;
+  min-width: 0;
+}
+
+.property-name {
+  font-size: 0.95rem;
+  font-weight: 500;
+}
+
+.owner-name {
+  font-weight: 400;
+  color: var(--ion-color-medium);
+}
+
+.property-percentage {
+  font-size: 0.8rem;
+}
+
+.no-properties {
+  padding: 1.5rem;
+  text-align: center;
+
+  p {
+    margin: 0;
+    font-size: 0.9rem;
+    color: var(--ion-color-medium);
+    font-style: italic;
+  }
+}
+
+.add-property-container {
+  padding: 0.5rem;
+  display: flex;
+  justify-content: center;
+  border-top: 1px solid var(--ion-color-light);
+}
+
+// Badge responsive behavior
+.badge-short {
+  display: inline;
+}
+
+.badge-long {
+  display: none;
+}
+
+// Small phones
+@media (max-width: 360px) {
+  .accordion-container {
+    padding: 0.5rem 0.75rem;
+  }
+
+  .structure-name {
+    font-size: 0.9rem;
+    max-width: 120px;
+  }
+
+  .structure-description {
+    font-size: 0.75rem;
+  }
+
+  .property-name {
+    font-size: 0.85rem;
+  }
+}
+
+// Tablets and larger
+@media (min-width: 600px) {
+  .structure-name {
+    font-size: 1.125rem;
+  }
+
+  .structure-description {
+    font-size: 0.875rem;
+  }
+
+  .property-name {
+    font-size: 1rem;
+  }
+
+  .property-percentage {
+    font-size: 0.875rem;
+  }
+
+  .badge-short {
+    display: none;
+  }
+
+  .badge-long {
+    display: inline;
+  }
+}
+
+// Dark mode
+@media (prefers-color-scheme: dark) {
+  .clickable:hover {
+    --background: var(--ion-color-dark);
+  }
+
+  .clickable:active {
+    --background: var(--ion-color-dark-shade);
+  }
+}

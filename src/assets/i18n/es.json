@@ -42,19 +42,30 @@
         "structures": "Estructuras",
         "properties": "Propiedades"
       },
+      "dashboard": {
+        "structures": "Estructuras",
+        "properties": "Propiedades"
+      },
       "structures": {
         "title": "Estructuras",
         "addButton": "Agregar estructura",
+        "addTitle": "Nueva estructura",
+        "editTitle": "Editar estructura",
         "emptyTitle": "Sin estructuras",
         "emptyDescription": "Aún no hay estructuras creadas para este condominio.",
         "deleteConfirmTitle": "Eliminar estructura",
-        "deleteConfirmMessage": "¿Estás seguro de que deseas eliminar \"{{name}}\"? Esta acción no se puede deshacer."
+        "deleteConfirmMessage": "¿Estás seguro de que deseas eliminar \"{{name}}\"? Esta acción no se puede deshacer.",
+        "propertiesCount": "propiedades",
+        "totalPercentage": "Alícuota total: {{value}}%"
       },
       "properties": {
         "title": "Propiedades",
         "addButton": "Agregar propiedad",
+        "addTitle": "Nueva propiedad",
+        "editTitle": "Editar propiedad",
         "emptyTitle": "Sin propiedades",
         "emptyDescription": "Aún no hay propiedades registradas en este condominio.",
+        "emptyInStructure": "No hay propiedades en esta estructura",
         "deleteConfirmTitle": "Eliminar propiedad",
         "deleteConfirmMessage": "¿Estás seguro de que deseas eliminar \"{{name}}\"? Esta acción no se puede deshacer.",
         "sharePercentage": "Alícuota: {{value}}%",
@@ -71,6 +82,11 @@
       "toast": {
         "structureDeleted": "Estructura eliminada correctamente",
         "propertyDeleted": "Propiedad eliminada correctamente",
+        "structureCreated": "Estructura creada correctamente",
+        "structureUpdated": "Estructura actualizada correctamente",
+        "propertyCreated": "Propiedad creada correctamente",
+        "propertyUpdated": "Propiedad actualizada correctamente",
+        "saveError": "Error al guardar. Inténtalo de nuevo.",
         "deleteError": "Error al eliminar. Inténtalo de nuevo.",
         "contextSwitchError": "Error al cambiar de condominio. Inténtalo de nuevo."
       }

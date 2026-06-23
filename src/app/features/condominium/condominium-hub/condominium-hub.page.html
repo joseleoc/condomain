@@ -47,72 +47,53 @@
       </div>
     }
 
-    <!-- Tabs + Content -->
+    <!-- Dashboard + Accordion -->
     @if (activeCondominium() && !isSwitchingContext()) {
-      <!-- Tab Selector -->
-      <ion-segment [value]="activeTab()" (ionChange)="onTabChange($event)">
-        <ion-segment-button value="structures">
-          <ion-icon name="business-outline" />
-          <ion-label>{{ t('condominium.hub.tabs.structures') }}</ion-label>
-        </ion-segment-button>
-        <ion-segment-button value="properties">
-          <ion-icon name="home-outline" />
-          <ion-label>{{ t('condominium.hub.tabs.properties') }}</ion-label>
-        </ion-segment-button>
-      </ion-segment>
+      <!-- Dashboard Card -->
+      <app-condo-dashboard-card
+        [condominium]="activeCondominium()!"
+        [structureCount]="structuresQuery.data()?.length ?? 0"
+        [propertyCount]="propertiesQuery.data()?.length ?? 0"
+      />
 
-      <!-- Structures Tab -->
-      @if (activeTab() === 'structures') {
-        <div class="tab-content">
-          <app-structures-list
-            [structures]="structuresQuery.data() ?? []"
-            [isLoading]="structuresQuery.isLoading()"
-            [error]="structuresQuery.error()"
-            [isAdmin]="isAdmin()"
-            [isOnline]="isOnline()"
-            (deleteStructure)="confirmDeleteStructure($event)"
-            (refresh)="onStructuresRefresh($event)"
-          />
-
-          <!-- Add button (admin only) -->
-          @if (isAdmin()) {
-            <div class="fab-container">
-              <ion-button expand="block" color="primary" class="add-button">
-                <ion-icon name="add" slot="start" />
-                {{ t('condominium.hub.structures.addButton') }}
-              </ion-button>
-            </div>
-          }
-        </div>
-      }
-
-      <!-- Properties Tab -->
-      @if (activeTab() === 'properties') {
-        <div class="tab-content">
-          <app-properties-list
-            [properties]="propertiesQuery.data() ?? []"
-            [isLoading]="propertiesQuery.isLoading()"
-            [error]="propertiesQuery.error()"
-            [isAdmin]="isAdmin()"
-            [isOnline]="isOnline()"
-            [structureNameMap]="structureNameMap()"
-            (deleteProperty)="confirmDeleteProperty($event)"
-            (refresh)="onPropertiesRefresh($event)"
-          />
-
-          <!-- Add button (admin only) -->
-          @if (isAdmin()) {
-            <div class="fab-container">
-              <ion-button expand="block" color="primary" class="add-button">
-                <ion-icon name="add" slot="start" />
-                {{ t('condominium.hub.properties.addButton') }}
-              </ion-button>
-            </div>
-          }
-        </div>
-      }
+      <!-- Structures & Properties Accordion -->
+      <app-hub-structures-accordion
+        [structures]="structuresQuery.data() ?? []"
+        [properties]="propertiesQuery.data() ?? []"
+        [isAdmin]="isAdmin()"
+        (editStructure)="openEditStructureModal($event)"
+        (deleteStructure)="confirmDeleteStructure($event)"
+        (addStructure)="openAddStructureModal()"
+        (editProperty)="openEditPropertyModal($event)"
+        (deleteProperty)="confirmDeleteProperty($event)"
+        (addProperty)="openAddPropertyModal($event)"
+      />
     }
   </ion-content>
+
+  <!-- Structure Form Modal -->
+  @if (activeCondominium()) {
+    <app-structure-form-modal
+      [structure]="structureToEdit()"
+      [condominiumId]="activeCondominium()!.id"
+      [existingStructures]="structuresQuery.data() ?? []"
+      [isOpen]="isStructureFormModalOpen()"
+      (isOpenChange)="isStructureFormModalOpen.set($event)"
+    />
+  }
+
+  <!-- Property Form Modal -->
+  @if (activeCondominium()) {
+    <app-property-form-modal
+      [property]="propertyToEdit()"
+      [preSelectedStructureId]="preSelectedStructureId()"
+      [condominiumId]="activeCondominium()!.id"
+      [structures]="structuresQuery.data() ?? []"
+      [existingProperties]="propertiesQuery.data() ?? []"
+      [isOpen]="isPropertyFormModalOpen()"
+      (isOpenChange)="isPropertyFormModalOpen.set($event)"
+    />
+  }
 
   <!-- Delete confirmation alert -->
   <ion-alert
