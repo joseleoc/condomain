@@ -5,46 +5,60 @@
   </ion-refresher>
 
   <!-- Skeleton loader -->
-  <ion-list *ngIf="isLoading()">
-    <ion-item *ngFor="let _ of [1,2,3]">
-      <ion-skeleton-text [animated]="true" slot="start" style="width: 40px; height: 40px; border-radius: 8px;" />
-      <ion-label>
-        <ion-skeleton-text [animated]="true" style="width: 50%;" />
-        <ion-skeleton-text [animated]="true" style="width: 30%;" />
-      </ion-label>
-    </ion-item>
-  </ion-list>
+  @if (isLoading()) {
+    <ion-list>
+      @for (_ of [1,2,3]; track $index) {
+        <ion-item>
+          <ion-skeleton-text [animated]="true" slot="start" style="width: 40px; height: 40px; border-radius: 8px;" />
+          <ion-label>
+            <ion-skeleton-text [animated]="true" style="width: 50%;" />
+            <ion-skeleton-text [animated]="true" style="width: 30%;" />
+          </ion-label>
+        </ion-item>
+      }
+    </ion-list>
+  }
 
   <!-- Error state -->
-  <div class="error-state" *ngIf="error() && !isLoading()">
-    <ion-icon name="alert-circle-outline" size="large" color="danger" />
-    <p>{{ error()?.message || 'Failed to load properties' }}</p>
-  </div>
+  @if (error() && !isLoading()) {
+    <div class="error-state">
+      <ion-icon name="alert-circle-outline" size="large" color="danger" />
+      <p>{{ error()?.message || 'Failed to load properties' }}</p>
+    </div>
+  }
 
   <!-- Empty state -->
-  <div class="empty-state" *ngIf="!isLoading() && properties().length === 0 && !error()">
-    <ion-icon [name]="homeIcon" size="large" />
-    <h3>{{ t('condominium.hub.properties.emptyTitle') }}</h3>
-    <p>{{ t('condominium.hub.properties.emptyDescription') }}</p>
-  </div>
+  @if (!isLoading() && properties().length === 0 && !error()) {
+    <div class="empty-state">
+      <ion-icon [name]="homeIcon" size="large" />
+      <h3>{{ t('condominium.hub.properties.emptyTitle') }}</h3>
+      <p>{{ t('condominium.hub.properties.emptyDescription') }}</p>
+    </div>
+  }
 
   <!-- Properties list -->
-  <ion-list *ngIf="!isLoading() && properties().length > 0">
-    <ion-item *ngFor="let property of properties()">
-      <ion-icon [name]="homeIcon" slot="start" color="success" />
-      <ion-label>
-        <h3>{{ property.name }}</h3>
-        <p>
-          {{ t('condominium.hub.properties.sharePercentage', { value: property.share_percentage }) }}
-          &middot;
-          {{ t('condominium.hub.properties.structureLabel') }}: {{ getStructureName(property.structure_id) }}
-        </p>
-      </ion-label>
-      <ion-buttons slot="end" *ngIf="isAdmin()">
-        <ion-button color="danger" fill="clear" (click)="onDelete(property)">
-          <ion-icon [name]="trashIcon" slot="icon-only" />
-        </ion-button>
-      </ion-buttons>
-    </ion-item>
-  </ion-list>
+  @if (!isLoading() && properties().length > 0) {
+    <ion-list>
+      @for (property of properties(); track property.id) {
+        <ion-item>
+          <ion-icon [name]="homeIcon" slot="start" color="success" />
+          <ion-label>
+            <h3>{{ property.name }}</h3>
+            <p>
+              {{ t('condominium.hub.properties.sharePercentage', { value: property.share_percentage }) }}
+              &middot;
+              {{ t('condominium.hub.properties.structureLabel') }}: {{ getStructureName(property.structure_id) }}
+            </p>
+          </ion-label>
+          @if (isAdmin()) {
+            <ion-buttons slot="end">
+              <ion-button color="danger" fill="clear" (click)="onDelete(property)">
+                <ion-icon [name]="trashIcon" slot="icon-only" />
+              </ion-button>
+            </ion-buttons>
+          }
+        </ion-item>
+      }
+    </ion-list>
+  }
 </ng-container>

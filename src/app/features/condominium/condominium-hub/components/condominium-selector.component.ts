@@ -1,5 +1,4 @@
 import { Component, input, output } from '@angular/core';
-import { CommonModule } from '@angular/common';
 import {
   IonSelect,
   IonSelectOption,
@@ -14,7 +13,6 @@ import type { CondominiumWithRole } from '@app-types/condominium';
   styleUrls: ['./condominium-selector.component.scss'],
   standalone: true,
   imports: [
-    CommonModule,
     IonSelect,
     IonSelectOption,
     TranslocoModule,

@@ -1,5 +1,4 @@
 import { Component, input, output } from '@angular/core';
-import { CommonModule } from '@angular/common';
 import {
   IonList,
   IonItem,
@@ -21,7 +20,6 @@ import type { Property } from '@app-types/property';
   styleUrls: ['./properties-list.component.scss'],
   standalone: true,
   imports: [
-    CommonModule,
     IonList,
     IonItem,
     IonLabel,

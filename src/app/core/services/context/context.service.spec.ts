@@ -15,6 +15,7 @@ describe('ContextService', () => {
     TestBed.configureTestingModule({
       imports: [SharedTestingModule],
       providers: [
+        ContextService,
         {
           provide: Condominium,
           useValue: {
@@ -27,6 +28,12 @@ describe('ContextService', () => {
         {
           provide: CondominiumRoles,
           useValue: {
+            isAdmin$: new BehaviorSubject(false),
+            isOperator$: new BehaviorSubject(false),
+            isResident$: new BehaviorSubject(false),
+            isReady$: new BehaviorSubject(false),
+            checkRole$: jasmine.createSpy('checkRole$').and.returnValue(new BehaviorSubject(false)),
+            hasAtLeastOneRole$: jasmine.createSpy('hasAtLeastOneRole$').and.returnValue(new BehaviorSubject(false)),
             isAdmin: jasmine.createSpy('isAdmin').and.returnValue(false),
             isOperator: jasmine.createSpy('isOperator').and.returnValue(false),
             isResident: jasmine.createSpy('isResident').and.returnValue(false),

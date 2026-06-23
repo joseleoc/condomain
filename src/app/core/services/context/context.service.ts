@@ -1,4 +1,4 @@
-import { inject, Injectable, Signal, signal } from '@angular/core';
+import { inject, Injectable, Signal } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { Condominium } from '@core/services/condominium/condominium';
 import { CondominiumRoles } from '@core/services/condominium-roles/condominium-roles';
@@ -6,6 +6,7 @@ import { Profile } from '@core/services/profile/profile';
 import { QueryClient } from '@tanstack/angular-query-experimental';
 import type { CondominiumWithRole } from '@app-types/condominium';
 import type { RoleName } from '@app-types/roles';
+import { combineLatest, map } from 'rxjs';
 
 export interface ActiveContext {
   condominium: CondominiumWithRole | null;
@@ -37,11 +38,29 @@ export class ContextService {
   );
 
   /** Whether the user is an admin in the active condominium */
-  readonly isAdmin: Signal<boolean> = signal(this.#condominiumRoles.isAdmin());
+  readonly isAdmin: Signal<boolean> = toSignal(
+    this.#condominiumRoles.isAdmin$,
+    { initialValue: false },
+  );
 
   /** The role name of the user in the active condominium */
-  readonly roleName: Signal<RoleName | null> = signal(
-    this.#getRoleName(),
+  readonly roleName: Signal<RoleName | null> = toSignal(
+    combineLatest([
+      this.#condominiumRoles.isAdmin$,
+      this.#condominiumRoles.isOperator$,
+      this.#condominiumRoles.isResident$,
+    ]).pipe(
+      map(([isAdmin, isOperator, isResident]) =>
+        isAdmin
+          ? 'condominium_admin'
+          : isOperator
+            ? 'admin_operator'
+            : isResident
+              ? 'resident_owner'
+              : null,
+      ),
+    ),
+    { initialValue: null },
   );
 
   /** Whether the condominium list is still loading */
@@ -87,17 +106,5 @@ export class ContextService {
       isAdmin: this.isAdmin(),
       isLoading: this.isLoading(),
     };
-  }
-
-  #getRoleName(): RoleName | null {
-    const active = this.#condominiumService.activeCondominium$.getValue();
-    if (!active) return null;
-    return this.#condominiumRoles.isAdmin()
-      ? 'condominium_admin'
-      : this.#condominiumRoles.isOperator()
-        ? 'admin_operator'
-        : this.#condominiumRoles.isResident()
-          ? 'resident_owner'
-          : null;
   }
 }

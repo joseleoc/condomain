@@ -1,11 +1,15 @@
 <ng-container *transloco="let t">
   <!-- Offline indicator -->
-  <ion-chip *ngIf="!isOnline()" color="warning" [title]="t('condominium.hub.offline.tooltip')">
-    <ion-badge color="warning">{{ t('condominium.hub.offline.badge') }}</ion-badge>
-  </ion-chip>
+  @if (!isOnline()) {
+    <ion-chip color="warning" [title]="t('condominium.hub.offline.tooltip')">
+      <ion-badge color="warning">{{ t('condominium.hub.offline.badge') }}</ion-badge>
+    </ion-chip>
+  }
 
   <!-- Read-only indicator for non-admins -->
-  <ion-chip *ngIf="!isAdmin() && isOnline()" color="medium" [title]="t('condominium.hub.readOnly.tooltip')">
-    <ion-badge color="medium">{{ t('condominium.hub.readOnly.badge') }}</ion-badge>
-  </ion-chip>
+  @if (!isAdmin() && isOnline()) {
+    <ion-chip color="medium" [title]="t('condominium.hub.readOnly.tooltip')">
+      <ion-badge color="medium">{{ t('condominium.hub.readOnly.badge') }}</ion-badge>
+    </ion-chip>
+  }
 </ng-container>

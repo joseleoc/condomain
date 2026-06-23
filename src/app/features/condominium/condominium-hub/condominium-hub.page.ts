@@ -1,6 +1,4 @@
 import { Component, inject, OnInit, signal, computed } from '@angular/core';
-import { CommonModule } from '@angular/common';
-import { FormsModule } from '@angular/forms';
 import {
   IonContent,
   IonHeader,
@@ -18,7 +16,6 @@ import {
   IonSkeletonText,
 } from '@ionic/angular/standalone';
 import { TranslocoModule, TranslocoService } from '@jsverse/transloco';
-import { add, business, home } from 'ionicons/icons';
 import { ContextService } from '@core/services/context/context.service';
 import { Structures } from '@core/services/structures/structures';
 import { Properties } from '@core/services/properties/properties';
@@ -43,8 +40,6 @@ import {
   styleUrls: ['./condominium-hub.page.scss'],
   standalone: true,
   imports: [
-    CommonModule,
-    FormsModule,
     IonContent,
     IonHeader,
     IonToolbar,
@@ -67,11 +62,6 @@ import {
   ],
 })
 export class CondominiumHubPage implements OnInit {
-  // --- Icons ---
-  addIcon = add;
-  buildingIcon = business;
-  homeIcon = home;
-
   // --- Dependencies ---
   private contextService = inject(ContextService);
   private structuresService = inject(Structures);
@@ -83,6 +73,7 @@ export class CondominiumHubPage implements OnInit {
   // --- Context signals ---
   activeCondominium = this.contextService.activeCondominium;
   isAdmin = this.contextService.isAdmin;
+
   userCondominiums = this.contextService.userCondominiums;
   isOnline = this.networkStatus.isOnline;
 
@@ -168,7 +159,9 @@ export class CondominiumHubPage implements OnInit {
 
   constructor() {}
 
-  ngOnInit() {}
+  ngOnInit() {
+    console.log(this.isAdmin());
+  }
 
   // --- Event Handlers ---
 

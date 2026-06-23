@@ -65,7 +65,9 @@ export class Wizard {
   progressPercentage = computed(() => this.step() / MAX_STEPS);
   buttonLabel = signal('common.next');
   backLabel = signal('common.back');
-  creationProcessSelected = signal<CreateCondominiumProcessOptions | null>(null);
+  creationProcessSelected = signal<CreateCondominiumProcessOptions | null>(
+    null,
+  );
 
   structures$ = new BehaviorSubject<LocalStructure[]>([]);
 
@@ -87,7 +89,9 @@ export class Wizard {
     this._step.set(this.savedWizardData.step);
     this.createdCondominium.set(this.savedWizardData.createdCondominium);
     this.structures$.next(this.savedWizardData.structures);
-    this.creationProcessSelected.set(this.savedWizardData.creationProcessSelected);
+    this.creationProcessSelected.set(
+      this.savedWizardData.creationProcessSelected,
+    );
     this.savedWizardData = null;
     try {
       this.telemetry.track(TelemetryEvents.WIZARD_RESTORED, {
@@ -242,6 +246,8 @@ export class Wizard {
         });
         await alert.present();
         return;
+      } else {
+        this.uploadStructuresAndProperties(structures);
       }
     } catch (error) {
       this.toast.present({
@@ -264,7 +270,9 @@ export class Wizard {
     const normalizedName = structure.name.trim().toLowerCase();
 
     if (!isEdit) {
-      if (currentStructures.some((s) => s.name.toLowerCase() === normalizedName)) {
+      if (
+        currentStructures.some((s) => s.name.toLowerCase() === normalizedName)
+      ) {
         this.toast.present({
           message: this.translocoService.translate(
             'condominium.createStructure.structureAlreadyExists',
@@ -285,7 +293,9 @@ export class Wizard {
 
       // Check if the new name conflicts with a DIFFERENT existing structure
       const nameConflict = currentStructures.some(
-        (s, idx) => idx !== foundStructureIndex && s.name.toLowerCase() === normalizedName,
+        (s, idx) =>
+          idx !== foundStructureIndex &&
+          s.name.toLowerCase() === normalizedName,
       );
       if (nameConflict) {
         this.toast.present({
@@ -308,7 +318,9 @@ export class Wizard {
 
     try {
       this.telemetry.track(
-        isEdit ? TelemetryEvents.STRUCTURE_EDITED : TelemetryEvents.STRUCTURE_ADDED,
+        isEdit
+          ? TelemetryEvents.STRUCTURE_EDITED
+          : TelemetryEvents.STRUCTURE_ADDED,
         {
           mode: this.creationProcessSelected(),
           structures_count: structuresToSave.length,

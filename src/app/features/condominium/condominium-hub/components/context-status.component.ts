@@ -1,5 +1,4 @@
 import { Component, input } from '@angular/core';
-import { CommonModule } from '@angular/common';
 import {
   IonChip,
   IonBadge,
@@ -11,7 +10,6 @@ import { TranslocoModule } from '@jsverse/transloco';
   templateUrl: './context-status.component.html',
   standalone: true,
   imports: [
-    CommonModule,
     IonChip,
     IonBadge,
     TranslocoModule,

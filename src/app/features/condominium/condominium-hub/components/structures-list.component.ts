@@ -1,5 +1,4 @@
 import { Component, input, output } from '@angular/core';
-import { CommonModule } from '@angular/common';
 import {
   IonList,
   IonItem,
@@ -21,7 +20,6 @@ import type { Structure } from '@app-types/structures';
   styleUrls: ['./structures-list.component.scss'],
   standalone: true,
   imports: [
-    CommonModule,
     IonList,
     IonItem,
     IonLabel,
