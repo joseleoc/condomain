@@ -1,0 +1,36 @@
+<ion-modal
+  [isOpen]="isOpen()"
+  [backdropDismiss]="false"
+>
+  <ng-template>
+    <ion-header>
+      <ion-toolbar>
+        <ion-title>
+          {{ (isEditMode() ? 'condominium.hub.structures.editTitle' : 'condominium.hub.structures.addTitle') | transloco }}
+        </ion-title>
+        <ion-buttons slot="end">
+          <ion-button fill="clear" color="secondary" (click)="isOpen.set(false)">
+            {{ "common.cancel" | transloco }}
+          </ion-button>
+        </ion-buttons>
+      </ion-toolbar>
+    </ion-header>
+
+    <ion-content class="ion-padding">
+      <p class="text-secondary structure-modal-description ion-padding-bottom">
+        {{ "condominium.createStructure.description" | transloco }}
+      </p>
+      <app-structure-form [initialData]="getInitialData()" />
+    </ion-content>
+
+    <ion-footer>
+      <ion-toolbar>
+        <ion-buttons slot="end">
+          <ion-button fill="solid" color="primary" (click)="handleSubmit()">
+            {{ "common.save" | transloco }}
+          </ion-button>
+        </ion-buttons>
+      </ion-toolbar>
+    </ion-footer>
+  </ng-template>
+</ion-modal>
