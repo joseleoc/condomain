@@ -27,7 +27,7 @@ import {
 import { TranslocoPipe, TranslocoService } from '@jsverse/transloco';
 import { Subscription } from 'rxjs';
 import { Wizard } from '../../services/wizard/wizard';
-import { CreatePropertyFormComponent } from '../create-property-form/create-property-form.component';
+import { PropertyFormComponent } from '@shared/components/property-form/property-form.component';
 import { StructuresPropertiesAccordionComponent } from '../structures-properties-accordion/structures-properties-accordion.component';
 import {
   PropertyPatternBuilderComponent,
@@ -66,7 +66,7 @@ interface PropertyPreviewGroup {
     IonContent,
     IonFooter,
     TranslocoPipe,
-    CreatePropertyFormComponent,
+    PropertyFormComponent,
     StructuresPropertiesAccordionComponent,
     PropertyPatternBuilderComponent,
     PropertyPreviewComponent,
@@ -80,7 +80,7 @@ export class MassivePropertyCreationComponent implements OnInit, OnDestroy {
   private nextSubscription!: Subscription;
   private backSubscription!: Subscription;
 
-  createPropertyFormComponent = viewChild(CreatePropertyFormComponent);
+  propertyFormComponent = viewChild(PropertyFormComponent);
 
   isEditModalOpen = signal(false);
   isAdding = signal(false);
@@ -397,23 +397,56 @@ export class MassivePropertyCreationComponent implements OnInit, OnDestroy {
   }
 
   handleSaveProperty(): void {
-    const formData = this.createPropertyFormComponent()?.submit();
+    const formData = this.propertyFormComponent()?.submit();
     if (formData) {
+      // Map PropertyFormValue to CreatePropertyFormData for wizard
+      const createPropertyData = {
+        number: formData.name,
+        fee: formData.share_percentage,
+        structure: formData.structure_id, // In wizard, structure_id is the structure name
+        ownerName: formData.owner_name,
+        ownerEmail: formData.owner_email,
+      };
+
       if (this.isAdding()) {
-        this.wizardService.addPropertyToStructure(formData.structure, {
-          number: formData.number,
-          fee: formData.fee,
-          structure: formData.structure,
-          ownerName: formData.ownerName,
-          ownerEmail: formData.ownerEmail,
-        });
+        this.wizardService.addPropertyToStructure(
+          formData.structure_id,
+          createPropertyData,
+        );
       } else {
         this.wizardService.editPropertyInStructure({
-          ...formData,
-          structureName: formData.structure,
+          ...createPropertyData,
+          structureName: formData.structure_id,
         });
       }
       this.closeEditModal();
     }
+  }
+
+  /**
+   * Maps the wizard's selectedProperty to the form's initialData format.
+   */
+  getPropertyInitialData() {
+    const selected = this.wizardService.selectedProperty();
+    if (!selected) return null;
+    return {
+      name: selected.number,
+      share_percentage: selected.fee,
+      structure_id: selected.structure, // In wizard, structure is the structure name
+      owner_name: selected.ownerName,
+      owner_email: selected.ownerEmail,
+    };
+  }
+
+  /**
+   * Maps wizard structures to StructureOption format for the dropdown.
+   * In wizard context, structure name is used as the ID.
+   */
+  getStructureOptions() {
+    const structures = this.wizardService.structures$.getValue();
+    return structures.map((s) => ({
+      id: s.name, // Use name as ID in wizard context
+      name: s.name,
+    }));
   }
 }

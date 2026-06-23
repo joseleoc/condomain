@@ -30,7 +30,7 @@ import { TranslocoPipe, TranslocoService } from '@jsverse/transloco';
 import { Subscription } from 'rxjs';
 import { Wizard } from '../../services/wizard/wizard';
 import { StructuresListComponent } from '../structures-list/structures-list.component';
-import { AddStructureFormComponent } from '../add-structure-form/add-structure-form.component';
+import { StructureFormComponent } from '@shared/components/structure-form/structure-form.component';
 import { StructurePatternBuilderComponent, StructurePatternPart } from '../structure-pattern-builder/structure-pattern-builder.component';
 import { LocalStructure } from '@features/create-condominium/create-condominium.types';
 import { Toast } from '@core/services/toast/toast';
@@ -62,7 +62,7 @@ import { TelemetryEvents } from '@core/services/telemetry/telemetry.types';
     IonFooter,
     TranslocoPipe,
     StructuresListComponent,
-    AddStructureFormComponent,
+    StructureFormComponent,
     StructurePatternBuilderComponent,
   ],
 })
@@ -113,7 +113,7 @@ export class MassiveCreationProcessComponent implements OnInit, OnDestroy {
   showingGenerator = signal(true);
 
   isOpenAddStructureModal = signal(false);
-  addStructureFormComponent = viewChild(AddStructureFormComponent);
+  structureFormComponent = viewChild(StructureFormComponent);
 
   ngOnInit(): void {
     this.showingGenerator.set(this.structures().length === 0);
@@ -280,10 +280,10 @@ export class MassiveCreationProcessComponent implements OnInit, OnDestroy {
   }
 
   submitAddStructureForm(): void {
-    const formComponent = this.addStructureFormComponent();
+    const formComponent = this.structureFormComponent();
     if (!formComponent) return;
 
-    const values = formComponent.submitAddStructureForm();
+    const values = formComponent.submit();
     if (!values) return;
 
     const success = this.wizardService.saveStructureLocally({
@@ -293,5 +293,17 @@ export class MassiveCreationProcessComponent implements OnInit, OnDestroy {
     if (success) {
       this.closeAddStructureModal();
     }
+  }
+
+  /**
+   * Maps the wizard's selectedStructure to the form's initialData format.
+   */
+  getStructureInitialData() {
+    const selected = this.wizardService.selectedStructure();
+    if (!selected) return null;
+    return {
+      name: selected.name,
+      description: selected.description,
+    };
   }
 }

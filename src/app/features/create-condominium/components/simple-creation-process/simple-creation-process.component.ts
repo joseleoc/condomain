@@ -17,13 +17,14 @@ import {
   IonFooter,
 } from '@ionic/angular/standalone';
 import { TranslocoPipe } from '@jsverse/transloco';
-import { AddStructureFormComponent } from '../add-structure-form/add-structure-form.component';
+import { StructureFormComponent } from '@shared/components/structure-form/structure-form.component';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { StructuresListComponent } from '../structures-list/structures-list.component';
 import { Wizard } from '@features/create-condominium/services/wizard/wizard';
 import { LocalStructure } from '@features/create-condominium/create-condominium.types';
 import { TelemetryService } from '@core/services/telemetry';
 import { TelemetryEvents } from '@core/services/telemetry/telemetry.types';
+import { StructureFormValue } from '@shared/components/property-form/form.types';
 
 @Component({
   selector: 'app-simple-creation-process',
@@ -39,7 +40,7 @@ import { TelemetryEvents } from '@core/services/telemetry/telemetry.types';
     IonButton,
     TranslocoPipe,
     IonContent,
-    AddStructureFormComponent,
+    StructureFormComponent,
     IonFooter,
     StructuresListComponent,
   ],
@@ -49,7 +50,7 @@ export class SimpleCreationProcessComponent implements OnInit {
   private wizardService = inject(Wizard);
   private telemetry = inject(TelemetryService);
   // --- Components ---
-  addStructureFormComponent = viewChild(AddStructureFormComponent);
+  structureFormComponent = viewChild(StructureFormComponent);
   // --- Properties ---
   isOpenAddStructureModal = signal(false);
   structures = toSignal(this.wizardService.structures$);
@@ -67,9 +68,9 @@ export class SimpleCreationProcessComponent implements OnInit {
   }
 
   submitAddStructureForm() {
-    const formComponent = this.addStructureFormComponent();
+    const formComponent = this.structureFormComponent();
     if (formComponent) {
-      const values = formComponent.submitAddStructureForm();
+      const values = formComponent.submit();
       if (values) {
         const success = this.wizardService.saveStructureLocally({
           ...values,
@@ -105,5 +106,17 @@ export class SimpleCreationProcessComponent implements OnInit {
 
   clearSelectedStructure() {
     this.wizardService.selectedStructure.set(null);
+  }
+
+  /**
+   * Maps the wizard's selectedStructure to the form's initialData format.
+   */
+  getStructureInitialData() {
+    const selected = this.wizardService.selectedStructure();
+    if (!selected) return null;
+    return {
+      name: selected.name,
+      description: selected.description,
+    };
   }
 }
