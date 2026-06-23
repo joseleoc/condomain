@@ -40,7 +40,10 @@
       <p class="text-secondary structure-modal-description ion-padding-bottom">
         {{ "condominium.createProperty.description" | transloco }}
       </p>
-      <app-create-property-form [showButton]="false" />
+      <app-property-form
+        [initialData]="getPropertyInitialData()"
+        [structureOptions]="getStructureOptions()"
+      />
     </ion-content>
     <ion-footer>
       <ion-toolbar>
