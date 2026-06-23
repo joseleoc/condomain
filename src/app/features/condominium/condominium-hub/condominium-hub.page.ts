@@ -1,4 +1,4 @@
-import { Component, inject, OnInit, signal, computed } from '@angular/core';
+import { Component, inject, signal, computed, effect } from '@angular/core';
 import {
   IonContent,
   IonHeader,
@@ -61,7 +61,7 @@ import {
     IonSkeletonText,
   ],
 })
-export class CondominiumHubPage implements OnInit {
+export class CondominiumHubPage {
   // --- Dependencies ---
   private contextService = inject(ContextService);
   private structuresService = inject(Structures);
@@ -73,6 +73,7 @@ export class CondominiumHubPage implements OnInit {
   // --- Context signals ---
   activeCondominium = this.contextService.activeCondominium;
   isAdmin = this.contextService.isAdmin;
+  isReady = this.contextService.isReady;
 
   userCondominiums = this.contextService.userCondominiums;
   isOnline = this.networkStatus.isOnline;
@@ -157,11 +158,12 @@ export class CondominiumHubPage implements OnInit {
     return map;
   });
 
-  constructor() {}
-
-  ngOnInit() {
-    console.log(this.isAdmin());
-  }
+  // --- React to context ready ---
+  contextReadyEffect = effect(() => {
+    if (this.isReady()) {
+      console.log('Context ready - isAdmin:', this.isAdmin());
+    }
+  });
 
   // --- Event Handlers ---
 

@@ -13,6 +13,7 @@ export interface ActiveContext {
   roleName: RoleName | null;
   isAdmin: boolean;
   isLoading: boolean;
+  isReady: boolean;
 }
 
 /**
@@ -69,6 +70,12 @@ export class ContextService {
     { initialValue: false },
   );
 
+  /** Whether both roles and active condominium are loaded and ready */
+  readonly isReady: Signal<boolean> = toSignal(
+    this.#condominiumRoles.isReady$,
+    { initialValue: false },
+  );
+
   /** All condominiums the user belongs to */
   readonly userCondominiums = toSignal(
     this.#condominiumService.userCondominiums$,
@@ -105,6 +112,7 @@ export class ContextService {
       roleName: this.roleName(),
       isAdmin: this.isAdmin(),
       isLoading: this.isLoading(),
+      isReady: this.isReady(),
     };
   }
 }

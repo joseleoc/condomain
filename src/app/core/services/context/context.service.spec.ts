@@ -77,6 +77,11 @@ describe('ContextService', () => {
     expect(typeof service.isLoading).toBe('function');
   });
 
+  it('should expose isReady signal', () => {
+    expect(service.isReady).toBeDefined();
+    expect(typeof service.isReady).toBe('function');
+  });
+
   it('should expose userCondominiums signal', () => {
     expect(service.userCondominiums).toBeDefined();
     expect(typeof service.userCondominiums).toBe('function');
@@ -90,6 +95,7 @@ describe('ContextService', () => {
         roleName: null,
         isAdmin: false,
         isLoading: false,
+        isReady: false,
       });
     });
   });
