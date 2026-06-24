@@ -2,6 +2,7 @@ import { Routes } from '@angular/router';
 import { isAuthenticatedGuard } from '@core/guards/is-authenticated/is-authenticated-guard';
 import { isNotAuthenticatedGuard } from '@core/guards/is-not-authenticated/is-not-authenticated-guard';
 import { hasCondominiumsGuard } from '@core/guards/has-condominiums/has-condominiums-guard';
+import { captureInvitationCodeGuard } from '@core/guards/capture-invitation-code/capture-invitation-code-guard';
 
 export const routes: Routes = [
   {
@@ -62,6 +63,7 @@ export const routes: Routes = [
       },
       {
         path: 'join-condominium',
+        canActivate: [captureInvitationCodeGuard],
         loadComponent: () =>
           import(
             './features/onboarding/join-condominium/join-condominium.page'

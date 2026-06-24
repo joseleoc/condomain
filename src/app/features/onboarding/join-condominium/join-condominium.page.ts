@@ -1,5 +1,5 @@
-import { Component, inject, signal } from '@angular/core';
-import { Router } from '@angular/router';
+import { Component, inject, OnInit, signal } from '@angular/core';
+import { ActivatedRoute, Router } from '@angular/router';
 import { TranslocoPipe, TranslocoService } from '@jsverse/transloco';
 import {
   IonContent,
@@ -11,6 +11,7 @@ import {
 } from '@ionic/angular/standalone';
 import { MainLayoutComponent } from '@shared/components/layout/main-layout/main-layout.component';
 import { CondominiumJoinRequest } from '@core/services/condominium-join-request/condominium-join-request';
+import { PendingInvitation } from '@core/services/pending-invitation/pending-invitation';
 import { firstValueFrom } from 'rxjs';
 
 @Component({
@@ -27,15 +28,30 @@ import { firstValueFrom } from 'rxjs';
     MainLayoutComponent,
   ],
 })
-export class JoinCondominiumPage {
+export class JoinCondominiumPage implements OnInit {
+  private route = inject(ActivatedRoute);
   private router = inject(Router);
   private joinRequestService = inject(CondominiumJoinRequest);
+  private pendingInvitation = inject(PendingInvitation);
   private alertController = inject(AlertController);
   private translocoService = inject(TranslocoService);
 
   invitationCode = signal('');
   loading = signal(false);
   error = signal<string | null>(null);
+
+  ngOnInit(): void {
+    // Check URL param first, then localStorage
+    const urlCode = this.route.snapshot.queryParamMap.get('code');
+    const storedCode = this.pendingInvitation.getCode();
+    const code = urlCode || storedCode;
+
+    if (code) {
+      this.invitationCode.set(code);
+      // Auto-submit if we have a valid code
+      this.handleSubmit();
+    }
+  }
 
   async handleSubmit(): Promise<void> {
     const code = this.invitationCode().trim();
@@ -57,6 +73,9 @@ export class JoinCondominiumPage {
         this.loading.set(false);
         return;
       }
+
+      // Clear pending invitation after success
+      this.pendingInvitation.clearCode();
 
       await this.showSuccessAlert();
       this.router.navigate(['/home']);
