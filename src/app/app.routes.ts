@@ -83,6 +83,13 @@ export const routes: Routes = [
           ),
       },
       {
+        path: 'join-requests',
+        loadComponent: () =>
+          import('./features/condominium/join-requests/join-requests.page').then(
+            (m) => m.JoinRequestsPage,
+          ),
+      },
+      {
         path: '',
         redirectTo: 'condominium-hub',
         pathMatch: 'full',

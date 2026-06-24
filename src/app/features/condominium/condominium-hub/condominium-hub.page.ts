@@ -17,6 +17,7 @@ import { ContextService } from '@core/services/context/context.service';
 import { Structures } from '@core/services/structures/structures';
 import { Properties } from '@core/services/properties/properties';
 import { NetworkStatusService } from '@core/services/network-status.service';
+import { CondominiumJoinRequest } from '@core/services/condominium-join-request/condominium-join-request';
 import {
   injectQuery,
   injectMutation,
@@ -67,6 +68,7 @@ export class CondominiumHubPage {
   private networkStatus = inject(NetworkStatusService);
   private queryClient = inject(QueryClient);
   private transloco = inject(TranslocoService);
+  private joinRequestService = inject(CondominiumJoinRequest);
 
   // --- Context signals ---
   activeCondominium = this.contextService.activeCondominium;
@@ -119,6 +121,21 @@ export class CondominiumHubPage {
       },
       enabled: !!condoId,
       staleTime: 1000 * 60 * 5, // 5 minutes
+    };
+  });
+
+  // --- TanStack Query: Pending Join Requests (admin only) ---
+  pendingRequestsQuery = injectQuery(() => {
+    const condoId = this.activeCondominium()?.id;
+    const isAdmin = this.isAdmin();
+    return {
+      queryKey: ['pending-join-requests', condoId] as const,
+      queryFn: async (): Promise<number> => {
+        if (!condoId) return 0;
+        return this.joinRequestService.countPendingRequests(condoId);
+      },
+      enabled: !!condoId && isAdmin,
+      staleTime: 1000 * 30, // 30 seconds
     };
   });
 

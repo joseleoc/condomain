@@ -44,7 +44,9 @@
       },
       "dashboard": {
         "structures": "Estructuras",
-        "properties": "Propiedades"
+        "properties": "Propiedades",
+        "pendingRequests": "Solicitudes",
+        "viewPendingRequests": "Ver solicitudes pendientes"
       },
       "structures": {
         "title": "Estructuras",
@@ -350,5 +352,20 @@
     "error": "Error al enviar la solicitud. Intenta de nuevo.",
     "successTitle": "¡Solicitud enviada!",
     "successMessage": "Tu solicitud ha sido enviada al administrador. Recibirás una notificación cuando sea aprobada."
+  },
+  "joinRequests": {
+    "title": "Solicitudes de ingreso",
+    "loading": "Cargando solicitudes...",
+    "noRequests": "Sin solicitudes pendientes",
+    "noRequestsDescription": "No hay solicitudes de ingreso pendientes en este momento.",
+    "approve": "Aprobar",
+    "decline": "Rechazar",
+    "approveTitle": "Aprobar solicitud",
+    "approveMessage": "¿Aprobar la solicitud de {{name}} para unirse al condominio?",
+    "declineTitle": "Rechazar solicitud",
+    "declineMessage": "¿Rechazar la solicitud de {{name}} para unirse al condominio?",
+    "approvedSuccess": "Solicitud aprobada correctamente",
+    "declinedSuccess": "Solicitud rechazada correctamente",
+    "actionError": "Error al procesar la solicitud. Intenta de nuevo."
   }
 }

@@ -44,7 +44,9 @@
       },
       "dashboard": {
         "structures": "Structures",
-        "properties": "Properties"
+        "properties": "Properties",
+        "pendingRequests": "Requests",
+        "viewPendingRequests": "View pending requests"
       },
       "structures": {
         "title": "Structures",
@@ -356,5 +358,20 @@
     "error": "Error submitting request. Please try again.",
     "successTitle": "Request sent!",
     "successMessage": "Your request has been sent to the administrator. You'll receive a notification when it's approved."
+  },
+  "joinRequests": {
+    "title": "Join requests",
+    "loading": "Loading requests...",
+    "noRequests": "No pending requests",
+    "noRequestsDescription": "There are no pending join requests at this time.",
+    "approve": "Approve",
+    "decline": "Decline",
+    "approveTitle": "Approve request",
+    "approveMessage": "Approve {{name}}'s request to join the condominium?",
+    "declineTitle": "Decline request",
+    "declineMessage": "Decline {{name}}'s request to join the condominium?",
+    "approvedSuccess": "Request approved successfully",
+    "declinedSuccess": "Request declined successfully",
+    "actionError": "Error processing request. Please try again."
   }
 }

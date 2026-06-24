@@ -59,6 +59,11 @@ ion-card-subtitle {
   letter-spacing: 0.5px;
 }
 
+.pending-requests {
+  --background: rgba(var(--ion-color-warning-rgb), 0.05);
+  border-radius: 8px;
+}
+
 // Small phones
 @media (max-width: 360px) {
   .dashboard-card {

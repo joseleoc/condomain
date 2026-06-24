@@ -58,7 +58,18 @@
       [condominium]="activeCondominium()!"
       [structureCount]="structuresQuery.data()?.length ?? 0"
       [propertyCount]="propertiesQuery.data()?.length ?? 0"
+      [pendingRequestsCount]="pendingRequestsQuery.data() ?? 0"
     />
+
+    <!-- View pending requests button (admin only) -->
+    @if (isAdmin() && (pendingRequestsQuery.data() ?? 0) > 0) {
+      <div class="view-requests-container">
+        <ion-button expand="block" fill="outline" href="/condominium/join-requests">
+          <ion-icon name="person-add-outline" slot="start"></ion-icon>
+          {{ t('condominium.hub.dashboard.viewPendingRequests') }}
+        </ion-button>
+      </div>
+    }
 
     <!-- Structures & Properties Accordion -->
     <app-hub-structures-accordion

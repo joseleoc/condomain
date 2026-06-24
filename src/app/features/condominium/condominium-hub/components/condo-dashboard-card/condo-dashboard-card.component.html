@@ -26,6 +26,16 @@
           <p>{{ 'condominium.hub.dashboard.properties' | transloco }}</p>
         </ion-label>
       </ion-item>
+
+      @if (pendingRequestsCount() > 0) {
+        <ion-item lines="none" class="stat-item pending-requests">
+          <ion-icon name="person-add-outline" slot="start" color="warning"></ion-icon>
+          <ion-label>
+            <h2>{{ pendingRequestsCount() }}</h2>
+            <p>{{ 'condominium.hub.dashboard.pendingRequests' | transloco }}</p>
+          </ion-label>
+        </ion-item>
+      }
     </div>
   </ion-card-content>
 </ion-card>

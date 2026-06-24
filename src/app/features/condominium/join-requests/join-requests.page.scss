@@ -1,0 +1,150 @@
+.loading-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 3rem 1.5rem;
+  gap: 1rem;
+
+  p {
+    margin: 0;
+    font-size: 0.95rem;
+    color: var(--ion-color-medium);
+  }
+}
+
+.empty-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 3rem 1.5rem;
+  text-align: center;
+
+  ion-icon {
+    font-size: 4rem;
+    color: var(--ion-color-success);
+    margin-bottom: 1rem;
+  }
+
+  h2 {
+    margin: 0 0 0.5rem;
+    font-size: 1.25rem;
+    font-weight: 600;
+  }
+
+  p {
+    margin: 0;
+    font-size: 0.9rem;
+    color: var(--ion-color-medium);
+  }
+}
+
+.request-item {
+  --padding-start: 0.5rem;
+  --padding-end: 0.5rem;
+  --inner-padding-end: 0.75rem;
+  margin-bottom: 0.5rem;
+  border-radius: 12px;
+  --background: var(--ion-color-light);
+
+  ion-avatar {
+    width: 48px;
+    height: 48px;
+    margin-right: 1rem;
+  }
+
+  .avatar-placeholder {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: var(--ion-color-primary);
+    color: white;
+    font-weight: 600;
+    font-size: 1rem;
+    border-radius: 50%;
+  }
+
+  ion-label {
+    h2 {
+      font-size: 1rem;
+      font-weight: 600;
+      margin-bottom: 0.25rem;
+    }
+
+    p {
+      font-size: 0.85rem;
+      color: var(--ion-color-medium);
+      margin: 0;
+    }
+
+    .request-date {
+      font-size: 0.75rem;
+      margin-top: 0.25rem;
+    }
+  }
+
+  .actions {
+    display: flex;
+    align-items: center;
+    gap: 0.25rem;
+
+    ion-button {
+      --padding-start: 0.5rem;
+      --padding-end: 0.5rem;
+      font-size: 1.5rem;
+    }
+
+    ion-spinner {
+      width: 24px;
+      height: 24px;
+    }
+  }
+}
+
+// Small phones
+@media (max-width: 360px) {
+  .request-item {
+    ion-avatar {
+      width: 40px;
+      height: 40px;
+    }
+
+    ion-label h2 {
+      font-size: 0.9rem;
+    }
+
+    .actions ion-button {
+      font-size: 1.25rem;
+    }
+  }
+}
+
+// Tablets and larger
+@media (min-width: 768px) {
+  ion-content {
+    --padding-start: 2rem;
+    --padding-end: 2rem;
+  }
+
+  .request-item {
+    max-width: 600px;
+    margin-left: auto;
+    margin-right: auto;
+  }
+
+  .empty-state,
+  .loading-container {
+    max-width: 600px;
+    margin: 0 auto;
+  }
+}
+
+// Dark mode
+@media (prefers-color-scheme: dark) {
+  .request-item {
+    --background: var(--ion-color-dark);
+  }
+}

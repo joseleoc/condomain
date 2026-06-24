@@ -25,4 +25,5 @@ export class CondoDashboardCardComponent {
   condominium = input.required<CondominiumWithRole>();
   structureCount = input.required<number>();
   propertyCount = input.required<number>();
+  pendingRequestsCount = input<number>(0);
 }
