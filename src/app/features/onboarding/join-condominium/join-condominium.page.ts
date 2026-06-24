@@ -7,11 +7,10 @@ import {
   IonInput,
   IonText,
   IonSpinner,
+  AlertController,
 } from '@ionic/angular/standalone';
 import { MainLayoutComponent } from '@shared/components/layout/main-layout/main-layout.component';
-import { Supabase } from '@core/services/supabase/supabase';
-import { Profile } from '@core/services/profile/profile';
-import { AlertController } from '@ionic/angular/standalone';
+import { CondominiumJoinRequest } from '@core/services/condominium-join-request/condominium-join-request';
 import { firstValueFrom } from 'rxjs';
 
 @Component({
@@ -30,8 +29,7 @@ import { firstValueFrom } from 'rxjs';
 })
 export class JoinCondominiumPage {
   private router = inject(Router);
-  private supabase = inject(Supabase);
-  private profileService = inject(Profile);
+  private joinRequestService = inject(CondominiumJoinRequest);
   private alertController = inject(AlertController);
   private translocoService = inject(TranslocoService);
 
@@ -51,52 +49,13 @@ export class JoinCondominiumPage {
     this.error.set(null);
 
     try {
-      const profileId = this.profileService.profile$.getValue()?.id;
-      if (!profileId) {
-        throw new Error('No profile found');
-      }
+      const result = await this.joinRequestService.submitJoinRequest(code);
 
-      // Find condominium by invitation code
-      const { data: condominium, error: condoError } = await this.supabase.client
-        .from('condominiums')
-        .select('id')
-        .eq('invitation_code', code)
-        .is('deleted_at', null)
-        .single();
-
-      if (condoError || !condominium) {
-        this.error.set('join.notFound');
+      if (!result.success) {
+        const errorKey = this.mapErrorToTranslationKey(result.error);
+        this.error.set(errorKey);
         this.loading.set(false);
         return;
-      }
-
-      // Check if already has a pending request
-      const { data: existingRequest } = await this.supabase.client
-        .from('condominium_join_requests')
-        .select('id')
-        .eq('condominium_id', condominium.id)
-        .eq('profile_id', profileId)
-        .eq('status', 'pending')
-        .maybeSingle();
-
-      if (existingRequest) {
-        this.error.set('join.alreadyRequested');
-        this.loading.set(false);
-        return;
-      }
-
-      // Create join request
-      const { error: insertError } = await this.supabase.client
-        .from('condominium_join_requests')
-        .insert({
-          condominium_id: condominium.id,
-          profile_id: profileId,
-          invitation_code: code,
-          status: 'pending',
-        });
-
-      if (insertError) {
-        throw insertError;
       }
 
       await this.showSuccessAlert();
@@ -106,6 +65,17 @@ export class JoinCondominiumPage {
       this.error.set('join.error');
     } finally {
       this.loading.set(false);
+    }
+  }
+
+  private mapErrorToTranslationKey(error?: string): string {
+    switch (error) {
+      case 'not_found':
+        return 'join.notFound';
+      case 'already_requested':
+        return 'join.alreadyRequested';
+      default:
+        return 'join.error';
     }
   }
 
