@@ -335,5 +335,14 @@
     "NIO": "Nicaraguan Córdoba",
     "CRC": "Costa Rican Colón",
     "CUP": "Cuban Peso"
+  },
+  "onboarding": {
+    "title": "Welcome to Condomain",
+    "subtitle": "What's your role? This will help us personalize your experience.",
+    "adminTitle": "I'm an admin",
+    "adminDescription": "Manage a condominium: properties, residents, finances, and more.",
+    "ownerTitle": "I'm a property owner",
+    "ownerDescription": "Access your property information and stay up to date with your condominium.",
+    "continue": "Continue"
   }
 }

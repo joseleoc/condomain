@@ -329,5 +329,14 @@
     "NIO": "Córdoba nicaragüense",
     "CRC": "Colón costarricense",
     "CUP": "Peso cubano"
+  },
+  "onboarding": {
+    "title": "Bienvenido a Condomain",
+    "subtitle": "¿Cuál es tu rol? Esto nos ayudará a personalizar tu experiencia.",
+    "adminTitle": "Soy administrador",
+    "adminDescription": "Gestiona un condominio: propiedades, residentes, finanzas y más.",
+    "ownerTitle": "Soy propietario",
+    "ownerDescription": "Accede a la información de tu propiedad y mantente al día con tu condominio.",
+    "continue": "Continuar"
   }
 }

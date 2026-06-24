@@ -1,0 +1,57 @@
+import { Component, inject, signal } from '@angular/core';
+import { Router } from '@angular/router';
+import { TranslocoPipe } from '@jsverse/transloco';
+import {
+  IonContent,
+  IonCard,
+  IonCardHeader,
+  IonCardTitle,
+  IonCardContent,
+  IonIcon,
+  IonButton,
+  IonRadioGroup,
+  IonRadio,
+} from '@ionic/angular/standalone';
+import { MainLayoutComponent } from '@shared/components/layout/main-layout/main-layout.component';
+import { IonicModule } from "@ionic/angular";
+
+type OnboardingRole = 'admin' | 'owner';
+
+@Component({
+  selector: 'app-onboarding',
+  templateUrl: 'onboarding.page.html',
+  styleUrls: ['onboarding.page.scss'],
+  imports: [
+    TranslocoPipe,
+    IonContent,
+    IonCard,
+    IonCardHeader,
+    IonCardTitle,
+    IonCardContent,
+    IonIcon,
+    IonButton,
+    MainLayoutComponent,
+    IonRadioGroup,
+    IonRadio,
+],
+})
+export class OnboardingPage {
+  private router = inject(Router);
+
+  selectedRole = signal<OnboardingRole | null>(null);
+
+  selectRole(role: OnboardingRole): void {
+    this.selectedRole.set(role);
+  }
+
+  handleContinue(): void {
+    const role = this.selectedRole();
+    if (!role) return;
+
+    if (role === 'admin') {
+      this.router.navigate(['/create-condominium']);
+    }
+    // Owner flow: TBD — placeholder for future implementation
+  }
+  
+}

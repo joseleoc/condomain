@@ -17,6 +17,7 @@ import {
   personOutline,
   remove,
   trashOutline,
+  shieldCheckmarkOutline,
 } from 'ionicons/icons';
 
 @Component({
@@ -42,6 +43,7 @@ export class AppComponent {
       helpCircleOutline,
       ellipsisHorizontalCircleOutline,
       homeOutline,
+      shieldCheckmarkOutline,
     });
   }
 }

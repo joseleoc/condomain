@@ -1,6 +1,7 @@
 import { Routes } from '@angular/router';
 import { isAuthenticatedGuard } from '@core/guards/is-authenticated/is-authenticated-guard';
 import { isNotAuthenticatedGuard } from '@core/guards/is-not-authenticated/is-not-authenticated-guard';
+import { hasCondominiumsGuard } from '@core/guards/has-condominiums/has-condominiums-guard';
 
 export const routes: Routes = [
   {
@@ -44,9 +45,17 @@ export const routes: Routes = [
   },
   {
     path: 'home',
-    canActivate: [isNotAuthenticatedGuard],
+    canActivate: [isNotAuthenticatedGuard, hasCondominiumsGuard],
     loadComponent: () =>
       import('./features/home/home.page').then((m) => m.HomePage),
+  },
+  {
+    path: 'onboarding',
+    canActivate: [isNotAuthenticatedGuard],
+    loadComponent: () =>
+      import('./features/onboarding/onboarding.page').then(
+        (m) => m.OnboardingPage,
+      ),
   },
   {
     path: 'condominium',
