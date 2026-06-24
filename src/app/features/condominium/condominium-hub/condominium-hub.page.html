@@ -8,7 +8,11 @@
       <ion-title>{{ t('condominium.hub.title') }}</ion-title>
 
       <ion-buttons slot="end">
-        <app-context-status [isAdmin]="isAdmin()" [isOnline]="isOnline()" />
+        <app-context-status
+          [isAdmin]="isAdmin()"
+          [isOnline]="isOnline()"
+          [hasActiveCondominium]="!!activeCondominium()"
+        />
       </ion-buttons>
     </ion-toolbar>
   </ion-header>
@@ -24,75 +28,75 @@
 
     <!-- Context switching overlay -->
     @if (isSwitchingContext()) {
-      <div class="context-switching-overlay">
-        <ion-skeleton-text
-          [animated]="true"
-          style="width: 60%; height: 20px; margin: 0 auto"
-        />
-        <p class="switching-text">
-          {{ t('condominium.hub.contextSelector.switching') }}
-        </p>
-      </div>
+    <div class="context-switching-overlay">
+      <ion-skeleton-text
+        [animated]="true"
+        style="width: 60%; height: 20px; margin: 0 auto"
+      />
+      <p class="switching-text">
+        {{ t('condominium.hub.contextSelector.switching') }}
+      </p>
+    </div>
     }
 
     <!-- No condominiums state -->
     @if (!activeCondominium() && !isSwitchingContext()) {
-      <div class="empty-state">
-        <ion-icon name="home-outline" size="large" />
-        <h3>{{ t('condominium.hub.noCondominiums') }}</h3>
-        <ion-button href="/create-condominium" size="default">
-          <ion-icon name="add" slot="start" />
-          {{ t('condominium.hub.newButton') }}
-        </ion-button>
-      </div>
+    <div class="empty-state">
+      <ion-icon name="home-outline" size="large" />
+      <h3>{{ t('condominium.hub.noCondominiums') }}</h3>
+      <ion-button href="/create-condominium" size="default">
+        <ion-icon name="add" slot="start" />
+        {{ t('condominium.hub.newButton') }}
+      </ion-button>
+    </div>
     }
 
     <!-- Dashboard + Accordion -->
     @if (activeCondominium() && !isSwitchingContext()) {
-      <!-- Dashboard Card -->
-      <app-condo-dashboard-card
-        [condominium]="activeCondominium()!"
-        [structureCount]="structuresQuery.data()?.length ?? 0"
-        [propertyCount]="propertiesQuery.data()?.length ?? 0"
-      />
+    <!-- Dashboard Card -->
+    <app-condo-dashboard-card
+      [condominium]="activeCondominium()!"
+      [structureCount]="structuresQuery.data()?.length ?? 0"
+      [propertyCount]="propertiesQuery.data()?.length ?? 0"
+    />
 
-      <!-- Structures & Properties Accordion -->
-      <app-hub-structures-accordion
-        [structures]="structuresQuery.data() ?? []"
-        [properties]="propertiesQuery.data() ?? []"
-        [isAdmin]="isAdmin()"
-        (editStructure)="openEditStructureModal($event)"
-        (deleteStructure)="confirmDeleteStructure($event)"
-        (addStructure)="openAddStructureModal()"
-        (editProperty)="openEditPropertyModal($event)"
-        (deleteProperty)="confirmDeleteProperty($event)"
-        (addProperty)="openAddPropertyModal($event)"
-      />
+    <!-- Structures & Properties Accordion -->
+    <app-hub-structures-accordion
+      [structures]="structuresQuery.data() ?? []"
+      [properties]="propertiesQuery.data() ?? []"
+      [isAdmin]="isAdmin()"
+      (editStructure)="openEditStructureModal($event)"
+      (deleteStructure)="confirmDeleteStructure($event)"
+      (addStructure)="openAddStructureModal()"
+      (editProperty)="openEditPropertyModal($event)"
+      (deleteProperty)="confirmDeleteProperty($event)"
+      (addProperty)="openAddPropertyModal($event)"
+    />
     }
   </ion-content>
 
   <!-- Structure Form Modal -->
   @if (activeCondominium()) {
-    <app-structure-form-modal
-      [structure]="structureToEdit()"
-      [condominiumId]="activeCondominium()!.id"
-      [existingStructures]="structuresQuery.data() ?? []"
-      [isOpen]="isStructureFormModalOpen()"
-      (isOpenChange)="isStructureFormModalOpen.set($event)"
-    />
+  <app-structure-form-modal
+    [structure]="structureToEdit()"
+    [condominiumId]="activeCondominium()!.id"
+    [existingStructures]="structuresQuery.data() ?? []"
+    [isOpen]="isStructureFormModalOpen()"
+    (isOpenChange)="isStructureFormModalOpen.set($event)"
+  />
   }
 
   <!-- Property Form Modal -->
   @if (activeCondominium()) {
-    <app-property-form-modal
-      [property]="propertyToEdit()"
-      [preSelectedStructureId]="preSelectedStructureId()"
-      [condominiumId]="activeCondominium()!.id"
-      [structures]="structuresQuery.data() ?? []"
-      [existingProperties]="propertiesQuery.data() ?? []"
-      [isOpen]="isPropertyFormModalOpen()"
-      (isOpenChange)="isPropertyFormModalOpen.set($event)"
-    />
+  <app-property-form-modal
+    [property]="propertyToEdit()"
+    [preSelectedStructureId]="preSelectedStructureId()"
+    [condominiumId]="activeCondominium()!.id"
+    [structures]="structuresQuery.data() ?? []"
+    [existingProperties]="propertiesQuery.data() ?? []"
+    [isOpen]="isPropertyFormModalOpen()"
+    (isOpenChange)="isPropertyFormModalOpen.set($event)"
+  />
   }
 
   <!-- Delete confirmation alert -->

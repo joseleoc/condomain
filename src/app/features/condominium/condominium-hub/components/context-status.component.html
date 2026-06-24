@@ -1,15 +1,17 @@
-<ng-container *transloco="let t">
-  <!-- Offline indicator -->
-  @if (!isOnline()) {
-    <ion-chip color="warning" [title]="t('condominium.hub.offline.tooltip')">
-      <ion-badge color="warning">{{ t('condominium.hub.offline.badge') }}</ion-badge>
-    </ion-chip>
-  }
+@if (hasActiveCondominium()) {
+  <ng-container *transloco="let t">
+    <!-- Offline indicator -->
+    @if (!isOnline()) {
+      <ion-chip color="warning" [title]="t('condominium.hub.offline.tooltip')">
+        <p color="warning">{{ t("condominium.hub.offline.badge") }}</p>
+      </ion-chip>
+    }
 
-  <!-- Read-only indicator for non-admins -->
-  @if (!isAdmin() && isOnline()) {
-    <ion-chip color="medium" [title]="t('condominium.hub.readOnly.tooltip')">
-      <ion-badge color="medium">{{ t('condominium.hub.readOnly.badge') }}</ion-badge>
-    </ion-chip>
-  }
-</ng-container>
+    <!-- Read-only indicator for non-admins -->
+    @if (!isAdmin() && isOnline()) {
+      <ion-chip color="medium" [title]="t('condominium.hub.readOnly.tooltip')">
+        <p>{{ t("condominium.hub.readOnly.badge") }}</p>
+      </ion-chip>
+    }
+  </ng-container>
+}

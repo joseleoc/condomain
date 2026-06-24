@@ -8,6 +8,7 @@ import { ContextStatusComponent } from './context-status.component';
     <app-context-status
       [isAdmin]="isAdmin()"
       [isOnline]="isOnline()"
+      [hasActiveCondominium]="true"
     />
   `,
   standalone: true,
