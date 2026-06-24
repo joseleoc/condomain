@@ -24,7 +24,7 @@ create index if not exists idx_profiles_idempotency_key
 -- ---------------------------------------------------------------------------
 alter table public.currencies
     add column if not exists version bigint not null default 1,
-    add column if not exists created_by uuid not null default auth.uid(),
+    add column if not exists created_by uuid default auth.uid(),
     add column if not exists idempotency_key uuid not null default gen_random_uuid(),
     add column if not exists deleted_at timestamptz;
 
@@ -38,7 +38,7 @@ create index if not exists idx_currencies_idempotency_key
 -- ---------------------------------------------------------------------------
 alter table public.roles
     add column if not exists version bigint not null default 1,
-    add column if not exists created_by uuid not null default auth.uid(),
+    add column if not exists created_by uuid default auth.uid(),
     add column if not exists idempotency_key uuid not null default gen_random_uuid();
 
 create index if not exists idx_roles_updated_at
