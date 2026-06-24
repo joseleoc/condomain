@@ -52,10 +52,22 @@ export const routes: Routes = [
   {
     path: 'onboarding',
     canActivate: [isNotAuthenticatedGuard],
-    loadComponent: () =>
-      import('./features/onboarding/onboarding.page').then(
-        (m) => m.OnboardingPage,
-      ),
+    children: [
+      {
+        path: '',
+        loadComponent: () =>
+          import('./features/onboarding/onboarding.page').then(
+            (m) => m.OnboardingPage,
+          ),
+      },
+      {
+        path: 'join-condominium',
+        loadComponent: () =>
+          import(
+            './features/onboarding/join-condominium/join-condominium.page'
+          ).then((m) => m.JoinCondominiumPage),
+      },
+    ],
   },
   {
     path: 'condominium',

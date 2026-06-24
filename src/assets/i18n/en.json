@@ -344,5 +344,17 @@
     "ownerTitle": "I'm a property owner",
     "ownerDescription": "Access your property information and stay up to date with your condominium.",
     "continue": "Continue"
+  },
+  "join": {
+    "title": "Join a condominium",
+    "subtitle": "Enter the 6-digit invitation code provided by the administrator.",
+    "codePlaceholder": "000000",
+    "submit": "Request access",
+    "invalidCode": "The code must be 6 digits",
+    "notFound": "No condominium found with that code",
+    "alreadyRequested": "You already have a pending request for this condominium",
+    "error": "Error submitting request. Please try again.",
+    "successTitle": "Request sent!",
+    "successMessage": "Your request has been sent to the administrator. You'll receive a notification when it's approved."
   }
 }

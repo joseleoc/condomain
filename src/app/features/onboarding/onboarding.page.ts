@@ -50,8 +50,9 @@ export class OnboardingPage {
 
     if (role === 'admin') {
       this.router.navigate(['/create-condominium']);
+    } else if (role === 'owner') {
+      this.router.navigate(['/onboarding/join-condominium']);
     }
-    // Owner flow: TBD — placeholder for future implementation
   }
   
 }

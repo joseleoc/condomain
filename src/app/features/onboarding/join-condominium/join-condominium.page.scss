@@ -1,0 +1,56 @@
+.join-container {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+  max-width: 500px;
+  margin: 0 auto;
+  padding-top: 2rem;
+}
+
+.join-header {
+  text-align: center;
+
+  h1 {
+    font-size: 1.5rem;
+    font-weight: 600;
+    margin-bottom: 0.5rem;
+  }
+
+  p {
+    font-size: 0.95rem;
+  }
+}
+
+.input-container {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+ion-input {
+  text-align: center;
+  font-size: 1.5rem;
+  font-weight: 600;
+  letter-spacing: 0.5rem;
+  --padding-start: 1rem;
+  --padding-end: 1rem;
+}
+
+.error-text {
+  font-size: 0.85rem;
+  text-align: center;
+}
+
+ion-button {
+  margin-top: 1rem;
+}
+
+@media (min-width: 600px) {
+  .join-header h1 {
+    font-size: 1.75rem;
+  }
+
+  ion-input {
+    font-size: 1.75rem;
+  }
+}

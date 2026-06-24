@@ -338,5 +338,17 @@
     "ownerTitle": "Soy propietario",
     "ownerDescription": "Accede a la información de tu propiedad y mantente al día con tu condominio.",
     "continue": "Continuar"
+  },
+  "join": {
+    "title": "Unirse a un condominio",
+    "subtitle": "Ingresa el código de invitación de 6 dígitos que te proporcionó el administrador.",
+    "codePlaceholder": "000000",
+    "submit": "Solicitar acceso",
+    "invalidCode": "El código debe tener 6 dígitos",
+    "notFound": "No se encontró un condominio con ese código",
+    "alreadyRequested": "Ya tienes una solicitud pendiente para este condominio",
+    "error": "Error al enviar la solicitud. Intenta de nuevo.",
+    "successTitle": "¡Solicitud enviada!",
+    "successMessage": "Tu solicitud ha sido enviada al administrador. Recibirás una notificación cuando sea aprobada."
   }
 }
