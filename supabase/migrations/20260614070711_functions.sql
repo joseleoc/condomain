@@ -34,12 +34,13 @@ security definer
 set search_path = public
 as $$
 begin
-    insert into public.profiles (id, name, email, avatar)
+    insert into public.profiles (id, name, email, avatar, created_by)
     values (
         new.id,
         coalesce(new.raw_user_meta_data->>'name', split_part(new.email, '@', 1)),
         new.email,
-        new.raw_user_meta_data->>'avatar_url'
+        new.raw_user_meta_data->>'avatar_url',
+        new.id
     )
     on conflict (id) do nothing;
     return new;
