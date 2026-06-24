@@ -22,6 +22,7 @@ import { Properties } from '@core/services/properties/properties';
 import { Router } from '@angular/router';
 import { TelemetryService } from '@core/services/telemetry';
 import { TelemetryEvents } from '@core/services/telemetry/telemetry.types';
+import { StructurePropertyValidationService } from '@core/services/structure-property-validation/structure-property-validation.service';
 
 interface WizardStorage {
   step: number;
@@ -46,6 +47,7 @@ export class Wizard {
   private propertiesService = inject(Properties);
   private router = inject(Router);
   private telemetry = inject(TelemetryService);
+  private validationService = inject(StructurePropertyValidationService);
 
   // --- Private Properties ---
   private nextStepSource = new Subject<number>();
@@ -65,7 +67,9 @@ export class Wizard {
   progressPercentage = computed(() => this.step() / MAX_STEPS);
   buttonLabel = signal('common.next');
   backLabel = signal('common.back');
-  creationProcessSelected = signal<CreateCondominiumProcessOptions | null>(null);
+  creationProcessSelected = signal<CreateCondominiumProcessOptions | null>(
+    null,
+  );
 
   structures$ = new BehaviorSubject<LocalStructure[]>([]);
 
@@ -87,7 +91,9 @@ export class Wizard {
     this._step.set(this.savedWizardData.step);
     this.createdCondominium.set(this.savedWizardData.createdCondominium);
     this.structures$.next(this.savedWizardData.structures);
-    this.creationProcessSelected.set(this.savedWizardData.creationProcessSelected);
+    this.creationProcessSelected.set(
+      this.savedWizardData.creationProcessSelected,
+    );
     this.savedWizardData = null;
     try {
       this.telemetry.track(TelemetryEvents.WIZARD_RESTORED, {
@@ -242,6 +248,8 @@ export class Wizard {
         });
         await alert.present();
         return;
+      } else {
+        this.uploadStructuresAndProperties(structures);
       }
     } catch (error) {
       this.toast.present({
@@ -254,50 +262,38 @@ export class Wizard {
   }
 
   saveStructureLocally(structure: LocalStructure): boolean {
-    if (!structure.name || structure.name.trim().length === 0) {
+    const currentStructures = this.structures$.getValue();
+    const isEdit = this.selectedStructure() != null;
+
+    // Use validation service to check structure name
+    const existingNames = currentStructures.map((s) => s.name);
+    const editingName = isEdit ? this.selectedStructure()?.name : undefined;
+    const validationResult = this.validationService.validateStructureName(
+      structure.name,
+      existingNames,
+      editingName,
+    );
+
+    if (!validationResult.valid) {
+      this.toast.present({
+        message: this.translocoService.translate(
+          validationResult.errorKey!,
+          validationResult.errorParams,
+        ),
+        dismissButton: true,
+      });
       return false;
     }
 
-    const currentStructures = this.structures$.getValue();
     const structuresToSave = [...currentStructures];
-    const isEdit = this.selectedStructure() != null;
-    const normalizedName = structure.name.trim().toLowerCase();
 
-    if (!isEdit) {
-      if (currentStructures.some((s) => s.name.toLowerCase() === normalizedName)) {
-        this.toast.present({
-          message: this.translocoService.translate(
-            'condominium.createStructure.structureAlreadyExists',
-            { name: structure.name },
-          ),
-          dismissButton: true,
-        });
-        return false;
-      }
-    } else {
-      const selected = this.selectedStructure();
+    if (isEdit) {
       const foundStructureIndex = this.structures$
         .getValue()
-        .findIndex((s) => s.name === selected?.name);
+        .findIndex((s) => s.name === this.selectedStructure()?.name);
       if (foundStructureIndex === -1) {
         return false;
       }
-
-      // Check if the new name conflicts with a DIFFERENT existing structure
-      const nameConflict = currentStructures.some(
-        (s, idx) => idx !== foundStructureIndex && s.name.toLowerCase() === normalizedName,
-      );
-      if (nameConflict) {
-        this.toast.present({
-          message: this.translocoService.translate(
-            'condominium.createStructure.structureAlreadyExists',
-            { name: structure.name },
-          ),
-          dismissButton: true,
-        });
-        return false;
-      }
-
       structuresToSave.splice(foundStructureIndex, 1);
     }
 
@@ -308,7 +304,9 @@ export class Wizard {
 
     try {
       this.telemetry.track(
-        isEdit ? TelemetryEvents.STRUCTURE_EDITED : TelemetryEvents.STRUCTURE_ADDED,
+        isEdit
+          ? TelemetryEvents.STRUCTURE_EDITED
+          : TelemetryEvents.STRUCTURE_ADDED,
         {
           mode: this.creationProcessSelected(),
           structures_count: structuresToSave.length,
@@ -325,10 +323,6 @@ export class Wizard {
     structureName: string,
     property: CreatePropertyFormData,
   ) {
-    if (!property.number || property.number.trim().length === 0) {
-      return false;
-    }
-
     const currentStructures = this.structures$.getValue();
     const structureIndex = currentStructures.findIndex(
       (s) => s.name === structureName,
@@ -345,11 +339,19 @@ export class Wizard {
     }
 
     const structure = currentStructures[structureIndex];
-    if (structure.properties.some((p) => p.number === property.number)) {
+
+    // Validate property name uniqueness
+    const existingPropertyNames = structure.properties.map((p) => p.number);
+    const nameValidation = this.validationService.validatePropertyName(
+      property.number,
+      existingPropertyNames,
+    );
+
+    if (!nameValidation.valid) {
       this.toast.present({
         message: this.translocoService.translate(
-          'condominium.createStructure.propertyAlreadyExists',
-          { number: property.number, structure: structure.name },
+          nameValidation.errorKey!,
+          { ...nameValidation.errorParams, structure: structure.name },
         ),
         dismissButton: true,
         duration: 5000,
@@ -357,17 +359,20 @@ export class Wizard {
       return false;
     }
 
-    const totalPercentage =
-      currentStructures.reduce((acc, s) => {
-        return acc + s.properties.reduce((sum, p) => sum + p.fee, 0);
-      }, 0) + property.fee;
-    const isMoreThan100Percentage = totalPercentage > 100;
+    // Validate total percentage
+    const currentTotal = currentStructures.reduce((acc, s) => {
+      return acc + s.properties.reduce((sum, p) => sum + p.fee, 0);
+    }, 0);
 
-    if (isMoreThan100Percentage) {
-      console.info('Total fee exceeds 100%:', totalPercentage);
+    const percentageValidation = this.validationService.validateTotalPercentage(
+      currentTotal,
+      property.fee,
+    );
+
+    if (!percentageValidation.valid) {
       this.toast.present({
         message: this.translocoService.translate(
-          'condominium.createStructure.totalFeeExceeds100',
+          percentageValidation.errorKey!,
         ),
         dismissButton: true,
         duration: 5000,
@@ -406,10 +411,6 @@ export class Wizard {
       throw new Error('No property selected');
     }
 
-    if (!property.number || property.number.trim().length === 0) {
-      return;
-    }
-
     const currentStructures = new Map(
       this.structures$.getValue().map((s) => [s.name, s]),
     );
@@ -419,15 +420,34 @@ export class Wizard {
     );
     const targetStructure = currentStructures.get(property.structure);
 
-    const targetIndex = targetStructure?.properties.findIndex(
-      (p) => p.number === property.number,
-    );
-
-    if (targetIndex != -1 && currentStructure !== targetStructure) {
+    if (!targetStructure) {
       this.toast.present({
         message: this.translocoService.translate(
-          'condominium.createStructure.propertyAlreadyExists',
-          { number: property.number, structure: targetStructure?.name },
+          'condominium.createStructure.structureNotFound',
+          { name: property.structure },
+        ),
+        color: 'danger',
+      });
+      return;
+    }
+
+    // Validate property name uniqueness in target structure
+    const existingPropertyNames = targetStructure.properties.map((p) => p.number);
+    const editingPropertyName = currentStructure === targetStructure
+      ? this.selectedProperty()!.number
+      : undefined;
+
+    const nameValidation = this.validationService.validatePropertyName(
+      property.number,
+      existingPropertyNames,
+      editingPropertyName,
+    );
+
+    if (!nameValidation.valid) {
+      this.toast.present({
+        message: this.translocoService.translate(
+          nameValidation.errorKey!,
+          { ...nameValidation.errorParams, structure: targetStructure.name },
         ),
         dismissButton: true,
         duration: 5000,
@@ -435,33 +455,39 @@ export class Wizard {
       return;
     }
 
-    if (
-      targetIndex != null &&
-      targetIndex != -1 &&
-      targetStructure?.properties[targetIndex].number !==
-        this.selectedProperty()!.number &&
-      currentStructure === targetStructure
-    ) {
-      this.toast.present({
-        message: this.translocoService.translate(
-          'condominium.createStructure.propertyAlreadyExists',
-          { number: property.number, structure: targetStructure?.name },
-        ),
-        dismissButton: true,
-        duration: 5000,
-      });
-      return;
+    // Validate total percentage if fee changed
+    if (property.fee !== this.selectedProperty()!.fee) {
+      const currentTotal = this.structures$.getValue().reduce((acc, s) => {
+        return acc + s.properties.reduce((sum, p) => sum + p.fee, 0);
+      }, 0);
+
+      const percentageValidation = this.validationService.validateTotalPercentage(
+        currentTotal,
+        property.fee,
+        this.selectedProperty()!.fee,
+      );
+
+      if (!percentageValidation.valid) {
+        this.toast.present({
+          message: this.translocoService.translate(
+            percentageValidation.errorKey!,
+          ),
+          dismissButton: true,
+          duration: 5000,
+        });
+        return;
+      }
     }
 
     const currentIndex = currentStructure?.properties.findIndex(
       (p) => p.number === this.selectedProperty()!.number,
     );
-    if (currentIndex != null) {
+    if (currentIndex != null && currentIndex !== -1) {
       currentStructure?.properties.splice(currentIndex, 1);
     }
 
-    targetStructure?.properties.push(property);
-    targetStructure?.properties.sort((a, b) =>
+    targetStructure.properties.push(property);
+    targetStructure.properties.sort((a, b) =>
       a.number.localeCompare(b.number),
     );
 

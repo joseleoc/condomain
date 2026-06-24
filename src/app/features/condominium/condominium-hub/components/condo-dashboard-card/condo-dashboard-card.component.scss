@@ -1,0 +1,98 @@
+.dashboard-card {
+  margin: 1rem;
+  border-radius: 12px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+ion-card-header {
+  padding-bottom: 0.5rem;
+}
+
+ion-card-title {
+  font-size: 1.25rem;
+  font-weight: 600;
+}
+
+ion-card-subtitle {
+  display: flex;
+  align-items: center;
+  gap: 0.25rem;
+  font-size: 0.875rem;
+  margin-top: 0.25rem;
+}
+
+.address-icon {
+  font-size: 0.875rem;
+}
+
+.stats-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1rem;
+  padding: 0.5rem 0;
+}
+
+.stat-item {
+  --background: transparent;
+  --padding-start: 0;
+  --padding-end: 0;
+  --inner-padding-end: 0;
+}
+
+.stat-item ion-icon {
+  font-size: 2rem;
+  margin-right: 0.75rem;
+}
+
+.stat-item h2 {
+  font-size: 1.5rem;
+  font-weight: 700;
+  margin: 0;
+  color: var(--ion-text-color);
+}
+
+.stat-item p {
+  font-size: 0.75rem;
+  margin: 0;
+  color: var(--ion-color-medium);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+// Small phones
+@media (max-width: 360px) {
+  .dashboard-card {
+    margin: 0.75rem;
+  }
+
+  .stats-grid {
+    gap: 0.5rem;
+  }
+
+  .stat-item ion-icon {
+    font-size: 1.5rem;
+  }
+
+  .stat-item h2 {
+    font-size: 1.25rem;
+  }
+}
+
+// Tablets and larger
+@media (min-width: 768px) {
+  .dashboard-card {
+    max-width: 600px;
+    margin: 1rem auto;
+  }
+
+  .stats-grid {
+    gap: 2rem;
+  }
+}
+
+// Dark mode
+@media (prefers-color-scheme: dark) {
+  .dashboard-card {
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+  }
+}

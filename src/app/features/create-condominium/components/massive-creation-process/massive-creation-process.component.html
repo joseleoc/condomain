@@ -200,7 +200,7 @@
       <p class="text-secondary structure-modal-description ion-padding-bottom">
         {{ "condominium.createStructure.description" | transloco }}
       </p>
-      <app-add-structure-form />
+      <app-structure-form [initialData]="getStructureInitialData()" />
     </ion-content>
     <ion-footer>
       <ion-toolbar>

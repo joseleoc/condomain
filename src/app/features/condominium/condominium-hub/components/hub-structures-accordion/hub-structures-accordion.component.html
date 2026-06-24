@@ -1,0 +1,113 @@
+<div class="accordion-container">
+  @if (isAdmin()) {
+    <div class="add-structure-container">
+      <ion-button fill="outline" expand="block" (click)="onAddStructure()">
+        <ion-icon name="add" slot="start"></ion-icon>
+        {{ 'condominium.hub.structures.addButton' | transloco }}
+      </ion-button>
+    </div>
+  }
+
+  @if (structuresWithProperties().length === 0) {
+    <div class="empty-state">
+      <ion-icon name="business-outline" size="large"></ion-icon>
+      <h3>{{ 'condominium.hub.structures.emptyTitle' | transloco }}</h3>
+      <p>{{ 'condominium.hub.structures.emptyDescription' | transloco }}</p>
+    </div>
+  } @else {
+    <ion-accordion-group expand="inset">
+      @for (item of structuresWithProperties(); track item.structure.id) {
+        <ion-accordion [value]="item.structure.id">
+          <ion-item
+            slot="header"
+            [class.clickable]="isAdmin()"
+            (click)="onStructureHeaderClick(item.structure)"
+          >
+            <ion-icon name="business-outline" slot="start"></ion-icon>
+            <div class="structure-info">
+              <span class="structure-name clamp-text">
+                {{ item.structure.name }}
+              </span>
+              @if (item.structure.description) {
+                <span class="structure-description clamp-text">
+                  {{ item.structure.description }}
+                </span>
+              }
+            </div>
+            <ion-badge slot="end" color="primary" class="ion-text-nowrap">
+              <span class="badge-short">
+                {{ item.properties.length }} • {{ item.totalPercentage | number:'1.0-2' }}%
+              </span>
+              <span class="badge-long">
+                {{ item.properties.length }}
+                {{ 'condominium.hub.structures.propertiesCount' | transloco }} •
+                {{ 'condominium.hub.structures.totalPercentage' | transloco: { value: item.totalPercentage | number:'1.0-2' } }}
+              </span>
+            </ion-badge>
+            @if (isAdmin()) {
+              <ion-icon
+                name="trash-outline"
+                slot="end"
+                color="danger"
+                (click)="onDeleteStructure($event, item.structure)"
+                class="delete-icon"
+              ></ion-icon>
+            }
+          </ion-item>
+
+          <div slot="content">
+            @if (item.properties.length === 0) {
+              <div class="no-properties">
+                <p>{{ 'condominium.hub.properties.emptyInStructure' | transloco }}</p>
+              </div>
+            } @else {
+              <ion-list>
+                @for (property of item.properties; track property.id) {
+                  <ion-item
+                    [class.clickable]="isAdmin()"
+                    (click)="onPropertyClick(property)"
+                  >
+                    <ion-icon name="home-outline" slot="start"></ion-icon>
+                    <div class="property-info">
+                      <span class="property-name clamp-text">
+                        {{ property.name }}
+                        @if (property.owner_name) {
+                          <span class="owner-name"> - {{ property.owner_name }}</span>
+                        }
+                      </span>
+                      <span class="property-percentage text-secondary">
+                        {{ 'condominium.createStructure.fee' | transloco: { value: property.share_percentage | number:'1.0-4' } }}
+                      </span>
+                    </div>
+                    @if (isAdmin()) {
+                      <ion-icon
+                        name="trash-outline"
+                        slot="end"
+                        color="danger"
+                        (click)="onDeleteProperty($event, property)"
+                        class="delete-icon"
+                      ></ion-icon>
+                    }
+                  </ion-item>
+                }
+              </ion-list>
+            }
+
+            @if (isAdmin()) {
+              <div class="add-property-container">
+                <ion-button
+                  fill="clear"
+                  size="small"
+                  (click)="onAddProperty($event, item.structure.id)"
+                >
+                  <ion-icon name="add" slot="start"></ion-icon>
+                  {{ 'condominium.hub.properties.addButton' | transloco }}
+                </ion-button>
+              </div>
+            }
+          </div>
+        </ion-accordion>
+      }
+    </ion-accordion-group>
+  }
+</div>

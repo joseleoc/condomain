@@ -1,0 +1,81 @@
+.context-bar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.75rem 1rem;
+  background: var(--ion-background-color);
+  border-bottom: 1px solid var(--ion-color-light);
+  flex-wrap: wrap;
+}
+
+.active-condominium-data {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 0.75rem;
+  flex: 1;
+  min-width: 0;
+}
+
+.condo-info {
+  min-width: 0;
+
+  h4 {
+    margin: 0;
+    font-size: 1rem;
+    font-weight: 600;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  .condo-address {
+    margin: 0;
+    font-size: 0.8rem;
+    color: var(--ion-color-medium);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+}
+
+ion-select {
+  max-width: 180px;
+  flex-shrink: 0;
+}
+
+/* Small phones (iPhone SE, Galaxy S8, etc.) */
+@media (max-width: 360px) {
+  .context-bar {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 0.5rem;
+    padding: 0.5rem 0.75rem;
+  }
+
+  .active-condominium-data {
+    gap: 0.5rem;
+  }
+
+  .condo-info h4 {
+    font-size: 0.95rem;
+  }
+
+  ion-select {
+    max-width: 100%;
+  }
+}
+
+/* Tablets and larger screens */
+@media (min-width: 768px) {
+  .context-bar {
+    padding: 1rem 1.5rem;
+    max-width: 720px;
+    margin: 0 auto;
+  }
+
+  .condo-info h4 {
+    font-size: 1.1rem;
+  }
+}

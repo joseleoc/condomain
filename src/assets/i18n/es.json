@@ -30,9 +30,66 @@
   "condominium": {
     "creationSuccess": "¡Condominio creado exitosamente!",
     "hub": {
-      "title": "Condominium Hub",
+      "title": "Centro del Condominio",
       "newButton": "Crear Condominio",
-      "noCondominiums": "No se encontraron condominios. Por favor, crea uno para comenzar."
+      "noCondominiums": "No se encontraron condominios. Por favor, crea uno para comenzar.",
+      "contextSelector": {
+        "label": "Condominio activo",
+        "placeholder": "Seleccionar condominio",
+        "switching": "Cambiando contexto..."
+      },
+      "tabs": {
+        "structures": "Estructuras",
+        "properties": "Propiedades"
+      },
+      "dashboard": {
+        "structures": "Estructuras",
+        "properties": "Propiedades"
+      },
+      "structures": {
+        "title": "Estructuras",
+        "addButton": "Agregar estructura",
+        "addTitle": "Nueva estructura",
+        "editTitle": "Editar estructura",
+        "emptyTitle": "Sin estructuras",
+        "emptyDescription": "Aún no hay estructuras creadas para este condominio.",
+        "deleteConfirmTitle": "Eliminar estructura",
+        "deleteConfirmMessage": "¿Estás seguro de que deseas eliminar \"{{name}}\"? Esta acción no se puede deshacer.",
+        "propertiesCount": "propiedades",
+        "totalPercentage": "Alícuota total: {{value}}%"
+      },
+      "properties": {
+        "title": "Propiedades",
+        "addButton": "Agregar propiedad",
+        "addTitle": "Nueva propiedad",
+        "editTitle": "Editar propiedad",
+        "emptyTitle": "Sin propiedades",
+        "emptyDescription": "Aún no hay propiedades registradas en este condominio.",
+        "emptyInStructure": "No hay propiedades en esta estructura",
+        "deleteConfirmTitle": "Eliminar propiedad",
+        "deleteConfirmMessage": "¿Estás seguro de que deseas eliminar \"{{name}}\"? Esta acción no se puede deshacer.",
+        "sharePercentage": "Alícuota: {{value}}%",
+        "structureLabel": "Estructura"
+      },
+      "readOnly": {
+        "badge": "Solo lectura",
+        "tooltip": "No tienes permisos para editar en este condominio"
+      },
+      "offline": {
+        "badge": "Sin conexión",
+        "tooltip": "Los cambios se sincronizarán cuando vuelvas a tener conexión"
+      },
+      "toast": {
+        "structureDeleted": "Estructura eliminada correctamente",
+        "propertyDeleted": "Propiedad eliminada correctamente",
+        "structureCreated": "Estructura creada correctamente",
+        "structureUpdated": "Estructura actualizada correctamente",
+        "propertyCreated": "Propiedad creada correctamente",
+        "propertyUpdated": "Propiedad actualizada correctamente",
+        "saveError": "Error al guardar. Inténtalo de nuevo.",
+        "deleteError": "Error al eliminar. Inténtalo de nuevo.",
+        "contextSwitchError": "Error al cambiar de condominio. Inténtalo de nuevo."
+      }
     },
     "wizard": {
       "step1Description": "Crea un nuevo condominio",

@@ -11,6 +11,7 @@ import {
   documentOutline,
   ellipsisHorizontalCircleOutline,
   helpCircleOutline,
+  homeOutline,
   languageOutline,
   menu,
   personOutline,
@@ -40,6 +41,7 @@ export class AppComponent {
       remove,
       helpCircleOutline,
       ellipsisHorizontalCircleOutline,
+      homeOutline,
     });
   }
 }

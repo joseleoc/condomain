@@ -33,7 +33,25 @@ select
 -- Índice para optimizar los ordenamientos y listados alfabéticos por nombre de moneda
 create index if not exists idx_currencies_name on public.currencies (name);
 
-
 -- Privilegios para el catálogo de Monedas (Generalmente de solo lectura para la app)
-grant select on public.currencies to authenticated;
-grant select on public.currencies to anon;
+grant
+select
+    on public.currencies to authenticated;
+
+grant
+select
+    on public.currencies to anon;
+
+insert into
+    public.currencies (iso_code, name, symbol, minor_unit)
+values
+    ('USD', 'US Dollar', '$', 2),
+    ('EUR', 'Euro', '€', 2),
+    ('VES', 'Bolívar Soberano', 'Bs.S', 2),
+    ('COP', 'Colombian Peso', '$', 0),
+    ('MXN', 'Mexican Peso', '$', 2) on conflict (iso_code) do
+update
+set
+    name = excluded.name,
+    symbol = excluded.symbol,
+    minor_unit = excluded.minor_unit;

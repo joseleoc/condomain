@@ -1,0 +1,62 @@
+<ng-container *transloco="let t">
+  <!-- Pull to refresh -->
+  <ion-refresher slot="fixed" (ionRefresh)="onRefresh($event)">
+    <ion-refresher-content />
+  </ion-refresher>
+
+  <!-- Skeleton loader -->
+  @if (isLoading()) {
+    <ion-list>
+      @for (_ of [1,2,3]; track $index) {
+        <ion-item>
+          <ion-skeleton-text [animated]="true" slot="start" style="width: 40px; height: 40px; border-radius: 8px;" />
+          <ion-label>
+            <ion-skeleton-text [animated]="true" style="width: 50%;" />
+            <ion-skeleton-text [animated]="true" style="width: 30%;" />
+          </ion-label>
+        </ion-item>
+      }
+    </ion-list>
+  }
+
+  <!-- Error state -->
+  @if (error() && !isLoading()) {
+    <div class="error-state">
+      <ion-icon name="alert-circle-outline" size="large" color="danger" />
+      <p>{{ error()?.message || 'Failed to load structures' }}</p>
+    </div>
+  }
+
+  <!-- Empty state -->
+  @if (!isLoading() && structures().length === 0 && !error()) {
+    <div class="empty-state">
+      <ion-icon [name]="buildingIcon" size="large" />
+      <h3>{{ t('condominium.hub.structures.emptyTitle') }}</h3>
+      <p>{{ t('condominium.hub.structures.emptyDescription') }}</p>
+    </div>
+  }
+
+  <!-- Structures list -->
+  @if (!isLoading() && structures().length > 0) {
+    <ion-list>
+      @for (structure of structures(); track structure.id) {
+        <ion-item>
+          <ion-icon [name]="buildingIcon" slot="start" color="primary" />
+          <ion-label>
+            <h3>{{ structure.name }}</h3>
+            @if (structure.description) {
+              <p>{{ structure.description }}</p>
+            }
+          </ion-label>
+          @if (isAdmin()) {
+            <ion-buttons slot="end">
+              <ion-button color="danger" fill="clear" (click)="onDelete(structure)">
+                <ion-icon [name]="trashIcon" slot="icon-only" />
+              </ion-button>
+            </ion-buttons>
+          }
+        </ion-item>
+      }
+    </ion-list>
+  }
+</ng-container>

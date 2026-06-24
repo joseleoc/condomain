@@ -32,7 +32,64 @@
     "hub": {
       "title": "Condominium Hub",
       "newButton": "Create Condominium",
-      "noCondominiums": "No condominiums found. Please create one to get started."
+      "noCondominiums": "No condominiums found. Please create one to get started.",
+      "contextSelector": {
+        "label": "Active condominium",
+        "placeholder": "Select condominium",
+        "switching": "Switching context..."
+      },
+      "tabs": {
+        "structures": "Structures",
+        "properties": "Properties"
+      },
+      "dashboard": {
+        "structures": "Structures",
+        "properties": "Properties"
+      },
+      "structures": {
+        "title": "Structures",
+        "addButton": "Add structure",
+        "addTitle": "New structure",
+        "editTitle": "Edit structure",
+        "emptyTitle": "No structures",
+        "emptyDescription": "No structures have been created for this condominium yet.",
+        "deleteConfirmTitle": "Delete structure",
+        "deleteConfirmMessage": "Are you sure you want to delete \"{{name}}\"? This action cannot be undone.",
+        "propertiesCount": "properties",
+        "totalPercentage": "Total share: {{value}}%"
+      },
+      "properties": {
+        "title": "Properties",
+        "addButton": "Add property",
+        "addTitle": "New property",
+        "editTitle": "Edit property",
+        "emptyTitle": "No properties",
+        "emptyDescription": "No properties have been registered in this condominium yet.",
+        "emptyInStructure": "No properties in this structure",
+        "deleteConfirmTitle": "Delete property",
+        "deleteConfirmMessage": "Are you sure you want to delete \"{{name}}\"? This action cannot be undone.",
+        "sharePercentage": "Share: {{value}}%",
+        "structureLabel": "Structure"
+      },
+      "readOnly": {
+        "badge": "Read-only",
+        "tooltip": "You don't have edit permissions for this condominium"
+      },
+      "offline": {
+        "badge": "Offline",
+        "tooltip": "Changes will sync when you're back online"
+      },
+      "toast": {
+        "structureDeleted": "Structure deleted successfully",
+        "propertyDeleted": "Property deleted successfully",
+        "structureCreated": "Structure created successfully",
+        "structureUpdated": "Structure updated successfully",
+        "propertyCreated": "Property created successfully",
+        "propertyUpdated": "Property updated successfully",
+        "saveError": "Failed to save. Please try again.",
+        "deleteError": "Failed to delete. Please try again.",
+        "contextSwitchError": "Failed to switch condominium. Please try again."
+      }
     },
     "wizard": {
       "step1Description": "Create a new condominium",

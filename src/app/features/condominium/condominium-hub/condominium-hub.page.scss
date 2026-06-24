@@ -1,20 +1,126 @@
-.condominium-hub-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: start;
-    gap: 1rem;
-    flex-wrap: wrap;
+/* Context switching overlay */
+.context-switching-overlay {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 3rem 1.5rem;
+  gap: 1rem;
 }
 
-.active-condominium-data {
-    display: flex;
-    flex-direction: row;
-    align-items: center;
-    gap: 0.5rem;
+.switching-text {
+  margin: 0;
+  font-size: 0.95rem;
+  color: var(--ion-color-medium);
+  text-align: center;
 }
 
-h4 {
+/* No condominiums empty state */
+.empty-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 3rem 1.5rem;
+  text-align: center;
+  gap: 1rem;
+
+  h3 {
     margin: 0;
-    font-size: 1.2rem;
-    font-weight: bold;
+    font-size: 1.1rem;
+    color: var(--text-base);
+    line-height: 1.4;
+  }
+
+}
+
+/* Tab content area */
+.tab-content {
+  padding: 0.5rem 0 1rem;
+}
+
+/* Add button container */
+.fab-container {
+  padding: 0.75rem 1rem;
+  padding-bottom: max(0.75rem, env(safe-area-inset-bottom));
+}
+
+.add-button {
+  --border-radius: 12px;
+  --box-shadow: 0 2px 8px rgba(0, 0, 0, 0.12);
+  font-weight: 500;
+}
+
+/* Segment tabs */
+ion-segment {
+  margin: 0.5rem 0;
+}
+
+/* Small phones (iPhone SE, Galaxy S8, etc.) */
+@media (max-width: 360px) {
+  .context-switching-overlay {
+    padding: 2rem 1rem;
+  }
+
+  .switching-text {
+    font-size: 0.85rem;
+  }
+
+  .empty-state {
+    padding: 2rem 1rem;
+  }
+
+
+  .empty-state h3 {
+    font-size: 1rem;
+    color: var(--text-base);
+  }
+
+  .fab-container {
+    padding: 0.5rem 0.75rem;
+    padding-bottom: max(0.5rem, env(safe-area-inset-bottom));
+  }
+
+  .add-button {
+    --border-radius: 10px;
+    font-size: 0.9rem;
+  }
+
+  ion-segment {
+    margin: 0.25rem 0;
+  }
+}
+
+/* Tablets and larger screens */
+@media (min-width: 768px) {
+  .context-switching-overlay {
+    padding: 4rem 2rem;
+  }
+
+  .empty-state {
+    padding: 4rem 2rem;
+  }
+
+  .empty-state h3 {
+    font-size: 1.25rem;
+    color: var(--text-base);
+  }
+
+  .tab-content {
+    max-width: 720px;
+    margin: 0 auto;
+  }
+
+  .fab-container {
+    max-width: 720px;
+    margin: 0 auto;
+    padding: 0.75rem 1.5rem;
+  }
+}
+
+/* Dark mode adjustments */
+@media (prefers-color-scheme: dark) {
+  .add-button {
+    --box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+  }
 }

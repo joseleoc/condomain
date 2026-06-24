@@ -1,0 +1,37 @@
+<ng-container *transloco="let t">
+  @if (activeCondominium()) {
+    <div class="context-bar">
+      <div class="active-condominium-data">
+        <app-avatar
+          [src]="activeCondominium()?.avatar || 'assets/icon/home-outline.svg'"
+          size="small"
+          alt="Condominium avatar"
+        />
+        <div class="condo-info">
+          <h4>{{ activeCondominium()?.name }}</h4>
+          @if (activeCondominium()?.address) {
+            <p class="condo-address">
+              {{ activeCondominium()?.address }}
+            </p>
+          }
+        </div>
+      </div>
+
+      @if (userCondominiums().length > 0) {
+        <ion-select
+          [interface]="'popover'"
+          [placeholder]="t('condominium.hub.contextSelector.placeholder')"
+          [value]="activeCondominium()?.id"
+          (ionChange)="onCondominiumSelected($event)"
+          [disabled]="isSwitchingContext()"
+        >
+          @for (condo of userCondominiums(); track condo.id) {
+            <ion-select-option [value]="condo.id">
+              {{ condo.name }}
+            </ion-select-option>
+          }
+        </ion-select>
+      }
+    </div>
+  }
+</ng-container>

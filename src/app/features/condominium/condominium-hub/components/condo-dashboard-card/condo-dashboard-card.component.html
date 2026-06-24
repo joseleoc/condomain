@@ -1,0 +1,31 @@
+<ion-card class="dashboard-card">
+  <ion-card-header>
+    <ion-card-title>{{ condominium().name }}</ion-card-title>
+    @if (condominium().address) {
+      <ion-card-subtitle>
+        <ion-icon name="location-outline" class="address-icon"></ion-icon>
+        {{ condominium().address }}
+      </ion-card-subtitle>
+    }
+  </ion-card-header>
+
+  <ion-card-content>
+    <div class="stats-grid">
+      <ion-item lines="none" class="stat-item">
+        <ion-icon name="business-outline" slot="start" color="primary"></ion-icon>
+        <ion-label>
+          <h2>{{ structureCount() }}</h2>
+          <p>{{ 'condominium.hub.dashboard.structures' | transloco }}</p>
+        </ion-label>
+      </ion-item>
+
+      <ion-item lines="none" class="stat-item">
+        <ion-icon name="home-outline" slot="start" color="primary"></ion-icon>
+        <ion-label>
+          <h2>{{ propertyCount() }}</h2>
+          <p>{{ 'condominium.hub.dashboard.properties' | transloco }}</p>
+        </ion-label>
+      </ion-item>
+    </div>
+  </ion-card-content>
+</ion-card>
