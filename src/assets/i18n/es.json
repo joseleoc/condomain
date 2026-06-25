@@ -384,7 +384,9 @@
       "assigningTo": "Asignando a:",
       "selectProperty": "Seleccionar Propiedad",
       "propertyPlaceholder": "Elige una propiedad",
-      "assignButton": "Asignar y Aprobar"
+      "assignButton": "Asignar y Aprobar",
+      "noPropertiesTitle": "No hay propiedades disponibles",
+      "noPropertiesDescription": "Debes crear al menos una propiedad antes de aprobar solicitudes de ingreso."
     }
   }
 }

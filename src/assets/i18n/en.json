@@ -390,7 +390,9 @@
       "assigningTo": "Assigning to:",
       "selectProperty": "Select Property",
       "propertyPlaceholder": "Choose a property",
-      "assignButton": "Assign & Approve"
+      "assignButton": "Assign & Approve",
+      "noPropertiesTitle": "No properties available",
+      "noPropertiesDescription": "You need to create at least one property before approving join requests."
     }
   }
 }

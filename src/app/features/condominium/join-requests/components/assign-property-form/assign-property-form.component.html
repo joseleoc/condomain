@@ -2,6 +2,15 @@
   <div class="loading-container">
     <ion-spinner name="crescent"></ion-spinner>
   </div>
+} @else if (properties().length === 0) {
+  <div class="empty-state">
+    <ion-icon name="business-outline"></ion-icon>
+    <h3>{{ 'joinRequests.assignProperty.noPropertiesTitle' | transloco }}</h3>
+    <p>{{ 'joinRequests.assignProperty.noPropertiesDescription' | transloco }}</p>
+    <ion-button fill="clear" (click)="cancel()">
+      {{ 'common.cancel' | transloco }}
+    </ion-button>
+  </div>
 } @else {
   <form [formGroup]="form" (ngSubmit)="submit()" class="assign-property-form">
     @if (userProfile(); as profile) {

@@ -9,6 +9,7 @@ import {
   IonLabel,
   IonButton,
   IonSpinner,
+  IonIcon,
 } from '@ionic/angular/standalone';
 import { Properties } from '@core/services/properties/properties';
 import { Structures } from '@core/services/structures/structures';
@@ -28,6 +29,7 @@ import type { Structure } from '@app-types/structures';
     IonLabel,
     IonButton,
     IonSpinner,
+    IonIcon,
   ],
   templateUrl: './assign-property-form.component.html',
   styleUrls: ['./assign-property-form.component.scss'],
