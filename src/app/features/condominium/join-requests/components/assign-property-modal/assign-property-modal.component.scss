@@ -1,0 +1,19 @@
+ion-modal {
+  --height: 100%;
+  --max-height: 90vh;
+  --border-radius: 16px 16px 0 0;
+  --backdrop-opacity: 0.5;
+}
+
+@media (min-width: 768px) {
+  ion-modal {
+    --width: 500px;
+    --border-radius: 16px;
+  }
+}
+
+@media (max-width: 767px) {
+  ion-modal {
+    --height: 85vh;
+  }
+}

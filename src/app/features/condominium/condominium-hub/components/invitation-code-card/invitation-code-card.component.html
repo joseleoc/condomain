@@ -1,0 +1,44 @@
+@if (invitationCode(); as code) {
+  <ion-card class="invitation-code-card">
+    <ion-card-header>
+      <ion-card-title>{{
+        "condominium.hub.invitationCode.title" | transloco
+      }}</ion-card-title>
+    </ion-card-header>
+    <ion-card-content>
+      <div class="code-display">
+        <div class="code-value">{{ code.code }}</div>
+        <div class="code-actions">
+          <ion-button
+            fill="clear"
+            (click)="copyToClipboard()"
+            [title]="'common.copiedToClipboard' | transloco"
+          >
+            <ion-icon name="copy-outline" slot="icon-only"></ion-icon>
+          </ion-button>
+          <ion-button
+            fill="clear"
+            (click)="showQrCode.emit()"
+            [title]="'condominium.hub.invitationCode.showQr' | transloco"
+          >
+            <ion-icon name="qr-code-outline" slot="icon-only"></ion-icon>
+          </ion-button>
+        </div>
+      </div>
+      <div class="code-info">
+        @if (code.max_uses !== null) {
+          <span
+            >{{ "condominium.hub.invitationCode.maxUses" | transloco }}:
+            {{ code.uses_count }}/{{ code.max_uses }}</span
+          >
+        }
+        @if (code.expires_at) {
+          <span
+            >{{ "condominium.hub.invitationCode.expires" | transloco }}:
+            {{ code.expires_at | date: "short" }}</span
+          >
+        }
+      </div>
+    </ion-card-content>
+  </ion-card>
+}

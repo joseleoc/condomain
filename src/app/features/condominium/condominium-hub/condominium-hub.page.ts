@@ -1,4 +1,4 @@
-import { Component, inject, signal, computed, effect } from '@angular/core';
+import { Component, inject, signal, effect } from '@angular/core';
 import {
   IonContent,
   IonHeader,
@@ -17,11 +17,13 @@ import { ContextService } from '@core/services/context/context.service';
 import { Structures } from '@core/services/structures/structures';
 import { Properties } from '@core/services/properties/properties';
 import { NetworkStatusService } from '@core/services/network-status.service';
+import { CondominiumJoinRequest } from '@core/services/condominium-join-request/condominium-join-request';
 import {
   injectQuery,
   injectMutation,
   QueryClient,
 } from '@tanstack/angular-query-experimental';
+import { toSignal } from '@angular/core/rxjs-interop';
 import type { Structure } from '@app-types/structures';
 import type { Property } from '@app-types/property';
 import {
@@ -31,7 +33,9 @@ import {
   HubStructuresAccordionComponent,
   StructureFormModalComponent,
   PropertyFormModalComponent,
+  QrCodeModalComponent,
 } from './components';
+import { CondominiumInvitationCode } from '@app-types/index';
 
 @Component({
   selector: 'app-condominium-hub',
@@ -54,6 +58,7 @@ import {
     HubStructuresAccordionComponent,
     StructureFormModalComponent,
     PropertyFormModalComponent,
+    QrCodeModalComponent,
     IonAlert,
     IonToast,
     IonSkeletonText,
@@ -67,6 +72,7 @@ export class CondominiumHubPage {
   private networkStatus = inject(NetworkStatusService);
   private queryClient = inject(QueryClient);
   private transloco = inject(TranslocoService);
+  private joinRequestService = inject(CondominiumJoinRequest);
 
   // --- Context signals ---
   activeCondominium = this.contextService.activeCondominium;
@@ -75,7 +81,12 @@ export class CondominiumHubPage {
 
   userCondominiums = this.contextService.userCondominiums;
   isOnline = this.networkStatus.isOnline;
+  condominiumInvitationCode = signal<CondominiumInvitationCode | null>(null);
 
+  // --- Reactive join requests from service ---
+  pendingRequestsCount = toSignal(this.joinRequestService.pendingRequestsCount$, {
+    initialValue: 0,
+  });
   // --- UI state ---
   isSwitchingContext = signal(false);
 
@@ -85,6 +96,7 @@ export class CondominiumHubPage {
   isPropertyFormModalOpen = signal(false);
   propertyToEdit = signal<Property | null>(null);
   preSelectedStructureId = signal<string | null>(null);
+  isQrModalOpen = signal(false);
 
   // --- Delete confirmation state ---
   deleteTarget = signal<{
@@ -120,6 +132,35 @@ export class CondominiumHubPage {
       enabled: !!condoId,
       staleTime: 1000 * 60 * 5, // 5 minutes
     };
+  });
+
+  // --- TanStack Query: Invitation Code (admin only) ---
+  invitationCodeQuery = injectQuery(() => {
+    const condoId = this.activeCondominium()?.id;
+    const isAdmin = this.isAdmin();
+    return {
+      queryKey: ['invitation-code', condoId] as const,
+      queryFn: async () => {
+        if (!condoId) return null;
+        const data =
+          await this.joinRequestService.getActiveInvitationCode(condoId);
+        console.log('Fetched invitation code:', data);
+        this.condominiumInvitationCode.set(data);
+        return data;
+      },
+      enabled: !!condoId && isAdmin,
+      staleTime: 1000 * 60 * 5, // 5 minutes
+    };
+  });
+
+  // --- Effect: Load pending join requests when condominium changes (admin only) ---
+  loadPendingRequestsEffect = effect(() => {
+    const condoId = this.activeCondominium()?.id;
+    const isAdmin = this.isAdmin();
+    
+    if (condoId && isAdmin) {
+      this.joinRequestService.loadPendingRequests(condoId);
+    }
   });
 
   // --- TanStack Mutation: Delete Structure ---
@@ -228,6 +269,16 @@ export class CondominiumHubPage {
     this.isPropertyFormModalOpen.set(false);
     this.propertyToEdit.set(null);
     this.preSelectedStructureId.set(null);
+  }
+
+  // --- QR Modal ---
+
+  openQrModal() {
+    this.isQrModalOpen.set(true);
+  }
+
+  closeQrModal() {
+    this.isQrModalOpen.set(false);
   }
 
   // --- Delete flow ---

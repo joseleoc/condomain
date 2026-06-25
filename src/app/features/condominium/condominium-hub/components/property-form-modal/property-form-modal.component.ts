@@ -1,4 +1,4 @@
-import { Component, inject, input, output, viewChild } from '@angular/core';
+import { Component, inject, input, output, viewChild, computed } from '@angular/core';
 import {
   IonModal,
   IonHeader,
@@ -69,12 +69,13 @@ export class PropertyFormModalComponent {
   propertyFormComponent = viewChild(PropertyFormComponent);
 
   // --- Computed ---
-  isEditMode = () => this.property() !== null;
+  isEditMode = computed(() => this.property() !== null);
 
   /**
    * Maps the property to the form's initialData format.
+   * Computed signal to avoid infinite change detection loops.
    */
-  getInitialData() {
+  initialData = computed(() => {
     const p = this.property();
     if (!p) {
       // For create mode, pre-select the structure if provided
@@ -95,17 +96,18 @@ export class PropertyFormModalComponent {
       owner_name: p.owner_name ?? null,
       owner_email: p.owner_email ?? null,
     };
-  }
+  });
 
   /**
    * Maps structures to StructureOption format for the dropdown.
+   * Computed signal to avoid infinite change detection loops.
    */
-  getStructureOptions(): StructureOption[] {
+  structureOptions = computed<StructureOption[]>(() => {
     return this.structures().map((s) => ({
       id: s.id,
       name: s.name,
     }));
-  }
+  });
 
   /**
    * Handles form submission - validates and calls the appropriate service method.

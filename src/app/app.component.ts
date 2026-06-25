@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, inject } from '@angular/core';
 import { IonApp, IonRouterOutlet } from '@ionic/angular/standalone';
 import { addIcons } from 'ionicons';
 import {
@@ -17,7 +17,16 @@ import {
   personOutline,
   remove,
   trashOutline,
+  shieldCheckmarkOutline,
+  createOutline,
+  qrCodeOutline,
+  close,
+  copyOutline,
+  personAddOutline,
+  closeCircle,
+  checkmarkCircle,
 } from 'ionicons/icons';
+import { PendingInvitation } from '@core/services/pending-invitation/pending-invitation';
 
 @Component({
   selector: 'app-root',
@@ -25,6 +34,9 @@ import {
   imports: [IonApp, IonRouterOutlet],
 })
 export class AppComponent {
+  // Eagerly instantiate to subscribe to auth changes for pending invitation redirect
+  private pendingInvitation = inject(PendingInvitation);
+
   constructor() {
     addIcons({
       languageOutline,
@@ -42,6 +54,14 @@ export class AppComponent {
       helpCircleOutline,
       ellipsisHorizontalCircleOutline,
       homeOutline,
+      shieldCheckmarkOutline,
+      qrCodeOutline,
+      close,
+      copyOutline,
+      personAddOutline,
+      closeCircle,
+      checkmarkCircle,
+      createOutline,
     });
   }
 }

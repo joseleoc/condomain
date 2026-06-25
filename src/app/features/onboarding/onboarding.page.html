@@ -1,0 +1,63 @@
+<app-main-layout>
+  <ion-content class="ion-padding">
+    <article class="onboarding-container">
+      <div class="onboarding-header">
+        <h1>{{ "onboarding.title" | transloco }}</h1>
+        <p class="text-secondary">{{ "onboarding.subtitle" | transloco }}</p>
+      </div>
+
+      <ion-radio-group class="cards-container" value="{{ selectedRole() }}">
+        <ion-card
+          (click)="selectRole('admin')"
+          [class.selected]="selectedRole() === 'admin'"
+          button
+        >
+          <ion-card-header class="card-header">
+            <ion-card-title class="card-title">
+              <div class="icon-wrapper">
+                <ion-icon name="shield-checkmark-outline"></ion-icon>
+              </div>
+              {{ "onboarding.adminTitle" | transloco }}
+            </ion-card-title>
+        <ion-radio value="admin"></ion-radio>
+
+          </ion-card-header>
+          <ion-card-content>
+            <span class="text-secondary">
+              {{ "onboarding.adminDescription" | transloco }}
+            </span>
+          </ion-card-content>
+        </ion-card>
+
+        <ion-card
+          (click)="selectRole('owner')"
+          [class.selected]="selectedRole() === 'owner'"
+          button
+        >
+          <ion-card-header class="card-header">
+            <ion-card-title class="card-title">
+              <div class="icon-wrapper">
+                <ion-icon name="home-outline"></ion-icon>
+              </div>
+              {{ "onboarding.ownerTitle" | transloco }}
+            </ion-card-title>
+            <ion-radio value="owner"></ion-radio>
+          </ion-card-header>
+          <ion-card-content>
+            <span class="text-secondary">
+              {{ "onboarding.ownerDescription" | transloco }}
+            </span>
+          </ion-card-content>
+        </ion-card>
+      </ion-radio-group>
+
+      <ion-button
+        expand="block"
+        [disabled]="!selectedRole()"
+        (click)="handleContinue()"
+      >
+        {{ "onboarding.continue" | transloco }}
+      </ion-button>
+    </article>
+  </ion-content>
+</app-main-layout>

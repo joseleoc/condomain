@@ -6,3 +6,5 @@ export { CondoDashboardCardComponent } from './condo-dashboard-card/condo-dashbo
 export { HubStructuresAccordionComponent } from './hub-structures-accordion/hub-structures-accordion.component';
 export { StructureFormModalComponent } from './structure-form-modal/structure-form-modal.component';
 export { PropertyFormModalComponent } from './property-form-modal/property-form-modal.component';
+export { InvitationCodeCardComponent } from './invitation-code-card/invitation-code-card.component';
+export { QrCodeModalComponent } from './qr-code-modal/qr-code-modal.component';

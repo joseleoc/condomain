@@ -59,6 +59,88 @@ ion-card-subtitle {
   letter-spacing: 0.5px;
 }
 
+.pending-requests {
+  --background: rgba(var(--ion-color-warning-rgb), 0.05);
+  border-radius: 8px;
+  padding: 0.75rem;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+
+  &.clickable {
+    cursor: pointer;
+    border: none;
+    width: 100%;
+    text-align: left;
+    display: flex;
+    align-items: center;
+
+    &:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(var(--ion-color-warning-rgb), 0.2);
+    }
+
+    &:active {
+      transform: translateY(0);
+    }
+  }
+
+  .chevron-icon {
+    margin-left: auto;
+    font-size: 1.25rem;
+    color: var(--ion-color-medium);
+  }
+}
+
+.divider {
+  height: 1px;
+  background: var(--ion-color-light-shade);
+  margin: 1rem 0;
+}
+
+.invitation-section {
+  .invitation-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 0.5rem;
+  }
+
+  .invitation-label {
+    font-size: 0.875rem;
+    font-weight: 600;
+    color: var(--ion-color-medium);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+  }
+
+  .invitation-actions {
+    display: flex;
+    gap: 0.25rem;
+  }
+
+  .code-display {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 0.5rem;
+  }
+
+  .code-value {
+    font-size: 1.75rem;
+    font-weight: 700;
+    letter-spacing: 4px;
+    font-family: monospace;
+    color: var(--ion-color-primary);
+  }
+
+  .code-info {
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
+    font-size: 0.75rem;
+    color: var(--ion-color-medium);
+  }
+}
+
 // Small phones
 @media (max-width: 360px) {
   .dashboard-card {
@@ -75,6 +157,10 @@ ion-card-subtitle {
 
   .stat-item h2 {
     font-size: 1.25rem;
+  }
+
+  .invitation-section .code-value {
+    font-size: 1.5rem;
   }
 }
 
@@ -94,5 +180,9 @@ ion-card-subtitle {
 @media (prefers-color-scheme: dark) {
   .dashboard-card {
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+  }
+
+  .divider {
+    background: var(--ion-color-light);
   }
 }

@@ -1,0 +1,33 @@
+.invitation-code-card {
+  margin: 16px;
+  --background: var(--ion-card-background);
+}
+
+.code-display {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 12px;
+}
+
+.code-value {
+  font-size: 24px;
+  font-weight: 700;
+  letter-spacing: 4px;
+  font-family: monospace;
+  color: var(--ion-color-primary);
+  cursor: text;
+}
+
+.code-actions {
+  display: flex;
+  gap: 4px;
+}
+
+.code-info {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  font-size: 12px;
+  color: var(--ion-color-medium);
+}

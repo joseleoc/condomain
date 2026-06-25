@@ -14,7 +14,8 @@
     "uploading": "Uploading...",
     "next": "Next",
     "added": "Added",
-    "total": "Total"
+    "total": "Total",
+    "copiedToClipboard": "Copied to clipboard"
   },
   "general": {
     "changeImage": "Change Image",
@@ -44,7 +45,9 @@
       },
       "dashboard": {
         "structures": "Structures",
-        "properties": "Properties"
+        "properties": "Properties",
+        "pendingRequests": "Requests",
+        "viewPendingRequests": "View pending requests"
       },
       "structures": {
         "title": "Structures",
@@ -89,6 +92,17 @@
         "saveError": "Failed to save. Please try again.",
         "deleteError": "Failed to delete. Please try again.",
         "contextSwitchError": "Failed to switch condominium. Please try again."
+      },
+      "invitationCode": {
+        "title": "Invitation Code",
+        "maxUses": "Uses",
+        "unlimitedUses": "Unlimited uses",
+        "expires": "Expires",
+        "showQr": "Show QR Code",
+        "copyCode": "Copy Code",
+        "copiedToClipboard": "Code copied to clipboard",
+        "qrTitle": "QR Code",
+        "qrDescription": "Scan this code to join the condominium"
       }
     },
     "wizard": {
@@ -335,5 +349,50 @@
     "NIO": "Nicaraguan Córdoba",
     "CRC": "Costa Rican Colón",
     "CUP": "Cuban Peso"
+  },
+  "onboarding": {
+    "title": "Welcome to Condomain",
+    "subtitle": "What's your role? This will help us personalize your experience.",
+    "adminTitle": "I'm an admin",
+    "adminDescription": "Manage a condominium: properties, residents, finances, and more.",
+    "ownerTitle": "I'm a property owner",
+    "ownerDescription": "Access your property information and stay up to date with your condominium.",
+    "continue": "Continue"
+  },
+  "join": {
+    "title": "Join a condominium",
+    "subtitle": "Enter the 6-digit invitation code provided by the administrator.",
+    "codePlaceholder": "000000",
+    "submit": "Request access",
+    "invalidCode": "The code must be 6 digits",
+    "notFound": "No condominium found with that code",
+    "alreadyRequested": "You already have a pending request for this condominium",
+    "error": "Error submitting request. Please try again.",
+    "successTitle": "Request sent!",
+    "successMessage": "Your request has been sent to the administrator. You'll receive a notification when it's approved."
+  },
+  "joinRequests": {
+    "title": "Join requests",
+    "loading": "Loading requests...",
+    "noRequests": "No pending requests",
+    "noRequestsDescription": "There are no pending join requests at this time.",
+    "approve": "Approve",
+    "decline": "Decline",
+    "approveTitle": "Approve request",
+    "approveMessage": "Approve {{name}}'s request to join the condominium?",
+    "declineTitle": "Decline request",
+    "declineMessage": "Decline {{name}}'s request to join the condominium?",
+    "approvedSuccess": "Request approved successfully",
+    "declinedSuccess": "Request declined successfully",
+    "actionError": "Error processing request. Please try again.",
+    "assignProperty": {
+      "title": "Assign Property",
+      "assigningTo": "Assigning to:",
+      "selectProperty": "Select Property",
+      "propertyPlaceholder": "Choose a property",
+      "assignButton": "Assign & Approve",
+      "noPropertiesTitle": "No properties available",
+      "noPropertiesDescription": "You need to create at least one property before approving join requests."
+    }
   }
 }

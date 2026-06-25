@@ -1,4 +1,4 @@
-import { Component, inject } from '@angular/core';
+import { Component, inject, input } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import {
   IonContent,
@@ -11,6 +11,7 @@ import {
   IonIcon,
   IonFooter,
   IonButton,
+  IonBackButton,
 } from '@ionic/angular/standalone';
 import { languageSelectorComponent } from '@shared/components/language-selector/language-selector.component';
 import { SidemenuContentComponent } from '@shared/components/sidemenu-content/sidemenu-content.component';
@@ -37,10 +38,15 @@ import { TranslocoPipe } from '@jsverse/transloco';
     SidemenuContentComponent,
     IonButton,
     TranslocoPipe,
+    IonBackButton,
   ],
 })
 export class MainLayoutComponent {
   private authService = inject(Auth);
+
+  title = input<string>();
+  showBackButton = input<boolean>();
+  defaultHref = input<string>();
 
   logOut() {
     this.authService.signOut();

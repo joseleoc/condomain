@@ -84,10 +84,9 @@ export class HubStructuresAccordionComponent {
 
   // --- Event Handlers ---
 
-  onStructureHeaderClick(structure: Structure) {
-    if (this.isAdmin()) {
-      this.editStructure.emit(structure);
-    }
+  onEditStructure(event: Event, structure: Structure) {
+    event.stopPropagation();
+    this.editStructure.emit(structure);
   }
 
   onDeleteStructure(event: Event, structure: Structure) {
@@ -99,10 +98,9 @@ export class HubStructuresAccordionComponent {
     this.addStructure.emit();
   }
 
-  onPropertyClick(property: Property) {
-    if (this.isAdmin()) {
-      this.editProperty.emit(property);
-    }
+  onEditProperty(event: Event, property: Property) {
+    event.stopPropagation();
+    this.editProperty.emit(property);
   }
 
   onDeleteProperty(event: Event, property: Property) {

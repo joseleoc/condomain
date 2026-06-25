@@ -14,7 +14,8 @@
     "uploading": "Subiendo...",
     "next": "Siguiente",
     "added": "Agregado",
-    "total": "Total"
+    "total": "Total",
+    "copiedToClipboard": "Copiado al portapapeles"
   },
   "general": {
     "changeImage": "Cambiar imagen",
@@ -44,7 +45,9 @@
       },
       "dashboard": {
         "structures": "Estructuras",
-        "properties": "Propiedades"
+        "properties": "Propiedades",
+        "pendingRequests": "Solicitudes",
+        "viewPendingRequests": "Ver solicitudes pendientes"
       },
       "structures": {
         "title": "Estructuras",
@@ -89,6 +92,17 @@
         "saveError": "Error al guardar. Inténtalo de nuevo.",
         "deleteError": "Error al eliminar. Inténtalo de nuevo.",
         "contextSwitchError": "Error al cambiar de condominio. Inténtalo de nuevo."
+      },
+      "invitationCode": {
+        "title": "Código de Invitación",
+        "maxUses": "Usos",
+        "unlimitedUses": "Usos ilimitados",
+        "expires": "Expira",
+        "showQr": "Mostrar Código QR",
+        "copyCode": "Copiar Código",
+        "copiedToClipboard": "Código copiado al portapapeles",
+        "qrTitle": "Código QR",
+        "qrDescription": "Escanea este código para unirte al condominio"
       }
     },
     "wizard": {
@@ -329,5 +343,50 @@
     "NIO": "Córdoba nicaragüense",
     "CRC": "Colón costarricense",
     "CUP": "Peso cubano"
+  },
+  "onboarding": {
+    "title": "Bienvenido a Condomain",
+    "subtitle": "¿Cuál es tu rol? Esto nos ayudará a personalizar tu experiencia.",
+    "adminTitle": "Soy administrador",
+    "adminDescription": "Gestiona un condominio: propiedades, residentes, finanzas y más.",
+    "ownerTitle": "Soy propietario",
+    "ownerDescription": "Accede a la información de tu propiedad y mantente al día con tu condominio.",
+    "continue": "Continuar"
+  },
+  "join": {
+    "title": "Unirse a un condominio",
+    "subtitle": "Ingresa el código de invitación de 6 dígitos que te proporcionó el administrador.",
+    "codePlaceholder": "000000",
+    "submit": "Solicitar acceso",
+    "invalidCode": "El código debe tener 6 dígitos",
+    "notFound": "No se encontró un condominio con ese código",
+    "alreadyRequested": "Ya tienes una solicitud pendiente para este condominio",
+    "error": "Error al enviar la solicitud. Intenta de nuevo.",
+    "successTitle": "¡Solicitud enviada!",
+    "successMessage": "Tu solicitud ha sido enviada al administrador. Recibirás una notificación cuando sea aprobada."
+  },
+  "joinRequests": {
+    "title": "Solicitudes de ingreso",
+    "loading": "Cargando solicitudes...",
+    "noRequests": "Sin solicitudes pendientes",
+    "noRequestsDescription": "No hay solicitudes de ingreso pendientes en este momento.",
+    "approve": "Aprobar",
+    "decline": "Rechazar",
+    "approveTitle": "Aprobar solicitud",
+    "approveMessage": "¿Aprobar la solicitud de {{name}} para unirse al condominio?",
+    "declineTitle": "Rechazar solicitud",
+    "declineMessage": "¿Rechazar la solicitud de {{name}} para unirse al condominio?",
+    "approvedSuccess": "Solicitud aprobada correctamente",
+    "declinedSuccess": "Solicitud rechazada correctamente",
+    "actionError": "Error al procesar la solicitud. Intenta de nuevo.",
+    "assignProperty": {
+      "title": "Asignar Propiedad",
+      "assigningTo": "Asignando a:",
+      "selectProperty": "Seleccionar Propiedad",
+      "propertyPlaceholder": "Elige una propiedad",
+      "assignButton": "Asignar y Aprobar",
+      "noPropertiesTitle": "No hay propiedades disponibles",
+      "noPropertiesDescription": "Debes crear al menos una propiedad antes de aprobar solicitudes de ingreso."
+    }
   }
 }

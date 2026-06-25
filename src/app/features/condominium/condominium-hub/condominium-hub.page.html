@@ -58,6 +58,10 @@
       [condominium]="activeCondominium()!"
       [structureCount]="structuresQuery.data()?.length ?? 0"
       [propertyCount]="propertiesQuery.data()?.length ?? 0"
+      [pendingRequestsCount]="pendingRequestsCount()"
+      [invitationCode]="invitationCodeQuery.data() ?? null"
+      [isAdmin]="isAdmin()"
+      (showQrCode)="openQrModal()"
     />
 
     <!-- Structures & Properties Accordion -->
@@ -98,6 +102,13 @@
     (isOpenChange)="isPropertyFormModalOpen.set($event)"
   />
   }
+
+  <!-- QR Code Modal -->
+  <app-qr-code-modal
+    [isOpen]="isQrModalOpen()"
+    [invitationCode]="invitationCodeQuery.data()?.code ?? null"
+    (closeModal)="closeQrModal()"
+  />
 
   <!-- Delete confirmation alert -->
   <ion-alert
