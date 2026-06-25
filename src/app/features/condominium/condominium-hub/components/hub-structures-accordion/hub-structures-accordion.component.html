@@ -18,11 +18,7 @@
     <ion-accordion-group expand="inset">
       @for (item of structuresWithProperties(); track item.structure.id) {
         <ion-accordion [value]="item.structure.id">
-          <ion-item
-            slot="header"
-            [class.clickable]="isAdmin()"
-            (click)="onStructureHeaderClick(item.structure)"
-          >
+          <ion-item slot="header">
             <ion-icon name="business-outline" slot="start"></ion-icon>
             <div class="structure-info">
               <span class="structure-name clamp-text">
@@ -46,11 +42,18 @@
             </ion-badge>
             @if (isAdmin()) {
               <ion-icon
+                name="create-outline"
+                slot="end"
+                color="primary"
+                (click)="onEditStructure($event, item.structure)"
+                class="action-icon"
+              ></ion-icon>
+              <ion-icon
                 name="trash-outline"
                 slot="end"
                 color="danger"
                 (click)="onDeleteStructure($event, item.structure)"
-                class="delete-icon"
+                class="action-icon"
               ></ion-icon>
             }
           </ion-item>
@@ -63,10 +66,7 @@
             } @else {
               <ion-list>
                 @for (property of item.properties; track property.id) {
-                  <ion-item
-                    [class.clickable]="isAdmin()"
-                    (click)="onPropertyClick(property)"
-                  >
+                  <ion-item>
                     <ion-icon name="home-outline" slot="start"></ion-icon>
                     <div class="property-info">
                       <span class="property-name clamp-text">
@@ -81,11 +81,18 @@
                     </div>
                     @if (isAdmin()) {
                       <ion-icon
+                        name="create-outline"
+                        slot="end"
+                        color="primary"
+                        (click)="onEditProperty($event, property)"
+                        class="action-icon"
+                      ></ion-icon>
+                      <ion-icon
                         name="trash-outline"
                         slot="end"
                         color="danger"
                         (click)="onDeleteProperty($event, property)"
-                        class="delete-icon"
+                        class="action-icon"
                       ></ion-icon>
                     }
                   </ion-item>
