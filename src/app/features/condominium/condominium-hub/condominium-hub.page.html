@@ -58,7 +58,7 @@
       [condominium]="activeCondominium()!"
       [structureCount]="structuresQuery.data()?.length ?? 0"
       [propertyCount]="propertiesQuery.data()?.length ?? 0"
-      [pendingRequestsCount]="pendingRequestsQuery.data() ?? 0"
+      [pendingRequestsCount]="pendingRequestsCount()"
       [invitationCode]="invitationCodeQuery.data() ?? null"
       [isAdmin]="isAdmin()"
       (showQrCode)="openQrModal()"

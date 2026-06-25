@@ -23,6 +23,7 @@ import {
   injectMutation,
   QueryClient,
 } from '@tanstack/angular-query-experimental';
+import { toSignal } from '@angular/core/rxjs-interop';
 import type { Structure } from '@app-types/structures';
 import type { Property } from '@app-types/property';
 import {
@@ -81,6 +82,11 @@ export class CondominiumHubPage {
   userCondominiums = this.contextService.userCondominiums;
   isOnline = this.networkStatus.isOnline;
   condominiumInvitationCode = signal<CondominiumInvitationCode | null>(null);
+
+  // --- Reactive join requests from service ---
+  pendingRequestsCount = toSignal(this.joinRequestService.pendingRequestsCount$, {
+    initialValue: 0,
+  });
   // --- UI state ---
   isSwitchingContext = signal(false);
 
@@ -128,21 +134,6 @@ export class CondominiumHubPage {
     };
   });
 
-  // --- TanStack Query: Pending Join Requests (admin only) ---
-  pendingRequestsQuery = injectQuery(() => {
-    const condoId = this.activeCondominium()?.id;
-    const isAdmin = this.isAdmin();
-    return {
-      queryKey: ['pending-join-requests', condoId] as const,
-      queryFn: async (): Promise<number> => {
-        if (!condoId) return 0;
-        return this.joinRequestService.countPendingRequests(condoId);
-      },
-      enabled: !!condoId && isAdmin,
-      staleTime: 1000 * 30, // 30 seconds
-    };
-  });
-
   // --- TanStack Query: Invitation Code (admin only) ---
   invitationCodeQuery = injectQuery(() => {
     const condoId = this.activeCondominium()?.id;
@@ -160,6 +151,16 @@ export class CondominiumHubPage {
       enabled: !!condoId && isAdmin,
       staleTime: 1000 * 60 * 5, // 5 minutes
     };
+  });
+
+  // --- Effect: Load pending join requests when condominium changes (admin only) ---
+  loadPendingRequestsEffect = effect(() => {
+    const condoId = this.activeCondominium()?.id;
+    const isAdmin = this.isAdmin();
+    
+    if (condoId && isAdmin) {
+      this.joinRequestService.loadPendingRequests(condoId);
+    }
   });
 
   // --- TanStack Mutation: Delete Structure ---

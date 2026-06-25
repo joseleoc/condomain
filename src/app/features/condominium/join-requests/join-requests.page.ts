@@ -24,6 +24,7 @@ import { CondominiumJoinRequest } from '@core/services/condominium-join-request/
 import { ContextService } from '@core/services/context/context.service';
 import { TelemetryService } from '@core/services/telemetry/telemetry.service';
 import { TelemetryEvents } from '@core/services/telemetry/telemetry.types';
+import { toSignal } from '@angular/core/rxjs-interop';
 import type { JoinRequestWithProfile } from '@app-types/join-request';
 import type { Property } from '@app-types/property';
 import { firstValueFrom } from 'rxjs';
@@ -57,7 +58,11 @@ export class JoinRequestsPage implements OnInit {
   private translocoService = inject(TranslocoService);
   private telemetry = inject(TelemetryService);
 
-  requests = signal<JoinRequestWithProfile[]>([]);
+  // Reactive requests from service
+  requests = toSignal(this.joinRequestService.pendingRequests$, {
+    initialValue: [] as JoinRequestWithProfile[],
+  });
+  
   loading = signal(true);
   processingId = signal<string | null>(null);
   alertOpen = signal(false);
@@ -98,8 +103,7 @@ export class JoinRequestsPage implements OnInit {
     }
 
     this.loading.set(true);
-    const data = await this.joinRequestService.fetchPendingRequests(condoId);
-    this.requests.set(data);
+    await this.joinRequestService.loadPendingRequests(condoId);
     this.loading.set(false);
   }
 
@@ -157,8 +161,6 @@ export class JoinRequestsPage implements OnInit {
     this.pendingApprovalRequest.set(null);
 
     if (success) {
-      this.requests.set(this.requests().filter((r) => r.id !== request.id));
-      
       try {
         this.telemetry.track(TelemetryEvents.JOIN_REQUEST_APPROVED, {
           request_id: request.id,
@@ -206,9 +208,6 @@ export class JoinRequestsPage implements OnInit {
     this.processingId.set(null);
 
     if (success) {
-      // Remove from list
-      this.requests.set(this.requests().filter((r) => r.id !== requestId));
-      
       try {
         this.telemetry.track(TelemetryEvents.JOIN_REQUEST_DECLINED, {
           request_id: requestId,

@@ -2,6 +2,10 @@ import { inject, Injectable } from '@angular/core';
 import { Supabase } from '../supabase/supabase';
 import { Profile } from '../profile/profile';
 import { Roles } from '../roles/roles';
+import { NetworkStatusService } from '../network-status.service';
+import { LocalRepository } from '../sync/local-repository';
+import { SyncService } from '../sync/sync-service';
+import { BehaviorSubject } from 'rxjs';
 import type { JoinRequestWithProfile, JoinRequestStatus } from '@app-types/join-request';
 import type { CondominiumInvitationCode } from '@app-types/condominium-invitation-code';
 
@@ -18,6 +22,18 @@ export class CondominiumJoinRequest {
   private client = inject(Supabase).client;
   private profileService = inject(Profile);
   private rolesService = inject(Roles);
+  #networkStatus = inject(NetworkStatusService);
+  #localRepo = inject(LocalRepository);
+  #syncService = inject(SyncService);
+
+  // --- Reactive State ---
+  private _pendingRequests$ = new BehaviorSubject<JoinRequestWithProfile[]>([]);
+  private _pendingRequestsCount$ = new BehaviorSubject<number>(0);
+  private _currentCondominiumId: string | null = null;
+
+  // --- Public Observables ---
+  readonly pendingRequests$ = this._pendingRequests$.asObservable();
+  readonly pendingRequestsCount$ = this._pendingRequestsCount$.asObservable();
 
   // --- Public Methods ---
   async submitJoinRequest(invitationCode: string): Promise<JoinRequestResult> {
@@ -72,7 +88,7 @@ export class CondominiumJoinRequest {
       }
 
       // Create join request
-      const { error: insertError } = await this.client
+      const { data: newRequest, error: insertError } = await this.client
         .from('condominium_join_requests')
         .insert({
           condominium_id: condominiumId,
@@ -80,11 +96,26 @@ export class CondominiumJoinRequest {
           created_by: profileId,
           invitation_id: invitation.id,
           status: 'pending',
-        });
+        })
+        .select(`
+          *,
+          profiles:profile_id (id, name, email, avatar)
+        `)
+        .single();
 
-      if (insertError) {
+      if (insertError || !newRequest) {
         console.error('Error creating join request:', insertError);
         return { success: false, error: 'unknown' };
+      }
+
+      // Cache locally
+      await this.#localRepo.upsert('join_requests', newRequest as unknown as Record<string, unknown>);
+
+      // Update reactive state if this is for the current condominium
+      if (this._currentCondominiumId === condominiumId) {
+        const currentRequests = this._pendingRequests$.getValue();
+        this._pendingRequests$.next([newRequest as JoinRequestWithProfile, ...currentRequests]);
+        this._pendingRequestsCount$.next(currentRequests.length + 1);
       }
 
       return { success: true };
@@ -96,52 +127,78 @@ export class CondominiumJoinRequest {
 
   // --- Admin Methods ---
 
+  /**
+   * Load pending requests for a condominium and update reactive state.
+   * Online: fetches from Supabase and caches locally.
+   * Offline: reads from IndexedDB cache.
+   */
+  async loadPendingRequests(condominiumId: string): Promise<void> {
+    this._currentCondominiumId = condominiumId;
+
+    if (!this.#networkStatus.isOnline()) {
+      const entities = await this.#localRepo.getEntitiesByType('join_requests');
+      const requests = entities
+        .map((e) => e.data as unknown as JoinRequestWithProfile)
+        .filter((r) => r.condominium_id === condominiumId && r.status === 'pending');
+      
+      this._pendingRequests$.next(requests);
+      this._pendingRequestsCount$.next(requests.length);
+      return;
+    }
+
+    const { data, error } = await this.client
+      .from('condominium_join_requests')
+      .select(
+        `
+        *,
+        profiles:profile_id (id, name, email, avatar)
+      `,
+      )
+      .eq('condominium_id', condominiumId)
+      .eq('status', 'pending')
+      .order('created_at', { ascending: false });
+
+    if (error) {
+      console.error('Error fetching pending requests:', error);
+      return;
+    }
+
+    const requests = (data as JoinRequestWithProfile[]) || [];
+    
+    // Cache locally
+    for (const request of requests) {
+      await this.#localRepo.upsert('join_requests', request as unknown as Record<string, unknown>);
+    }
+
+    // Update reactive state
+    this._pendingRequests$.next(requests);
+    this._pendingRequestsCount$.next(requests.length);
+  }
+
+  /**
+   * Get current pending requests count (synchronous).
+   */
+  getPendingRequestsCount(): number {
+    return this._pendingRequestsCount$.getValue();
+  }
+
+  /**
+   * Get current pending requests (synchronous).
+   */
+  getPendingRequests(): JoinRequestWithProfile[] {
+    return this._pendingRequests$.getValue();
+  }
+
   async fetchPendingRequests(
     condominiumId: string,
   ): Promise<JoinRequestWithProfile[]> {
-    try {
-      const { data, error } = await this.client
-        .from('condominium_join_requests')
-        .select(
-          `
-          *,
-          profiles:profile_id (id, name, email, avatar)
-        `,
-        )
-        .eq('condominium_id', condominiumId)
-        .eq('status', 'pending')
-        .order('created_at', { ascending: false });
-
-      if (error) {
-        console.error('Error fetching pending requests:', error);
-        return [];
-      }
-
-      return (data as JoinRequestWithProfile[]) || [];
-    } catch (err) {
-      console.error('Error in fetchPendingRequests:', err);
-      return [];
-    }
+    await this.loadPendingRequests(condominiumId);
+    return this._pendingRequests$.getValue();
   }
 
   async countPendingRequests(condominiumId: string): Promise<number> {
-    try {
-      const { count, error } = await this.client
-        .from('condominium_join_requests')
-        .select('*', { count: 'exact', head: true })
-        .eq('condominium_id', condominiumId)
-        .eq('status', 'pending');
-
-      if (error) {
-        console.error('Error counting pending requests:', error);
-        return 0;
-      }
-
-      return count || 0;
-    } catch (err) {
-      console.error('Error in countPendingRequests:', err);
-      return 0;
-    }
+    await this.loadPendingRequests(condominiumId);
+    return this._pendingRequestsCount$.getValue();
   }
 
   async approveRequest(requestId: string): Promise<boolean> {
@@ -217,6 +274,23 @@ export class CondominiumJoinRequest {
           insertError,
         );
         return false;
+      }
+
+      // Update local state - remove from pending requests
+      const currentRequests = this._pendingRequests$.getValue();
+      const updatedRequests = currentRequests.filter((r) => r.id !== requestId);
+      this._pendingRequests$.next(updatedRequests);
+      this._pendingRequestsCount$.next(updatedRequests.length);
+
+      // Update local cache
+      const existingRequest = await this.#localRepo.getById('join_requests', requestId);
+      if (existingRequest) {
+        await this.#localRepo.upsert('join_requests', {
+          ...existingRequest,
+          status: 'approved',
+          reviewed_by: profileId,
+          reviewed_at: new Date().toISOString(),
+        } as Record<string, unknown>);
       }
 
       return true;
@@ -302,6 +376,23 @@ export class CondominiumJoinRequest {
         return false;
       }
 
+      // Update local state - remove from pending requests
+      const currentRequests = this._pendingRequests$.getValue();
+      const updatedRequests = currentRequests.filter((r) => r.id !== requestId);
+      this._pendingRequests$.next(updatedRequests);
+      this._pendingRequestsCount$.next(updatedRequests.length);
+
+      // Update local cache
+      const existingRequest = await this.#localRepo.getById('join_requests', requestId);
+      if (existingRequest) {
+        await this.#localRepo.upsert('join_requests', {
+          ...existingRequest,
+          status: 'approved',
+          reviewed_by: profileId,
+          reviewed_at: new Date().toISOString(),
+        } as Record<string, unknown>);
+      }
+
       return true;
     } catch (err) {
       console.error('Error in approveRequestWithProperty:', err);
@@ -326,6 +417,23 @@ export class CondominiumJoinRequest {
       if (error) {
         console.error('Error declining request:', error);
         return false;
+      }
+
+      // Update local state - remove from pending requests
+      const currentRequests = this._pendingRequests$.getValue();
+      const updatedRequests = currentRequests.filter((r) => r.id !== requestId);
+      this._pendingRequests$.next(updatedRequests);
+      this._pendingRequestsCount$.next(updatedRequests.length);
+
+      // Update local cache
+      const existingRequest = await this.#localRepo.getById('join_requests', requestId);
+      if (existingRequest) {
+        await this.#localRepo.upsert('join_requests', {
+          ...existingRequest,
+          status: 'declined',
+          reviewed_by: profileId,
+          reviewed_at: new Date().toISOString(),
+        } as Record<string, unknown>);
       }
 
       return true;
