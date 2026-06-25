@@ -31,6 +31,17 @@ export const TelemetryEvents = {
   PROPERTY_GENERATION_COMPLETED: 'property_generation_completed',
   PROPERTY_SELECTED: 'property_selected',
   CONDOMINIUM_SELECTED: 'condominium_selected',
+  // Onboarding
+  ONBOARDING_STARTED: 'onboarding_started',
+  ONBOARDING_ROLE_SELECTED: 'onboarding_role_selected',
+  // Invitation codes
+  INVITATION_CODE_COPIED: 'invitation_code_copied',
+  INVITATION_QR_SHOWN: 'invitation_qr_shown',
+  // Join requests
+  JOIN_REQUEST_SUBMITTED: 'join_request_submitted',
+  JOIN_REQUEST_APPROVED: 'join_request_approved',
+  JOIN_REQUEST_DECLINED: 'join_request_declined',
+  JOIN_REQUEST_PROPERTY_ASSIGNED: 'join_request_property_assigned',
 } as const;
 
 export type TelemetryEvent = (typeof TelemetryEvents)[keyof typeof TelemetryEvents];

@@ -12,6 +12,8 @@ import {
 import { MainLayoutComponent } from '@shared/components/layout/main-layout/main-layout.component';
 import { CondominiumJoinRequest } from '@core/services/condominium-join-request/condominium-join-request';
 import { PendingInvitation } from '@core/services/pending-invitation/pending-invitation';
+import { TelemetryService } from '@core/services/telemetry/telemetry.service';
+import { TelemetryEvents } from '@core/services/telemetry/telemetry.types';
 import { firstValueFrom } from 'rxjs';
 
 @Component({
@@ -35,6 +37,7 @@ export class JoinCondominiumPage implements OnInit {
   private pendingInvitation = inject(PendingInvitation);
   private alertController = inject(AlertController);
   private translocoService = inject(TranslocoService);
+  private telemetry = inject(TelemetryService);
 
   invitationCode = signal('');
   loading = signal(false);
@@ -76,6 +79,14 @@ export class JoinCondominiumPage implements OnInit {
 
       // Clear pending invitation after success
       this.pendingInvitation.clearCode();
+
+      try {
+        this.telemetry.track(TelemetryEvents.JOIN_REQUEST_SUBMITTED, {
+          code: code.substring(0, 3) + '***', // Partial code for privacy
+        });
+      } catch (error) {
+        // Telemetry should never break the app
+      }
 
       await this.showSuccessAlert();
       this.router.navigate(['/home']);

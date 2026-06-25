@@ -22,6 +22,8 @@ import {
 import { MainLayoutComponent } from '@shared/components/layout/main-layout/main-layout.component';
 import { CondominiumJoinRequest } from '@core/services/condominium-join-request/condominium-join-request';
 import { ContextService } from '@core/services/context/context.service';
+import { TelemetryService } from '@core/services/telemetry/telemetry.service';
+import { TelemetryEvents } from '@core/services/telemetry/telemetry.types';
 import type { JoinRequestWithProfile } from '@app-types/join-request';
 import type { Property } from '@app-types/property';
 import { firstValueFrom } from 'rxjs';
@@ -53,6 +55,7 @@ export class JoinRequestsPage implements OnInit {
   private joinRequestService = inject(CondominiumJoinRequest);
   contextService = inject(ContextService);
   private translocoService = inject(TranslocoService);
+  private telemetry = inject(TelemetryService);
 
   requests = signal<JoinRequestWithProfile[]>([]);
   loading = signal(true);
@@ -155,6 +158,20 @@ export class JoinRequestsPage implements OnInit {
 
     if (success) {
       this.requests.set(this.requests().filter((r) => r.id !== request.id));
+      
+      try {
+        this.telemetry.track(TelemetryEvents.JOIN_REQUEST_APPROVED, {
+          request_id: request.id,
+          property_id: property.id,
+        });
+        this.telemetry.track(TelemetryEvents.JOIN_REQUEST_PROPERTY_ASSIGNED, {
+          request_id: request.id,
+          property_id: property.id,
+        });
+      } catch (error) {
+        // Telemetry should never break the app
+      }
+
       const message = await firstValueFrom(
         this.translocoService.selectTranslate('joinRequests.approvedSuccess'),
       );
@@ -191,6 +208,15 @@ export class JoinRequestsPage implements OnInit {
     if (success) {
       // Remove from list
       this.requests.set(this.requests().filter((r) => r.id !== requestId));
+      
+      try {
+        this.telemetry.track(TelemetryEvents.JOIN_REQUEST_DECLINED, {
+          request_id: requestId,
+        });
+      } catch (error) {
+        // Telemetry should never break the app
+      }
+
       const message = await firstValueFrom(
         this.translocoService.selectTranslate('joinRequests.declinedSuccess'),
       );

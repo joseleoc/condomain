@@ -18,6 +18,7 @@ import {
   remove,
   trashOutline,
   shieldCheckmarkOutline,
+  createOutline,
   qrCodeOutline,
   close,
   copyOutline,
@@ -60,6 +61,7 @@ export class AppComponent {
       personAddOutline,
       closeCircle,
       checkmarkCircle,
+      createOutline,
     });
   }
 }

@@ -45,7 +45,7 @@
         <div class="invitation-header">
           <span class="invitation-label">{{ 'condominium.hub.invitationCode.title' | transloco }}</span>
           <div class="invitation-actions">
-            <ion-button fill="clear" size="small" (click)="showQrCode.emit()" [title]="'condominium.hub.invitationCode.showQr' | transloco">
+            <ion-button fill="clear" size="small" (click)="onShowQrCode()" [title]="'condominium.hub.invitationCode.showQr' | transloco">
               <ion-icon name="qr-code-outline" slot="icon-only"></ion-icon>
             </ion-button>
           </div>

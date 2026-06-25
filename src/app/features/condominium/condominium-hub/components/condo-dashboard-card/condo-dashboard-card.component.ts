@@ -4,6 +4,8 @@ import { DatePipe } from '@angular/common';
 import { IonCard, IonCardHeader, IonCardTitle, IonCardSubtitle, IonCardContent, IonIcon, IonItem, IonLabel, IonButton } from '@ionic/angular/standalone';
 import { TranslocoModule, TranslocoService } from '@jsverse/transloco';
 import { Toast } from '@core/services/toast/toast';
+import { TelemetryService } from '@core/services/telemetry/telemetry.service';
+import { TelemetryEvents } from '@core/services/telemetry/telemetry.types';
 import type { CondominiumWithRole } from '@app-types/condominium';
 import type { CondominiumInvitationCode } from '@app-types/condominium-invitation-code';
 
@@ -30,6 +32,7 @@ export class CondoDashboardCardComponent {
   private router = inject(Router);
   private toast = inject(Toast);
   private transloco = inject(TranslocoService);
+  private telemetry = inject(TelemetryService);
 
   // --- Inputs ---
   condominium = input.required<CondominiumWithRole>();
@@ -56,8 +59,28 @@ export class CondoDashboardCardComponent {
         message: this.transloco.translate('condominium.hub.invitationCode.copiedToClipboard'),
         duration: 2000,
       });
+
+      try {
+        this.telemetry.track(TelemetryEvents.INVITATION_CODE_COPIED, {
+          condominium_id: this.condominium().id,
+        });
+      } catch (error) {
+        // Telemetry should never break the app
+      }
     }).catch(err => {
       console.error('Failed to copy code:', err);
     });
+  }
+
+  onShowQrCode(): void {
+    this.showQrCode.emit();
+
+    try {
+      this.telemetry.track(TelemetryEvents.INVITATION_QR_SHOWN, {
+        condominium_id: this.condominium().id,
+      });
+    } catch (error) {
+      // Telemetry should never break the app
+    }
   }
 }
