@@ -22,8 +22,8 @@
         {{ "condominium.createProperty.description" | transloco }}
       </p>
       <app-property-form
-        [initialData]="getInitialData()"
-        [structureOptions]="getStructureOptions()"
+        [initialData]="initialData()"
+        [structureOptions]="structureOptions()"
       />
     </ion-content>
 
