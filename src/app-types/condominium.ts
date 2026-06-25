@@ -5,8 +5,6 @@ export interface Condominium {
   address?: string | null;
   /** The avatar id only */
   avatar?: string;
-  /** 6-digit invitation code for owners to join */
-  invitation_code?: string;
   /** Currency ISO Code which references the currencies table */
   currency: string;
   owner_id: string;

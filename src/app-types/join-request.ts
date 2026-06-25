@@ -20,3 +20,4 @@ export interface JoinRequestWithProfile extends JoinRequest {
     avatar: string | null;
   };
 }
+

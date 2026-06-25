@@ -26,23 +26,36 @@ export class CondominiumJoinRequest {
         return { success: false, error: 'unknown' };
       }
 
-      // Find condominium by invitation code
-      const { data: condominium, error: condoError } = await this.client
-        .from('condominiums')
-        .select('id')
-        .eq('invitation_code', invitationCode)
+      // Find invitation code in condominium_invitation_codes table
+      const { data: invitation, error: inviteError } = await this.client
+        .from('condominium_invitation_codes')
+        .select('id, condominium_id, max_uses, uses_count, expires_at, active')
+        .eq('code', invitationCode)
         .is('deleted_at', null)
+        .eq('active', true)
         .single();
 
-      if (condoError || !condominium) {
+      if (inviteError || !invitation) {
         return { success: false, error: 'not_found' };
       }
+
+      // Check if invitation has expired
+      if (invitation.expires_at && new Date(invitation.expires_at) < new Date()) {
+        return { success: false, error: 'not_found' };
+      }
+
+      // Check if max uses has been reached (null = unlimited)
+      if (invitation.max_uses !== null && invitation.uses_count >= invitation.max_uses) {
+        return { success: false, error: 'not_found' };
+      }
+
+      const condominiumId = invitation.condominium_id;
 
       // Check if already has a pending request
       const { data: existingRequest } = await this.client
         .from('condominium_join_requests')
         .select('id')
-        .eq('condominium_id', condominium.id)
+        .eq('condominium_id', condominiumId)
         .eq('profile_id', profileId)
         .eq('status', 'pending')
         .maybeSingle();
@@ -55,7 +68,7 @@ export class CondominiumJoinRequest {
       const { error: insertError } = await this.client
         .from('condominium_join_requests')
         .insert({
-          condominium_id: condominium.id,
+          condominium_id: condominiumId,
           profile_id: profileId,
           invitation_code: invitationCode,
           status: 'pending',
@@ -127,7 +140,7 @@ export class CondominiumJoinRequest {
       // Get the request to know which condominium and profile
       const { data: request, error: fetchError } = await this.client
         .from('condominium_join_requests')
-        .select('condominium_id, profile_id')
+        .select('condominium_id, profile_id, invitation_code')
         .eq('id', requestId)
         .single();
 
@@ -149,6 +162,17 @@ export class CondominiumJoinRequest {
       if (updateError) {
         console.error('Error approving request:', updateError);
         return false;
+      }
+
+      // Increment uses_count on the invitation code
+      const { error: incrementError } = await this.client.rpc(
+        'increment_invitation_uses',
+        { p_code: request.invitation_code }
+      );
+
+      if (incrementError) {
+        console.error('Error incrementing invitation uses:', incrementError);
+        // Don't fail the approval if increment fails - it's a secondary concern
       }
 
       // Get the resident_owner role_id

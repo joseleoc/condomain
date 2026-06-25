@@ -1,4 +1,5 @@
 export * from './condominium';
+export * from './condominium-invitation-code';
 export * from './currency';
 export * from './general';
 export * from './join-request';
