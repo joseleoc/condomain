@@ -8,7 +8,7 @@ create table if not exists public.condominium_join_requests (
     id uuid primary key default gen_random_uuid(),
     condominium_id uuid not null references public.condominiums(id) on delete cascade,
     profile_id uuid not null references public.profiles(id) on delete cascade,
-    invitation_id uuid not null references public.condominium_invitations(id) on delete cascade,
+    invitation_id uuid not null references public.condominium_invitation_codes(id) on delete cascade,
     status text not null default 'pending' check (status in ('pending', 'approved', 'declined')),
     reviewed_by uuid references public.profiles(id) on delete set null,
     reviewed_at timestamptz,

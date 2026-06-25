@@ -1,4 +1,4 @@
-import { Component, inject, signal, computed, effect } from '@angular/core';
+import { Component, inject, signal, effect } from '@angular/core';
 import {
   IonContent,
   IonHeader,
@@ -32,7 +32,9 @@ import {
   HubStructuresAccordionComponent,
   StructureFormModalComponent,
   PropertyFormModalComponent,
+  QrCodeModalComponent,
 } from './components';
+import { CondominiumInvitationCode } from '@app-types/index';
 
 @Component({
   selector: 'app-condominium-hub',
@@ -55,6 +57,7 @@ import {
     HubStructuresAccordionComponent,
     StructureFormModalComponent,
     PropertyFormModalComponent,
+    QrCodeModalComponent,
     IonAlert,
     IonToast,
     IonSkeletonText,
@@ -77,7 +80,7 @@ export class CondominiumHubPage {
 
   userCondominiums = this.contextService.userCondominiums;
   isOnline = this.networkStatus.isOnline;
-
+  condominiumInvitationCode = signal<CondominiumInvitationCode | null>(null);
   // --- UI state ---
   isSwitchingContext = signal(false);
 
@@ -87,6 +90,7 @@ export class CondominiumHubPage {
   isPropertyFormModalOpen = signal(false);
   propertyToEdit = signal<Property | null>(null);
   preSelectedStructureId = signal<string | null>(null);
+  isQrModalOpen = signal(false);
 
   // --- Delete confirmation state ---
   deleteTarget = signal<{
@@ -136,6 +140,25 @@ export class CondominiumHubPage {
       },
       enabled: !!condoId && isAdmin,
       staleTime: 1000 * 30, // 30 seconds
+    };
+  });
+
+  // --- TanStack Query: Invitation Code (admin only) ---
+  invitationCodeQuery = injectQuery(() => {
+    const condoId = this.activeCondominium()?.id;
+    const isAdmin = this.isAdmin();
+    return {
+      queryKey: ['invitation-code', condoId] as const,
+      queryFn: async () => {
+        if (!condoId) return null;
+        const data =
+          await this.joinRequestService.getActiveInvitationCode(condoId);
+        console.log('Fetched invitation code:', data);
+        this.condominiumInvitationCode.set(data);
+        return data;
+      },
+      enabled: !!condoId && isAdmin,
+      staleTime: 1000 * 60 * 5, // 5 minutes
     };
   });
 
@@ -245,6 +268,16 @@ export class CondominiumHubPage {
     this.isPropertyFormModalOpen.set(false);
     this.propertyToEdit.set(null);
     this.preSelectedStructureId.set(null);
+  }
+
+  // --- QR Modal ---
+
+  openQrModal() {
+    this.isQrModalOpen.set(true);
+  }
+
+  closeQrModal() {
+    this.isQrModalOpen.set(false);
   }
 
   // --- Delete flow ---

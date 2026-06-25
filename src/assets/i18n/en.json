@@ -14,7 +14,8 @@
     "uploading": "Uploading...",
     "next": "Next",
     "added": "Added",
-    "total": "Total"
+    "total": "Total",
+    "copiedToClipboard": "Copied to clipboard"
   },
   "general": {
     "changeImage": "Change Image",
@@ -91,6 +92,17 @@
         "saveError": "Failed to save. Please try again.",
         "deleteError": "Failed to delete. Please try again.",
         "contextSwitchError": "Failed to switch condominium. Please try again."
+      },
+      "invitationCode": {
+        "title": "Invitation Code",
+        "maxUses": "Uses",
+        "unlimitedUses": "Unlimited uses",
+        "expires": "Expires",
+        "showQr": "Show QR Code",
+        "copyCode": "Copy Code",
+        "copiedToClipboard": "Code copied to clipboard",
+        "qrTitle": "QR Code",
+        "qrDescription": "Scan this code to join the condominium"
       }
     },
     "wizard": {

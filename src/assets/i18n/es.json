@@ -14,7 +14,8 @@
     "uploading": "Subiendo...",
     "next": "Siguiente",
     "added": "Agregado",
-    "total": "Total"
+    "total": "Total",
+    "copiedToClipboard": "Copiado al portapapeles"
   },
   "general": {
     "changeImage": "Cambiar imagen",
@@ -91,6 +92,17 @@
         "saveError": "Error al guardar. Inténtalo de nuevo.",
         "deleteError": "Error al eliminar. Inténtalo de nuevo.",
         "contextSwitchError": "Error al cambiar de condominio. Inténtalo de nuevo."
+      },
+      "invitationCode": {
+        "title": "Código de Invitación",
+        "maxUses": "Usos",
+        "unlimitedUses": "Usos ilimitados",
+        "expires": "Expira",
+        "showQr": "Mostrar Código QR",
+        "copyCode": "Copiar Código",
+        "copiedToClipboard": "Código copiado al portapapeles",
+        "qrTitle": "Código QR",
+        "qrDescription": "Escanea este código para unirte al condominio"
       }
     },
     "wizard": {

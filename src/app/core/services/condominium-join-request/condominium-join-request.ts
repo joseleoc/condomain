@@ -3,6 +3,7 @@ import { Supabase } from '../supabase/supabase';
 import { Profile } from '../profile/profile';
 import { Roles } from '../roles/roles';
 import type { JoinRequestWithProfile, JoinRequestStatus } from '@app-types/join-request';
+import type { CondominiumInvitationCode } from '@app-types/condominium-invitation-code';
 
 export interface JoinRequestResult {
   success: boolean;
@@ -40,12 +41,18 @@ export class CondominiumJoinRequest {
       }
 
       // Check if invitation has expired
-      if (invitation.expires_at && new Date(invitation.expires_at) < new Date()) {
+      if (
+        invitation.expires_at &&
+        new Date(invitation.expires_at) < new Date()
+      ) {
         return { success: false, error: 'not_found' };
       }
 
       // Check if max uses has been reached (null = unlimited)
-      if (invitation.max_uses !== null && invitation.uses_count >= invitation.max_uses) {
+      if (
+        invitation.max_uses !== null &&
+        invitation.uses_count >= invitation.max_uses
+      ) {
         return { success: false, error: 'not_found' };
       }
 
@@ -70,7 +77,8 @@ export class CondominiumJoinRequest {
         .insert({
           condominium_id: condominiumId,
           profile_id: profileId,
-          invitation_code: invitationCode,
+          created_by: profileId,
+          invitation_id: invitation.id,
           status: 'pending',
         });
 
@@ -88,14 +96,18 @@ export class CondominiumJoinRequest {
 
   // --- Admin Methods ---
 
-  async fetchPendingRequests(condominiumId: string): Promise<JoinRequestWithProfile[]> {
+  async fetchPendingRequests(
+    condominiumId: string,
+  ): Promise<JoinRequestWithProfile[]> {
     try {
       const { data, error } = await this.client
         .from('condominium_join_requests')
-        .select(`
+        .select(
+          `
           *,
           profiles:profile_id (id, name, email, avatar)
-        `)
+        `,
+        )
         .eq('condominium_id', condominiumId)
         .eq('status', 'pending')
         .order('created_at', { ascending: false });
@@ -167,7 +179,7 @@ export class CondominiumJoinRequest {
       // Increment uses_count on the invitation code
       const { error: incrementError } = await this.client.rpc(
         'increment_invitation_uses',
-        { p_code: request.invitation_code }
+        { p_code: request.invitation_code },
       );
 
       if (incrementError) {
@@ -192,7 +204,10 @@ export class CondominiumJoinRequest {
         });
 
       if (insertError) {
-        console.error('Error adding profile to condominium after approval:', insertError);
+        console.error(
+          'Error adding profile to condominium after approval:',
+          insertError,
+        );
         return false;
       }
 
@@ -226,6 +241,32 @@ export class CondominiumJoinRequest {
     } catch (err) {
       console.error('Error in declineRequest:', err);
       return false;
+    }
+  }
+
+  async getActiveInvitationCode(
+    condominiumId: string,
+  ): Promise<CondominiumInvitationCode | null> {
+    try {
+      const { data, error } = await this.client
+        .from('condominium_invitation_codes')
+        .select('*')
+        .eq('condominium_id', condominiumId)
+        .eq('active', true)
+        .is('deleted_at', null)
+        .order('created_at', { ascending: false })
+        .limit(1)
+        .maybeSingle();
+
+      if (error) {
+        console.error('Error fetching invitation code:', error);
+        return null;
+      }
+
+      return data;
+    } catch (err) {
+      console.error('Error in getActiveInvitationCode:', err);
+      return null;
     }
   }
 }

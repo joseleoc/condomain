@@ -1,0 +1,47 @@
+.qr-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 32px 16px;
+  text-align: center;
+}
+
+.qr-image {
+  width: 300px;
+  height: 300px;
+  margin-bottom: 24px;
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.qr-description {
+  font-size: 14px;
+  color: var(--ion-color-medium);
+  margin-bottom: 16px;
+}
+
+.url-display {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 1rem;
+  background: var(--ion-card-background);
+  padding: 12px 16px;
+  border-radius: 8px;
+  word-break: break-all;
+  font-size: 12px;
+  color: var(--ion-color-medium);
+  max-width: 100%;
+}
+
+.url-text {
+  font-family: monospace;
+}
+
+.loading {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 300px;
+}

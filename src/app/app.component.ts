@@ -18,6 +18,12 @@ import {
   remove,
   trashOutline,
   shieldCheckmarkOutline,
+  qrCodeOutline,
+  close,
+  copyOutline,
+  personAddOutline,
+  closeCircle,
+  checkmarkCircle,
 } from 'ionicons/icons';
 import { PendingInvitation } from '@core/services/pending-invitation/pending-invitation';
 
@@ -48,6 +54,12 @@ export class AppComponent {
       ellipsisHorizontalCircleOutline,
       homeOutline,
       shieldCheckmarkOutline,
+      qrCodeOutline,
+      close,
+      copyOutline,
+      personAddOutline,
+      closeCircle,
+      checkmarkCircle,
     });
   }
 }

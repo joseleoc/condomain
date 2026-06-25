@@ -27,15 +27,44 @@
         </ion-label>
       </ion-item>
 
-      @if (pendingRequestsCount() > 0) {
-        <ion-item lines="none" class="stat-item pending-requests">
-          <ion-icon name="person-add-outline" slot="start" color="warning"></ion-icon>
+      @if (isAdmin() && pendingRequestsCount() > 0) {
+        <button class="stat-item pending-requests clickable" (click)="goToPendingRequests()" type="button">
+          <ion-icon name="person-add-outline" color="warning"></ion-icon>
           <ion-label>
             <h2>{{ pendingRequestsCount() }}</h2>
             <p>{{ 'condominium.hub.dashboard.pendingRequests' | transloco }}</p>
           </ion-label>
-        </ion-item>
+          <ion-icon name="chevron-forward-outline" class="chevron-icon"></ion-icon>
+        </button>
       }
     </div>
+
+    @if (isAdmin() && invitationCode(); as code) {
+      <div class="divider"></div>
+      <div class="invitation-section">
+        <div class="invitation-header">
+          <span class="invitation-label">{{ 'condominium.hub.invitationCode.title' | transloco }}</span>
+          <div class="invitation-actions">
+            <ion-button fill="clear" size="small" (click)="showQrCode.emit()" [title]="'condominium.hub.invitationCode.showQr' | transloco">
+              <ion-icon name="qr-code-outline" slot="icon-only"></ion-icon>
+            </ion-button>
+          </div>
+        </div>
+        <div class="code-display">
+          <div class="code-value">{{ code.code }}</div>
+          <ion-button fill="clear" size="small" (click)="copyToClipboard()" [title]="'condominium.hub.invitationCode.copyCode' | transloco">
+            <ion-icon name="copy-outline" slot="icon-only"></ion-icon>
+          </ion-button>
+        </div>
+        <div class="code-info">
+          @if (code.max_uses !== null) {
+            <span>{{ 'condominium.hub.invitationCode.maxUses' | transloco }}: {{ code.uses_count }}/{{ code.max_uses }}</span>
+          }
+          @if (code.expires_at) {
+            <span>{{ 'condominium.hub.invitationCode.expires' | transloco }}: {{ code.expires_at | date:'short' }}</span>
+          }
+        </div>
+      </div>
+    }
   </ion-card-content>
 </ion-card>
