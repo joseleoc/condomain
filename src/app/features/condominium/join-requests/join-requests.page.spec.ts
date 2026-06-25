@@ -1,11 +1,12 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { Router } from '@angular/router';
-import { of } from 'rxjs';
+import { of, BehaviorSubject } from 'rxjs';
 import { SharedTestingModule } from '@testing/shared-testing.module';
 import { JoinRequestsPage } from './join-requests.page';
 import { CondominiumJoinRequest } from '@core/services/condominium-join-request/condominium-join-request';
 import { ContextService } from '@core/services/context/context.service';
 import { TelemetryService } from '@core/services/telemetry/telemetry.service';
+import { QueryClient } from '@tanstack/angular-query-experimental';
 import type { JoinRequestWithProfile } from '@app-types/join-request';
 
 describe('JoinRequestsPage', () => {
@@ -36,9 +37,40 @@ describe('JoinRequestsPage', () => {
     },
   ];
 
+  let pendingRequestsSubject: BehaviorSubject<JoinRequestWithProfile[]>;
+  let pendingRequestsCountSubject: BehaviorSubject<number>;
+
   beforeEach(async () => {
+    pendingRequestsSubject = new BehaviorSubject<JoinRequestWithProfile[]>([]);
+    pendingRequestsCountSubject = new BehaviorSubject<number>(0);
+
     await TestBed.configureTestingModule({
       imports: [JoinRequestsPage, SharedTestingModule],
+      providers: [
+        QueryClient,
+        {
+          provide: CondominiumJoinRequest,
+          useValue: {
+            pendingRequests$: pendingRequestsSubject.asObservable(),
+            pendingRequestsCount$: pendingRequestsCountSubject.asObservable(),
+            loadPendingRequests: jasmine.createSpy('loadPendingRequests').and.callFake((condoId: string) => {
+              pendingRequestsSubject.next(mockRequests);
+              pendingRequestsCountSubject.next(mockRequests.length);
+              return Promise.resolve();
+            }),
+            approveRequestWithProperty: jasmine.createSpy('approveRequestWithProperty').and.callFake(() => {
+              pendingRequestsSubject.next([]);
+              pendingRequestsCountSubject.next(0);
+              return Promise.resolve(true);
+            }),
+            declineRequest: jasmine.createSpy('declineRequest').and.callFake(() => {
+              pendingRequestsSubject.next([]);
+              pendingRequestsCountSubject.next(0);
+              return Promise.resolve(true);
+            }),
+          },
+        },
+      ],
     }).compileComponents();
 
     router = TestBed.inject(Router);
@@ -49,12 +81,6 @@ describe('JoinRequestsPage', () => {
     fixture = TestBed.createComponent(JoinRequestsPage);
     component = fixture.componentInstance;
 
-    // Mock contextService
-    spyOn(contextService, 'activeCondominium').and.returnValue({
-      id: 'condo-1',
-      name: 'Test Condo',
-    } as any);
-
     fixture.detectChanges();
   });
 
@@ -64,6 +90,10 @@ describe('JoinRequestsPage', () => {
 
   describe('ngOnInit', () => {
     it('should load requests on init', () => {
+      spyOn(contextService, 'activeCondominium').and.returnValue({
+        id: 'condo-1',
+        name: 'Test Condo',
+      } as any);
       spyOn(component, 'loadRequests');
       component.ngOnInit();
       expect(component.loadRequests).toHaveBeenCalled();
@@ -71,14 +101,14 @@ describe('JoinRequestsPage', () => {
   });
 
   describe('loadRequests', () => {
-    it('should fetch pending requests', async () => {
-      spyOn(joinRequestService, 'fetchPendingRequests').and.returnValue(
-        Promise.resolve(mockRequests)
-      );
-
+    it('should load pending requests', async () => {
+      spyOn(contextService, 'activeCondominium').and.returnValue({
+        id: 'condo-1',
+        name: 'Test Condo',
+      } as any);
       await component.loadRequests();
 
-      expect(joinRequestService.fetchPendingRequests).toHaveBeenCalledWith('condo-1');
+      expect(joinRequestService.loadPendingRequests).toHaveBeenCalledWith('condo-1');
       expect(component.requests()).toEqual(mockRequests);
       expect(component.loading()).toBeFalse();
     });
@@ -95,7 +125,8 @@ describe('JoinRequestsPage', () => {
 
   describe('confirmAction', () => {
     it('should open assign property modal for approval', async () => {
-      component.requests.set(mockRequests);
+      pendingRequestsSubject.next(mockRequests);
+      fixture.detectChanges();
 
       await component.confirmAction('request-1', 'approve');
 
@@ -104,7 +135,8 @@ describe('JoinRequestsPage', () => {
     });
 
     it('should open alert for decline', async () => {
-      component.requests.set(mockRequests);
+      pendingRequestsSubject.next(mockRequests);
+      fixture.detectChanges();
 
       await component.confirmAction('request-1', 'decline');
 
@@ -116,10 +148,9 @@ describe('JoinRequestsPage', () => {
   describe('handlePropertyAssigned', () => {
     it('should approve request with property', async () => {
       const mockProperty = { id: 'property-1', name: 'Apt 101' } as any;
+      pendingRequestsSubject.next(mockRequests);
       component.pendingApprovalRequest.set(mockRequests[0]);
-      spyOn(joinRequestService, 'approveRequestWithProperty').and.returnValue(
-        Promise.resolve(true)
-      );
+      fixture.detectChanges();
 
       await component.handlePropertyAssigned(mockProperty);
 
@@ -133,24 +164,22 @@ describe('JoinRequestsPage', () => {
 
     it('should remove request from list on success', async () => {
       const mockProperty = { id: 'property-1', name: 'Apt 101' } as any;
-      component.requests.set(mockRequests);
+      pendingRequestsSubject.next(mockRequests);
       component.pendingApprovalRequest.set(mockRequests[0]);
-      spyOn(joinRequestService, 'approveRequestWithProperty').and.returnValue(
-        Promise.resolve(true)
-      );
+      fixture.detectChanges();
 
       await component.handlePropertyAssigned(mockProperty);
 
+      // The service mock already updates the subject to empty array
       expect(component.requests().length).toBe(0);
     });
 
     it('should track telemetry on success', async () => {
       const mockProperty = { id: 'property-1', name: 'Apt 101' } as any;
+      pendingRequestsSubject.next(mockRequests);
       component.pendingApprovalRequest.set(mockRequests[0]);
-      spyOn(joinRequestService, 'approveRequestWithProperty').and.returnValue(
-        Promise.resolve(true)
-      );
       spyOn(telemetryService, 'track');
+      fixture.detectChanges();
 
       await component.handlePropertyAssigned(mockProperty);
 
@@ -166,26 +195,27 @@ describe('JoinRequestsPage', () => {
 
     it('should show error toast on failure', async () => {
       const mockProperty = { id: 'property-1', name: 'Apt 101' } as any;
+      pendingRequestsSubject.next(mockRequests);
       component.pendingApprovalRequest.set(mockRequests[0]);
-      spyOn(joinRequestService, 'approveRequestWithProperty').and.returnValue(
-        Promise.resolve(false)
-      );
+      (joinRequestService.approveRequestWithProperty as jasmine.Spy).and.returnValue(Promise.resolve(false));
+      fixture.detectChanges();
 
       await component.handlePropertyAssigned(mockProperty);
 
       expect(component.toastOpen()).toBeTrue();
-      expect(component.toastMessage()).toContain('error');
+      expect(component.toastMessage()).toBe('joinRequests.actionError');
     });
   });
 
   describe('handleAlertConfirm', () => {
     it('should decline request', async () => {
+      pendingRequestsSubject.next(mockRequests);
       component.alertData.set({
         header: 'Decline',
         message: 'Are you sure?',
         requestId: 'request-1:decline',
       });
-      spyOn(joinRequestService, 'declineRequest').and.returnValue(Promise.resolve(true));
+      fixture.detectChanges();
 
       await component.handleAlertConfirm('decline');
 
@@ -193,27 +223,29 @@ describe('JoinRequestsPage', () => {
     });
 
     it('should remove request from list on success', async () => {
-      component.requests.set(mockRequests);
+      pendingRequestsSubject.next(mockRequests);
       component.alertData.set({
         header: 'Decline',
         message: 'Are you sure?',
         requestId: 'request-1:decline',
       });
-      spyOn(joinRequestService, 'declineRequest').and.returnValue(Promise.resolve(true));
+      fixture.detectChanges();
 
       await component.handleAlertConfirm('decline');
 
+      // The service mock already updates the subject to empty array
       expect(component.requests().length).toBe(0);
     });
 
     it('should track telemetry on success', async () => {
+      pendingRequestsSubject.next(mockRequests);
       component.alertData.set({
         header: 'Decline',
         message: 'Are you sure?',
         requestId: 'request-1:decline',
       });
-      spyOn(joinRequestService, 'declineRequest').and.returnValue(Promise.resolve(true));
       spyOn(telemetryService, 'track');
+      fixture.detectChanges();
 
       await component.handleAlertConfirm('decline');
 

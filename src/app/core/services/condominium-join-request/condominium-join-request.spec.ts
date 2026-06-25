@@ -4,6 +4,9 @@ import { CondominiumJoinRequest } from './condominium-join-request';
 import { Supabase } from '../supabase/supabase';
 import { Profile } from '../profile/profile';
 import { Roles } from '../roles/roles';
+import { NetworkStatusService } from '../network-status.service';
+import { LocalRepository } from '../sync/local-repository';
+import { SyncService } from '../sync/sync-service';
 import { of, throwError } from 'rxjs';
 import type { JoinRequestStatus } from '@app-types/join-request';
 
@@ -12,6 +15,9 @@ describe('CondominiumJoinRequest', () => {
   let supabaseMock: any;
   let profileMock: any;
   let rolesMock: any;
+  let networkStatusMock: any;
+  let localRepoMock: any;
+  let syncServiceMock: any;
 
   beforeEach(() => {
     supabaseMock = {
@@ -44,12 +50,29 @@ describe('CondominiumJoinRequest', () => {
       getRoleIdByName: jasmine.createSpy('getRoleIdByName').and.returnValue('test-role-id'),
     };
 
+    networkStatusMock = {
+      isOnline: jasmine.createSpy('isOnline').and.returnValue(true),
+    };
+
+    localRepoMock = {
+      upsert: jasmine.createSpy('upsert').and.returnValue(Promise.resolve()),
+      getById: jasmine.createSpy('getById').and.returnValue(Promise.resolve(null)),
+      getEntitiesByType: jasmine.createSpy('getEntitiesByType').and.returnValue(Promise.resolve([])),
+    };
+
+    syncServiceMock = {
+      enqueueMutation: jasmine.createSpy('enqueueMutation').and.returnValue(Promise.resolve()),
+    };
+
     TestBed.configureTestingModule({
       imports: [SharedTestingModule],
       providers: [
         { provide: Supabase, useValue: supabaseMock },
         { provide: Profile, useValue: profileMock },
         { provide: Roles, useValue: rolesMock },
+        { provide: NetworkStatusService, useValue: networkStatusMock },
+        { provide: LocalRepository, useValue: localRepoMock },
+        { provide: SyncService, useValue: syncServiceMock },
       ],
     });
 
