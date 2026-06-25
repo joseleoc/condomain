@@ -355,7 +355,10 @@ describe('CondominiumJoinRequest', () => {
       const mockRequest = {
         condominium_id: 'condo-id',
         profile_id: 'profile-id',
-        invitation_code: '123456',
+        invitation_id: 'invitation-id',
+        condominium_invitation_codes: {
+          code: '123456'
+        }
       };
 
       supabaseMock.client.from = jasmine.createSpy('from').and.callFake((table: string) => {

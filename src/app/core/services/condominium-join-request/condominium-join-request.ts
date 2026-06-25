@@ -149,10 +149,15 @@ export class CondominiumJoinRequest {
       const profileId = this.profileService.profile$.getValue()?.id;
       if (!profileId) return false;
 
-      // Get the request to know which condominium and profile
+      // Get the request with invitation code
       const { data: request, error: fetchError } = await this.client
         .from('condominium_join_requests')
-        .select('condominium_id, profile_id, invitation_code')
+        .select(`
+          condominium_id,
+          profile_id,
+          invitation_id,
+          condominium_invitation_codes!inner(code)
+        `)
         .eq('id', requestId)
         .single();
 
@@ -177,14 +182,17 @@ export class CondominiumJoinRequest {
       }
 
       // Increment uses_count on the invitation code
-      const { error: incrementError } = await this.client.rpc(
-        'increment_invitation_uses',
-        { p_code: request.invitation_code },
-      );
+      const invitationCode = (request as any).condominium_invitation_codes?.code;
+      if (invitationCode) {
+        const { error: incrementError } = await this.client.rpc(
+          'increment_invitation_uses',
+          { p_code: invitationCode },
+        );
 
-      if (incrementError) {
-        console.error('Error incrementing invitation uses:', incrementError);
-        // Don't fail the approval if increment fails - it's a secondary concern
+        if (incrementError) {
+          console.error('Error incrementing invitation uses:', incrementError);
+          // Don't fail the approval if increment fails - it's a secondary concern
+        }
       }
 
       // Get the resident_owner role_id
@@ -226,10 +234,15 @@ export class CondominiumJoinRequest {
       const profileId = this.profileService.profile$.getValue()?.id;
       if (!profileId) return false;
 
-      // Get the request to know which condominium and profile
+      // Get the request with invitation code
       const { data: request, error: fetchError } = await this.client
         .from('condominium_join_requests')
-        .select('condominium_id, profile_id, invitation_code')
+        .select(`
+          condominium_id,
+          profile_id,
+          invitation_id,
+          condominium_invitation_codes!inner(code)
+        `)
         .eq('id', requestId)
         .single();
 
@@ -254,14 +267,17 @@ export class CondominiumJoinRequest {
       }
 
       // Increment uses_count on the invitation code
-      const { error: incrementError } = await this.client.rpc(
-        'increment_invitation_uses',
-        { p_code: request.invitation_code }
-      );
+      const invitationCode = (request as any).condominium_invitation_codes?.code;
+      if (invitationCode) {
+        const { error: incrementError } = await this.client.rpc(
+          'increment_invitation_uses',
+          { p_code: invitationCode }
+        );
 
-      if (incrementError) {
-        console.error('Error incrementing invitation uses:', incrementError);
-        // Don't fail the approval if increment fails - it's a secondary concern
+        if (incrementError) {
+          console.error('Error incrementing invitation uses:', incrementError);
+          // Don't fail the approval if increment fails - it's a secondary concern
+        }
       }
 
       // Get the resident_owner role_id
