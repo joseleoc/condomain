@@ -1,12 +1,8 @@
 ion-modal {
-  --height: auto;
+  --height: 100%;
   --max-height: 90vh;
   --border-radius: 16px 16px 0 0;
-}
-
-ion-content {
-  --padding-top: 1rem;
-  --padding-bottom: 1rem;
+  --backdrop-opacity: 0.5;
 }
 
 @media (min-width: 768px) {
