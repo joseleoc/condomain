@@ -384,6 +384,13 @@
     "declineMessage": "Decline {{name}}'s request to join the condominium?",
     "approvedSuccess": "Request approved successfully",
     "declinedSuccess": "Request declined successfully",
-    "actionError": "Error processing request. Please try again."
+    "actionError": "Error processing request. Please try again.",
+    "assignProperty": {
+      "title": "Assign Property",
+      "assigningTo": "Assigning to:",
+      "selectProperty": "Select Property",
+      "propertyPlaceholder": "Choose a property",
+      "assignButton": "Assign & Approve"
+    }
   }
 }

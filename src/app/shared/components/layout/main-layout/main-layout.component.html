@@ -35,7 +35,7 @@
     <ion-toolbar>
       <ion-buttons slot="start">
         @if (showBackButton()) {
-          <ion-back-button defaultHref="/"></ion-back-button>
+          <ion-back-button [defaultHref]="defaultHref() || '/'"></ion-back-button>
         } @else {
           <ion-menu-button>
             <ion-icon name="menu" slot="icon-only"></ion-icon>

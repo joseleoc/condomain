@@ -218,6 +218,81 @@ export class CondominiumJoinRequest {
     }
   }
 
+  async approveRequestWithProperty(
+    requestId: string,
+    propertyId: string,
+  ): Promise<boolean> {
+    try {
+      const profileId = this.profileService.profile$.getValue()?.id;
+      if (!profileId) return false;
+
+      // Get the request to know which condominium and profile
+      const { data: request, error: fetchError } = await this.client
+        .from('condominium_join_requests')
+        .select('condominium_id, profile_id, invitation_code')
+        .eq('id', requestId)
+        .single();
+
+      if (fetchError || !request) {
+        console.error('Error fetching request:', fetchError);
+        return false;
+      }
+
+      // Update request status
+      const { error: updateError } = await this.client
+        .from('condominium_join_requests')
+        .update({
+          status: 'approved' as JoinRequestStatus,
+          reviewed_by: profileId,
+          reviewed_at: new Date().toISOString(),
+        })
+        .eq('id', requestId);
+
+      if (updateError) {
+        console.error('Error approving request:', updateError);
+        return false;
+      }
+
+      // Increment uses_count on the invitation code
+      const { error: incrementError } = await this.client.rpc(
+        'increment_invitation_uses',
+        { p_code: request.invitation_code }
+      );
+
+      if (incrementError) {
+        console.error('Error incrementing invitation uses:', incrementError);
+        // Don't fail the approval if increment fails - it's a secondary concern
+      }
+
+      // Get the resident_owner role_id
+      const roleId = this.rolesService.getRoleIdByName('resident_owner');
+      if (!roleId) {
+        console.error('resident_owner role not found');
+        return false;
+      }
+
+      // Add user to condominium as resident_owner
+      const { error: insertError } = await this.client
+        .from('profile_condominiums')
+        .insert({
+          profile_id: request.profile_id,
+          condominium_id: request.condominium_id,
+          role_id: roleId,
+          property_id: propertyId,
+        });
+
+      if (insertError) {
+        console.error('Error adding profile to condominium after approval:', insertError);
+        return false;
+      }
+
+      return true;
+    } catch (err) {
+      console.error('Error in approveRequestWithProperty:', err);
+      return false;
+    }
+  }
+
   async declineRequest(requestId: string): Promise<boolean> {
     try {
       const profileId = this.profileService.profile$.getValue()?.id;

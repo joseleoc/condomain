@@ -46,6 +46,7 @@ export class MainLayoutComponent {
 
   title = input<string>();
   showBackButton = input<boolean>();
+  defaultHref = input<string>();
 
   logOut() {
     this.authService.signOut();

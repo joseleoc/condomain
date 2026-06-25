@@ -1,0 +1,43 @@
+@if (loading()) {
+  <div class="loading-container">
+    <ion-spinner name="crescent"></ion-spinner>
+  </div>
+} @else {
+  <form [formGroup]="form" (ngSubmit)="submit()" class="assign-property-form">
+    @if (userProfile(); as profile) {
+      <div class="user-info">
+        <h3>{{ 'joinRequests.assignProperty.assigningTo' | transloco }}</h3>
+        <p class="user-name">{{ profile.name || profile.email }}</p>
+        @if (profile.name && profile.email) {
+          <p class="user-email">{{ profile.email }}</p>
+        }
+      </div>
+    }
+
+    <ion-item class="property-select-item">
+      <ion-label position="stacked">
+        {{ 'joinRequests.assignProperty.selectProperty' | transloco }}
+      </ion-label>
+      <ion-select
+        formControlName="propertyId"
+        [placeholder]="'joinRequests.assignProperty.propertyPlaceholder' | transloco"
+        interface="popover"
+      >
+        @for (property of properties(); track property.id) {
+          <ion-select-option [value]="property.id">
+            {{ getPropertyDisplayName(property) }}
+          </ion-select-option>
+        }
+      </ion-select>
+    </ion-item>
+
+    <div class="form-actions">
+      <ion-button fill="clear" (click)="cancel()" type="button">
+        {{ 'common.cancel' | transloco }}
+      </ion-button>
+      <ion-button type="submit" [disabled]="!form.valid">
+        {{ 'joinRequests.assignProperty.assignButton' | transloco }}
+      </ion-button>
+    </div>
+  </form>
+}

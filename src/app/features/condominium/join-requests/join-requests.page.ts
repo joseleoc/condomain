@@ -23,7 +23,9 @@ import { MainLayoutComponent } from '@shared/components/layout/main-layout/main-
 import { CondominiumJoinRequest } from '@core/services/condominium-join-request/condominium-join-request';
 import { ContextService } from '@core/services/context/context.service';
 import type { JoinRequestWithProfile } from '@app-types/join-request';
+import type { Property } from '@app-types/property';
 import { firstValueFrom } from 'rxjs';
+import { AssignPropertyModalComponent } from './components/assign-property-modal/assign-property-modal.component';
 
 @Component({
   selector: 'app-join-requests',
@@ -33,11 +35,6 @@ import { firstValueFrom } from 'rxjs';
     TranslocoPipe,
     DatePipe,
     IonContent,
-    IonHeader,
-    IonToolbar,
-    IonTitle,
-    IonButtons,
-    IonBackButton,
     IonButton,
     IonIcon,
     IonList,
@@ -48,27 +45,41 @@ import { firstValueFrom } from 'rxjs';
     IonAlert,
     IonToast,
     MainLayoutComponent,
+    AssignPropertyModalComponent,
   ],
 })
 export class JoinRequestsPage implements OnInit {
   private router = inject(Router);
   private joinRequestService = inject(CondominiumJoinRequest);
-  private contextService = inject(ContextService);
+  contextService = inject(ContextService);
   private translocoService = inject(TranslocoService);
 
   requests = signal<JoinRequestWithProfile[]>([]);
   loading = signal(true);
   processingId = signal<string | null>(null);
   alertOpen = signal(false);
-  alertData = signal<{ header: string; message: string; requestId: string } | null>(null);
+  alertData = signal<{
+    header: string;
+    message: string;
+    requestId: string;
+  } | null>(null);
   toastOpen = signal(false);
   toastMessage = signal('');
+  assignPropertyModalOpen = signal(false);
+  pendingApprovalRequest = signal<JoinRequestWithProfile | null>(null);
 
   get alertButtons() {
     return [
-      { text: this.translocoService.translate('common.cancel'), role: 'cancel', handler: () => this.handleAlertCancel() },
-      { text: this.translocoService.translate('joinRequests.approve'), role: 'confirm', handler: () => this.handleAlertConfirm('approve') },
-      { text: this.translocoService.translate('joinRequests.decline'), role: 'decline', handler: () => this.handleAlertConfirm('decline') }
+      {
+        text: this.translocoService.translate('common.cancel'),
+        role: 'cancel',
+        handler: () => this.handleAlertCancel(),
+      },
+      {
+        text: this.translocoService.translate('joinRequests.decline'),
+        role: 'confirm',
+        handler: () => this.handleAlertConfirm('decline'),
+      },
     ];
   }
 
@@ -89,32 +100,81 @@ export class JoinRequestsPage implements OnInit {
     this.loading.set(false);
   }
 
-  async confirmAction(requestId: string, action: 'approve' | 'decline'): Promise<void> {
-    const request = this.requests().find(r => r.id === requestId);
+  async confirmAction(
+    requestId: string,
+    action: 'approve' | 'decline',
+  ): Promise<void> {
+    const request = this.requests().find((r) => r.id === requestId);
     if (!request) return;
 
-    const userName = request.profiles?.name || request.profiles?.email || 'Unknown';
-    const isApprove = action === 'approve';
+    if (action === 'approve') {
+      // Show assign property modal for approval
+      this.pendingApprovalRequest.set(request);
+      this.assignPropertyModalOpen.set(true);
+      return;
+    }
 
-    const [header, message, confirmText, cancelText] = await Promise.all([
-      firstValueFrom(this.translocoService.selectTranslate(
-        isApprove ? 'joinRequests.approveTitle' : 'joinRequests.declineTitle'
-      )),
-      firstValueFrom(this.translocoService.selectTranslate(
-        isApprove ? 'joinRequests.approveMessage' : 'joinRequests.declineMessage',
-        { name: userName }
-      )),
-      firstValueFrom(this.translocoService.selectTranslate(
-        isApprove ? 'joinRequests.approve' : 'joinRequests.decline'
-      )),
-      firstValueFrom(this.translocoService.selectTranslate('common.cancel')),
+    // For decline, show confirmation alert
+    const userName =
+      request.profiles?.name || request.profiles?.email || 'Unknown';
+
+    const [header, message] = await Promise.all([
+      firstValueFrom(
+        this.translocoService.selectTranslate('joinRequests.declineTitle'),
+      ),
+      firstValueFrom(
+        this.translocoService.selectTranslate(
+          'joinRequests.declineMessage',
+          { name: userName },
+        ),
+      ),
     ]);
 
-    this.alertData.set({ header, message, requestId: `${requestId}:${action}` });
+    this.alertData.set({
+      header,
+      message,
+      requestId: `${requestId}:decline`,
+    });
     this.alertOpen.set(true);
   }
 
-  async handleAlertConfirm(action: 'approve' | 'decline'): Promise<void> {
+  async handlePropertyAssigned(property: Property): Promise<void> {
+    const request = this.pendingApprovalRequest();
+    if (!request) return;
+
+    this.assignPropertyModalOpen.set(false);
+    this.processingId.set(request.id);
+
+    const success = await this.joinRequestService.approveRequestWithProperty(
+      request.id,
+      property.id,
+    );
+
+    this.processingId.set(null);
+    this.pendingApprovalRequest.set(null);
+
+    if (success) {
+      this.requests.set(this.requests().filter((r) => r.id !== request.id));
+      const message = await firstValueFrom(
+        this.translocoService.selectTranslate('joinRequests.approvedSuccess'),
+      );
+      this.toastMessage.set(message);
+      this.toastOpen.set(true);
+    } else {
+      const message = await firstValueFrom(
+        this.translocoService.selectTranslate('joinRequests.actionError'),
+      );
+      this.toastMessage.set(message);
+      this.toastOpen.set(true);
+    }
+  }
+
+  handleAssignPropertyCancelled(): void {
+    this.assignPropertyModalOpen.set(false);
+    this.pendingApprovalRequest.set(null);
+  }
+
+  async handleAlertConfirm(action: 'decline'): Promise<void> {
     const data = this.alertData();
     if (!data) return;
 
@@ -124,24 +184,22 @@ export class JoinRequestsPage implements OnInit {
     this.alertOpen.set(false);
     this.processingId.set(requestId);
 
-    let success = false;
-    if (action === 'approve') {
-      success = await this.joinRequestService.approveRequest(requestId);
-    } else {
-      success = await this.joinRequestService.declineRequest(requestId);
-    }
+    const success = await this.joinRequestService.declineRequest(requestId);
 
     this.processingId.set(null);
 
     if (success) {
       // Remove from list
-      this.requests.set(this.requests().filter(r => r.id !== requestId));
-      const messageKey = action === 'approve' ? 'joinRequests.approvedSuccess' : 'joinRequests.declinedSuccess';
-      const message = await firstValueFrom(this.translocoService.selectTranslate(messageKey));
+      this.requests.set(this.requests().filter((r) => r.id !== requestId));
+      const message = await firstValueFrom(
+        this.translocoService.selectTranslate('joinRequests.declinedSuccess'),
+      );
       this.toastMessage.set(message);
       this.toastOpen.set(true);
     } else {
-      const message = await firstValueFrom(this.translocoService.selectTranslate('joinRequests.actionError'));
+      const message = await firstValueFrom(
+        this.translocoService.selectTranslate('joinRequests.actionError'),
+      );
       this.toastMessage.set(message);
       this.toastOpen.set(true);
     }
