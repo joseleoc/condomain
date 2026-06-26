@@ -173,6 +173,7 @@ pending → voided
 | **FinancialTransaction** | Cabecera del evento económico | id, condominium_id, actor_id, type, status, description, reference_number, payment_method, original_currency, exchange_rate, transaction_date, created_by |
 | **FinancialTransactionDetail** | Líneas del asiento contable | id, transaction_id, account_id, entry_type (debit/credit), amount_original_currency, amount_base_currency |
 | **AccountMonthlyBalance** | Snapshot de saldo mensual | id, account_id, year, month, initial_balance, total_debits, total_credits, final_balance |
+| **AccountAnnualBalance** | Snapshot de saldo anual | id, account_id, year, initial_balance, total_debits, total_credits, final_balance, is_closed, closed_at |
 | **Party** (futuro) | Actores externos (propietarios, proveedores) | id, identification, contact_info, role |
 
 ### 3.2 Relaciones
@@ -326,7 +327,35 @@ CREATE TABLE account_monthly_balances (
 - `initial_balance + total_debits - total_credits = final_balance`: Esta relación se valida a nivel de servicio. El `final_balance` del mes anterior es el `initial_balance` del mes siguiente.
 - `year >= 2020`: Validación de rango razonable. No esperamos transacciones antes de 2020.
 
-### 4.5 Índices de Rendimiento
+### 4.5 Tabla: `account_annual_balances`
+
+```sql
+CREATE TABLE account_annual_balances (
+  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  account_id UUID NOT NULL REFERENCES chart_of_accounts(id) ON DELETE CASCADE,
+  year INT NOT NULL,
+  initial_balance NUMERIC(15, 2) NOT NULL DEFAULT 0.00,
+  total_debits NUMERIC(15, 2) NOT NULL DEFAULT 0.00,
+  total_credits NUMERIC(15, 2) NOT NULL DEFAULT 0.00,
+  final_balance NUMERIC(15, 2) NOT NULL DEFAULT 0.00,
+  is_closed BOOLEAN DEFAULT FALSE,
+  closed_at TIMESTAMPTZ,
+  updated_at TIMESTAMPTZ DEFAULT CURRENT_TIMESTAMP,
+
+  CONSTRAINT unique_account_year UNIQUE (account_id, year),
+  CONSTRAINT chk_year_valid CHECK (year >= 2020)
+);
+```
+
+**Decisiones explicadas**:
+- `unique_account_year`: Una cuenta solo puede tener un registro por año. Evita duplicados.
+- `is_closed`: Indica si el año fiscal fue cerrado. Una vez cerrado, el snapshot es inmutable (no se puede modificar).
+- `closed_at`: Fecha y hora de cierre del año fiscal. NULL si aún no se ha cerrado.
+- **Propósito**: Optimización para reportes anuales (estados financieros, asamblea de copropietarios, reportes SUNAPI/SENIAT). Consulta UN registro en vez de sumar 12 meses.
+- **Relación con snapshots mensuales**: El `final_balance` de diciembre es el `initial_balance` del año siguiente. El snapshot anual consolida los 12 snapshots mensuales.
+- **Inmutabilidad**: Una vez cerrado el año (`is_closed = true`), el snapshot no se puede modificar. Si hay ajustes retroactivos, se debe generar una transacción de reversa en el año actual.
+
+### 4.6 Índices de Rendimiento
 
 ```sql
 -- Índice para filtrar rápidamente cuentas del sistema vs cuentas propias
@@ -338,6 +367,10 @@ CREATE INDEX idx_tx_details_account ON financial_transaction_details(account_id)
 
 -- Índices para saldos mensuales
 CREATE INDEX idx_balances_period ON account_monthly_balances(year, month);
+
+-- Índices para saldos anuales
+CREATE INDEX idx_annual_balances_year ON account_annual_balances(year);
+CREATE INDEX idx_annual_balances_closed ON account_annual_balances(is_closed) WHERE is_closed = true;
 ```
 
 **Por qué estos índices**:
@@ -345,6 +378,8 @@ CREATE INDEX idx_balances_period ON account_monthly_balances(year, month);
 - `idx_tx_condo_date`: El reporte más común es "flujo de caja de este condominio en este mes". Este índice lo resuelve en milisegundos.
 - `idx_tx_details_account`: Para calcular el saldo analítico de una cuenta específica (drill-down).
 - `idx_balances_period`: Para cargar estados financieros comparativos (mes actual vs mes anterior).
+- `idx_annual_balances_year`: Para consultas de reportes anuales (estados financieros, asamblea de copropietarios).
+- `idx_annual_balances_closed`: Índice parcial para filtrar rápidamente años cerrados (inmutables). Útil para auditorías y reportes históricos.
 
 ---
 
