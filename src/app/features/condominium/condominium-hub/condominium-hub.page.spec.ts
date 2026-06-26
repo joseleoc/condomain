@@ -51,6 +51,7 @@ function createMockCondominiumService() {
     activeCondominium$: new BehaviorSubject(null),
     userCondominiums$: new BehaviorSubject([]),
     loadingCondominiums$: new BehaviorSubject(false),
+    condominiumsLoaded$: new BehaviorSubject(false),
     fetchUserCondominiums: jasmine.createSpy('fetchUserCondominiums').and.returnValue(Promise.resolve()),
   };
 }
