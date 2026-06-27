@@ -89,7 +89,7 @@ export class Structures {
 
   /**
    * Soft-delete a structure.
-   * Online: updates deleted_at on Supabase.
+   * Online: calls RPC function to update deleted_at on Supabase.
    * Offline: updates local cache and queues mutation for sync.
    */
   async deleteStructure(id: string): Promise<void> {
@@ -103,10 +103,10 @@ export class Structures {
     }
 
     if (this.#networkStatus.isOnline()) {
-      const { error } = await this.client
-        .from('structures')
-        .update({ deleted_at: new Date().toISOString() })
-        .eq('id', id);
+      const { error } = await this.client.rpc('soft_delete_structure', {
+        p_id: id,
+        p_reversal_reason: 'Deleted by user',
+      });
 
       if (error) {
         // Revert optimistic update on failure
