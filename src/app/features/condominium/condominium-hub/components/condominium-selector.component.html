@@ -1,6 +1,24 @@
 <ng-container *transloco="let t">
   @if (activeCondominium()) {
     <div class="context-bar">
+      <div class="context-header">
+        <span class="context-label">{{
+          t("condominium.hub.contextSelector.label")
+        }}</span>
+        <ion-badge
+          class="role-badge"
+          [class.admin]="isAdmin()"
+          [class.owner]="!isAdmin()"
+          [color]="isAdmin() ? 'primary' : 'secondary'"
+        >
+          {{
+            isAdmin()
+              ? t("condominium.hub.contextSelector.role.admin")
+              : t("condominium.hub.contextSelector.role.owner")
+          }}
+        </ion-badge>
+      </div>
+
       <div class="active-condominium-data">
         <app-avatar
           [src]="activeCondominium()?.avatar || 'assets/icon/home-outline.svg'"
@@ -15,23 +33,25 @@
             </p>
           }
         </div>
-      </div>
 
-      @if (userCondominiums().length > 0) {
-        <ion-select
-          [interface]="'popover'"
-          [placeholder]="t('condominium.hub.contextSelector.placeholder')"
-          [value]="activeCondominium()?.id"
-          (ionChange)="onCondominiumSelected($event)"
-          [disabled]="isSwitchingContext()"
-        >
-          @for (condo of userCondominiums(); track condo.id) {
-            <ion-select-option [value]="condo.id">
-              {{ condo.name }}
-            </ion-select-option>
-          }
-        </ion-select>
-      }
+        @if (userCondominiums().length > 1) {
+          <ion-select
+            class="condo-selector"
+            [helperText]="t('condominium.hub.contextSelector.helpText')"
+            [interface]="'popover'"
+            [placeholder]="t('condominium.hub.contextSelector.placeholder')"
+            [value]="activeCondominium()?.id"
+            (ionChange)="onCondominiumSelected($event)"
+            [disabled]="isSwitchingContext()"
+          >
+            @for (condo of userCondominiums(); track condo.id) {
+              <ion-select-option [value]="condo.id">
+                {{ condo.name }}
+              </ion-select-option>
+            }
+          </ion-select>
+        }
+      </div>
     </div>
   }
 </ng-container>

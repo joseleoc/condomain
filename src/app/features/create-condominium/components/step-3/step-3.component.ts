@@ -75,9 +75,6 @@ export class Step3Component implements OnInit, OnDestroy {
   // --- Lifecycle Methods ---
   ngOnInit() {
     this.nextSubscription = this.wizardService.nextStep$.subscribe(async () => {
-      console.log(
-        'Step 3: Next step triggered, creating structures and properties...',
-      );
       this.wizardService.createStructuresAndProperties();
     });
 

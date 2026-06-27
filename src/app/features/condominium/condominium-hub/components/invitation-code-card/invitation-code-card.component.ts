@@ -45,8 +45,6 @@ export class InvitationCodeCardComponent {
           message: this.translocoService.translate('common.copiedToClipboard'),
           duration: 2000,
         });
-
-        console.log('Code copied to clipboard');
       })
       .catch((err) => {
         console.error('Failed to copy code:', err);

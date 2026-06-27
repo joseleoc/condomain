@@ -37,7 +37,12 @@
       "contextSelector": {
         "label": "Condominio activo",
         "placeholder": "Seleccionar condominio",
-        "switching": "Cambiando contexto..."
+        "switching": "Cambiando contexto...",
+        "helpText": "Cambiar de condominio.",
+        "role": {
+          "admin": "Administrador",
+          "owner": "Propietario"
+        }
       },
       "tabs": {
         "structures": "Estructuras",

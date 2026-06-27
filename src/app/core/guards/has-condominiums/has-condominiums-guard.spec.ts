@@ -1,6 +1,6 @@
 import { TestBed } from '@angular/core/testing';
 import { Router } from '@angular/router';
-import { BehaviorSubject, of } from 'rxjs';
+import { BehaviorSubject } from 'rxjs';
 import { hasCondominiumsGuard } from './has-condominiums-guard';
 import { Condominium } from '@core/services/condominium/condominium';
 
@@ -14,24 +14,23 @@ describe('hasCondominiumsGuard', () => {
     };
 
     TestBed.configureTestingModule({
-      providers: [
-        { provide: Router, useValue: routerMock },
-      ],
+      providers: [{ provide: Router, useValue: routerMock }],
     });
   });
 
   it('should return true when user has condominiums', (done) => {
     condominiumMock = {
-      loadingCondominiums$: new BehaviorSubject<boolean>(false),
-      userCondominiums$: new BehaviorSubject<any[]>([{ id: 'condo-1', name: 'Test Condo' }]),
+      condominiumsLoaded$: new BehaviorSubject<boolean>(true),
+      userCondominiums$: new BehaviorSubject<any[]>([
+        { id: 'condo-1', name: 'Test Condo' },
+      ]),
     };
 
     TestBed.overrideProvider(Condominium, { useValue: condominiumMock });
 
     TestBed.runInInjectionContext(() => {
       const result = hasCondominiumsGuard({} as any, {} as any);
-      
-      // Handle both Observable and direct value
+
       if (result && typeof result === 'object' && 'subscribe' in result) {
         result.subscribe((res: any) => {
           expect(res).toBeTrue();
@@ -47,7 +46,7 @@ describe('hasCondominiumsGuard', () => {
 
   it('should redirect to onboarding when user has no condominiums', (done) => {
     condominiumMock = {
-      loadingCondominiums$: new BehaviorSubject<boolean>(false),
+      condominiumsLoaded$: new BehaviorSubject<boolean>(true),
       userCondominiums$: new BehaviorSubject<any[]>([]),
     };
 
@@ -55,8 +54,7 @@ describe('hasCondominiumsGuard', () => {
 
     TestBed.runInInjectionContext(() => {
       const result = hasCondominiumsGuard({} as any, {} as any);
-      
-      // Handle both Observable and direct value
+
       if (result && typeof result === 'object' && 'subscribe' in result) {
         result.subscribe((res: any) => {
           expect(routerMock.parseUrl).toHaveBeenCalledWith('/onboarding');
@@ -69,12 +67,14 @@ describe('hasCondominiumsGuard', () => {
     });
   });
 
-  it('should wait for loading to complete', (done) => {
-    const loadingSubject = new BehaviorSubject<boolean>(true);
-    const condominiumsSubject = new BehaviorSubject<any[]>([{ id: 'condo-1', name: 'Test Condo' }]);
-    
+  it('should wait until condominiums are loaded before deciding', (done) => {
+    const loadedSubject = new BehaviorSubject<boolean>(false);
+    const condominiumsSubject = new BehaviorSubject<any[]>([
+      { id: 'condo-1', name: 'Test Condo' },
+    ]);
+
     condominiumMock = {
-      loadingCondominiums$: loadingSubject,
+      condominiumsLoaded$: loadedSubject,
       userCondominiums$: condominiumsSubject,
     };
 
@@ -82,22 +82,18 @@ describe('hasCondominiumsGuard', () => {
 
     TestBed.runInInjectionContext(() => {
       const result = hasCondominiumsGuard({} as any, {} as any);
-      
-      // Set loading to false after a short delay
-      setTimeout(() => {
-        loadingSubject.next(false);
-      }, 100);
-      
-      // Handle both Observable and direct value
+
       if (result && typeof result === 'object' && 'subscribe' in result) {
         result.subscribe((res: any) => {
           expect(res).toBeTrue();
           done();
         });
-      } else {
-        expect(result).toBeTrue();
-        done();
       }
+
+      // Simulate the fetch completing after a delay
+      setTimeout(() => {
+        loadedSubject.next(true);
+      }, 100);
     });
   });
 });

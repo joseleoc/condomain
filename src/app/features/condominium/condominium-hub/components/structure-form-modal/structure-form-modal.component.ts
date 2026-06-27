@@ -1,4 +1,4 @@
-import { Component, inject, input, output, viewChild } from '@angular/core';
+import { Component, computed, inject, input, output, viewChild } from '@angular/core';
 import {
   IonModal,
   IonHeader,
@@ -66,15 +66,16 @@ export class StructureFormModalComponent {
 
   /**
    * Maps the structure to the form's initialData format.
+   * Computed signal to avoid infinite change detection loops.
    */
-  getInitialData() {
+  initialData = computed(() => {
     const s = this.structure();
     if (!s) return null;
     return {
       name: s.name,
       description: s.description,
     };
-  }
+  });
 
   /**
    * Handles form submission - validates and calls the appropriate service method.

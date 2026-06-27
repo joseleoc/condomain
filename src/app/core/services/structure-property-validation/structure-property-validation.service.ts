@@ -71,13 +71,13 @@ export class StructurePropertyValidationService {
    *
    * @param name - The property name/number to validate
    * @param existingPropertyNames - Array of existing property names in the same structure
-   * @param editingId - Optional ID of the property being edited (excludes self from uniqueness check)
+   * @param editingPropertyName - Optional current name of the property being edited (excludes self from uniqueness check). Must be the property name, NOT the UUID.
    * @returns ValidationResult with valid flag and optional error key
    */
   validatePropertyName(
     name: string,
     existingPropertyNames: string[],
-    editingId?: string,
+    editingPropertyName?: string,
   ): ValidationResult {
     if (!name || name.trim().length === 0) {
       return { valid: false, errorKey: 'validation.required' };
@@ -94,8 +94,8 @@ export class StructurePropertyValidationService {
     // Check for duplicate property names within the same structure
     const isDuplicate = existingPropertyNames.some((existingName) => {
       // If we're editing, exclude the current property from the check
-      if (editingId) {
-        return existingName === name && existingName !== editingId;
+      if (editingPropertyName) {
+        return existingName === name && existingName !== editingPropertyName;
       }
       return existingName === name;
     });

@@ -28,6 +28,7 @@ export class Condominium {
 
   // --- Properties ---
   loadingCondominiums$ = new BehaviorSubject<boolean>(false);
+  condominiumsLoaded$ = new BehaviorSubject<boolean>(false);
   activeCondominium$ = new BehaviorSubject<CondominiumWithRole | null>(null);
   userCondominiums$ = new BehaviorSubject<CondominiumWithRole[]>([]);
 
@@ -44,6 +45,7 @@ export class Condominium {
       } else {
         this.activeCondominium$.next(null);
         this.userCondominiums$.next([]);
+        this.condominiumsLoaded$.next(false);
       }
     });
   }
@@ -220,6 +222,7 @@ export class Condominium {
       console.error('Error fetching user condominiums:', error);
       throw error;
     } finally {
+      this.condominiumsLoaded$.next(true);
       this.loadingCondominiums$.next(false);
     }
   }

@@ -55,7 +55,6 @@ export class QrCodeModalComponent {
   constructor() {
     effect(() => {
       const code = this.invitationCode();
-      console.log({ code });
       if (code) {
         const url = `${environment.appUrl}/onboarding/join-condominium?code=${code}`;
         this.invitationUrl.set(url);
@@ -74,7 +73,6 @@ export class QrCodeModalComponent {
           light: '#ffffff',
         },
       });
-      console.log('Generated QR code data URL:', dataUrl);
       this.qrCodeDataUrl.set(dataUrl);
     } catch (err) {
       console.error('Error generating QR code:', err);
@@ -88,10 +86,8 @@ export class QrCodeModalComponent {
   copyUrlToClipboard(url: string) {
     navigator.clipboard.writeText(url).then(
       () => {
-        console.log('URL copied to clipboard:', url);
         this.toastService.present({
           message: this.translocoService.translate('common.copiedToClipboard'),
-          
         });
       },
       (err) => {

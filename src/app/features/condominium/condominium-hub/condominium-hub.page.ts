@@ -84,9 +84,12 @@ export class CondominiumHubPage {
   condominiumInvitationCode = signal<CondominiumInvitationCode | null>(null);
 
   // --- Reactive join requests from service ---
-  pendingRequestsCount = toSignal(this.joinRequestService.pendingRequestsCount$, {
-    initialValue: 0,
-  });
+  pendingRequestsCount = toSignal(
+    this.joinRequestService.pendingRequestsCount$,
+    {
+      initialValue: 0,
+    },
+  );
   // --- UI state ---
   isSwitchingContext = signal(false);
 
@@ -144,7 +147,6 @@ export class CondominiumHubPage {
         if (!condoId) return null;
         const data =
           await this.joinRequestService.getActiveInvitationCode(condoId);
-        console.log('Fetched invitation code:', data);
         this.condominiumInvitationCode.set(data);
         return data;
       },
@@ -157,7 +159,7 @@ export class CondominiumHubPage {
   loadPendingRequestsEffect = effect(() => {
     const condoId = this.activeCondominium()?.id;
     const isAdmin = this.isAdmin();
-    
+
     if (condoId && isAdmin) {
       this.joinRequestService.loadPendingRequests(condoId);
     }
@@ -170,11 +172,11 @@ export class CondominiumHubPage {
     },
     onSuccess: () => {
       this.queryClient.invalidateQueries({ queryKey: ['structures'] });
-      this.#showToast('structure_deleted');
+      this.#showToast('structureDeleted');
     },
     onError: (error) => {
       console.error('Failed to delete structure:', error);
-      this.#showToast('delete_error');
+      this.#showToast('deleteError');
     },
   }));
 
@@ -185,20 +187,20 @@ export class CondominiumHubPage {
     },
     onSuccess: () => {
       this.queryClient.invalidateQueries({ queryKey: ['properties'] });
-      this.#showToast('property_deleted');
+      this.#showToast('propertyDeleted');
     },
     onError: (error) => {
       console.error('Failed to delete property:', error);
-      this.#showToast('delete_error');
+      this.#showToast('deleteError');
     },
   }));
 
   // --- React to context ready ---
-  contextReadyEffect = effect(() => {
-    if (this.isReady()) {
-      console.log('Context ready - isAdmin:', this.isAdmin());
-    }
-  });
+  // contextReadyEffect = effect(() => {
+  //   if (this.isReady()) {
+  //     console.log('Context ready - isAdmin:', this.isAdmin());
+  //   }
+  // });
 
   // --- Event Handlers ---
 
@@ -211,7 +213,7 @@ export class CondominiumHubPage {
       await this.contextService.setActiveCondominium(condominiumId);
     } catch (error) {
       console.error('Failed to switch condominium:', error);
-      this.#showToast('context_switch_error');
+      this.#showToast('contextSwitchError');
     } finally {
       this.isSwitchingContext.set(false);
     }

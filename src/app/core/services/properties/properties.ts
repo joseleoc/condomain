@@ -122,7 +122,7 @@ export class Properties {
 
   /**
    * Soft-delete a property.
-   * Online: updates deleted_at on Supabase.
+   * Online: calls RPC function to update deleted_at on Supabase.
    * Offline: updates local cache and queues mutation for sync.
    */
   async deleteProperty(id: string): Promise<void> {
@@ -136,10 +136,10 @@ export class Properties {
     }
 
     if (this.#networkStatus.isOnline()) {
-      const { error } = await this.client
-        .from('properties')
-        .update({ deleted_at: new Date().toISOString() })
-        .eq('id', id);
+      const { error } = await this.client.rpc('soft_delete_property', {
+        p_id: id,
+        p_reversal_reason: 'Deleted by user',
+      });
 
       if (error) {
         // Revert optimistic update on failure
@@ -171,10 +171,16 @@ export class Properties {
       const updated = {
         ...existing,
         ...(data.name !== undefined && { name: data.name }),
-        ...(data.share_percentage !== undefined && { share_percentage: data.share_percentage }),
+        ...(data.share_percentage !== undefined && {
+          share_percentage: data.share_percentage,
+        }),
         ...(data.owner_name !== undefined && { owner_name: data.owner_name }),
-        ...(data.owner_email !== undefined && { owner_email: data.owner_email }),
-        ...(data.structure_id !== undefined && { structure_id: data.structure_id }),
+        ...(data.owner_email !== undefined && {
+          owner_email: data.owner_email,
+        }),
+        ...(data.structure_id !== undefined && {
+          structure_id: data.structure_id,
+        }),
         updated_at: new Date().toISOString(),
       };
       await this.#localRepo.upsert('properties', updated);
@@ -185,10 +191,14 @@ export class Properties {
         updated_at: new Date().toISOString(),
       };
       if (data.name !== undefined) updateData['name'] = data.name;
-      if (data.share_percentage !== undefined) updateData['share_percentage'] = data.share_percentage;
-      if (data.owner_name !== undefined) updateData['owner_name'] = data.owner_name;
-      if (data.owner_email !== undefined) updateData['owner_email'] = data.owner_email;
-      if (data.structure_id !== undefined) updateData['structure_id'] = data.structure_id;
+      if (data.share_percentage !== undefined)
+        updateData['share_percentage'] = data.share_percentage;
+      if (data.owner_name !== undefined)
+        updateData['owner_name'] = data.owner_name;
+      if (data.owner_email !== undefined)
+        updateData['owner_email'] = data.owner_email;
+      if (data.structure_id !== undefined)
+        updateData['structure_id'] = data.structure_id;
 
       const { error } = await this.client
         .from('properties')
