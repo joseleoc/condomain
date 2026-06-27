@@ -7,7 +7,7 @@ import { Roles } from '../roles/roles';
 import { NetworkStatusService } from '../network-status.service';
 import { LocalRepository } from '../sync/local-repository';
 import { SyncService } from '../sync/sync-service';
-import { of, throwError } from 'rxjs';
+import { BehaviorSubject, of, throwError } from 'rxjs';
 import type { JoinRequestStatus } from '@app-types/join-request';
 
 describe('CondominiumJoinRequest', () => {
@@ -43,7 +43,7 @@ describe('CondominiumJoinRequest', () => {
     };
 
     profileMock = {
-      profile$: of({ id: 'test-profile-id', name: 'Test User', email: 'test@example.com' }),
+      profile$: new BehaviorSubject({ id: 'test-profile-id', name: 'Test User', email: 'test@example.com' }),
     };
 
     rolesMock = {
@@ -132,7 +132,13 @@ describe('CondominiumJoinRequest', () => {
                 }),
               }),
             }),
-            insert: jasmine.createSpy('insert').and.returnValue(Promise.resolve({ error: null })),
+            insert: jasmine.createSpy('insert').and.returnValue({
+              select: jasmine.createSpy('select').and.returnValue({
+                single: jasmine.createSpy('single').and.returnValue(
+                  Promise.resolve({ data: { id: 'new-request-id', condominium_id: 'condo-id', profile_id: 'test-profile-id', status: 'pending' }, error: null })
+                ),
+              }),
+            }),
           };
         }
         return { select: jasmine.createSpy('select').and.returnValue({}) };
@@ -346,24 +352,28 @@ describe('CondominiumJoinRequest', () => {
       supabaseMock.client.from = jasmine.createSpy('from').and.returnValue({
         select: jasmine.createSpy('select').and.returnValue({
           eq: jasmine.createSpy('eq').and.returnValue({
-            eq: jasmine.createSpy('eq').and.returnValue(
-              Promise.resolve({ count: 5, error: null })
-            ),
+            eq: jasmine.createSpy('eq').and.returnValue({
+              order: jasmine.createSpy('order').and.returnValue(
+                Promise.resolve({ data: [{ id: '1' }, { id: '2' }], error: null })
+              ),
+            }),
           }),
         }),
       });
 
       const result = await service.countPendingRequests('condo-id');
-      expect(result).toBe(5);
+      expect(result).toBe(2);
     });
 
     it('should return 0 on error', async () => {
       supabaseMock.client.from = jasmine.createSpy('from').and.returnValue({
         select: jasmine.createSpy('select').and.returnValue({
           eq: jasmine.createSpy('eq').and.returnValue({
-            eq: jasmine.createSpy('eq').and.returnValue(
-              Promise.resolve({ count: null, error: { message: 'Error' } })
-            ),
+            eq: jasmine.createSpy('eq').and.returnValue({
+              order: jasmine.createSpy('order').and.returnValue(
+                Promise.resolve({ data: null, error: { message: 'Error' } })
+              ),
+            }),
           }),
         }),
       });
@@ -406,6 +416,7 @@ describe('CondominiumJoinRequest', () => {
         }
         return { select: jasmine.createSpy('select').and.returnValue({}) };
       });
+      supabaseMock.client.rpc = jasmine.createSpy('rpc').and.returnValue(Promise.resolve({ error: null }));
 
       const result = await service.approveRequest('request-id');
       expect(result).toBeTrue();
