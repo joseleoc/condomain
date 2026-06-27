@@ -2,6 +2,7 @@ import { Component, input, output } from '@angular/core';
 import {
   IonSelect,
   IonSelectOption,
+  IonBadge,
 } from '@ionic/angular/standalone';
 import { TranslocoModule } from '@jsverse/transloco';
 import { AvatarComponent } from '@shared/components/avatar/avatar.component';
@@ -17,6 +18,7 @@ import type { CondominiumWithRole } from '@app-types/condominium';
     IonSelectOption,
     TranslocoModule,
     AvatarComponent,
+    IonBadge,
   ],
 })
 export class CondominiumSelectorComponent {
@@ -24,6 +26,7 @@ export class CondominiumSelectorComponent {
   activeCondominium = input<CondominiumWithRole | null>(null);
   userCondominiums = input<CondominiumWithRole[]>([]);
   isSwitchingContext = input(false);
+  isAdmin = input(false);
 
   // --- Outputs ---
   condominiumChange = output<string>();
