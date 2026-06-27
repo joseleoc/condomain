@@ -144,13 +144,13 @@ export class PropertyFormModalComponent {
       (p) => p.structure_id === formValue.structure_id,
     );
     const existingPropertyNames = propertiesInTargetStructure.map((p) => p.name);
-    const editingId = propertyToEdit?.id;
+    const editingPropertyName = propertyToEdit?.name;
 
     // Validate property name
     const nameValidation = this.validationService.validatePropertyName(
       formValue.name,
       existingPropertyNames,
-      editingId,
+      editingPropertyName,
     );
 
     if (!nameValidation.valid) {
