@@ -23,8 +23,8 @@ export function provideTelemetry(): EnvironmentProviders {
   const apiKey = environment.posthogApiKey;
   const host = environment.posthogHost || 'https://app.posthog.com';
 
-  // Enable telemetry when API key is configured (works in both dev and prod).
-  if (apiKey) {
+  // Enable telemetry only in production when API key is configured.
+  if (environment.production && apiKey) {
     providers.push({
       provide: TELEMETRY_PROVIDER,
       useClass: PosthogProvider,
@@ -39,7 +39,7 @@ export function provideTelemetry(): EnvironmentProviders {
   } else {
     // Always register TELEMETRY_PROVIDER to prevent NG0201 DI crash.
     // Use NoOpProvider when telemetry is disabled (dev mode or missing API key).
-    console.warn('[Telemetry] PostHog is disabled. posthogApiKey is missing or empty.');
+    console.warn('[Telemetry] PostHog is disabled. Running in dev mode or posthogApiKey is missing.');
 
     providers.push({
       provide: TELEMETRY_PROVIDER,

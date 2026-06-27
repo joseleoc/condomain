@@ -45,12 +45,12 @@ describe('SimpleCreationProcessComponent', () => {
 
     // Mock the viewChild signal to return a fake form component
     const fakeFormComponent = {
-      submitAddStructureForm: jasmine.createSpy('submit').and.returnValue({
+      submit: jasmine.createSpy('submit').and.returnValue({
         name: 'Tower A',
         description: '',
       }),
     };
-    (component as any).addStructureFormComponent = signal(fakeFormComponent);
+    (component as any).structureFormComponent = signal(fakeFormComponent);
 
     component.submitAddStructureForm();
 
