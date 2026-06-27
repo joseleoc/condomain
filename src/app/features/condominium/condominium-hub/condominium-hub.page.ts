@@ -84,9 +84,12 @@ export class CondominiumHubPage {
   condominiumInvitationCode = signal<CondominiumInvitationCode | null>(null);
 
   // --- Reactive join requests from service ---
-  pendingRequestsCount = toSignal(this.joinRequestService.pendingRequestsCount$, {
-    initialValue: 0,
-  });
+  pendingRequestsCount = toSignal(
+    this.joinRequestService.pendingRequestsCount$,
+    {
+      initialValue: 0,
+    },
+  );
   // --- UI state ---
   isSwitchingContext = signal(false);
 
@@ -144,7 +147,6 @@ export class CondominiumHubPage {
         if (!condoId) return null;
         const data =
           await this.joinRequestService.getActiveInvitationCode(condoId);
-        console.log('Fetched invitation code:', data);
         this.condominiumInvitationCode.set(data);
         return data;
       },
@@ -157,7 +159,7 @@ export class CondominiumHubPage {
   loadPendingRequestsEffect = effect(() => {
     const condoId = this.activeCondominium()?.id;
     const isAdmin = this.isAdmin();
-    
+
     if (condoId && isAdmin) {
       this.joinRequestService.loadPendingRequests(condoId);
     }
@@ -194,11 +196,11 @@ export class CondominiumHubPage {
   }));
 
   // --- React to context ready ---
-  contextReadyEffect = effect(() => {
-    if (this.isReady()) {
-      console.log('Context ready - isAdmin:', this.isAdmin());
-    }
-  });
+  // contextReadyEffect = effect(() => {
+  //   if (this.isReady()) {
+  //     console.log('Context ready - isAdmin:', this.isAdmin());
+  //   }
+  // });
 
   // --- Event Handlers ---
 

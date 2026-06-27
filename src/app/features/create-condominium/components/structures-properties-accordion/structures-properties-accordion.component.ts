@@ -79,7 +79,6 @@ export class StructuresPropertiesAccordionComponent {
     structureName: string,
   ) {
     event.stopPropagation();
-console.log(this.structures());
     const alert = await this.alertController.create({
       header: this.translocoService.translate(
         'condominium.createProperty.confirmDeleteTitle',
