@@ -170,11 +170,11 @@ export class CondominiumHubPage {
     },
     onSuccess: () => {
       this.queryClient.invalidateQueries({ queryKey: ['structures'] });
-      this.#showToast('structure_deleted');
+      this.#showToast('structureDeleted');
     },
     onError: (error) => {
       console.error('Failed to delete structure:', error);
-      this.#showToast('delete_error');
+      this.#showToast('deleteError');
     },
   }));
 
@@ -185,11 +185,11 @@ export class CondominiumHubPage {
     },
     onSuccess: () => {
       this.queryClient.invalidateQueries({ queryKey: ['properties'] });
-      this.#showToast('property_deleted');
+      this.#showToast('propertyDeleted');
     },
     onError: (error) => {
       console.error('Failed to delete property:', error);
-      this.#showToast('delete_error');
+      this.#showToast('deleteError');
     },
   }));
 
@@ -211,7 +211,7 @@ export class CondominiumHubPage {
       await this.contextService.setActiveCondominium(condominiumId);
     } catch (error) {
       console.error('Failed to switch condominium:', error);
-      this.#showToast('context_switch_error');
+      this.#showToast('contextSwitchError');
     } finally {
       this.isSwitchingContext.set(false);
     }
