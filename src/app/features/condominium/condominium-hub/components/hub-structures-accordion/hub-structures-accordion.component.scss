@@ -43,8 +43,8 @@
 }
 
 .structure-name {
-  font-weight: 500;
-  font-size: 1rem;
+  font-weight: 700;
+  font-size: 1.2rem;
 }
 
 .structure-description {
@@ -153,6 +153,11 @@
 
 // Tablets and larger
 @media (min-width: 600px) {
+  .accordion-container {
+    max-width: 720px;
+    margin: 0 auto;
+  }
+
   .structure-name {
     font-size: 1.125rem;
   }
@@ -186,5 +191,11 @@
 
   .clickable:active {
     --background: var(--ion-color-dark-shade);
+  }
+}
+
+@media (max-width: 400px) {
+  .info-badge {
+    display: none;
   }
 }
