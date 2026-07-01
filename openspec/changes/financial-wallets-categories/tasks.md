@@ -4,7 +4,7 @@
 
 Decision needed before apply: Yes
 Chained PRs recommended: Yes
-Chain strategy: pending
+Chain strategy: feature-branch-chain
 400-line budget risk: High
 
 | Field | Value |
@@ -28,9 +28,9 @@ Chain strategy: pending
 
 ## Phase 1: Foundation
 
-- [ ] 1.1 Create `supabase/migrations/20260701000000_financial_wallets_categories.sql` — both tables, partial unique indexes, RLS, RPCs (`soft_delete_account`, `soft_delete_category`), 2-level hierarchy trigger, system seed trigger on `condominiums` INSERT
-- [ ] 1.2 Add `src/app-types/condominium-accounts.ts` (`CondominiumAccount`, `CreateCondominiumAccountData`) and `transaction-categories.ts` (`TransactionCategory`, `CategoryTreeNode`, DTOs) + barrel export; write type-parity tests
-- [ ] 1.3 Add `account`/`transaction_category` RPC mappings to `SyncService.#buildRpcName()` and `#buildRpcParams()`; write mapping tests
+- [x] 1.1 Create `supabase/migrations/20260701000000_financial_wallets_categories.sql` — both tables, partial unique indexes, RLS, RPCs (`soft_delete_account`, `soft_delete_category`), 2-level hierarchy trigger, system seed trigger on `condominiums` INSERT
+- [x] 1.2 Add `src/app-types/condominium-accounts.ts` (`CondominiumAccount`, `CreateCondominiumAccountData`) and `transaction-categories.ts` (`TransactionCategory`, `CategoryTreeNode`, DTOs) + barrel export; write type-parity tests
+- [x] 1.3 Add `account`/`transaction_category` RPC mappings to `SyncService.#buildRpcName()` and `#buildRpcParams()`; write mapping tests
 
 ## Phase 2: Core Services
 
