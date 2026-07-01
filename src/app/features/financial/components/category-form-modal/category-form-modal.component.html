@@ -1,0 +1,97 @@
+<ion-modal
+  [isOpen]="isOpen()"
+  [backdropDismiss]="false"
+  (didDismiss)="cancel()"
+>
+  <ng-template>
+    <ion-header>
+      <ion-toolbar>
+        <ion-title>
+          {{ (isEditMode() ? 'financial.categories.editButton' : 'financial.categories.createButton') | transloco }}
+        </ion-title>
+        <ion-buttons slot="end">
+          <ion-button fill="clear" color="secondary" (click)="cancel()">
+            {{ 'common.cancel' | transloco }}
+          </ion-button>
+        </ion-buttons>
+      </ion-toolbar>
+    </ion-header>
+
+    <ion-content class="ion-padding" [scrollY]="true">
+      <form [formGroup]="form" (ngSubmit)="submit()">
+        <ion-item>
+          <ion-input
+            formControlName="name"
+            [label]="'financial.categories.form.name' | transloco"
+            labelPlacement="stacked"
+            [placeholder]="'financial.categories.form.name' | transloco"
+          ></ion-input>
+        </ion-item>
+
+        <ion-item>
+          <ion-select
+            formControlName="category_type"
+            [label]="'financial.categories.form.type' | transloco"
+            labelPlacement="stacked"
+          >
+            @for (type of getCategoryTypes(); track type) {
+              <ion-select-option [value]="type">
+                {{ ('financial.categories.' + type + 'Tab') | transloco }}
+              </ion-select-option>
+            }
+          </ion-select>
+        </ion-item>
+
+        <ion-item>
+          <ion-select
+            formControlName="parent_id"
+            [label]="'financial.categories.form.parent' | transloco"
+            labelPlacement="stacked"
+            [placeholder]="'financial.categories.form.noParent' | transloco"
+          >
+            <ion-select-option [value]="null">
+              {{ 'financial.categories.form.parentRoot' | transloco }}
+            </ion-select-option>
+            @for (parent of availableParentCategories(); track parent.id) {
+              <ion-select-option [value]="parent.id">
+                @if (parent.i18n_key) {
+                  {{ 'financial.categories.system.' + parent.i18n_key | transloco }}
+                } @else {
+                  {{ parent.name }}
+                }
+              </ion-select-option>
+            }
+          </ion-select>
+        </ion-item>
+
+        <ion-item>
+          <ion-input
+            formControlName="icon"
+            [label]="'financial.categories.form.icon' | transloco"
+            labelPlacement="stacked"
+            [placeholder]="'financial.categories.form.icon' | transloco"
+          ></ion-input>
+        </ion-item>
+
+        <ion-item>
+          <ion-input
+            formControlName="color"
+            [label]="'financial.categories.form.color' | transloco"
+            labelPlacement="stacked"
+            [placeholder]="'financial.categories.form.color' | transloco"
+          ></ion-input>
+        </ion-item>
+      </form>
+    </ion-content>
+
+    <ion-footer>
+      <ion-toolbar>
+        <ion-buttons slot="end">
+          <ion-button fill="solid" color="primary" (click)="submit()">
+            {{ 'financial.categories.form.save' | transloco }}
+          </ion-button>
+        </ion-buttons>
+      </ion-toolbar>
+    </ion-footer>
+  </ng-template>
+</ion-modal>

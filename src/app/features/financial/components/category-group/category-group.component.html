@@ -1,0 +1,30 @@
+<div class="category-group">
+  <div class="group-header">
+    <ion-icon [name]="rootIcon()" class="header-icon"></ion-icon>
+    <span class="header-title">
+      @if (node().i18n_key) {
+        {{ 'financial.categories.system.' + node().i18n_key | transloco }}
+      } @else {
+        {{ node().name }}
+      }
+    </span>
+  </div>
+
+  @if (hasChildren()) {
+    <div class="children-grid">
+      @for (child of node().children; track child.id) {
+        <app-category-card
+          [category]="child"
+          [editable]="!child.is_system"
+          (edit)="onChildEdit(child)"
+          (delete)="onChildDelete(child)"
+        />
+      }
+    </div>
+  } @else {
+    <div class="empty-children">
+      <ion-icon name="folder-open-outline" size="large" color="medium"></ion-icon>
+      <p>{{ 'financial.categories.emptyList' | transloco }}</p>
+    </div>
+  }
+</div>

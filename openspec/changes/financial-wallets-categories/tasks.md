@@ -45,10 +45,10 @@ Chain strategy: feature-branch-chain
 
 ## Phase 4: Category UI
 
-- [ ] 4.1 Create `CategoryListPage` container — income/expense tabs, tree via `CategoryGroup`, system lock icons, create/edit/delete with protection; lazy route at `/financial/categories`; component tests
-- [ ] 4.2 Create `CategoryGroup` — root + children grouped display; component tests
-- [ ] 4.3 Create `CategoryCard` — icon, name, color, system lock badge; test system vs user display
-- [ ] 4.4 Create `CategoryFormModal` — reactive form (name, type, parent roots-only selector, icon, color); test validation and parent filter
+- [x] 4.1 Create `CategoryListPage` container — income/expense tabs, tree via `CategoryGroup`, system lock icons, create/edit/delete with protection; lazy route at `/financial/categories`; component tests
+- [x] 4.2 Create `CategoryGroup` — root + children grouped display; component tests
+- [x] 4.3 Create `CategoryCard` — icon, name, color, system lock badge; test system vs user display
+- [x] 4.4 Create `CategoryFormModal` — reactive form (name, type, parent roots-only selector, icon, color); test validation and parent filter
 
 ## Phase 5: i18n, Telemetry, Integration
 
