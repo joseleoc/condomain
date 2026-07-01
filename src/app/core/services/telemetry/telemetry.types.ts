@@ -42,6 +42,9 @@ export const TelemetryEvents = {
   JOIN_REQUEST_APPROVED: 'join_request_approved',
   JOIN_REQUEST_DECLINED: 'join_request_declined',
   JOIN_REQUEST_PROPERTY_ASSIGNED: 'join_request_property_assigned',
+  // Financial
+  FINANCIAL_WALLET_CREATED: 'financial_wallet_created',
+  FINANCIAL_CATEGORY_CREATED: 'financial_category_created',
 } as const;
 
 export type TelemetryEvent = (typeof TelemetryEvents)[keyof typeof TelemetryEvents];

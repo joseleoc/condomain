@@ -34,8 +34,8 @@ Chain strategy: feature-branch-chain
 
 ## Phase 2: Core Services
 
-- [ ] 2.1 Create `CondominiumAccountsService` — offline-first CRUD (`fetchByCondominium`, `getById`, `create`, `update`, `delete`), BehaviorSubject state, Telemetry; test online/offline fetch, offline queue, update revert, soft-delete RPC
-- [ ] 2.2 Create `TransactionCategoriesService` — CRUD + hierarchy validation (3rd-level reject), system protection (delete/update reject), tree-building `fetchByType`, Telemetry; test tree, hierarchy reject, system lock, offline queue
+- [x] 2.1 Create `CondominiumAccountsService` — offline-first CRUD (`fetchByCondominium`, `getById`, `create`, `update`, `delete`), BehaviorSubject state, Telemetry; test online/offline fetch, offline queue, update revert, soft-delete RPC
+- [x] 2.2 Create `TransactionCategoriesService` — CRUD + hierarchy validation (3rd-level reject), system protection (delete/update reject), tree-building `fetchByType`, Telemetry; test tree, hierarchy reject, system lock, offline queue
 
 ## Phase 3: Wallet UI
 
