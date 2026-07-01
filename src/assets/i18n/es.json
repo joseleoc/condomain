@@ -432,6 +432,61 @@
         "error": "Error al guardar. Inténtalo de nuevo."
       }
     },
+    "transactions": {
+      "title": "Transacciones",
+      "incomeTab": "Ingresos",
+      "expenseTab": "Egresos",
+      "transferTab": "Transferencias",
+      "allTab": "Todas",
+      "emptyList": "No hay transacciones",
+      "createIncomeButton": "Nuevo ingreso",
+      "createExpenseButton": "Nuevo egreso",
+      "createTransferButton": "Nueva transferencia",
+      "filters": {
+        "account": "Cuenta",
+        "category": "Categoría",
+        "type": "Tipo",
+        "status": "Estado",
+        "dateFrom": "Desde",
+        "dateTo": "Hasta",
+        "allAccounts": "Todas las cuentas",
+        "allCategories": "Todas las categorías",
+        "allTypes": "Todos los tipos",
+        "allStatuses": "Todos los estados"
+      },
+      "status": {
+        "pending": "Pendiente",
+        "completed": "Completada",
+        "voided": "Anulada"
+      },
+      "form": {
+        "incomeTitle": "Nuevo ingreso",
+        "expenseTitle": "Nuevo egreso",
+        "transferTitle": "Nueva transferencia",
+        "editTitle": "Editar transacción",
+        "type": "Tipo",
+        "account": "Cuenta",
+        "fromAccount": "Cuenta origen",
+        "toAccount": "Cuenta destino",
+        "category": "Categoría",
+        "amount": "Monto",
+        "currency": "Moneda",
+        "exchangeRate": "Tasa de cambio",
+        "description": "Descripción",
+        "referenceNumber": "Número de referencia",
+        "transactionDate": "Fecha",
+        "save": "Guardar",
+        "cancel": "Cancelar"
+      },
+      "toast": {
+        "created": "Transacción creada correctamente",
+        "updated": "Transacción actualizada correctamente",
+        "deleted": "Transacción eliminada correctamente",
+        "terminalEditError": "No se pueden editar transacciones completadas o anuladas",
+        "sameAccountError": "Las cuentas origen y destino deben ser diferentes",
+        "error": "Error al guardar. Inténtalo de nuevo."
+      }
+    },
     "categories": {
       "title": "Categorías",
       "incomeTab": "Ingresos",

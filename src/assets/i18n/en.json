@@ -438,6 +438,61 @@
         "error": "Error saving. Please try again."
       }
     },
+    "transactions": {
+      "title": "Transactions",
+      "incomeTab": "Income",
+      "expenseTab": "Expenses",
+      "transferTab": "Transfers",
+      "allTab": "All",
+      "emptyList": "No transactions yet",
+      "createIncomeButton": "New income",
+      "createExpenseButton": "New expense",
+      "createTransferButton": "New transfer",
+      "filters": {
+        "account": "Account",
+        "category": "Category",
+        "type": "Type",
+        "status": "Status",
+        "dateFrom": "From",
+        "dateTo": "To",
+        "allAccounts": "All accounts",
+        "allCategories": "All categories",
+        "allTypes": "All types",
+        "allStatuses": "All statuses"
+      },
+      "status": {
+        "pending": "Pending",
+        "completed": "Completed",
+        "voided": "Voided"
+      },
+      "form": {
+        "incomeTitle": "New income",
+        "expenseTitle": "New expense",
+        "transferTitle": "New transfer",
+        "editTitle": "Edit transaction",
+        "type": "Type",
+        "account": "Account",
+        "fromAccount": "From account",
+        "toAccount": "To account",
+        "category": "Category",
+        "amount": "Amount",
+        "currency": "Currency",
+        "exchangeRate": "Exchange rate",
+        "description": "Description",
+        "referenceNumber": "Reference number",
+        "transactionDate": "Date",
+        "save": "Save",
+        "cancel": "Cancel"
+      },
+      "toast": {
+        "created": "Transaction created successfully",
+        "updated": "Transaction updated successfully",
+        "deleted": "Transaction deleted successfully",
+        "terminalEditError": "Cannot edit completed or voided transactions",
+        "sameAccountError": "Source and destination accounts must be different",
+        "error": "Error saving. Please try again."
+      }
+    },
     "categories": {
       "title": "Categories",
       "incomeTab": "Income",
