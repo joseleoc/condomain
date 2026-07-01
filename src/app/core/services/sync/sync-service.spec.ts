@@ -332,6 +332,54 @@ describe('SyncService', () => {
       expect(rpcSpy.calls.argsFor(2)[0]).toBe('soft_delete_category');
     });
 
+    it('should map financial_transaction create/update/delete mutations', async () => {
+      const rpcSpy = spyOn(supabase.client, 'rpc' as any).and.returnValue(
+        mockRpc(null),
+      );
+
+      await localRepo.enqueueMutation({
+        mutation_type: 'create',
+        entity_type: 'financial_transaction',
+        entity_id: 'tx-1',
+        payload: { amount: 100, condominium_id: 'c1' },
+        idempotency_key: 'key-tx-create',
+        retry_count: 0,
+        max_retries: 5,
+        last_error: null,
+      });
+      await localRepo.enqueueMutation({
+        mutation_type: 'update',
+        entity_type: 'financial_transaction',
+        entity_id: 'tx-1',
+        payload: { amount: 200 },
+        idempotency_key: 'key-tx-update',
+        retry_count: 0,
+        max_retries: 5,
+        last_error: null,
+      });
+      await localRepo.enqueueMutation({
+        mutation_type: 'delete',
+        entity_type: 'financial_transaction',
+        entity_id: 'tx-1',
+        payload: { id: 'tx-1', reversal_reason: 'User deleted' },
+        idempotency_key: 'key-tx-delete',
+        retry_count: 0,
+        max_retries: 5,
+        last_error: null,
+      });
+
+      await service.processOutbox();
+
+      expect(rpcSpy.calls.count()).toBe(3);
+      expect(rpcSpy.calls.argsFor(0)[0]).toBe(
+        'insert_financial_transaction_idempotent',
+      );
+      expect(rpcSpy.calls.argsFor(1)[0]).toBe(
+        'update_financial_transaction_idempotent',
+      );
+      expect(rpcSpy.calls.argsFor(2)[0]).toBe('soft_delete_transaction');
+    });
+
     it('should pass delete payload id and reversal reason to RPC params', async () => {
       const rpcSpy = spyOn(supabase.client, 'rpc' as any).and.returnValue(
         mockRpc(null),

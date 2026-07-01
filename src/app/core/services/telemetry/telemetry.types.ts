@@ -45,6 +45,7 @@ export const TelemetryEvents = {
   // Financial
   FINANCIAL_WALLET_CREATED: 'financial_wallet_created',
   FINANCIAL_CATEGORY_CREATED: 'financial_category_created',
+  FINANCIAL_TRANSACTION_CREATED: 'financial_transaction_created',
 } as const;
 
 export type TelemetryEvent = (typeof TelemetryEvents)[keyof typeof TelemetryEvents];

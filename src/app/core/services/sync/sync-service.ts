@@ -176,6 +176,11 @@ export class SyncService {
         if (mutationType === 'update') return 'update_transaction_category_idempotent';
         if (mutationType === 'delete') return 'soft_delete_category';
         return null;
+      case 'financial_transaction':
+        if (mutationType === 'create') return 'insert_financial_transaction_idempotent';
+        if (mutationType === 'update') return 'update_financial_transaction_idempotent';
+        if (mutationType === 'delete') return 'soft_delete_transaction';
+        return null;
       case 'structures':
         if (mutationType === 'create') return 'insert_structure_idempotent';
         if (mutationType === 'delete') return 'soft_delete_structure';
