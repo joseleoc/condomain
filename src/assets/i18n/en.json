@@ -399,5 +399,102 @@
       "noPropertiesTitle": "No properties available",
       "noPropertiesDescription": "You need to create at least one property before approving join requests."
     }
+  },
+  "financial": {
+    "wallets": {
+      "title": "Wallets",
+      "emptyList": "You have no wallets. Create one to get started.",
+      "createButton": "Create wallet",
+      "editButton": "Edit",
+      "deleteButton": "Delete",
+      "deleteConfirmTitle": "Delete wallet",
+      "deleteConfirmMessage": "Are you sure you want to delete \"{{name}}\"? This action cannot be undone.",
+      "form": {
+        "title": "New wallet",
+        "editTitle": "Edit wallet",
+        "name": "Name",
+        "namePlaceholder": "e.g. Banco Mercantil USD",
+        "type": "Type",
+        "currency": "Currency",
+        "institution": "Institution",
+        "institutionPlaceholder": "e.g. Banco Mercantil",
+        "balance": "Initial balance",
+        "icon": "Icon",
+        "color": "Color",
+        "save": "Save",
+        "cancel": "Cancel"
+      },
+      "accountType": {
+        "bank": "Bank account",
+        "cash": "Cash",
+        "wallet": "Digital wallet",
+        "credit": "Credit",
+        "investment": "Investment"
+      },
+      "toast": {
+        "created": "Wallet created successfully",
+        "updated": "Wallet updated successfully",
+        "deleted": "Wallet deleted successfully",
+        "error": "Error saving. Please try again."
+      }
+    },
+    "categories": {
+      "title": "Categories",
+      "incomeTab": "Income",
+      "expenseTab": "Expenses",
+      "emptyList": "No categories yet. Create one to get started.",
+      "createButton": "Create category",
+      "editButton": "Edit",
+      "deleteButton": "Delete",
+      "systemLock": "System category",
+      "deleteConfirmTitle": "Delete category",
+      "deleteConfirmMessage": "Are you sure you want to delete \"{{name}}\"?",
+      "deleteSystemError": "System categories cannot be deleted.",
+      "hierarchyError": "Cannot create subcategories beyond 2 levels.",
+      "form": {
+        "title": "New category",
+        "editTitle": "Edit category",
+        "name": "Name",
+        "namePlaceholder": "e.g. Electricity",
+        "type": "Type",
+        "parent": "Parent category",
+        "parentRoot": "No parent (root category)",
+        "noParent": "Select parent category",
+        "icon": "Icon",
+        "color": "Color",
+        "save": "Save",
+        "cancel": "Cancel"
+      },
+      "system": {
+        "maintenance": "Maintenance",
+        "maintenance_common_areas": "Common areas",
+        "maintenance_repairs": "Repairs",
+        "services": "Public Services",
+        "services_electricity": "Electricity",
+        "services_water": "Water",
+        "services_gas": "Gas",
+        "services_internet": "Internet",
+        "services_phone": "Phone",
+        "services_waste": "Waste collection",
+        "administration": "Administration",
+        "administration_fees": "Management fees",
+        "administration_salaries": "Salaries",
+        "security": "Security",
+        "cleaning": "Cleaning",
+        "fees": "Fees",
+        "fees_monthly": "Monthly fee",
+        "fees_extraordinary": "Extraordinary fee",
+        "reserves": "Reserve funds",
+        "other_income": "Other income"
+      },
+      "toast": {
+        "created": "Category created successfully",
+        "updated": "Category updated successfully",
+        "deleted": "Category deleted successfully",
+        "systemError": "System categories cannot be modified.",
+        "hierarchyError": "No more than 2 category levels allowed.",
+        "error": "Error saving. Please try again."
+      }
+    }
   }
 }

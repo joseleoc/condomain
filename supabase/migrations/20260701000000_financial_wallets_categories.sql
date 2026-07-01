@@ -149,33 +149,33 @@ begin
     insert into public.transaction_categories
         (condominium_id, name, category_type, is_system, i18n_key)
     values
-        (v_condominium_id, 'maintenance', 'expense', true, 'financial.categories.expense.maintenance'),
-        (v_condominium_id, 'services', 'expense', true, 'financial.categories.expense.services'),
-        (v_condominium_id, 'administration', 'expense', true, 'financial.categories.expense.administration'),
-        (v_condominium_id, 'security', 'expense', true, 'financial.categories.expense.security'),
-        (v_condominium_id, 'cleaning', 'expense', true, 'financial.categories.expense.cleaning')
+        (v_condominium_id, 'maintenance', 'expense', true, 'maintenance'),
+        (v_condominium_id, 'services', 'expense', true, 'services'),
+        (v_condominium_id, 'administration', 'expense', true, 'administration'),
+        (v_condominium_id, 'security', 'expense', true, 'security'),
+        (v_condominium_id, 'cleaning', 'expense', true, 'cleaning')
     on conflict do nothing;
 
     -- Income root categories
     insert into public.transaction_categories
         (condominium_id, name, category_type, is_system, i18n_key)
     values
-        (v_condominium_id, 'fees', 'income', true, 'financial.categories.income.fees'),
-        (v_condominium_id, 'reserves', 'income', true, 'financial.categories.income.reserves'),
-        (v_condominium_id, 'other_income', 'income', true, 'financial.categories.income.other_income')
+        (v_condominium_id, 'fees', 'income', true, 'fees'),
+        (v_condominium_id, 'reserves', 'income', true, 'reserves'),
+        (v_condominium_id, 'other_income', 'income', true, 'other_income')
     on conflict do nothing;
 
     -- Expense children: maintenance
     insert into public.transaction_categories
         (condominium_id, parent_id, name, category_type, is_system, i18n_key)
-    select v_condominium_id, p.id, 'common_areas', 'expense', true, 'financial.categories.expense.maintenance.common_areas'
+    select v_condominium_id, p.id, 'maintenance_common_areas', 'expense', true, 'maintenance_common_areas'
     from public.transaction_categories p
     where p.condominium_id = v_condominium_id and p.name = 'maintenance' and p.parent_id is null and p.deleted_at is null
     on conflict do nothing;
 
     insert into public.transaction_categories
         (condominium_id, parent_id, name, category_type, is_system, i18n_key)
-    select v_condominium_id, p.id, 'repairs', 'expense', true, 'financial.categories.expense.maintenance.repairs'
+    select v_condominium_id, p.id, 'maintenance_repairs', 'expense', true, 'maintenance_repairs'
     from public.transaction_categories p
     where p.condominium_id = v_condominium_id and p.name = 'maintenance' and p.parent_id is null and p.deleted_at is null
     on conflict do nothing;
@@ -183,28 +183,42 @@ begin
     -- Expense children: services
     insert into public.transaction_categories
         (condominium_id, parent_id, name, category_type, is_system, i18n_key)
-    select v_condominium_id, p.id, 'water', 'expense', true, 'financial.categories.expense.services.water'
+    select v_condominium_id, p.id, 'services_electricity', 'expense', true, 'services_electricity'
     from public.transaction_categories p
     where p.condominium_id = v_condominium_id and p.name = 'services' and p.parent_id is null and p.deleted_at is null
     on conflict do nothing;
 
     insert into public.transaction_categories
         (condominium_id, parent_id, name, category_type, is_system, i18n_key)
-    select v_condominium_id, p.id, 'electricity', 'expense', true, 'financial.categories.expense.services.electricity'
+    select v_condominium_id, p.id, 'services_water', 'expense', true, 'services_water'
     from public.transaction_categories p
     where p.condominium_id = v_condominium_id and p.name = 'services' and p.parent_id is null and p.deleted_at is null
     on conflict do nothing;
 
     insert into public.transaction_categories
         (condominium_id, parent_id, name, category_type, is_system, i18n_key)
-    select v_condominium_id, p.id, 'gas', 'expense', true, 'financial.categories.expense.services.gas'
+    select v_condominium_id, p.id, 'services_gas', 'expense', true, 'services_gas'
     from public.transaction_categories p
     where p.condominium_id = v_condominium_id and p.name = 'services' and p.parent_id is null and p.deleted_at is null
     on conflict do nothing;
 
     insert into public.transaction_categories
         (condominium_id, parent_id, name, category_type, is_system, i18n_key)
-    select v_condominium_id, p.id, 'internet', 'expense', true, 'financial.categories.expense.services.internet'
+    select v_condominium_id, p.id, 'services_internet', 'expense', true, 'services_internet'
+    from public.transaction_categories p
+    where p.condominium_id = v_condominium_id and p.name = 'services' and p.parent_id is null and p.deleted_at is null
+    on conflict do nothing;
+
+    insert into public.transaction_categories
+        (condominium_id, parent_id, name, category_type, is_system, i18n_key)
+    select v_condominium_id, p.id, 'services_phone', 'expense', true, 'services_phone'
+    from public.transaction_categories p
+    where p.condominium_id = v_condominium_id and p.name = 'services' and p.parent_id is null and p.deleted_at is null
+    on conflict do nothing;
+
+    insert into public.transaction_categories
+        (condominium_id, parent_id, name, category_type, is_system, i18n_key)
+    select v_condominium_id, p.id, 'services_waste', 'expense', true, 'services_waste'
     from public.transaction_categories p
     where p.condominium_id = v_condominium_id and p.name = 'services' and p.parent_id is null and p.deleted_at is null
     on conflict do nothing;
@@ -212,134 +226,36 @@ begin
     -- Expense children: administration
     insert into public.transaction_categories
         (condominium_id, parent_id, name, category_type, is_system, i18n_key)
-    select v_condominium_id, p.id, 'insurance', 'expense', true, 'financial.categories.expense.administration.insurance'
+    select v_condominium_id, p.id, 'administration_fees', 'expense', true, 'administration_fees'
     from public.transaction_categories p
     where p.condominium_id = v_condominium_id and p.name = 'administration' and p.parent_id is null and p.deleted_at is null
     on conflict do nothing;
 
     insert into public.transaction_categories
         (condominium_id, parent_id, name, category_type, is_system, i18n_key)
-    select v_condominium_id, p.id, 'legal', 'expense', true, 'financial.categories.expense.administration.legal'
+    select v_condominium_id, p.id, 'administration_salaries', 'expense', true, 'administration_salaries'
     from public.transaction_categories p
     where p.condominium_id = v_condominium_id and p.name = 'administration' and p.parent_id is null and p.deleted_at is null
     on conflict do nothing;
 
-    insert into public.transaction_categories
-        (condominium_id, parent_id, name, category_type, is_system, i18n_key)
-    select v_condominium_id, p.id, 'accounting', 'expense', true, 'financial.categories.expense.administration.accounting'
-    from public.transaction_categories p
-    where p.condominium_id = v_condominium_id and p.name = 'administration' and p.parent_id is null and p.deleted_at is null
-    on conflict do nothing;
 
-    insert into public.transaction_categories
-        (condominium_id, parent_id, name, category_type, is_system, i18n_key)
-    select v_condominium_id, p.id, 'management', 'expense', true, 'financial.categories.expense.administration.management'
-    from public.transaction_categories p
-    where p.condominium_id = v_condominium_id and p.name = 'administration' and p.parent_id is null and p.deleted_at is null
-    on conflict do nothing;
-
-    -- Expense children: security
-    insert into public.transaction_categories
-        (condominium_id, parent_id, name, category_type, is_system, i18n_key)
-    select v_condominium_id, p.id, 'surveillance', 'expense', true, 'financial.categories.expense.security.surveillance'
-    from public.transaction_categories p
-    where p.condominium_id = v_condominium_id and p.name = 'security' and p.parent_id is null and p.deleted_at is null
-    on conflict do nothing;
-
-    insert into public.transaction_categories
-        (condominium_id, parent_id, name, category_type, is_system, i18n_key)
-    select v_condominium_id, p.id, 'access_control', 'expense', true, 'financial.categories.expense.security.access_control'
-    from public.transaction_categories p
-    where p.condominium_id = v_condominium_id and p.name = 'security' and p.parent_id is null and p.deleted_at is null
-    on conflict do nothing;
-
-    insert into public.transaction_categories
-        (condominium_id, parent_id, name, category_type, is_system, i18n_key)
-    select v_condominium_id, p.id, 'guards', 'expense', true, 'financial.categories.expense.security.guards'
-    from public.transaction_categories p
-    where p.condominium_id = v_condominium_id and p.name = 'security' and p.parent_id is null and p.deleted_at is null
-    on conflict do nothing;
-
-    -- Expense children: cleaning
-    insert into public.transaction_categories
-        (condominium_id, parent_id, name, category_type, is_system, i18n_key)
-    select v_condominium_id, p.id, 'common_cleaning', 'expense', true, 'financial.categories.expense.cleaning.common_cleaning'
-    from public.transaction_categories p
-    where p.condominium_id = v_condominium_id and p.name = 'cleaning' and p.parent_id is null and p.deleted_at is null
-    on conflict do nothing;
-
-    insert into public.transaction_categories
-        (condominium_id, parent_id, name, category_type, is_system, i18n_key)
-    select v_condominium_id, p.id, 'gardening', 'expense', true, 'financial.categories.expense.cleaning.gardening'
-    from public.transaction_categories p
-    where p.condominium_id = v_condominium_id and p.name = 'cleaning' and p.parent_id is null and p.deleted_at is null
-    on conflict do nothing;
-
-    insert into public.transaction_categories
-        (condominium_id, parent_id, name, category_type, is_system, i18n_key)
-    select v_condominium_id, p.id, 'pest_control', 'expense', true, 'financial.categories.expense.cleaning.pest_control'
-    from public.transaction_categories p
-    where p.condominium_id = v_condominium_id and p.name = 'cleaning' and p.parent_id is null and p.deleted_at is null
-    on conflict do nothing;
 
     -- Income children: fees
     insert into public.transaction_categories
         (condominium_id, parent_id, name, category_type, is_system, i18n_key)
-    select v_condominium_id, p.id, 'maintenance_fees', 'income', true, 'financial.categories.income.fees.maintenance_fees'
+    select v_condominium_id, p.id, 'fees_monthly', 'income', true, 'fees_monthly'
     from public.transaction_categories p
     where p.condominium_id = v_condominium_id and p.name = 'fees' and p.parent_id is null and p.deleted_at is null
     on conflict do nothing;
 
     insert into public.transaction_categories
         (condominium_id, parent_id, name, category_type, is_system, i18n_key)
-    select v_condominium_id, p.id, 'special_fees', 'income', true, 'financial.categories.income.fees.special_fees'
+    select v_condominium_id, p.id, 'fees_extraordinary', 'income', true, 'fees_extraordinary'
     from public.transaction_categories p
     where p.condominium_id = v_condominium_id and p.name = 'fees' and p.parent_id is null and p.deleted_at is null
     on conflict do nothing;
 
-    insert into public.transaction_categories
-        (condominium_id, parent_id, name, category_type, is_system, i18n_key)
-    select v_condominium_id, p.id, 'late_fees', 'income', true, 'financial.categories.income.fees.late_fees'
-    from public.transaction_categories p
-    where p.condominium_id = v_condominium_id and p.name = 'fees' and p.parent_id is null and p.deleted_at is null
-    on conflict do nothing;
 
-    -- Income children: reserves
-    insert into public.transaction_categories
-        (condominium_id, parent_id, name, category_type, is_system, i18n_key)
-    select v_condominium_id, p.id, 'reserve_fund', 'income', true, 'financial.categories.income.reserves.reserve_fund'
-    from public.transaction_categories p
-    where p.condominium_id = v_condominium_id and p.name = 'reserves' and p.parent_id is null and p.deleted_at is null
-    on conflict do nothing;
-
-    insert into public.transaction_categories
-        (condominium_id, parent_id, name, category_type, is_system, i18n_key)
-    select v_condominium_id, p.id, 'emergency_fund', 'income', true, 'financial.categories.income.reserves.emergency_fund'
-    from public.transaction_categories p
-    where p.condominium_id = v_condominium_id and p.name = 'reserves' and p.parent_id is null and p.deleted_at is null
-    on conflict do nothing;
-
-    -- Income children: other_income
-    insert into public.transaction_categories
-        (condominium_id, parent_id, name, category_type, is_system, i18n_key)
-    select v_condominium_id, p.id, 'rentals', 'income', true, 'financial.categories.income.other_income.rentals'
-    from public.transaction_categories p
-    where p.condominium_id = v_condominium_id and p.name = 'other_income' and p.parent_id is null and p.deleted_at is null
-    on conflict do nothing;
-
-    insert into public.transaction_categories
-        (condominium_id, parent_id, name, category_type, is_system, i18n_key)
-    select v_condominium_id, p.id, 'donations', 'income', true, 'financial.categories.income.other_income.donations'
-    from public.transaction_categories p
-    where p.condominium_id = v_condominium_id and p.name = 'other_income' and p.parent_id is null and p.deleted_at is null
-    on conflict do nothing;
-
-    insert into public.transaction_categories
-        (condominium_id, parent_id, name, category_type, is_system, i18n_key)
-    select v_condominium_id, p.id, 'other', 'income', true, 'financial.categories.income.other_income.other'
-    from public.transaction_categories p
-    where p.condominium_id = v_condominium_id and p.name = 'other_income' and p.parent_id is null and p.deleted_at is null
-    on conflict do nothing;
 
     return new;
 end;

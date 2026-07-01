@@ -235,6 +235,34 @@ describe('CondominiumAccounts', () => {
         }),
       );
     });
+
+    it('should track telemetry when creating offline', async () => {
+      networkStatus.set(false);
+      localRepoSpy.upsert.and.returnValue(Promise.resolve());
+      syncServiceSpy.enqueueMutation.and.returnValue(Promise.resolve());
+
+      const createData: CreateCondominiumAccountData = {
+        condominium_id: condominiumId,
+        name: 'Offline Wallet',
+        account_type: 'cash',
+        currency: 'USD',
+        institution_name: null,
+        initial_balance: 25,
+        icon: 'cash',
+        color: '#00aa00',
+      };
+
+      const result = await service.create(createData);
+
+      expect(telemetrySpy.track).toHaveBeenCalledWith(
+        TelemetryEvents.FINANCIAL_WALLET_CREATED,
+        jasmine.objectContaining({
+          account_id: result.id,
+          condominium_id: condominiumId,
+          account_type: 'cash',
+        }),
+      );
+    });
   });
 
   describe('update', () => {

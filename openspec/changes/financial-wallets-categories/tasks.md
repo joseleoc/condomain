@@ -52,6 +52,6 @@ Chain strategy: feature-branch-chain
 
 ## Phase 5: i18n, Telemetry, Integration
 
-- [ ] 5.1 Add `financial.wallets.*` and `financial.categories.*` (including system category translations) to `es.json` and `en.json`
-- [ ] 5.2 Add `FINANCIAL_WALLET_CREATED` / `FINANCIAL_CATEGORY_CREATED` to `TelemetryEvents`; wire into both service `create()`; test events fire
-- [ ] 5.3 Run full suite (services 80%+, components 70%+), verify offline behaviour, seed idempotency, manual E2E checklist
+- [x] 5.1 Add `financial.wallets.*` and `financial.categories.*` (including system category translations) to `es.json` and `en.json`
+- [x] 5.2 Add `FINANCIAL_WALLET_CREATED` / `FINANCIAL_CATEGORY_CREATED` to `TelemetryEvents`; wire into both service `create()`; test events fire
+- [x] 5.3 Run full suite (services 80%+, components 70%+), verify offline behaviour, seed idempotency, manual E2E checklist

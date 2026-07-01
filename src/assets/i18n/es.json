@@ -393,5 +393,102 @@
       "noPropertiesTitle": "No hay propiedades disponibles",
       "noPropertiesDescription": "Debes crear al menos una propiedad antes de aprobar solicitudes de ingreso."
     }
+  },
+  "financial": {
+    "wallets": {
+      "title": "Billeteras",
+      "emptyList": "No tienes billeteras. Crea una para comenzar.",
+      "createButton": "Crear billetera",
+      "editButton": "Editar",
+      "deleteButton": "Eliminar",
+      "deleteConfirmTitle": "Eliminar billetera",
+      "deleteConfirmMessage": "¿Estás seguro de que deseas eliminar \"{{name}}\"? Esta acción no se puede deshacer.",
+      "form": {
+        "title": "Nueva billetera",
+        "editTitle": "Editar billetera",
+        "name": "Nombre",
+        "namePlaceholder": "ej. Banco Mercantil USD",
+        "type": "Tipo",
+        "currency": "Moneda",
+        "institution": "Institución",
+        "institutionPlaceholder": "ej. Banco Mercantil",
+        "balance": "Saldo inicial",
+        "icon": "Ícono",
+        "color": "Color",
+        "save": "Guardar",
+        "cancel": "Cancelar"
+      },
+      "accountType": {
+        "bank": "Cuenta bancaria",
+        "cash": "Efectivo",
+        "wallet": "Billetera digital",
+        "credit": "Crédito",
+        "investment": "Inversión"
+      },
+      "toast": {
+        "created": "Billetera creada correctamente",
+        "updated": "Billetera actualizada correctamente",
+        "deleted": "Billetera eliminada correctamente",
+        "error": "Error al guardar. Inténtalo de nuevo."
+      }
+    },
+    "categories": {
+      "title": "Categorías",
+      "incomeTab": "Ingresos",
+      "expenseTab": "Egresos",
+      "emptyList": "No hay categorías. Crea una para comenzar.",
+      "createButton": "Crear categoría",
+      "editButton": "Editar",
+      "deleteButton": "Eliminar",
+      "systemLock": "Categoría del sistema",
+      "deleteConfirmTitle": "Eliminar categoría",
+      "deleteConfirmMessage": "¿Estás seguro de que deseas eliminar \"{{name}}\"?",
+      "deleteSystemError": "No se pueden eliminar categorías del sistema.",
+      "hierarchyError": "No se pueden crear subcategorías de más de 2 niveles.",
+      "form": {
+        "title": "Nueva categoría",
+        "editTitle": "Editar categoría",
+        "name": "Nombre",
+        "namePlaceholder": "ej. Electricidad",
+        "type": "Tipo",
+        "parent": "Categoría padre",
+        "parentRoot": "Sin padre (categoría raíz)",
+        "noParent": "Seleccionar categoría padre",
+        "icon": "Ícono",
+        "color": "Color",
+        "save": "Guardar",
+        "cancel": "Cancelar"
+      },
+      "system": {
+        "maintenance": "Mantenimiento",
+        "maintenance_common_areas": "Áreas comunes",
+        "maintenance_repairs": "Reparaciones",
+        "services": "Servicios Públicos",
+        "services_electricity": "Electricidad",
+        "services_water": "Agua",
+        "services_gas": "Gas",
+        "services_internet": "Internet",
+        "services_phone": "Teléfono",
+        "services_waste": "Aseo urbano",
+        "administration": "Administración",
+        "administration_fees": "Honorarios",
+        "administration_salaries": "Sueldos",
+        "security": "Seguridad",
+        "cleaning": "Limpieza",
+        "fees": "Alícuotas",
+        "fees_monthly": "Alícuota mensual",
+        "fees_extraordinary": "Cuota extraordinaria",
+        "reserves": "Fondos de reserva",
+        "other_income": "Otros ingresos"
+      },
+      "toast": {
+        "created": "Categoría creada correctamente",
+        "updated": "Categoría actualizada correctamente",
+        "deleted": "Categoría eliminada correctamente",
+        "systemError": "No se pueden modificar categorías del sistema.",
+        "hierarchyError": "No se permiten más de 2 niveles de categorías.",
+        "error": "Error al guardar. Inténtalo de nuevo."
+      }
+    }
   }
 }

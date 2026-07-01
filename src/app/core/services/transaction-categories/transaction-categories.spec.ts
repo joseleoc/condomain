@@ -104,7 +104,7 @@ describe('TransactionCategories', () => {
     icon: 'construct',
     color: '#ff8200',
     is_system: true,
-    i18n_key: 'financial.categories.expense.maintenance',
+    i18n_key: 'maintenance',
     created_at: '2026-07-01T00:00:00Z',
     updated_at: '2026-07-01T00:00:00Z',
     deleted_at: null,
@@ -119,7 +119,7 @@ describe('TransactionCategories', () => {
     icon: 'hammer',
     color: '#ff8200',
     is_system: true,
-    i18n_key: 'financial.categories.expense.maintenance.repairs',
+    i18n_key: 'maintenance_repairs',
     created_at: '2026-07-01T00:00:00Z',
     updated_at: '2026-07-01T00:00:00Z',
     deleted_at: null,
@@ -280,6 +280,33 @@ describe('TransactionCategories', () => {
           category_id: createdCategory.id,
           condominium_id: condominiumId,
           category_type: 'income',
+          parent_id: null,
+        }),
+      );
+    });
+
+    it('should track telemetry when creating offline', async () => {
+      networkStatus.set(false);
+      localRepoSpy.upsert.and.returnValue(Promise.resolve());
+      syncServiceSpy.enqueueMutation.and.returnValue(Promise.resolve());
+
+      const createData: CreateTransactionCategoryData = {
+        condominium_id: condominiumId,
+        parent_id: null,
+        name: 'Offline Category',
+        category_type: 'expense',
+        icon: 'cash',
+        color: '#00aa00',
+      };
+
+      const result = await service.create(createData);
+
+      expect(telemetrySpy.track).toHaveBeenCalledWith(
+        TelemetryEvents.FINANCIAL_CATEGORY_CREATED,
+        jasmine.objectContaining({
+          category_id: result.id,
+          condominium_id: condominiumId,
+          category_type: 'expense',
           parent_id: null,
         }),
       );
