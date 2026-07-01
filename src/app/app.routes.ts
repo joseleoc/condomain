@@ -123,6 +123,13 @@ export const routes: Routes = [
           ).then((m) => m.CategoryListPage),
       },
       {
+        path: 'transactions',
+        loadComponent: () =>
+          import(
+            './features/financial/pages/transaction-list/transaction-list.page'
+          ).then((m) => m.TransactionListPage),
+      },
+      {
         path: '',
         redirectTo: 'wallets',
         pathMatch: 'full',

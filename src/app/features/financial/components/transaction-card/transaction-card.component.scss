@@ -1,0 +1,76 @@
+.transaction-card {
+  --padding-start: 0.75rem;
+  --padding-end: 0.75rem;
+  --inner-padding-end: 0;
+}
+
+.transaction-type-icon {
+  font-size: 1.5rem;
+  margin-right: 0.75rem;
+}
+
+.transaction-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.5rem;
+}
+
+.transaction-description {
+  font-size: 1rem;
+  font-weight: 600;
+  margin: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  flex: 1;
+}
+
+.transaction-status {
+  font-size: 0.7rem;
+  text-transform: uppercase;
+  flex-shrink: 0;
+}
+
+.transaction-meta {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  margin: 0.25rem 0 0;
+  font-size: 0.85rem;
+  color: var(--ion-color-medium);
+}
+
+.category-label,
+.account-label {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.25rem;
+}
+
+.category-icon {
+  font-size: 0.9rem;
+}
+
+.transaction-date {
+  margin-left: auto;
+}
+
+.transaction-amount {
+  font-size: 1.1rem;
+  font-weight: 700;
+  white-space: nowrap;
+  margin-left: 0.75rem;
+}
+
+.amount-income {
+  color: var(--ion-color-success);
+}
+
+.amount-expense {
+  color: var(--ion-color-danger);
+}
+
+.amount-transfer {
+  color: var(--ion-color-primary);
+}
