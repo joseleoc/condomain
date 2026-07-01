@@ -9,7 +9,6 @@ import {
   IonItem,
   IonLabel,
 } from '@ionic/angular/standalone';
-import { TranslocoPipe } from '@jsverse/transloco';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { Currency } from '@core/services/currency/currency';
 import type { CondominiumAccount } from '@app-types/condominium-accounts';
@@ -38,7 +37,6 @@ const ICON_MAP: Record<AccountType, string> = {
     IonIcon,
     IonItem,
     IonLabel,
-    TranslocoPipe,
   ],
 })
 export class WalletCardComponent {

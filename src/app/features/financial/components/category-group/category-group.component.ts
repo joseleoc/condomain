@@ -2,7 +2,7 @@ import { Component, computed, input, output } from '@angular/core';
 import { IonIcon } from '@ionic/angular/standalone';
 import { TranslocoPipe } from '@jsverse/transloco';
 import { CategoryCardComponent } from '../category-card/category-card.component';
-import type { CategoryTreeNode } from '@app-types/transaction-categories';
+import type { CategoryTreeNode, TransactionCategory } from '@app-types/transaction-categories';
 
 @Component({
   selector: 'app-category-group',
@@ -14,17 +14,17 @@ import type { CategoryTreeNode } from '@app-types/transaction-categories';
 export class CategoryGroupComponent {
   node = input.required<CategoryTreeNode>();
 
-  edit = output<CategoryTreeNode>();
-  delete = output<CategoryTreeNode>();
+  edit = output<TransactionCategory>();
+  delete = output<TransactionCategory>();
 
   rootIcon = computed(() => this.node().icon ?? 'folder-outline');
   hasChildren = computed(() => this.node().children.length > 0);
 
-  onChildEdit(child: CategoryTreeNode): void {
+  onChildEdit(child: TransactionCategory): void {
     this.edit.emit(child);
   }
 
-  onChildDelete(child: CategoryTreeNode): void {
+  onChildDelete(child: TransactionCategory): void {
     this.delete.emit(child);
   }
 }

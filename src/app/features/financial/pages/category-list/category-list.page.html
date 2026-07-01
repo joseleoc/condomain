@@ -14,7 +14,7 @@
 
   <ion-segment
     [value]="selectedType()"
-    (ionChange)="setSelectedType($event.detail.value)"
+    (ionChange)="setSelectedType($any($event.detail.value))"
     class="category-segment"
   >
     @for (type of getCategoryTypes(); track type) {
