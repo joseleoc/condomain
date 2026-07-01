@@ -2,6 +2,7 @@ export * from './condominium';
 export * from './condominium-accounts';
 export * from './condominium-invitation-code';
 export * from './currency';
+export * from './financial-transactions';
 export * from './general';
 export * from './join-request';
 export * from './profile';
