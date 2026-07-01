@@ -39,9 +39,9 @@ Chain strategy: feature-branch-chain
 
 ## Phase 3: Wallet UI
 
-- [ ] 3.1 Create `WalletListPage` container — TanStack Query, loading/empty/populated/error states, swipe-to-delete with confirm; lazy route at `/financial/wallets`; component tests
-- [ ] 3.2 Create `WalletCard` presentational — name, type icon, balance + currency, institution; component tests
-- [ ] 3.3 Create `WalletFormModal` — reactive form (name, type, currency, institution, icon, color, initial balance), create/edit modes; test validation
+- [x] 3.1 Create `WalletListPage` container — service BehaviorSubjects, loading/empty/populated/error states, swipe-to-delete with confirm; lazy route at `/financial/wallets`; component tests
+- [x] 3.2 Create `WalletCard` presentational — name, type icon, balance + currency, institution; component tests
+- [x] 3.3 Create `WalletFormModal` — reactive form (name, type, currency, institution, icon, color, initial balance), create/edit modes; test validation
 
 ## Phase 4: Category UI
 

@@ -1,0 +1,87 @@
+<ion-header>
+  <ion-toolbar>
+    <ion-buttons slot="start">
+      <ion-back-button defaultHref="/home" />
+    </ion-buttons>
+    <ion-title>{{ 'financial.wallets.title' | transloco }}</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content [fullscreen]="true">
+  @let accounts = accounts$ | async;
+  @let loading = loading$ | async;
+  @let error = error$ | async;
+
+  <!-- Loading state -->
+  @if (loading) {
+    <div class="state-container loading-state">
+      <ion-spinner name="crescent"></ion-spinner>
+      <p>{{ 'common.loading' | transloco }}</p>
+    </div>
+  }
+
+  <!-- Error state -->
+  @if (!loading && error) {
+    <div class="state-container error-state">
+      <ion-icon name="alert-circle-outline" size="large" color="danger"></ion-icon>
+      <p>{{ 'common.error' | transloco }}</p>
+    </div>
+  }
+
+  <!-- Empty state -->
+  @if (!loading && !error && accounts?.length === 0) {
+    <div class="state-container empty-state">
+      <ion-icon name="wallet-outline" size="large" color="medium"></ion-icon>
+      <h3>{{ 'financial.wallets.emptyList' | transloco }}</h3>
+      <ion-button (click)="openCreateModal()">
+        <ion-icon name="add" slot="start"></ion-icon>
+        {{ 'financial.wallets.createButton' | transloco }}
+      </ion-button>
+    </div>
+  }
+
+  <!-- Populated state -->
+  @if (!loading && !error && accounts && accounts.length > 0) {
+    <ion-list class="wallet-list">
+      @for (account of accounts; track account.id) {
+        <ion-item-sliding>
+          <ion-item lines="full" (click)="openEditModal(account)" class="wallet-item">
+            <app-wallet-card [account]="account" />
+          </ion-item>
+
+          <ion-item-options side="end">
+            <ion-item-option color="primary" (click)="openEditModal(account)">
+              <ion-icon name="create-outline" slot="icon-only"></ion-icon>
+            </ion-item-option>
+            <ion-item-option color="danger" (click)="confirmDelete(account)">
+              <ion-icon name="trash-outline" slot="icon-only"></ion-icon>
+            </ion-item-option>
+          </ion-item-options>
+        </ion-item-sliding>
+      }
+    </ion-list>
+  }
+
+  <!-- Floating action button -->
+  <ion-fab slot="fixed" vertical="bottom" horizontal="end" class="wallet-fab">
+    <ion-fab-button (click)="openCreateModal()">
+      <ion-icon name="add"></ion-icon>
+    </ion-fab-button>
+  </ion-fab>
+
+  <!-- Wallet form modal -->
+  <app-wallet-form-modal
+    [account]="accountToEdit()"
+    [condominiumId]="contextService.activeCondominium()?.id ?? ''"
+    [isOpen]="isFormModalOpen()"
+    (isOpenChange)="closeFormModal()"
+  />
+
+  <!-- Delete confirmation alert -->
+  <ion-alert
+    [isOpen]="!!deleteTarget()"
+    [header]="'financial.wallets.deleteConfirmTitle' | transloco"
+    [message]="'financial.wallets.deleteConfirmMessage' | transloco"
+    [buttons]="deleteAlertButtons()"
+  />
+</ion-content>

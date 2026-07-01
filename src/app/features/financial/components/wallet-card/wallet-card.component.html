@@ -1,0 +1,26 @@
+<ion-card class="wallet-card">
+  <ion-card-header>
+    <ion-card-title>{{ account().name }}</ion-card-title>
+    @if (account().institution_name) {
+      <ion-card-subtitle>
+        {{ account().institution_name }}
+      </ion-card-subtitle>
+    }
+  </ion-card-header>
+
+  <ion-card-content>
+    <ion-item lines="none" class="wallet-balance-item">
+      <ion-icon
+        [name]="iconName()"
+        slot="start"
+        color="primary"
+        class="wallet-type-icon"
+      ></ion-icon>
+      <ion-label>
+        <h2 class="balance-value">
+          {{ currencySymbol() }}{{ account().current_balance }}
+        </h2>
+      </ion-label>
+    </ion-item>
+  </ion-card-content>
+</ion-card>

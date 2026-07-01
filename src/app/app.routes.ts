@@ -105,6 +105,24 @@ export const routes: Routes = [
       ),
   },
   {
+    path: 'financial',
+    canActivate: [isNotAuthenticatedGuard],
+    children: [
+      {
+        path: 'wallets',
+        loadComponent: () =>
+          import(
+            './features/financial/pages/wallet-list/wallet-list.page'
+          ).then((m) => m.WalletListPage),
+      },
+      {
+        path: '',
+        redirectTo: 'wallets',
+        pathMatch: 'full',
+      },
+    ],
+  },
+  {
     path: '',
     redirectTo: 'home',
     pathMatch: 'full',
