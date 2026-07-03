@@ -18,9 +18,9 @@ comment on column public.financial_transactions.base_currency is 'Currency code 
 -- 2. POPULATE EXISTING ROWS
 -- =========================================================================
 
--- Copy base_currency from condominiums.base_currency for existing transactions
+-- Copy base_currency from condominiums.currency for existing transactions
 update public.financial_transactions ft
-set base_currency = c.base_currency
+set base_currency = c.currency
 from public.condominiums c
 where ft.condominium_id = c.id
   and ft.base_currency is null;
