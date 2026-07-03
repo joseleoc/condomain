@@ -13,6 +13,7 @@ export interface FinancialTransaction {
   original_currency: string;
   exchange_rate: number;
   base_amount: number;
+  base_currency: string;
   description: string;
   reference_number: string | null;
   transaction_date: string;
@@ -30,6 +31,7 @@ export interface CreateFinancialTransactionData {
   amount: number;
   original_currency: string;
   exchange_rate?: number;
+  base_currency: string;
   description: string;
   reference_number?: string | null;
   transaction_date: string;
@@ -43,6 +45,7 @@ export interface CreateTransferData {
   amount: number;
   original_currency: string;
   exchange_rate?: number;
+  base_currency: string;
   description: string;
   transaction_date: string;
 }
@@ -53,6 +56,7 @@ export interface UpdateFinancialTransactionData {
   amount?: number;
   original_currency?: string;
   exchange_rate?: number;
+  base_currency?: string;
   description?: string;
   reference_number?: string | null;
   transaction_date?: string;

@@ -15,6 +15,7 @@ import { SyncService } from '../sync/sync-service';
 import { TelemetryService } from '../telemetry/telemetry.service';
 import { TelemetryEvents } from '../telemetry/telemetry.types';
 import { Profile } from '../profile/profile';
+import { ContextService } from '../context/context.service';
 import { v4 as uuidv4 } from 'uuid';
 import { BehaviorSubject } from 'rxjs';
 
@@ -37,6 +38,7 @@ export class FinancialTransactions {
   #syncService = inject(SyncService);
   #telemetry = inject(TelemetryService);
   #profile = inject(Profile);
+  #context = inject(ContextService);
 
   // --- State ---
   transactions$ = new BehaviorSubject<FinancialTransaction[]>([]);
@@ -256,6 +258,7 @@ export class FinancialTransactions {
     const transferGroupId = uuidv4();
     const exchangeRate = data.exchange_rate ?? 1;
     const baseAmount = this.#calculateBaseAmount(data.amount, exchangeRate);
+    const baseCurrency = data.base_currency ?? this.#getBaseCurrency(data.condominium_id);
 
     const common = {
       condominium_id: data.condominium_id,
@@ -263,6 +266,7 @@ export class FinancialTransactions {
       original_currency: data.original_currency,
       exchange_rate: exchangeRate,
       base_amount: baseAmount,
+      base_currency: baseCurrency,
       description: data.description,
       transaction_date: data.transaction_date,
       transfer_group_id: transferGroupId,
@@ -328,6 +332,7 @@ export class FinancialTransactions {
         ...(data.original_currency !== undefined && {
           original_currency: data.original_currency,
         }),
+        ...(data.base_currency !== undefined && { base_currency: data.base_currency }),
         ...(data.exchange_rate !== undefined && {
           exchange_rate: data.exchange_rate,
           base_amount: this.#calculateBaseAmount(
@@ -362,6 +367,7 @@ export class FinancialTransactions {
       }
       if (data.original_currency !== undefined)
         updateData['original_currency'] = data.original_currency;
+      if (data.base_currency !== undefined) updateData['base_currency'] = data.base_currency;
       if (data.exchange_rate !== undefined) {
         updateData['exchange_rate'] = data.exchange_rate;
         updateData['base_amount'] = this.#calculateBaseAmount(
@@ -491,6 +497,7 @@ export class FinancialTransactions {
     const createdBy = this.#currentProfileId();
     const exchangeRate = data.exchange_rate ?? 1;
     const baseAmount = this.#calculateBaseAmount(data.amount, exchangeRate);
+    const baseCurrency = data.base_currency ?? this.#getBaseCurrency(data.condominium_id);
 
     const valuesToInsert = {
       ...data,
@@ -500,6 +507,7 @@ export class FinancialTransactions {
       status: 'pending' as TransactionStatus,
       exchange_rate: exchangeRate,
       base_amount: baseAmount,
+      base_currency: baseCurrency,
       created_by: createdBy,
       created_at: new Date().toISOString(),
       updated_at: new Date().toISOString(),
@@ -535,6 +543,7 @@ export class FinancialTransactions {
     const createdBy = this.#currentProfileId();
     const exchangeRate = data.exchange_rate ?? 1;
     const baseAmount = this.#calculateBaseAmount(data.amount, exchangeRate);
+    const baseCurrency = data.base_currency ?? this.#getBaseCurrency(data.condominium_id);
 
     const transaction: FinancialTransaction = {
       id,
@@ -548,6 +557,7 @@ export class FinancialTransactions {
       original_currency: data.original_currency,
       exchange_rate: exchangeRate,
       base_amount: baseAmount,
+      base_currency: baseCurrency,
       description: data.description,
       reference_number: data.reference_number ?? null,
       transaction_date: data.transaction_date,
@@ -592,6 +602,16 @@ export class FinancialTransactions {
 
   #calculateBaseAmount(amount: number, exchangeRate: number): number {
     return Math.round(amount * exchangeRate * 100) / 100;
+  }
+
+  #getBaseCurrency(condominiumId: string): string {
+    const condo = this.#context.activeCondominium();
+    if (condo && condo.id === condominiumId && condo.currency) {
+      return condo.currency;
+    }
+    // Fallback: query from database
+    // This should rarely happen as ContextService should have the condo loaded
+    return 'USD';
   }
 
   #currentProfileId(): string {

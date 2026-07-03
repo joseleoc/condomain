@@ -176,6 +176,7 @@ export class TransferFormModalComponent {
         amount: formValue.amount,
         original_currency: formValue.original_currency,
         exchange_rate: formValue.exchange_rate,
+        base_currency: this.baseCurrency(),
         description: formValue.description,
         transaction_date: formValue.transaction_date,
       });

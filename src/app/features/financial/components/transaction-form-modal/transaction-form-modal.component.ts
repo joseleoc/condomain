@@ -39,6 +39,7 @@ import { TransactionCategories } from '@core/services/transaction-categories/tra
 import { Currency } from '@core/services/currency/currency';
 import { FinancialTransactions } from '@core/services/financial-transactions/financial-transactions';
 import { Toast } from '@core/services/toast/toast';
+import { ContextService } from '@core/services/context/context.service';
 import type { FinancialTransaction } from '@app-types/financial-transactions';
 
 type TransactionFormType = 'income' | 'expense';
@@ -254,6 +255,7 @@ export class TransactionFormModalComponent {
           amount: formValue.amount,
           original_currency: formValue.original_currency,
           exchange_rate: formValue.exchange_rate,
+          base_currency: this.baseCurrency(),
           description: formValue.description,
           reference_number: formValue.reference_number,
           transaction_date: formValue.transaction_date,
@@ -268,6 +270,7 @@ export class TransactionFormModalComponent {
           amount: formValue.amount,
           original_currency: formValue.original_currency,
           exchange_rate: formValue.exchange_rate,
+          base_currency: this.baseCurrency(),
           description: formValue.description,
           reference_number: formValue.reference_number,
           transaction_date: formValue.transaction_date,
