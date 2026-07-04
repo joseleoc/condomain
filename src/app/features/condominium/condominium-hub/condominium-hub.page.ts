@@ -1,13 +1,8 @@
 import { Component, inject, signal, effect } from '@angular/core';
 import {
   IonContent,
-  IonHeader,
-  IonToolbar,
-  IonButtons,
-  IonBackButton,
   IonIcon,
   IonButton,
-  IonTitle,
   IonAlert,
   IonToast,
   IonSkeletonText,
@@ -27,7 +22,6 @@ import { toSignal } from '@angular/core/rxjs-interop';
 import type { Structure } from '@app-types/structures';
 import type { Property } from '@app-types/property';
 import {
-  ContextStatusComponent,
   CondominiumSelectorComponent,
   CondoDashboardCardComponent,
   HubStructuresAccordionComponent,
@@ -44,15 +38,9 @@ import { CondominiumInvitationCode } from '@app-types/index';
   standalone: true,
   imports: [
     IonContent,
-    IonHeader,
-    IonToolbar,
-    IonButtons,
-    IonBackButton,
     IonIcon,
     IonButton,
     TranslocoModule,
-    IonTitle,
-    ContextStatusComponent,
     CondominiumSelectorComponent,
     CondoDashboardCardComponent,
     HubStructuresAccordionComponent,

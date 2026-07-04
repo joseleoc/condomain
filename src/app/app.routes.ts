@@ -3,6 +3,7 @@ import { isAuthenticatedGuard } from '@core/guards/is-authenticated/is-authentic
 import { isNotAuthenticatedGuard } from '@core/guards/is-not-authenticated/is-not-authenticated-guard';
 import { hasCondominiumsGuard } from '@core/guards/has-condominiums/has-condominiums-guard';
 import { captureInvitationCodeGuard } from '@core/guards/capture-invitation-code/capture-invitation-code-guard';
+import { MainLayoutComponent } from '@shared/components/layout/main-layout/main-layout.component';
 
 export const routes: Routes = [
   {
@@ -45,100 +46,124 @@ export const routes: Routes = [
     ],
   },
   {
-    path: 'home',
+    path: 'app',
     canActivate: [isNotAuthenticatedGuard, hasCondominiumsGuard],
-    loadComponent: () =>
-      import('./features/home/home.page').then((m) => m.HomePage),
-  },
-  {
-    path: 'onboarding',
-    canActivate: [isNotAuthenticatedGuard],
+    component: MainLayoutComponent,
+    data: {
+      title: 'Condomain',
+      showBackButton: false,
+      defaultHref: '',
+    },
     children: [
       {
-        path: '',
+        path: 'home',
+
         loadComponent: () =>
-          import('./features/onboarding/onboarding.page').then(
-            (m) => m.OnboardingPage,
+          import('./features/home/home.page').then((m) => m.HomePage),
+      },
+      {
+        path: 'onboarding',
+        children: [
+          {
+            path: '',
+            loadComponent: () =>
+              import('./features/onboarding/onboarding.page').then(
+                (m) => m.OnboardingPage,
+              ),
+          },
+          {
+            path: 'join-condominium',
+            canActivate: [captureInvitationCodeGuard],
+            loadComponent: () =>
+              import('./features/onboarding/join-condominium/join-condominium.page').then(
+                (m) => m.JoinCondominiumPage,
+              ),
+          },
+        ],
+      },
+      {
+        path: 'condominium',
+        children: [
+          {
+            path: 'condominium-hub',
+            data: {
+              showBackButton: true,
+              defaultHref: '/app/home',
+            },
+            loadComponent: () =>
+              import('./features/condominium/condominium-hub/condominium-hub.page').then(
+                (m) => m.CondominiumHubPage,
+              ),
+          },
+          {
+            path: 'join-requests',
+            loadComponent: () =>
+              import('./features/condominium/join-requests/join-requests.page').then(
+                (m) => m.JoinRequestsPage,
+              ),
+          },
+          {
+            path: '',
+            redirectTo: 'condominium-hub',
+            pathMatch: 'full',
+          },
+          {
+            path: '**',
+            redirectTo: 'condominium-hub',
+            pathMatch: 'full',
+          },
+        ],
+      },
+      {
+        path: 'create-condominium',
+        loadComponent: () =>
+          import('./features/create-condominium/create-condominium.page').then(
+            (m) => m.CreateCondominiumPage,
           ),
       },
+
       {
-        path: 'join-condominium',
-        canActivate: [captureInvitationCodeGuard],
-        loadComponent: () =>
-          import(
-            './features/onboarding/join-condominium/join-condominium.page'
-          ).then((m) => m.JoinCondominiumPage),
-      },
-    ],
-  },
-  {
-    path: 'condominium',
-    canActivate: [isNotAuthenticatedGuard],
-    children: [
-      {
-        path: 'condominium-hub',
-        loadComponent: () =>
-          import('./features/condominium/condominium-hub/condominium-hub.page').then(
-            (m) => m.CondominiumHubPage,
-          ),
-      },
-      {
-        path: 'join-requests',
-        loadComponent: () =>
-          import('./features/condominium/join-requests/join-requests.page').then(
-            (m) => m.JoinRequestsPage,
-          ),
-      },
-      {
-        path: '',
-        redirectTo: 'condominium-hub',
-        pathMatch: 'full',
-      },
-    ],
-  },
-  {
-    path: 'create-condominium',
-    canActivate: [isNotAuthenticatedGuard],
-    loadComponent: () =>
-      import('./features/create-condominium/create-condominium.page').then(
-        (m) => m.CreateCondominiumPage,
-      ),
-  },
-  {
-    path: 'financial',
-    canActivate: [isNotAuthenticatedGuard],
-    children: [
-      {
-        path: 'wallets',
-        loadComponent: () =>
-          import(
-            './features/financial/pages/wallet-list/wallet-list.page'
-          ).then((m) => m.WalletListPage),
-      },
-      {
-        path: 'categories',
-        loadComponent: () =>
-          import(
-            './features/financial/pages/category-list/category-list.page'
-          ).then((m) => m.CategoryListPage),
-      },
-      {
-        path: 'transactions',
-        loadComponent: () =>
-          import(
-            './features/financial/pages/transaction-list/transaction-list.page'
-          ).then((m) => m.TransactionListPage),
-      },
-      {
-        path: '',
-        redirectTo: 'wallets',
-        pathMatch: 'full',
+        path: 'financial',
+        canActivate: [isNotAuthenticatedGuard],
+        children: [
+          {
+            path: 'wallets',
+            loadComponent: () =>
+              import('./features/financial/pages/wallet-list/wallet-list.page').then(
+                (m) => m.WalletListPage,
+              ),
+          },
+          {
+            path: 'categories',
+            loadComponent: () =>
+              import('./features/financial/pages/category-list/category-list.page').then(
+                (m) => m.CategoryListPage,
+              ),
+          },
+          {
+            path: 'transactions',
+            loadComponent: () =>
+              import('./features/financial/pages/transaction-list/transaction-list.page').then(
+                (m) => m.TransactionListPage,
+              ),
+          },
+          {
+            path: '',
+            redirectTo: 'wallets',
+            pathMatch: 'full',
+          },
+        ],
       },
     ],
   },
   {
     path: '',
-    redirectTo: 'home',
+    redirectTo: 'app/home',
+    pathMatch: 'full',
+  },
+  {
+    path: '**',
+    redirectTo: 'app/home',
     pathMatch: 'full',
   },
 ];

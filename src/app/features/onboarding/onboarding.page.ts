@@ -12,8 +12,6 @@ import {
   IonRadioGroup,
   IonRadio,
 } from '@ionic/angular/standalone';
-import { MainLayoutComponent } from '@shared/components/layout/main-layout/main-layout.component';
-import { IonicModule } from "@ionic/angular";
 import { TelemetryService } from '@core/services/telemetry/telemetry.service';
 import { TelemetryEvents } from '@core/services/telemetry/telemetry.types';
 
@@ -32,10 +30,9 @@ type OnboardingRole = 'admin' | 'owner';
     IonCardContent,
     IonIcon,
     IonButton,
-    MainLayoutComponent,
     IonRadioGroup,
     IonRadio,
-],
+  ],
 })
 export class OnboardingPage {
   private router = inject(Router);
@@ -62,5 +59,4 @@ export class OnboardingPage {
       this.router.navigate(['/onboarding/join-condominium']);
     }
   }
-  
 }

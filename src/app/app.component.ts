@@ -25,6 +25,7 @@ import {
   personAddOutline,
   closeCircle,
   checkmarkCircle,
+  locationOutline,
 } from 'ionicons/icons';
 import { PendingInvitation } from '@core/services/pending-invitation/pending-invitation';
 
@@ -62,6 +63,7 @@ export class AppComponent {
       closeCircle,
       checkmarkCircle,
       createOutline,
+      locationOutline,
     });
   }
 }
