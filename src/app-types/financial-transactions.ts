@@ -21,6 +21,16 @@ export interface FinancialTransaction {
   created_at: string;
   updated_at: string;
   deleted_at: string | null;
+  // Approval fields
+  approved_at: string | null;
+  approved_by: string | null;
+  // Reconciliation fields
+  reconciled_at: string | null;
+  reconciled_by: string | null;
+  // Reversal fields
+  reversal_transaction_id: string | null;
+  reversed_by_transaction_id: string | null;
+  reversal_reason: string | null;
 }
 
 export interface CreateFinancialTransactionData {
