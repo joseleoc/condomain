@@ -16,10 +16,6 @@ import { TelemetryService } from '../telemetry/telemetry.service';
 import { TelemetryEvents } from '../telemetry/telemetry.types';
 import { Profile } from '../profile/profile';
 import { ContextService } from '../context/context.service';
-import { AccountingEngineService } from '../accounting-engine/accounting-engine.service';
-import { ChartOfAccountsService } from '../chart-of-accounts/chart-of-accounts.service';
-import { CondominiumAccounts } from '../condominium-accounts/condominium-accounts';
-import type { ChartOfAccounts } from '@app-types/chart-of-accounts';
 import { v4 as uuidv4 } from 'uuid';
 import { BehaviorSubject } from 'rxjs';
 
@@ -43,9 +39,6 @@ export class FinancialTransactions {
   #telemetry = inject(TelemetryService);
   #profile = inject(Profile);
   #context = inject(ContextService);
-  #accountingEngine = inject(AccountingEngineService);
-  #chartOfAccounts = inject(ChartOfAccountsService);
-  #wallets = inject(CondominiumAccounts);
 
   // --- State ---
   transactions$ = new BehaviorSubject<FinancialTransaction[]>([]);
@@ -530,14 +523,8 @@ export class FinancialTransactions {
 
     await this.#localRepo.upsert(ENTITY_TYPE, result);
 
-    // Generate accounting entries (Phase 3)
-    try {
-      await this.#generateAccountingEntries(result, data, isTransferLeg);
-    } catch (error) {
-      console.error('Failed to generate accounting entries:', error);
-      // Don't fail the transaction creation if accounting entries fail
-      // This can be reconciled later
-    }
+    // Accounting entries are generated automatically by Postgres trigger
+    // (see supabase/migrations/20260703000004_accounting_engine_trigger.sql)
 
     this.#telemetry.track(TelemetryEvents.FINANCIAL_TRANSACTION_CREATED, {
       transaction_type: data.type,
@@ -661,118 +648,5 @@ export class FinancialTransactions {
       return false;
     }
     return true;
-  }
-
-  // --- Accounting Engine Integration (Phase 3) ---
-
-  /**
-   * Generate double-entry accounting entries for a transaction.
-   */
-  async #generateAccountingEntries(
-    transaction: FinancialTransaction,
-    data: CreateFinancialTransactionData,
-    isTransferLeg: boolean,
-  ): Promise<void> {
-    // For transfer legs, we handle them differently in createTransfer
-    if (isTransferLeg) {
-      return;
-    }
-
-    // Get wallet account
-    const wallet = await this.#wallets.getById(data.account_id);
-    if (!wallet) {
-      throw new Error('Wallet not found');
-    }
-
-    // Find chart_of_accounts entries
-    const walletAccount = await this.#findWalletAccount(wallet, transaction.condominium_id);
-    const categoryAccount = data.category_id
-      ? await this.#findCategoryAccount(data.category_id, transaction.condominium_id)
-      : null;
-
-    // For transfers, we need destination account
-    let destinationAccount: ChartOfAccounts | undefined;
-    if (transaction.type === 'transfer' && transaction.transfer_group_id) {
-      // Find the other leg of the transfer
-      const { data: otherLeg } = await this.client
-        .from('financial_transactions')
-        .select('account_id')
-        .eq('transfer_group_id', transaction.transfer_group_id)
-        .neq('id', transaction.id)
-        .single();
-
-      if (otherLeg) {
-        const destWallet = await this.#wallets.getById(otherLeg.account_id);
-        if (destWallet) {
-          destinationAccount = await this.#findWalletAccount(destWallet, transaction.condominium_id);
-        }
-      }
-    }
-
-    await this.#accountingEngine.generateEntries(
-      transaction,
-      walletAccount,
-      categoryAccount,
-      destinationAccount,
-    );
-  }
-
-  /**
-   * Find the chart_of_accounts entry for a wallet.
-   * Maps wallet account_type to asset account codes.
-   */
-  async #findWalletAccount(
-    wallet: { account_type: string; name: string },
-    condominiumId: string,
-  ): Promise<ChartOfAccounts> {
-    const accounts = await this.#chartOfAccounts.fetchByCondominium(condominiumId);
-
-    // Try to find by code mapping
-    const codeMapping: Record<string, string> = {
-      bank: '1.1.02',
-      cash: '1.1.01',
-      wallet: '1.1.01', // Use petty cash for digital wallets
-      credit: '2.1.01', // Use reserve fund for credit (liability)
-      investment: '1.1.02', // Use bank account for investments
-    };
-
-    const targetCode = codeMapping[wallet.account_type] || '1.1.02';
-    const account = accounts.find((a) => a.code === targetCode && a.type === 'asset');
-
-    if (account) return account;
-
-    // Fallback: find any asset account
-    const fallback = accounts.find((a) => a.type === 'asset');
-    if (fallback) return fallback;
-
-    throw new Error(`No asset account found for wallet type: ${wallet.account_type}`);
-  }
-
-  /**
-   * Find the chart_of_accounts entry for a category.
-   */
-  async #findCategoryAccount(
-    categoryId: string,
-    condominiumId: string,
-  ): Promise<ChartOfAccounts> {
-    const accounts = await this.#chartOfAccounts.fetchByCondominium(condominiumId);
-
-    // Try to find by system_account_id reference
-    const account = accounts.find((a) => a.system_account_id === categoryId);
-    if (account) return account;
-
-    // Fallback: find by matching name
-    const { data: category } = await this.client
-      .from('transaction_categories')
-      .select('name')
-      .eq('id', categoryId)
-      .single();
-
-    if (category) {
-      const matchByName = accounts.find((a) => a.name === category.name);
-      if (matchByName) return matchByName;
-    }
-
-    throw new Error(`No chart of accounts entry found for category: ${categoryId}`);
   }
 }
