@@ -78,7 +78,7 @@ export class ChartOfAccountsService {
       deleted_at: null,
     };
 
-    await this.#localRepo.upsert(ENTITY_TYPE, account);
+    await this.#localRepo.upsert(ENTITY_TYPE, account as unknown as Record<string, unknown>);
 
     if (this.#networkStatus.isOnline()) {
       const { data: result, error } = await this.#client
