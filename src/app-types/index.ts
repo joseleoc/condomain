@@ -5,6 +5,7 @@ export * from './condominium';
 export * from './condominium-accounts';
 export * from './condominium-invitation-code';
 export * from './currency';
+export * from './exchange-rates-reconciliation';
 export * from './financial-transactions';
 export * from './financial-transaction-entries';
 export * from './general';
