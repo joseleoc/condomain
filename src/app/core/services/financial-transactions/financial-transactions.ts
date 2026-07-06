@@ -568,6 +568,13 @@ export class FinancialTransactions {
       created_at: new Date().toISOString(),
       updated_at: new Date().toISOString(),
       deleted_at: null,
+      approved_at: null,
+      approved_by: null,
+      reconciled_at: null,
+      reconciled_by: null,
+      reversal_transaction_id: null,
+      reversed_by_transaction_id: null,
+      reversal_reason: null,
     };
 
     await this.#localRepo.upsert(ENTITY_TYPE, {
