@@ -18,70 +18,18 @@ declare
     v_wallet_account_id uuid;
     v_category_account_id uuid;
     v_destination_account_id uuid;
-    v_wallet_account_type text;
-    v_category_type text;
     v_other_leg record;
 begin
     -- =========================================================================
-    -- Step 1: Find the wallet's chart_of_accounts entry
+    -- Step 1: Get wallet's chart_of_accounts entry (direct FK lookup)
     -- =========================================================================
     
-    -- Get wallet account_type from condominium_accounts
-    select account_type into v_wallet_account_type
+    select chart_account_id into v_wallet_account_id
     from public.condominium_accounts
     where id = new.account_id and deleted_at is null;
 
-    if not found then
-        raise exception 'Wallet not found: %', new.account_id;
-    end if;
-
-    -- Map wallet type to asset account code
-    -- bank → 1.1.02, cash/wallet → 1.1.01, credit → 2.1.01, investment → 1.1.02
-    case v_wallet_account_type
-        when 'bank' then
-            select id into v_wallet_account_id
-            from public.chart_of_accounts
-            where condominium_id = new.condominium_id
-                and code = '1.1.02'
-                and type = 'asset'
-                and deleted_at is null
-            limit 1;
-        when 'cash', 'wallet' then
-            select id into v_wallet_account_id
-            from public.chart_of_accounts
-            where condominium_id = new.condominium_id
-                and code = '1.1.01'
-                and type = 'asset'
-                and deleted_at is null
-            limit 1;
-        when 'credit' then
-            select id into v_wallet_account_id
-            from public.chart_of_accounts
-            where condominium_id = new.condominium_id
-                and code = '2.1.01'
-                and type = 'liability'
-                and deleted_at is null
-            limit 1;
-        when 'investment' then
-            select id into v_wallet_account_id
-            from public.chart_of_accounts
-            where condominium_id = new.condominium_id
-                and code = '1.1.02'
-                and type = 'asset'
-                and deleted_at is null
-            limit 1;
-        else
-            -- Fallback: find any asset account
-            select id into v_wallet_account_id
-            from public.chart_of_accounts
-            where condominium_id = new.condominium_id
-                and type = 'asset'
-                and deleted_at is null
-            limit 1;
-    end case;
-
     if v_wallet_account_id is null then
-        raise exception 'No chart_of_accounts entry found for wallet type: %', v_wallet_account_type;
+        raise exception 'Wallet has no chart_account_id assigned. Please assign a chart account to wallet: %', new.account_id;
     end if;
 
     -- =========================================================================
@@ -189,39 +137,13 @@ begin
                 return new;
             end if;
 
-            -- Find destination wallet's chart_of_accounts entry
-            select account_type into v_wallet_account_type
+            -- Get destination wallet's chart_account_id directly
+            select chart_account_id into v_destination_account_id
             from public.condominium_accounts
             where id = v_other_leg.account_id and deleted_at is null;
 
-            case v_wallet_account_type
-                when 'bank' then
-                    select id into v_destination_account_id
-                    from public.chart_of_accounts
-                    where condominium_id = new.condominium_id
-                        and code = '1.1.02'
-                        and type = 'asset'
-                        and deleted_at is null
-                    limit 1;
-                when 'cash', 'wallet' then
-                    select id into v_destination_account_id
-                    from public.chart_of_accounts
-                    where condominium_id = new.condominium_id
-                        and code = '1.1.01'
-                        and type = 'asset'
-                        and deleted_at is null
-                    limit 1;
-                else
-                    select id into v_destination_account_id
-                    from public.chart_of_accounts
-                    where condominium_id = new.condominium_id
-                        and type = 'asset'
-                        and deleted_at is null
-                    limit 1;
-            end case;
-
             if v_destination_account_id is null then
-                raise exception 'No destination account found for transfer';
+                raise exception 'Destination wallet has no chart_account_id assigned';
             end if;
 
             -- Determine if this is the source or destination leg

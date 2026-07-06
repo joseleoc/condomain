@@ -56,9 +56,25 @@ El **Accounting Engine** es el motor contable que genera automáticamente asient
 
 ## Lógica de Mapeo
 
-### Billetera → Cuenta Contable
+### Billetera → Cuenta Contable (FK Directa)
 
-El sistema mapea el `account_type` de la billetera a códigos de cuentas contables:
+Cada billetera tiene una columna `chart_account_id` que apunta directamente a su cuenta contable en `chart_of_accounts`.
+
+```sql
+-- Lookup directo
+select chart_account_id 
+from condominium_accounts 
+where id = new.account_id;
+```
+
+**Ventajas**:
+- ✅ **Directo**: Un solo lookup en vez de dos
+- ✅ **Explícito**: Relación clara entre billetera y cuenta contable
+- ✅ **Flexible**: Diferentes billeteras del mismo tipo pueden usar diferentes cuentas contables
+- ✅ **Performance**: Mejor que mapeo por tipo
+
+**Auto-populación**:
+Cuando se crea una billetera, el sistema asigna automáticamente `chart_account_id` basado en el `account_type`:
 
 | Wallet Type | Código Cuenta | Tipo Cuenta | Descripción |
 |-------------|---------------|-------------|-------------|
@@ -67,6 +83,8 @@ El sistema mapea el `account_type` de la billetera a códigos de cuentas contabl
 | `wallet` | `1.1.01` | Asset | Caja Chica (billeteras digitales) |
 | `credit` | `2.1.01` | Liability | Fondo de Reserva (pasivo) |
 | `investment` | `1.1.02` | Asset | Banco (inversiones) |
+
+**Nota**: El usuario puede cambiar manualmente `chart_account_id` si necesita usar una cuenta contable diferente.
 
 ### Categoría → Cuenta Contable
 
