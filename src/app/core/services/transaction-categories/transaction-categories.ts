@@ -40,9 +40,14 @@ export class TransactionCategories {
   // --- Methods ---
 
   /**
-   * Fetch categories for a condominium.
-   * Online: fetches from Supabase and caches locally.
-   * Offline: reads from IndexedDB cache.
+   * Fetch all categories for a condominium.
+   * 
+   * Online: queries Supabase and caches locally in IndexedDB.
+   * Offline: reads from IndexedDB cache filtered by condominium_id.
+   * 
+   * @param condominiumId - The condominium ID to fetch categories for
+   * @returns Array of TransactionCategory sorted by name (ascending)
+   * @throws Error if Supabase query fails
    */
   async fetchByCondominium(condominiumId: string): Promise<TransactionCategory[]> {
     this.loading$.next(true);
@@ -84,9 +89,14 @@ export class TransactionCategories {
   }
 
   /**
-   * Fetch categories of a given type and build a tree (roots with children).
-   * Online: fetches from Supabase and caches locally.
-   * Offline: reads from IndexedDB cache.
+   * Fetch categories of a given type and build a tree structure (roots with children).
+   * 
+   * Online: fetches from Supabase, caches locally, builds tree in memory.
+   * Offline: reads from IndexedDB cache, builds tree in memory.
+   * 
+   * @param condominiumId - The condominium ID
+   * @param type - Category type: 'income' or 'expense'
+   * @returns Array of CategoryTreeNode (parent categories with children array populated)
    */
   async fetchByType(
     condominiumId: string,
@@ -99,8 +109,13 @@ export class TransactionCategories {
 
   /**
    * Fetch direct children of a parent category.
-   * Online: fetches from Supabase and caches locally.
-   * Offline: reads from IndexedDB cache.
+   * 
+   * Online: queries Supabase and caches locally.
+   * Offline: reads from IndexedDB cache filtered by parent_id.
+   * 
+   * @param parentId - The parent category ID
+   * @returns Array of child TransactionCategory sorted by name
+   * @throws Error if Supabase query fails
    */
   async fetchChildren(parentId: string): Promise<TransactionCategory[]> {
     if (!this.#networkStatus.isOnline()) {
@@ -128,7 +143,15 @@ export class TransactionCategories {
 
   /**
    * Create a new category.
-   * Validates hierarchy (max 2 levels), then inserts online or queues offline.
+   * 
+   * Validates hierarchy (max 2 levels) before creation.
+   * Online: inserts into Supabase, caches locally, tracks telemetry.
+   * Offline: generates local UUID, creates local record, queues mutation for sync.
+   * 
+   * @param data - Category creation data (name, category_type, parent_id, icon, color)
+   * @returns Created TransactionCategory
+   * @throws Error if hierarchy validation fails (3rd level not allowed)
+   * @throws Error if Supabase insert fails
    */
   async create(data: CreateTransactionCategoryData): Promise<TransactionCategory> {
     await this.#validateHierarchy(data);
@@ -140,9 +163,16 @@ export class TransactionCategories {
   }
 
   /**
-   * Update a category.
-   * Rejects system categories. Online: updates on Supabase with optimistic local update.
-   * Offline: optimistic local update and queues mutation for sync.
+   * Update an existing category.
+   * 
+   * Rejects if category is system-defined (is_system = true).
+   * Online: performs optimistic local update, then updates Supabase.
+   * Offline: performs optimistic local update, queues mutation for sync.
+   * 
+   * @param id - The category ID to update
+   * @param data - Partial category data to update
+   * @throws Error if category is system-defined
+   * @throws Error if Supabase update fails (local changes reverted)
    */
   async update(id: string, data: UpdateTransactionCategoryData): Promise<void> {
     // Optimistic local update
@@ -203,8 +233,15 @@ export class TransactionCategories {
 
   /**
    * Soft-delete a category.
-   * Rejects system categories. Online: calls RPC function to update deleted_at.
-   * Offline: updates local cache and queues mutation for sync.
+   * 
+   * Rejects if category is system-defined (is_system = true).
+   * Online: performs optimistic local update (sets deleted_at), then calls
+   *         RPC function soft_delete_category. Reverts if RPC fails.
+   * Offline: performs optimistic local update, queues mutation for sync.
+   * 
+   * @param id - The category ID to delete
+   * @throws Error if category is system-defined
+   * @throws Error if Supabase RPC fails (local changes reverted)
    */
   async delete(id: string): Promise<void> {
     const existing = await this.#localRepo.getById('transaction_category', id);

@@ -23,6 +23,13 @@ export class TransactionApprovalService {
 
   /**
    * Fetch pending transactions for approval.
+   * 
+   * Returns all transactions with status = 'pending' for a condominium,
+   * sorted by transaction_date (newest first).
+   * 
+   * @param condominiumId - The condominium ID to fetch pending transactions for
+   * @returns Array of pending FinancialTransaction
+   * @throws Error if Supabase query fails
    */
   async fetchPending(condominiumId: string): Promise<FinancialTransaction[]> {
     this.loading$.next(true);
@@ -51,7 +58,13 @@ export class TransactionApprovalService {
 
   /**
    * Approve a transaction (pending → completed).
-   * Updates wallet balance automatically via trigger.
+   * 
+   * Updates transaction status to 'completed', records approval timestamp and admin.
+   * Wallet balance is updated automatically via Postgres trigger.
+   * Transaction becomes immutable after approval.
+   * 
+   * @param transactionId - The transaction ID to approve
+   * @throws Error if Supabase update fails
    */
   async approve(transactionId: string): Promise<void> {
     const profileId = this.#getCurrentProfileId();
@@ -89,7 +102,16 @@ export class TransactionApprovalService {
 
   /**
    * Void a transaction (pending → voided or completed → voided).
-   * If completed, creates a reversal transaction automatically.
+   * 
+   * If transaction is completed: creates a reversal transaction automatically via RPC,
+   * generates reversal accounting entries via trigger, marks original as voided.
+   * If transaction is pending: simply changes status to voided (no reversal needed).
+   * 
+   * @param transactionId - The transaction ID to void
+   * @param reason - Reason for voiding (audit trail, required for completed transactions)
+   * @throws Error if transaction not found
+   * @throws Error if transaction is already voided
+   * @throws Error if Supabase RPC or update fails
    */
   async void(transactionId: string, reason: string): Promise<void> {
     const profileId = this.#getCurrentProfileId();
@@ -150,7 +172,13 @@ export class TransactionApprovalService {
   }
 
   /**
-   * Mark transaction as reconciled.
+   * Mark transaction as reconciled with bank statement.
+   * 
+   * Records reconciliation timestamp and admin who performed reconciliation.
+   * Does not change transaction status (must be completed first).
+   * 
+   * @param transactionId - The transaction ID to mark as reconciled
+   * @throws Error if Supabase update fails
    */
   async reconcile(transactionId: string): Promise<void> {
     const profileId = this.#getCurrentProfileId();

@@ -42,9 +42,14 @@ export class CondominiumAccounts {
   // --- Methods ---
 
   /**
-   * Fetch accounts for a condominium.
-   * Online: fetches from Supabase and caches locally.
-   * Offline: reads from IndexedDB cache.
+   * Fetch all wallets for a condominium.
+   * 
+   * Online: queries Supabase and caches locally in IndexedDB.
+   * Offline: reads from IndexedDB cache filtered by condominium_id.
+   * 
+   * @param condominiumId - The condominium ID to fetch wallets for
+   * @returns Array of CondominiumAccount sorted by name (ascending)
+   * @throws Error if Supabase query fails
    */
   async fetchByCondominium(condominiumId: string): Promise<CondominiumAccount[]> {
     this.loading$.next(true);
@@ -86,9 +91,14 @@ export class CondominiumAccounts {
   }
 
   /**
-   * Fetch a single account by ID.
-   * Online: fetches from Supabase and caches locally.
+   * Fetch a single wallet by ID.
+   * 
+   * Online: queries Supabase and caches locally.
    * Offline: reads from IndexedDB cache.
+   * 
+   * @param id - The wallet ID to fetch
+   * @returns CondominiumAccount if found, null otherwise
+   * @throws Error if Supabase query fails (except PGRST116 - no rows)
    */
   async getById(id: string): Promise<CondominiumAccount | null> {
     if (!this.#networkStatus.isOnline()) {
@@ -113,9 +123,15 @@ export class CondominiumAccounts {
   }
 
   /**
-   * Create a new account.
-   * Online: inserts into Supabase, caches locally, tracks telemetry.
-   * Offline: generates a local UUID, queues a mutation for sync.
+   * Create a new wallet.
+   * 
+   * Online: inserts into Supabase, caches locally in IndexedDB, tracks telemetry event.
+   * Offline: generates a local UUID, creates local record with _local_status='pending',
+   *          queues mutation for sync when online.
+   * 
+   * @param data - Wallet creation data (condominium_id, name, account_type, currency, etc.)
+   * @returns Created CondominiumAccount
+   * @throws Error if Supabase insert fails
    */
   async create(data: CreateCondominiumAccountData): Promise<CondominiumAccount> {
     if (this.#networkStatus.isOnline()) {
@@ -125,9 +141,15 @@ export class CondominiumAccounts {
   }
 
   /**
-   * Update an account.
-   * Online: updates on Supabase with optimistic local update.
-   * Offline: optimistic local update and queues mutation for sync.
+   * Update an existing wallet.
+   * 
+   * Online: performs optimistic local update, then updates Supabase.
+   *         Reverts local update if Supabase fails.
+   * Offline: performs optimistic local update, queues mutation for sync.
+   * 
+   * @param id - The wallet ID to update
+   * @param data - Partial wallet data to update (only provided fields will be updated)
+   * @throws Error if Supabase update fails (local changes reverted)
    */
   async update(id: string, data: UpdateCondominiumAccountData): Promise<void> {
     // Optimistic local update
@@ -195,9 +217,14 @@ export class CondominiumAccounts {
   }
 
   /**
-   * Soft-delete an account.
-   * Online: calls RPC function to update deleted_at on Supabase.
-   * Offline: updates local cache and queues mutation for sync.
+   * Soft-delete a wallet.
+   * 
+   * Online: performs optimistic local update (sets deleted_at), then calls
+   *         RPC function soft_delete_account on Supabase. Reverts if RPC fails.
+   * Offline: performs optimistic local update, queues mutation for sync.
+   * 
+   * @param id - The wallet ID to delete
+   * @throws Error if Supabase RPC fails (local changes reverted)
    */
   async delete(id: string): Promise<void> {
     // Optimistic local update
