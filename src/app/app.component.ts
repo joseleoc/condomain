@@ -26,6 +26,14 @@ import {
   closeCircle,
   checkmarkCircle,
   locationOutline,
+  business,
+  wallet,
+  folderOutline,
+  lockClosed,
+  folderOpenOutline,
+  receiptOutline,
+  cashOutline,
+  swapHorizontalOutline,
 } from 'ionicons/icons';
 import { PendingInvitation } from '@core/services/pending-invitation/pending-invitation';
 
@@ -64,6 +72,14 @@ export class AppComponent {
       checkmarkCircle,
       createOutline,
       locationOutline,
+      business,
+      wallet,
+      folderOutline,
+      lockClosed,
+      folderOpenOutline,
+      receiptOutline,
+      cashOutline,
+      swapHorizontalOutline,
     });
   }
 }

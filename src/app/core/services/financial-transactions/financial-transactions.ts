@@ -494,6 +494,7 @@ export class FinancialTransactions {
     data: CreateFinancialTransactionData,
     isTransferLeg = false,
   ): Promise<FinancialTransaction> {
+    console.log('Creating transaction online:', data);
     const createdBy = this.#currentProfileId();
     const exchangeRate = data.exchange_rate ?? 1;
     const baseAmount = this.#calculateBaseAmount(data.amount, exchangeRate);

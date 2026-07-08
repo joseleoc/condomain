@@ -47,7 +47,6 @@ import { AssignPropertyModalComponent } from './components/assign-property-modal
     IonSpinner,
     IonAlert,
     IonToast,
-    MainLayoutComponent,
     AssignPropertyModalComponent,
   ],
 })
@@ -62,7 +61,7 @@ export class JoinRequestsPage implements OnInit {
   requests = toSignal(this.joinRequestService.pendingRequests$, {
     initialValue: [] as JoinRequestWithProfile[],
   });
-  
+
   loading = signal(true);
   processingId = signal<string | null>(null);
   alertOpen = signal(false);
@@ -130,10 +129,9 @@ export class JoinRequestsPage implements OnInit {
         this.translocoService.selectTranslate('joinRequests.declineTitle'),
       ),
       firstValueFrom(
-        this.translocoService.selectTranslate(
-          'joinRequests.declineMessage',
-          { name: userName },
-        ),
+        this.translocoService.selectTranslate('joinRequests.declineMessage', {
+          name: userName,
+        }),
       ),
     ]);
 

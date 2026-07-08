@@ -291,6 +291,12 @@ export class CondominiumAccounts {
       account_type: result.account_type,
     });
 
+    const accounts = [...this.accounts$.getValue(), result].sort((a, b) =>
+      a.name.localeCompare(b.name),
+    );
+
+    this.accounts$.next(accounts);
+
     return result;
   }
 
@@ -335,6 +341,11 @@ export class CondominiumAccounts {
       condominium_id: account.condominium_id,
       account_type: account.account_type,
     });
+
+    const accounts = [...this.accounts$.getValue(), account].sort((a, b) =>
+      a.name.localeCompare(b.name),
+    );
+    this.accounts$.next(accounts);
 
     return { ...account, _local_status: 'pending' as const };
   }
