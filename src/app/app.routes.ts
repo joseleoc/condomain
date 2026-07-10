@@ -62,26 +62,6 @@ export const routes: Routes = [
           import('./features/home/home.page').then((m) => m.HomePage),
       },
       {
-        path: 'onboarding',
-        children: [
-          {
-            path: '',
-            loadComponent: () =>
-              import('./features/onboarding/onboarding.page').then(
-                (m) => m.OnboardingPage,
-              ),
-          },
-          {
-            path: 'join-condominium',
-            canActivate: [captureInvitationCodeGuard],
-            loadComponent: () =>
-              import('./features/onboarding/join-condominium/join-condominium.page').then(
-                (m) => m.JoinCondominiumPage,
-              ),
-          },
-        ],
-      },
-      {
         path: 'condominium',
         children: [
           {
@@ -107,19 +87,7 @@ export const routes: Routes = [
             redirectTo: 'condominium-hub',
             pathMatch: 'full',
           },
-          {
-            path: '**',
-            redirectTo: 'condominium-hub',
-            pathMatch: 'full',
-          },
         ],
-      },
-      {
-        path: 'create-condominium',
-        loadComponent: () =>
-          import('./features/create-condominium/create-condominium.page').then(
-            (m) => m.CreateCondominiumPage,
-          ),
       },
 
       {
@@ -131,13 +99,6 @@ export const routes: Routes = [
             loadComponent: () =>
               import('./features/financial/pages/wallet-list/wallet-list.page').then(
                 (m) => m.WalletListPage,
-              ),
-          },
-          {
-            path: 'categories',
-            loadComponent: () =>
-              import('./features/financial/pages/category-list/category-list.page').then(
-                (m) => m.CategoryListPage,
               ),
           },
           {
@@ -153,6 +114,34 @@ export const routes: Routes = [
             pathMatch: 'full',
           },
         ],
+      },
+    ],
+  },
+  {
+    path: 'onboarding',
+    canActivate: [isNotAuthenticatedGuard],
+    children: [
+      {
+        path: '',
+        loadComponent: () =>
+          import('./features/onboarding/onboarding.page').then(
+            (m) => m.OnboardingPage,
+          ),
+      },
+      {
+        path: 'join-condominium',
+        canActivate: [captureInvitationCodeGuard],
+        loadComponent: () =>
+          import('./features/onboarding/join-condominium/join-condominium.page').then(
+            (m) => m.JoinCondominiumPage,
+          ),
+      },
+      {
+        path: 'create-condominium',
+        loadComponent: () =>
+          import('./features/create-condominium/create-condominium.page').then(
+            (m) => m.CreateCondominiumPage,
+          ),
       },
     ],
   },

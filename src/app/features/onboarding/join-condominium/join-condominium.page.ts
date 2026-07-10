@@ -8,8 +8,11 @@ import {
   IonText,
   IonSpinner,
   AlertController,
+  IonHeader,
+  IonToolbar,
+  IonButtons,
+  IonBackButton,
 } from '@ionic/angular/standalone';
-import { MainLayoutComponent } from '@shared/components/layout/main-layout/main-layout.component';
 import { CondominiumJoinRequest } from '@core/services/condominium-join-request/condominium-join-request';
 import { PendingInvitation } from '@core/services/pending-invitation/pending-invitation';
 import { TelemetryService } from '@core/services/telemetry/telemetry.service';
@@ -27,7 +30,10 @@ import { firstValueFrom } from 'rxjs';
     IonInput,
     IonText,
     IonSpinner,
-    MainLayoutComponent,
+    IonHeader,
+    IonToolbar,
+    IonButtons,
+    IonBackButton,
   ],
 })
 export class JoinCondominiumPage implements OnInit {
@@ -58,7 +64,7 @@ export class JoinCondominiumPage implements OnInit {
 
   async handleSubmit(): Promise<void> {
     const code = this.invitationCode().trim();
-    
+
     if (code.length !== 6) {
       this.error.set('join.invalidCode');
       return;
@@ -111,8 +117,12 @@ export class JoinCondominiumPage implements OnInit {
 
   private async showSuccessAlert(): Promise<void> {
     const [header, message, ok] = await Promise.all([
-      firstValueFrom(this.translocoService.selectTranslate('join.successTitle')),
-      firstValueFrom(this.translocoService.selectTranslate('join.successMessage')),
+      firstValueFrom(
+        this.translocoService.selectTranslate('join.successTitle'),
+      ),
+      firstValueFrom(
+        this.translocoService.selectTranslate('join.successMessage'),
+      ),
       firstValueFrom(this.translocoService.selectTranslate('common.ok')),
     ]);
 

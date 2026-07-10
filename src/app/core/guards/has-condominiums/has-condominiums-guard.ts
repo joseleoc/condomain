@@ -13,7 +13,7 @@ export const hasCondominiumsGuard: CanActivateFn = () => {
     map(() => {
       const condominiums = condominiumService.userCondominiums$.getValue();
       if (!condominiums || condominiums.length === 0) {
-        return router.parseUrl('/onboarding');
+        return router.parseUrl('onboarding');
       }
       return true;
     }),
