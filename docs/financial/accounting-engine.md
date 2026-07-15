@@ -37,9 +37,12 @@ El **Accounting Engine** es el motor contable que genera automáticamente asient
 
 ### Ubicación
 
-- **Migración**: `supabase/migrations/20260703000004_accounting_engine_trigger.sql`
-- **Función**: `public.generate_accounting_entries()`
-- **Trigger**: `trg_generate_accounting_entries`
+- **Migración (trigger contable)**: `supabase/migrations/20260703000004_accounting_engine_trigger.sql`
+- **Migración (auto-populate wallet)**: `supabase/migrations/20260706000007_auto_populate_wallet_chart_account.sql`
+- **Función contable**: `public.generate_accounting_entries()`
+- **Trigger contable**: `trg_generate_accounting_entries`
+- **Función auto-populate wallet**: `public.auto_populate_wallet_chart_account()`
+- **Trigger auto-populate wallet**: `trg_auto_populate_wallet_chart_account`
 
 ### Tablas Involucradas
 
@@ -73,8 +76,8 @@ where id = new.account_id;
 - ✅ **Flexible**: Diferentes billeteras del mismo tipo pueden usar diferentes cuentas contables
 - ✅ **Performance**: Mejor que mapeo por tipo
 
-**Auto-populación**:
-Cuando se crea una billetera, el sistema asigna automáticamente `chart_account_id` basado en el `account_type`:
+**Auto-populación (BEFORE INSERT Trigger)**:
+Cuando se crea una billetera, el trigger `trg_auto_populate_wallet_chart_account` asigna automáticamente `chart_account_id` basado en el `account_type`:
 
 | Wallet Type | Código Cuenta | Tipo Cuenta | Descripción |
 |-------------|---------------|-------------|-------------|
@@ -175,6 +178,7 @@ END IF;
 | Error | Causa | Solución |
 |-------|-------|----------|
 | `Wallet not found` | Billetera eliminada o no existe | Verificar `account_id` |
+| `Cannot create wallet: no chart_of_accounts entry found` | No existe plan de cuentas para el condominio | Verificar que el condominio fue inicializado correctamente |
 | `No chart_of_accounts entry found for wallet type` | No hay cuenta contable para ese tipo de billetera | Crear cuenta contable con código apropiado |
 | `Category required for income/expense` | Transacción de ingreso/egreso sin categoría | Proporcionar `category_id` |
 | `No chart_of_accounts entry found for category` | Categoría no mapeada a cuenta contable | Crear cuenta contable o vincular categoría |
@@ -327,3 +331,4 @@ DELETE FROM financial_transaction_entries;
 |-------|---------|--------|
 | 2026-07-03 | 1.0.0 | Implementación inicial con Postgres Trigger |
 | 2026-07-06 | 1.1.0 | Documentación técnica completa |
+| 2026-07-06 | 1.2.0 | BEFORE INSERT trigger para auto-vincular billeteras a chart_of_accounts |
