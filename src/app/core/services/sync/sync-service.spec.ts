@@ -2,7 +2,7 @@ import { TestBed } from '@angular/core/testing';
 import { SharedTestingModule } from '@testing/shared-testing.module';
 import { SyncService, calculateBackoff } from './sync-service';
 import { LocalRepository } from './local-repository';
-import { NetworkStatusService } from '../network-status.service';
+import { NetworkStatusService } from '../network-status/network-status.service';
 import { Supabase } from '../supabase/supabase';
 import { QueryClient } from '@tanstack/angular-query-experimental';
 import { resetLocalDB, setTestDbName } from './local-db';

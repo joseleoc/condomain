@@ -11,7 +11,7 @@ import { TranslocoModule, TranslocoService } from '@jsverse/transloco';
 import { ContextService } from '@core/services/context/context.service';
 import { Structures } from '@core/services/structures/structures';
 import { Properties } from '@core/services/properties/properties';
-import { NetworkStatusService } from '@core/services/network-status.service';
+import { NetworkStatusService } from '@core/services/network-status/network-status.service';
 import { CondominiumJoinRequest } from '@core/services/condominium-join-request/condominium-join-request';
 import {
   injectQuery,

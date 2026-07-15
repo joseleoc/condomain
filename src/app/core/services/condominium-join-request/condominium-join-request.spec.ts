@@ -4,7 +4,7 @@ import { CondominiumJoinRequest } from './condominium-join-request';
 import { Supabase } from '../supabase/supabase';
 import { Profile } from '../profile/profile';
 import { Roles } from '../roles/roles';
-import { NetworkStatusService } from '../network-status.service';
+import { NetworkStatusService } from '../network-status/network-status.service';
 import { LocalRepository } from '../sync/local-repository';
 import { SyncService } from '../sync/sync-service';
 import { BehaviorSubject, of, throwError } from 'rxjs';

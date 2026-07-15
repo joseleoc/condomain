@@ -1,7 +1,7 @@
 import { Component, inject, computed } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { IonicModule } from '@ionic/angular';
-import { NetworkStatusService } from '@core/services/network-status.service';
+import { NetworkStatusService } from '@core/services/network-status/network-status.service';
 
 /**
  * Small, reusable component that shows online/offline status.

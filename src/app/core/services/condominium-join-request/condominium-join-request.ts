@@ -2,7 +2,7 @@ import { inject, Injectable } from '@angular/core';
 import { Supabase } from '../supabase/supabase';
 import { Profile } from '../profile/profile';
 import { Roles } from '../roles/roles';
-import { NetworkStatusService } from '../network-status.service';
+import { NetworkStatusService } from '../network-status/network-status.service';
 import { LocalRepository } from '../sync/local-repository';
 import { SyncService } from '../sync/sync-service';
 import { BehaviorSubject } from 'rxjs';

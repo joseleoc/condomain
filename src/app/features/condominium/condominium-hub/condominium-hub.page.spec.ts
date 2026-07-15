@@ -5,7 +5,7 @@ import { ContextService } from '@core/services/context/context.service';
 import { Structures } from '@core/services/structures/structures';
 import { Properties } from '@core/services/properties/properties';
 import { Condominium } from '@core/services/condominium/condominium';
-import { NetworkStatusService } from '@core/services/network-status.service';
+import { NetworkStatusService } from '@core/services/network-status/network-status.service';
 import { QueryClient } from '@tanstack/angular-query-experimental';
 import { signal, Signal } from '@angular/core';
 import { BehaviorSubject } from 'rxjs';

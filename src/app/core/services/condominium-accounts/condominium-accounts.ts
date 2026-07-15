@@ -4,7 +4,7 @@ import {
   CondominiumAccount,
   CreateCondominiumAccountData,
 } from '@app-types/condominium-accounts';
-import { NetworkStatusService } from '../network-status.service';
+import { NetworkStatusService } from '../network-status/network-status.service';
 import { LocalRepository } from '../sync/local-repository';
 import { SyncService } from '../sync/sync-service';
 import { TelemetryService } from '../telemetry/telemetry.service';

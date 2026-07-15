@@ -1,7 +1,7 @@
 import { inject, Injectable } from '@angular/core';
 import { BehaviorSubject } from 'rxjs';
 import { Supabase } from '@core/services/supabase/supabase';
-import { NetworkStatusService } from '@core/services/network-status.service';
+import { NetworkStatusService } from '@core/services/network-status/network-status.service';
 import { LocalRepository } from '@core/services/sync/local-repository';
 import { SyncService } from '@core/services/sync/sync-service';
 import type { ChartOfAccounts, CreateChartOfAccountsData } from '@app-types/chart-of-accounts';

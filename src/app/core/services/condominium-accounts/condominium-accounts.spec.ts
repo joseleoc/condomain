@@ -4,7 +4,7 @@ import { SharedTestingModule } from '@testing/shared-testing.module';
 
 import { CondominiumAccounts } from './condominium-accounts';
 import { Supabase } from '@core/services/supabase/supabase';
-import { NetworkStatusService } from '@core/services/network-status.service';
+import { NetworkStatusService } from '@core/services/network-status/network-status.service';
 import { LocalRepository } from '@core/services/sync/local-repository';
 import { SyncService } from '@core/services/sync/sync-service';
 import { TelemetryService } from '@core/services/telemetry/telemetry.service';
