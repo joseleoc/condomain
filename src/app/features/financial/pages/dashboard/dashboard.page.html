@@ -1,0 +1,127 @@
+<ion-header>
+  <ion-toolbar>
+    <ion-buttons slot="start">
+      <ion-back-button defaultHref="/home" />
+    </ion-buttons>
+    <ion-title>{{ 'financial.dashboard.title' | transloco }}</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content [fullscreen]="true">
+  @let loading = loading$ | async;
+  @let error = error$ | async;
+  @let isEmpty = isEmpty$ | async;
+  @let netWorth = netWorth$ | async;
+  @let history = netWorthHistory$ | async;
+  @let duration = selectedDuration();
+
+  <!-- Full page loading state -->
+  @if (loading) {
+    <div class="dashboard-skeleton">
+      <app-net-worth-card [netWorth]="null" [isLoading]="true" [isEmpty]="false" [hasError]="false" currency="USD" />
+      <app-net-worth-chart [dataPoints]="[]" [isLoading]="true" [isEmpty]="false" [hasError]="false" [selectedDuration]="duration" />
+      <div class="wallets-section-skeleton">
+        @for (i of [1, 2, 3]; track i) {
+          <app-wallet-card [account]="mockAccount" [isLoading]="true" />
+        }
+      </div>
+    </div>
+  }
+
+  <!-- Full page error state -->
+  @if (!loading && error) {
+    <div class="state-container error-state">
+      <ion-icon name="cloud-offline-outline" size="large" color="danger"></ion-icon>
+      <h3>{{ 'financial.dashboard.error.title' | transloco }}</h3>
+      <p>{{ 'financial.dashboard.error.description' | transloco }}</p>
+      <ion-button (click)="retryLoad()">
+        <ion-icon name="refresh" slot="start"></ion-icon>
+        {{ 'financial.dashboard.error.retry' | transloco }}
+      </ion-button>
+    </div>
+  }
+
+  <!-- Empty state (no wallets) -->
+  @if (!loading && !error && isEmpty) {
+    <div class="state-container empty-state">
+      <ion-icon name="wallet-outline" size="large" color="medium"></ion-icon>
+      <h3>{{ 'financial.dashboard.empty.title' | transloco }}</h3>
+      <p>{{ 'financial.dashboard.empty.description' | transloco }}</p>
+      <ion-button (click)="openCreateWalletModal()">
+        <ion-icon name="add" slot="start"></ion-icon>
+        {{ 'financial.dashboard.empty.createButton' | transloco }}
+      </ion-button>
+    </div>
+  }
+
+  <!-- Populated state -->
+  @if (!loading && !error && !isEmpty) {
+    <div class="dashboard-content">
+      <!-- Net Worth Card -->
+      <app-net-worth-card
+        [netWorth]="netWorth"
+        [isLoading]="false"
+        [isEmpty]="false"
+        [hasError]="false"
+        currency="USD"
+      />
+
+      <!-- Net Worth Chart -->
+      <app-net-worth-chart
+        [dataPoints]="history ?? []"
+        [isLoading]="false"
+        [isEmpty]="(history?.length ?? 0) === 0"
+        [hasError]="false"
+        [selectedDuration]="duration"
+        (durationChange)="onDurationChange($event)"
+        (retry)="retryLoadHistory()"
+      />
+
+      <!-- Wallets Section -->
+      <div class="wallets-section">
+        <h2 class="section-title">{{ 'financial.wallets.title' | transloco }}</h2>
+        <div class="wallet-grid">
+          @for (wallet of wallets$ | async; track wallet.id) {
+            <ion-item-sliding>
+              <ion-item lines="none" (click)="openEditWalletModal(wallet)" class="wallet-item">
+                <app-wallet-card [account]="wallet" />
+              </ion-item>
+
+              <ion-item-options side="end">
+                <ion-item-option color="primary" (click)="openEditWalletModal(wallet)">
+                  <ion-icon name="create-outline" slot="icon-only"></ion-icon>
+                </ion-item-option>
+                <ion-item-option color="danger" (click)="confirmDeleteWallet(wallet)">
+                  <ion-icon name="trash-outline" slot="icon-only"></ion-icon>
+                </ion-item-option>
+              </ion-item-options>
+            </ion-item-sliding>
+          }
+        </div>
+      </div>
+    </div>
+  }
+
+  <!-- FAB -->
+  <ion-fab slot="fixed" vertical="bottom" horizontal="end" class="dashboard-fab">
+    <ion-fab-button (click)="openCreateWalletModal()">
+      <ion-icon name="add"></ion-icon>
+    </ion-fab-button>
+  </ion-fab>
+
+  <!-- Wallet Form Modal -->
+  <app-wallet-form-modal
+    [account]="walletToEdit()"
+    [condominiumId]="contextService.activeCondominium()?.id ?? ''"
+    [isOpen]="isFormModalOpen()"
+    (isOpenChange)="closeFormModal()"
+  />
+
+  <!-- Delete Confirmation Alert -->
+  <ion-alert
+    [isOpen]="!!deleteTarget()"
+    [header]="'financial.wallets.deleteConfirmTitle' | transloco"
+    [message]="'financial.wallets.deleteConfirmMessage' | transloco"
+    [buttons]="deleteAlertButtons()"
+  />
+</ion-content>
