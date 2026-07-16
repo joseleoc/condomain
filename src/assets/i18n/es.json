@@ -395,41 +395,77 @@
     }
   },
   "financial": {
+    "dashboard": {
+      "title": "Panel Financiero",
+      "netWorth": {
+        "title": "Patrimonio Neto",
+        "loading": "Calculando...",
+        "empty": "Sin billeteras aún",
+        "error": "No se pudo calcular el patrimonio"
+      },
+      "chart": {
+        "title": "Tendencia del Patrimonio",
+        "loading": "Cargando gráfico...",
+        "empty": "Sin datos para este período",
+        "error": "No se pudo cargar el gráfico",
+        "retry": "Reintentar",
+        "duration": {
+          "1m": "1 Mes",
+          "3m": "3 Meses",
+          "6m": "6 Meses",
+          "1y": "1 Año",
+          "2y": "2 Años"
+        }
+      },
+      "empty": {
+        "title": "Bienvenido al Panel Financiero",
+        "description": "Crea tu primera billetera para comenzar a seguir tus finanzas",
+        "createButton": "Crear Billetera"
+      },
+      "error": {
+        "title": "Algo salió mal",
+        "description": "No pudimos cargar tus datos financieros",
+        "retry": "Intentar de Nuevo"
+      }
+    },
     "wallets": {
       "title": "Billeteras",
-      "emptyList": "No tienes billeteras. Crea una para comenzar.",
-      "createButton": "Crear billetera",
+      "emptyList": "Sin billeteras aún",
+      "createButton": "Crear Billetera",
       "editButton": "Editar",
       "deleteButton": "Eliminar",
       "deleteConfirmTitle": "Eliminar billetera",
-      "deleteConfirmMessage": "¿Estás seguro de que deseas eliminar \"{{name}}\"? Esta acción no se puede deshacer.",
+      "deleteConfirmMessage": "¿Estás seguro de que quieres eliminar \"{{name}}\"? Esta acción no se puede deshacer.",
+      "loading": "Cargando billeteras...",
+      "error": "No se pudieron cargar las billeteras",
+      "retry": "Reintentar",
+      "accountType": {
+        "bank": "Banco",
+        "cash": "Efectivo",
+        "wallet": "Billetera",
+        "credit": "Crédito",
+        "investment": "Inversión"
+      },
       "form": {
-        "title": "Nueva billetera",
-        "editTitle": "Editar billetera",
+        "title": "Nueva Billetera",
+        "editTitle": "Editar Billetera",
         "name": "Nombre",
-        "namePlaceholder": "ej. Banco Mercantil USD",
-        "type": "Tipo",
+        "namePlaceholder": "ej. Cuenta Principal",
+        "type": "Tipo de Cuenta",
         "currency": "Moneda",
         "institution": "Institución",
-        "institutionPlaceholder": "ej. Banco Mercantil",
-        "balance": "Saldo inicial",
+        "institutionPlaceholder": "ej. Banco Nacional",
+        "balance": "Balance Inicial",
         "icon": "Ícono",
         "color": "Color",
         "save": "Guardar",
         "cancel": "Cancelar"
       },
-      "accountType": {
-        "bank": "Cuenta bancaria",
-        "cash": "Efectivo",
-        "wallet": "Billetera digital",
-        "credit": "Crédito",
-        "investment": "Inversión"
-      },
       "toast": {
-        "created": "Billetera creada correctamente",
-        "updated": "Billetera actualizada correctamente",
-        "deleted": "Billetera eliminada correctamente",
-        "error": "Error al guardar. Inténtalo de nuevo."
+        "created": "Billetera creada exitosamente",
+        "updated": "Billetera actualizada exitosamente",
+        "deleted": "Billetera eliminada exitosamente",
+        "error": "Error al guardar la billetera"
       }
     },
     "transactions": {
