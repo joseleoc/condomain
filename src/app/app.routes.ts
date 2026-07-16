@@ -95,6 +95,13 @@ export const routes: Routes = [
         canActivate: [isNotAuthenticatedGuard],
         children: [
           {
+            path: 'dashboard',
+            loadComponent: () =>
+              import('./features/financial/pages/dashboard/dashboard.page').then(
+                (m) => m.FinancialDashboardPage,
+              ),
+          },
+          {
             path: 'wallets',
             loadComponent: () =>
               import('./features/financial/pages/wallet-list/wallet-list.page').then(
@@ -110,7 +117,7 @@ export const routes: Routes = [
           },
           {
             path: '',
-            redirectTo: 'wallets',
+            redirectTo: 'dashboard',
             pathMatch: 'full',
           },
         ],
