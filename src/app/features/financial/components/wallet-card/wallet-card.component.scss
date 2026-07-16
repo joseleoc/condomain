@@ -1,7 +1,18 @@
 .wallet-card {
-  margin: 0.75rem 1rem;
+  margin: 0.75rem 0.5rem;
   border-radius: 12px;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+  box-shadow: 0 2px 8px rgba(var(--ion-text-color-rgb, 0, 0, 0), 0.08);
+  border-left: 4px solid var(--ion-color-primary);
+  transition: all 0.2s ease;
+
+  &:hover {
+    box-shadow: 0 4px 12px rgba(var(--ion-text-color-rgb, 0, 0, 0), 0.12);
+    transform: translateY(-2px);
+  }
+
+  @media (min-width: 768px) {
+    margin: 0.75rem 1rem;
+  }
 }
 
 ion-card-header {
@@ -11,7 +22,7 @@ ion-card-header {
 ion-card-title {
   font-size: 1.1rem;
   font-weight: 600;
-  color: var(--text-base);
+  color: var(--ion-text-color);
 }
 
 ion-card-subtitle {
@@ -21,6 +32,59 @@ ion-card-subtitle {
   font-size: 0.875rem;
   color: var(--ion-color-medium);
   margin-top: 0.25rem;
+}
+
+// Shimmer skeleton
+.shimmer {
+  .skeleton-line {
+    background: linear-gradient(
+      90deg,
+      var(--ion-color-light-shade, #f0f0f0) 25%,
+      var(--ion-color-light-tint, #e0e0e0) 50%,
+      var(--ion-color-light-shade, #f0f0f0) 75%
+    );
+    background-size: 200% 100%;
+    animation: shimmer 1.5s infinite;
+    border-radius: 4px;
+
+    &.title {
+      height: 20px;
+      width: 60%;
+      margin-bottom: 8px;
+    }
+
+    &.subtitle {
+      height: 14px;
+      width: 40%;
+    }
+
+    &.balance {
+      height: 28px;
+      width: 50%;
+    }
+  }
+}
+
+@keyframes shimmer {
+  0% { background-position: 200% 0; }
+  100% { background-position: -200% 0; }
+}
+
+// Error badge
+.error-badge {
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  font-size: 12px;
+}
+
+// Account type badge
+.account-type-badge {
+  margin-top: 8px;
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--ion-text-color);
+  text-transform: uppercase;
 }
 
 .wallet-balance-item {
@@ -39,11 +103,14 @@ ion-card-subtitle {
   font-size: 1.5rem;
   font-weight: 700;
   margin: 0;
-  color: var(--ion-color-primary);
 }
 
 @media (prefers-color-scheme: dark) {
   .wallet-card {
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.25);
+    box-shadow: 0 2px 8px rgba(var(--ion-text-color-rgb, 255, 255, 255), 0.12);
+
+    &:hover {
+      box-shadow: 0 4px 12px rgba(var(--ion-text-color-rgb, 255, 255, 255), 0.18);
+    }
   }
 }

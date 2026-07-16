@@ -104,12 +104,14 @@ describe('WalletListPage', () => {
     expect(accountsService.fetchByCondominium).toHaveBeenCalledWith('condo-1');
   });
 
-  it('should show loading state', () => {
+  it('should show skeleton cards when loading', () => {
     accountsService.loading$.next(true);
     fixture.detectChanges();
 
     const compiled = fixture.nativeElement as HTMLElement;
-    expect(compiled.querySelector('ion-spinner')).toBeTruthy();
+    const skeletonCards = compiled.querySelectorAll('app-wallet-card');
+    expect(skeletonCards.length).toBe(3);
+    expect(compiled.querySelector('.wallet-card.shimmer')).toBeTruthy();
   });
 
   it('should show empty state when no accounts', () => {
@@ -131,13 +133,25 @@ describe('WalletListPage', () => {
     expect(compiled.querySelector('app-wallet-card')).toBeTruthy();
   });
 
-  it('should show error state', () => {
+  it('should show error state with retry button', () => {
     accountsService.error$.next(new Error('Fetch failed'));
     accountsService.loading$.next(false);
     fixture.detectChanges();
 
     const compiled = fixture.nativeElement as HTMLElement;
-    expect(compiled.textContent).toContain('common.error');
+    expect(compiled.textContent).toContain('financial.wallets.error');
+    expect(compiled.textContent).toContain('financial.wallets.retry');
+  });
+
+  it('should retry loading when retry button is clicked', () => {
+    accountsService.error$.next(new Error('Fetch failed'));
+    accountsService.loading$.next(false);
+    fixture.detectChanges();
+
+    component.retryLoad();
+
+    expect(accountsService.fetchByCondominium).toHaveBeenCalledTimes(2);
+    expect(accountsService.fetchByCondominium).toHaveBeenCalledWith('condo-1');
   });
 
   it('should open form modal on FAB click', () => {

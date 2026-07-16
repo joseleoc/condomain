@@ -8,9 +8,9 @@ import {
   IonIcon,
   IonItem,
   IonLabel,
+  IonBadge,
 } from '@ionic/angular/standalone';
-import { toSignal } from '@angular/core/rxjs-interop';
-import { Currency } from '@core/services/currency/currency';
+import { TranslocoPipe } from '@jsverse/transloco';
 import type { CondominiumAccount } from '@app-types/condominium-accounts';
 
 type AccountType = CondominiumAccount['account_type'];
@@ -37,27 +37,39 @@ const ICON_MAP: Record<AccountType, string> = {
     IonIcon,
     IonItem,
     IonLabel,
+    IonBadge,
+    TranslocoPipe,
   ],
 })
 export class WalletCardComponent {
-  // --- Dependencies ---
-  #currencyService = inject(Currency);
-
   // --- Inputs ---
   account = input.required<CondominiumAccount>();
+  isLoading = input<boolean>(false);
+  hasError = input<boolean>(false);
 
-  // --- Signals ---
-  #currencies = toSignal(this.#currencyService.currencies$, {
-    initialValue: [],
+  // --- Computed ---
+  /** Icon name derived from the account icon or account type fallback. */
+  iconName = computed(() => {
+    const account = this.account();
+    return account.icon || ICON_MAP[account.account_type];
   });
 
-  /** Icon name derived from the account type. */
-  iconName = computed(() => ICON_MAP[this.account().account_type]);
+  /** Accent color derived from the account color or primary fallback. */
+  accentColor = computed(() => {
+    return this.account().color || 'var(--ion-color-primary)';
+  });
 
-  /** Currency symbol for the account's currency, falling back to the ISO code. */
-  currencySymbol = computed(() => {
-    const isoCode = this.account().currency;
-    const currency = this.#currencies().find((c) => c.iso_code === isoCode);
-    return currency?.symbol ?? isoCode;
+  /** Formatted balance with thousands separators and 2 decimals. */
+  formattedBalance = computed(() => {
+    const account = this.account();
+    return new Intl.NumberFormat('en-US', {
+      minimumFractionDigits: 2,
+      maximumFractionDigits: 2,
+    }).format(account.current_balance);
+  });
+
+  /** Transloco key for the account type badge label. */
+  accountTypeLabel = computed(() => {
+    return `financial.wallets.accountType.${this.account().account_type}`;
   });
 }

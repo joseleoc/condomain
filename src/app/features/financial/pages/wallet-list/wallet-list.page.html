@@ -12,19 +12,24 @@
   @let loading = loading$ | async;
   @let error = error$ | async;
 
-  <!-- Loading state -->
+  <!-- Loading state: skeleton cards -->
   @if (loading) {
-    <div class="state-container loading-state">
-      <ion-spinner name="crescent"></ion-spinner>
-      <p>{{ 'common.loading' | transloco }}</p>
+    <div class="wallet-grid">
+      @for (i of [1, 2, 3]; track i) {
+        <app-wallet-card [account]="mockAccount" [isLoading]="true" />
+      }
     </div>
   }
 
   <!-- Error state -->
   @if (!loading && error) {
     <div class="state-container error-state">
-      <ion-icon name="alert-circle-outline" size="large" color="danger"></ion-icon>
-      <p>{{ 'common.error' | transloco }}</p>
+      <ion-icon name="cloud-offline-outline" size="large" color="danger"></ion-icon>
+      <h3>{{ 'financial.wallets.error' | transloco }}</h3>
+      <ion-button (click)="retryLoad()">
+        <ion-icon name="refresh" slot="start"></ion-icon>
+        {{ 'financial.wallets.retry' | transloco }}
+      </ion-button>
     </div>
   }
 
@@ -40,12 +45,12 @@
     </div>
   }
 
-  <!-- Populated state -->
+  <!-- Populated state: responsive grid -->
   @if (!loading && !error && accounts && accounts.length > 0) {
-    <ion-list class="wallet-list">
+    <div class="wallet-grid">
       @for (account of accounts; track account.id) {
         <ion-item-sliding>
-          <ion-item lines="full" (click)="openEditModal(account)" class="wallet-item">
+          <ion-item lines="none" (click)="openEditModal(account)" class="wallet-item">
             <app-wallet-card [account]="account" />
           </ion-item>
 
@@ -59,17 +64,17 @@
           </ion-item-options>
         </ion-item-sliding>
       }
-    </ion-list>
+    </div>
   }
 
-  <!-- Floating action button -->
+  <!-- FAB -->
   <ion-fab slot="fixed" vertical="bottom" horizontal="end" class="wallet-fab">
     <ion-fab-button (click)="openCreateModal()">
       <ion-icon name="add"></ion-icon>
     </ion-fab-button>
   </ion-fab>
 
-  <!-- Wallet form modal -->
+  <!-- Modal and alert (unchanged) -->
   <app-wallet-form-modal
     [account]="accountToEdit()"
     [condominiumId]="contextService.activeCondominium()?.id ?? ''"
@@ -77,7 +82,6 @@
     (isOpenChange)="closeFormModal()"
   />
 
-  <!-- Delete confirmation alert -->
   <ion-alert
     [isOpen]="!!deleteTarget()"
     [header]="'financial.wallets.deleteConfirmTitle' | transloco"

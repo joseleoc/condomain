@@ -1,26 +1,46 @@
-<ion-card class="wallet-card">
-  <ion-card-header>
-    <ion-card-title>{{ account().name }}</ion-card-title>
-    @if (account().institution_name) {
-      <ion-card-subtitle>
-        {{ account().institution_name }}
-      </ion-card-subtitle>
+@if (isLoading()) {
+  <!-- Shimmer skeleton -->
+  <ion-card class="wallet-card shimmer">
+    <ion-card-header>
+      <div class="skeleton-line title"></div>
+      <div class="skeleton-line subtitle"></div>
+    </ion-card-header>
+    <ion-card-content>
+      <div class="skeleton-line balance"></div>
+    </ion-card-content>
+  </ion-card>
+} @else {
+  <ion-card class="wallet-card" [style.border-left-color]="accentColor()">
+    @if (hasError()) {
+      <ion-badge color="danger" class="error-badge">
+        <ion-icon name="alert-circle"></ion-icon>
+      </ion-badge>
     }
-  </ion-card-header>
 
-  <ion-card-content>
-    <ion-item lines="none" class="wallet-balance-item">
-      <ion-icon
-        [name]="iconName()"
-        slot="start"
-        color="primary"
-        class="wallet-type-icon"
-      ></ion-icon>
-      <ion-label>
-        <h2 class="balance-value">
-          {{ currencySymbol() }}{{ account().current_balance }}
-        </h2>
-      </ion-label>
-    </ion-item>
-  </ion-card-content>
-</ion-card>
+    <ion-card-header>
+      <ion-card-title>{{ account().name }}</ion-card-title>
+      @if (account().institution_name) {
+        <ion-card-subtitle>{{ account().institution_name }}</ion-card-subtitle>
+      }
+      <ion-badge class="account-type-badge" [style.background]="accentColor()">
+        {{ accountTypeLabel() | transloco }}
+      </ion-badge>
+    </ion-card-header>
+
+    <ion-card-content>
+      <ion-item lines="none" class="wallet-balance-item">
+        <ion-icon
+          [name]="iconName()"
+          slot="start"
+          class="wallet-type-icon"
+          [style.color]="accentColor()"
+        ></ion-icon>
+        <ion-label>
+          <h2 class="balance-value">
+            {{ account().currency }} {{ formattedBalance() }}
+          </h2>
+        </ion-label>
+      </ion-item>
+    </ion-card-content>
+  </ion-card>
+}

@@ -9,10 +9,8 @@ import {
   IonTitle,
   IonIcon,
   IonButton,
-  IonSpinner,
   IonFab,
   IonFabButton,
-  IonList,
   IonItemSliding,
   IonItem,
   IonItemOptions,
@@ -42,10 +40,8 @@ import type { CondominiumAccount } from '@app-types/condominium-accounts';
     IonTitle,
     IonIcon,
     IonButton,
-    IonSpinner,
     IonFab,
     IonFabButton,
-    IonList,
     IonItemSliding,
     IonItem,
     IonItemOptions,
@@ -67,6 +63,23 @@ export class WalletListPage {
   isFormModalOpen = signal(false);
   accountToEdit = signal<CondominiumAccount | null>(null);
   deleteTarget = signal<CondominiumAccount | null>(null);
+
+  // --- Mock account for skeleton loading ---
+  mockAccount: CondominiumAccount = {
+    id: 'skeleton',
+    name: '',
+    account_type: 'bank',
+    currency: 'USD',
+    current_balance: 0,
+    initial_balance: 0,
+    condominium_id: '',
+    created_at: '',
+    updated_at: '',
+    institution_name: null,
+    icon: null,
+    color: null,
+    deleted_at: null,
+  };
 
   // --- Computed ---
   isEditMode = computed(() => this.accountToEdit() !== null);
@@ -114,6 +127,15 @@ export class WalletListPage {
   closeFormModal(): void {
     this.isFormModalOpen.set(false);
     this.accountToEdit.set(null);
+  }
+
+  retryLoad(): void {
+    const condominium = this.contextService.activeCondominium();
+    if (condominium) {
+      this.#accountsService.fetchByCondominium(condominium.id).catch((error) => {
+        console.error('Failed to retry loading wallets:', error);
+      });
+    }
   }
 
   confirmDelete(account: CondominiumAccount): void {
