@@ -2,11 +2,6 @@ import { Component, computed, effect, inject, signal } from '@angular/core';
 import { AsyncPipe } from '@angular/common';
 import {
   IonContent,
-  IonHeader,
-  IonToolbar,
-  IonTitle,
-  IonButtons,
-  IonBackButton,
   IonIcon,
   IonButton,
   IonFab,
@@ -16,6 +11,9 @@ import {
   IonItemOptions,
   IonItemOption,
   IonAlert,
+  IonGrid,
+  IonRow,
+  IonCol,
 } from '@ionic/angular/standalone';
 import { TranslocoPipe, TranslocoService } from '@jsverse/transloco';
 import {
@@ -39,11 +37,6 @@ import type { CondominiumAccount } from '@app-types/condominium-accounts';
   imports: [
     AsyncPipe,
     IonContent,
-    IonHeader,
-    IonToolbar,
-    IonTitle,
-    IonButtons,
-    IonBackButton,
     IonIcon,
     IonButton,
     IonFab,
@@ -58,6 +51,9 @@ import type { CondominiumAccount } from '@app-types/condominium-accounts';
     NetWorthChartComponent,
     WalletCardComponent,
     WalletFormModalComponent,
+    IonGrid,
+    IonRow,
+    IonCol,
   ],
 })
 export class FinancialDashboardPage {

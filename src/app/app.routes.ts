@@ -92,6 +92,11 @@ export const routes: Routes = [
 
       {
         path: 'financial',
+        data: {
+          title: 'financial.dashboard.title',
+          showBackButton: false,
+          defaultHref: '',
+        },
         canActivate: [isNotAuthenticatedGuard],
         children: [
           {
