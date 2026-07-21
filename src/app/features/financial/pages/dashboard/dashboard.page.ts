@@ -1,4 +1,13 @@
-import { Component, computed, effect, inject, signal } from '@angular/core';
+import {
+  Component,
+  computed,
+  effect,
+  inject,
+  signal,
+  ViewChildren,
+  QueryList,
+} from '@angular/core';
+import { toSignal } from '@angular/core/rxjs-interop';
 import { AsyncPipe } from '@angular/common';
 import {
   IonContent,
@@ -11,9 +20,6 @@ import {
   IonItemOptions,
   IonItemOption,
   IonAlert,
-  IonGrid,
-  IonRow,
-  IonCol,
 } from '@ionic/angular/standalone';
 import { TranslocoPipe, TranslocoService } from '@jsverse/transloco';
 import {
@@ -51,9 +57,6 @@ import type { CondominiumAccount } from '@app-types/condominium-accounts';
     NetWorthChartComponent,
     WalletCardComponent,
     WalletFormModalComponent,
-    IonGrid,
-    IonRow,
-    IonCol,
   ],
 })
 export class FinancialDashboardPage {
@@ -62,6 +65,10 @@ export class FinancialDashboardPage {
   contextService = inject(ContextService);
   #translocoService = inject(TranslocoService);
   #toast = inject(Toast);
+
+  // --- View children ---
+  @ViewChildren(IonItemSliding)
+  slidingItems!: QueryList<IonItemSliding>;
 
   // --- Service streams ---
   loading$ = this.#dashboardService.loading$;
@@ -77,11 +84,7 @@ export class FinancialDashboardPage {
   walletToEdit = signal<CondominiumAccount | null>(null);
   deleteTarget = signal<CondominiumAccount | null>(null);
 
-  constructor() {
-    if (!environment.production) {
-      this.#dashboardService.enableMockData();
-    }
-  }
+  constructor() {}
 
   // --- Mock account for skeleton loading ---
   mockAccount: CondominiumAccount = {
@@ -100,15 +103,23 @@ export class FinancialDashboardPage {
     deleted_at: null,
   };
 
+  // --- Reactive translations for alert buttons ---
+  #cancelText = toSignal(
+    this.#translocoService.selectTranslate('common.cancel'),
+  );
+  #deleteText = toSignal(
+    this.#translocoService.selectTranslate('common.delete'),
+  );
+
   // --- Computed ---
   deleteAlertButtons = computed(() => [
     {
-      text: this.#translocoService.translate('common.cancel'),
+      text: this.#cancelText(),
       role: 'cancel',
       handler: () => this.cancelDelete(),
     },
     {
-      text: this.#translocoService.translate('common.delete'),
+      text: this.#deleteText(),
       role: 'confirm',
       handler: () => this.executeDelete(),
     },
@@ -125,6 +136,10 @@ export class FinancialDashboardPage {
   });
 
   // --- Event handlers ---
+  onSeeAllWallets(): void {
+    // TODO: Navigate to full wallets list page when route exists
+  }
+
   onDurationChange(duration: ChartDuration): void {
     this.#dashboardService.setDuration(duration);
   }
@@ -154,6 +169,7 @@ export class FinancialDashboardPage {
   closeFormModal(): void {
     this.isFormModalOpen.set(false);
     this.walletToEdit.set(null);
+    this.#closeAllSlidingItems();
   }
 
   confirmDeleteWallet(wallet: CondominiumAccount): void {
@@ -169,8 +185,7 @@ export class FinancialDashboardPage {
     if (!target) return;
 
     try {
-      // TODO: Implement wallet deletion once the dashboard service exposes a delete method.
-      // For now, just show a success toast.
+      await this.#dashboardService.deleteWallet(target.id);
       this.#toast.present({
         message: this.#translocoService.translate(
           'financial.wallets.toast.deleted',
@@ -187,6 +202,16 @@ export class FinancialDashboardPage {
       });
     } finally {
       this.deleteTarget.set(null);
+      this.#closeAllSlidingItems();
+    }
+  }
+
+  // --- Private helpers ---
+
+  /** Close all open ion-item-sliding elements. */
+  #closeAllSlidingItems(): void {
+    if (this.slidingItems) {
+      this.slidingItems.forEach((item) => item.close());
     }
   }
 }

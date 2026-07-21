@@ -1,6 +1,12 @@
 import { inject, Injectable, signal, type Signal } from '@angular/core';
 import { toObservable } from '@angular/core/rxjs-interop';
-import { BehaviorSubject, type Observable, combineLatest, of, from } from 'rxjs';
+import {
+  BehaviorSubject,
+  type Observable,
+  combineLatest,
+  of,
+  from,
+} from 'rxjs';
 import { map, catchError, switchMap, shareReplay } from 'rxjs/operators';
 
 import { CondominiumAccounts } from '@core/services/condominium-accounts/condominium-accounts';
@@ -19,85 +25,6 @@ export interface NetWorthDataPoint {
   /** Human-readable label for chart axes (e.g., "Jan 2024"). */
   label: string;
 }
-
-/** Mock data for development and testing the financial dashboard without a backend. */
-export const MOCK_DASHBOARD_DATA = {
-  netWorth: 45678.9,
-  wallets: [
-    {
-      id: 'mock-1',
-      name: 'Main Checking',
-      account_type: 'bank' as const,
-      currency: 'USD',
-      current_balance: 12345.67,
-      initial_balance: 10000,
-      condominium_id: 'mock-condo',
-      created_at: new Date().toISOString(),
-      updated_at: new Date().toISOString(),
-      color: '#4CAF50',
-      icon: 'business',
-      institution_name: 'Bank of America',
-      deleted_at: null,
-    },
-    {
-      id: 'mock-2',
-      name: 'Savings Account',
-      account_type: 'bank' as const,
-      currency: 'USD',
-      current_balance: 25000.0,
-      initial_balance: 20000,
-      condominium_id: 'mock-condo',
-      created_at: new Date().toISOString(),
-      updated_at: new Date().toISOString(),
-      color: '#2196F3',
-      icon: 'savings',
-      institution_name: 'Chase',
-      deleted_at: null,
-    },
-    {
-      id: 'mock-3',
-      name: 'Cash Wallet',
-      account_type: 'cash' as const,
-      currency: 'USD',
-      current_balance: 500.0,
-      initial_balance: 500,
-      condominium_id: 'mock-condo',
-      created_at: new Date().toISOString(),
-      updated_at: new Date().toISOString(),
-      color: '#FF9800',
-      icon: 'cash',
-      institution_name: null,
-      deleted_at: null,
-    },
-    {
-      id: 'mock-4',
-      name: 'Investment Portfolio',
-      account_type: 'investment' as const,
-      currency: 'USD',
-      current_balance: 7833.23,
-      initial_balance: 5000,
-      condominium_id: 'mock-condo',
-      created_at: new Date().toISOString(),
-      updated_at: new Date().toISOString(),
-      color: '#9C27B0',
-      icon: 'trending-up',
-      institution_name: 'Vanguard',
-      deleted_at: null,
-    },
-  ],
-  history: [
-    { date: '2024-01-01', value: 35000, label: 'Jan 2024' },
-    { date: '2024-02-01', value: 36500, label: 'Feb 2024' },
-    { date: '2024-03-01', value: 38000, label: 'Mar 2024' },
-    { date: '2024-04-01', value: 39200, label: 'Apr 2024' },
-    { date: '2024-05-01', value: 40800, label: 'May 2024' },
-    { date: '2024-06-01', value: 42100, label: 'Jun 2024' },
-    { date: '2024-07-01', value: 43500, label: 'Jul 2024' },
-    { date: '2024-08-01', value: 44200, label: 'Aug 2024' },
-    { date: '2024-09-01', value: 45000, label: 'Sep 2024' },
-    { date: '2024-10-01', value: 45678.9, label: 'Oct 2024' },
-  ],
-};
 
 /**
  * Data orchestrator for the financial dashboard.
@@ -119,31 +46,22 @@ export class FinancialDashboardService {
   #loading = new BehaviorSubject<boolean>(false);
   #error = new BehaviorSubject<unknown>(null);
   #selectedDuration = signal<ChartDuration>('1m');
-  #useMockData = signal<boolean>(false);
 
   // --- Public streams ---
   readonly loading$: Observable<boolean> = this.#loading.asObservable();
   readonly error$: Observable<unknown> = this.#error.asObservable();
 
-  /** Active wallets for the current condominium (or mock wallets when enabled). */
+  /** Active wallets for the current condominium. */
   readonly wallets$: Observable<CondominiumAccount[]> = combineLatest([
     this.#accountsService.accounts$,
-    toObservable(this.#useMockData),
   ]).pipe(
-    map(([accounts, useMock]) => (useMock ? MOCK_DASHBOARD_DATA.wallets : accounts)),
+    map(([accounts]) => accounts),
     shareReplay(1),
   );
 
   /** Sum of all wallet current balances. */
-  readonly netWorth$: Observable<number> = combineLatest([
-    this.wallets$,
-    toObservable(this.#useMockData),
-  ]).pipe(
-    map(([wallets, useMock]) => {
-      if (useMock) {
-        return MOCK_DASHBOARD_DATA.netWorth;
-      }
-
+  readonly netWorth$: Observable<number> = combineLatest([this.wallets$]).pipe(
+    map(([wallets]) => {
       return wallets.reduce((sum, wallet) => sum + wallet.current_balance, 0);
     }),
     shareReplay(1),
@@ -159,37 +77,19 @@ export class FinancialDashboardService {
   readonly netWorthHistory$: Observable<NetWorthDataPoint[]>;
 
   /** Currently selected chart duration. */
-  readonly selectedDuration: Signal<ChartDuration> = this.#selectedDuration.asReadonly();
+  readonly selectedDuration: Signal<ChartDuration> =
+    this.#selectedDuration.asReadonly();
 
   constructor() {
     this.netWorthHistory$ = combineLatest([
       this.wallets$,
       toObservable(this.#selectedDuration),
-      toObservable(this.#useMockData),
     ]).pipe(
-      switchMap(([wallets, duration, useMock]) => {
-        if (useMock) {
-          return of(MOCK_DASHBOARD_DATA.history);
-        }
-
+      switchMap(([wallets, duration]) => {
         return this.#calculateHistory(wallets, duration);
       }),
       shareReplay(1),
     );
-  }
-
-  /**
-   * Enables mock data for dashboard streams. Intended for development and testing.
-   */
-  enableMockData(): void {
-    this.#useMockData.set(true);
-  }
-
-  /**
-   * Disables mock data and returns dashboard streams to real backend data.
-   */
-  disableMockData(): void {
-    this.#useMockData.set(false);
   }
 
   /**
@@ -219,6 +119,14 @@ export class FinancialDashboardService {
   }
 
   /**
+   * Deletes a wallet. Delegates to CondominiumAccounts which handles
+   * optimistic update and emits the updated list reactively.
+   */
+  async deleteWallet(id: string): Promise<void> {
+    await this.#accountsService.delete(id);
+  }
+
+  /**
    * Updates the chart duration filter.
    * Recalculates net worth history reactively.
    */
@@ -241,7 +149,9 @@ export class FinancialDashboardService {
     return from(this.#fetchAndAggregateHistory(wallets)).pipe(
       map((dataPoints) => {
         if (!isOnline && dataPoints.length === 0) {
-          this.#error.next(new Error('No cached history data available while offline'));
+          this.#error.next(
+            new Error('No cached history data available while offline'),
+          );
         }
         return this.#filterByDuration(dataPoints, duration);
       }),
@@ -278,7 +188,10 @@ export class FinancialDashboardService {
         return {
           date: this.#formatISODate(date),
           value,
-          label: date.toLocaleDateString(undefined, { month: 'short', year: 'numeric' }),
+          label: date.toLocaleDateString(undefined, {
+            month: 'short',
+            year: 'numeric',
+          }),
         };
       })
       .sort((a, b) => a.date.localeCompare(b.date));

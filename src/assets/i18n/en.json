@@ -436,6 +436,7 @@
     },
     "wallets": {
       "title": "Wallets",
+      "seeAll": "See all",
       "emptyList": "No wallets yet",
       "createButton": "Create Wallet",
       "editButton": "Edit",

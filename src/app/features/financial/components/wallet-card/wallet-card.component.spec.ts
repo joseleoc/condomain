@@ -1,5 +1,4 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
-import { SharedTestingModule } from '@testing/shared-testing.module';
 import { WalletCardComponent } from './wallet-card.component';
 import type { CondominiumAccount } from '@app-types/condominium-accounts';
 
@@ -30,7 +29,7 @@ describe('WalletCardComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [WalletCardComponent, SharedTestingModule],
+      imports: [WalletCardComponent],
     }).compileComponents();
 
     fixture = TestBed.createComponent(WalletCardComponent);
@@ -45,18 +44,18 @@ describe('WalletCardComponent', () => {
 
   it('should display the wallet name', () => {
     const compiled = fixture.nativeElement as HTMLElement;
-    expect(compiled.textContent).toContain('Main Bank Account');
+    expect(compiled.querySelector('.wallet-name')?.textContent).toContain('Main Bank Account');
   });
 
   it('should display the institution name', () => {
     const compiled = fixture.nativeElement as HTMLElement;
-    expect(compiled.textContent).toContain('Bank of America');
+    expect(compiled.querySelector('.wallet-subtitle')?.textContent).toContain('Bank of America');
   });
 
   it('should display the current balance formatted with currency code', () => {
     const compiled = fixture.nativeElement as HTMLElement;
-    expect(compiled.textContent).toContain('USD');
-    expect(compiled.textContent).toContain('1,250.50');
+    expect(compiled.querySelector('.balance-amount')?.textContent).toContain('1,250.50');
+    expect(compiled.querySelector('.balance-currency')?.textContent).toContain('USD');
   });
 
   it('should map account_type to the correct icon', () => {
@@ -73,6 +72,16 @@ describe('WalletCardComponent', () => {
     expect(component.iconName()).toBe('card-outline');
   });
 
+  it('should fallback to wallet-outline when icon and account_type are missing', () => {
+    fixture.componentRef.setInput(
+      'account',
+      createMockAccount({ icon: null, account_type: 'unknown' as any }),
+    );
+    fixture.detectChanges();
+
+    expect(component.iconName()).toBe('wallet-outline');
+  });
+
   it('should default accent color to primary', () => {
     expect(component.accentColor()).toBe('var(--ion-color-primary)');
   });
@@ -87,46 +96,76 @@ describe('WalletCardComponent', () => {
     expect(component.accentColor()).toBe('#ff0000');
   });
 
-  it('should compute the account type label key', () => {
-    expect(component.accountTypeLabel()).toBe(
-      'financial.wallets.accountType.bank',
-    );
-  });
-
   it('should show shimmer skeleton when loading', () => {
     fixture.componentRef.setInput('isLoading', true);
     fixture.detectChanges();
 
     const compiled = fixture.nativeElement as HTMLElement;
-    expect(compiled.querySelector('.wallet-card.shimmer')).toBeTruthy();
-    expect(compiled.querySelector('.skeleton-line')).toBeTruthy();
+    expect(compiled.querySelector('.wallet-row.shimmer')).toBeTruthy();
+    expect(compiled.querySelector('.shimmer-circle')).toBeTruthy();
   });
 
-  it('should show error badge when hasError is true', () => {
+  it('should add has-error class when hasError is true', () => {
     fixture.componentRef.setInput('hasError', true);
     fixture.detectChanges();
 
     const compiled = fixture.nativeElement as HTMLElement;
-    expect(compiled.querySelector('.error-badge')).toBeTruthy();
+    expect(compiled.querySelector('.wallet-row.has-error')).toBeTruthy();
+  });
+
+  it('should format negative balance with minus sign and absolute value', () => {
+    fixture.componentRef.setInput(
+      'account',
+      createMockAccount({ current_balance: -1200 }),
+    );
+    fixture.detectChanges();
+
+    expect(component.formattedBalance()).toBe('-1,200.00');
+
+    const compiled = fixture.nativeElement as HTMLElement;
+    expect(compiled.querySelector('.balance-amount.negative')).toBeTruthy();
+  });
+
+  it('should compute iconBgColor from account color', () => {
+    fixture.componentRef.setInput(
+      'account',
+      createMockAccount({ color: '#ff8200' }),
+    );
+    fixture.detectChanges();
+
+    expect(component.iconBgColor()).toBe('rgba(255, 130, 0, 0.12)');
+  });
+
+  it('should default iconBgColor to ion-color-light when no color', () => {
+    expect(component.iconBgColor()).toBe('var(--ion-color-light)');
   });
 
   describe('icon mapping', () => {
     it('should render cash icon for cash account type', () => {
-      fixture.componentRef.setInput('account', createMockAccount({ account_type: 'cash' }));
+      fixture.componentRef.setInput(
+        'account',
+        createMockAccount({ account_type: 'cash' }),
+      );
       fixture.detectChanges();
 
       expect(component.iconName()).toBe('cash');
     });
 
     it('should render wallet icon for wallet account type', () => {
-      fixture.componentRef.setInput('account', createMockAccount({ account_type: 'wallet' }));
+      fixture.componentRef.setInput(
+        'account',
+        createMockAccount({ account_type: 'wallet' }),
+      );
       fixture.detectChanges();
 
       expect(component.iconName()).toBe('wallet');
     });
 
     it('should render card icon for credit account type', () => {
-      fixture.componentRef.setInput('account', createMockAccount({ account_type: 'credit' }));
+      fixture.componentRef.setInput(
+        'account',
+        createMockAccount({ account_type: 'credit' }),
+      );
       fixture.detectChanges();
 
       expect(component.iconName()).toBe('card');

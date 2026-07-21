@@ -53,6 +53,36 @@
   padding: 0 1rem;
 }
 
+.wallets-section-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 0.5rem;
+}
+
+.see-all-link {
+  font-size: 0.875rem;
+  font-weight: 500;
+  color: var(--ion-color-primary);
+  cursor: pointer;
+  text-decoration: none;
+
+  &:hover {
+    text-decoration: underline;
+  }
+}
+
+.wallets-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.wallet-card {
+  width: 100%;
+}
+
+
 .wallets-section-skeleton {
   display: flex;
   flex-direction: column;
@@ -64,22 +94,23 @@
 .section-title {
   font-size: 1.25rem;
   font-weight: 600;
-  margin: 0 0 1rem 0;
+  margin: 0;
   color: var(--ion-text-color);
 }
 
-.wallet-item-sliding{
+.wallet-item-sliding {
+  --ion-item-background: transparent;
   width: 100%;
-  height: 100%;
+  border-radius: 12px;
 }
 
 .wallet-item {
   --padding-start: 0;
   --padding-end: 0;
   --inner-padding-end: 0;
+  --background: transparent;
   cursor: pointer;
   width: 100%;
-  height: 100%;
 }
 
 .dashboard-fab {

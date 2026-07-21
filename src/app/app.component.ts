@@ -25,6 +25,8 @@ import {
   personAddOutline,
   closeCircle,
   checkmarkCircle,
+  trendingUp,
+  cash,
   locationOutline,
   business,
   wallet,
@@ -76,10 +78,12 @@ export class AppComponent {
       wallet,
       folderOutline,
       lockClosed,
+      cash,
       folderOpenOutline,
       receiptOutline,
       cashOutline,
       swapHorizontalOutline,
+      trendingUp,
     });
   }
 }

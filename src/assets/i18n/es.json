@@ -430,6 +430,7 @@
     },
     "wallets": {
       "title": "Billeteras",
+      "seeAll": "Ver todas",
       "emptyList": "Sin billeteras aún",
       "createButton": "Crear Billetera",
       "editButton": "Editar",

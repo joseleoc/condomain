@@ -1,16 +1,5 @@
-import { Component, computed, inject, input } from '@angular/core';
-import {
-  IonCard,
-  IonCardHeader,
-  IonCardTitle,
-  IonCardSubtitle,
-  IonCardContent,
-  IonIcon,
-  IonItem,
-  IonLabel,
-  IonBadge,
-} from '@ionic/angular/standalone';
-import { TranslocoPipe } from '@jsverse/transloco';
+import { Component, computed, input } from '@angular/core';
+import { IonIcon } from '@ionic/angular/standalone';
 import type { CondominiumAccount } from '@app-types/condominium-accounts';
 
 type AccountType = CondominiumAccount['account_type'];
@@ -28,18 +17,7 @@ const ICON_MAP: Record<AccountType, string> = {
   templateUrl: './wallet-card.component.html',
   styleUrls: ['./wallet-card.component.scss'],
   standalone: true,
-  imports: [
-    IonCard,
-    IonCardHeader,
-    IonCardTitle,
-    IonCardSubtitle,
-    IonCardContent,
-    IonIcon,
-    IonItem,
-    IonLabel,
-    IonBadge,
-    TranslocoPipe,
-  ],
+  imports: [IonIcon],
 })
 export class WalletCardComponent {
   // --- Inputs ---
@@ -51,7 +29,7 @@ export class WalletCardComponent {
   /** Icon name derived from the account icon or account type fallback. */
   iconName = computed(() => {
     const account = this.account();
-    return account.icon || ICON_MAP[account.account_type];
+    return account.icon || ICON_MAP[account.account_type] || 'wallet-outline';
   });
 
   /** Accent color derived from the account color or primary fallback. */
@@ -59,17 +37,35 @@ export class WalletCardComponent {
     return this.account().color || 'var(--ion-color-primary)';
   });
 
+  /** Light background color for the icon circle (accent color at low opacity). */
+  iconBgColor = computed(() => {
+    const color = this.account().color;
+    if (color) {
+      return this.#hexToRgba(color, 0.12);
+    }
+    return 'var(--ion-color-light)';
+  });
+
   /** Formatted balance with thousands separators and 2 decimals. */
   formattedBalance = computed(() => {
     const account = this.account();
-    return new Intl.NumberFormat('en-US', {
-      minimumFractionDigits: 2,
-      maximumFractionDigits: 2,
-    }).format(account.current_balance);
+    const sign = account.current_balance < 0 ? '-' : '';
+    const absBalance = Math.abs(account.current_balance);
+    return (
+      sign +
+      new Intl.NumberFormat('en-US', {
+        minimumFractionDigits: 2,
+        maximumFractionDigits: 2,
+      }).format(absBalance)
+    );
   });
 
-  /** Transloco key for the account type badge label. */
-  accountTypeLabel = computed(() => {
-    return `financial.wallets.accountType.${this.account().account_type}`;
-  });
+  // --- Private helpers ---
+  #hexToRgba(hex: string, alpha: number): string {
+    const cleaned = hex.replace('#', '');
+    const r = parseInt(cleaned.substring(0, 2), 16);
+    const g = parseInt(cleaned.substring(2, 4), 16);
+    const b = parseInt(cleaned.substring(4, 6), 16);
+    return `rgba(${r}, ${g}, ${b}, ${alpha})`;
+  }
 }

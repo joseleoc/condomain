@@ -174,6 +174,7 @@ export class CondominiumAccounts {
         updated_at: new Date().toISOString(),
       };
       await this.#localRepo.upsert('account', updated);
+      this.#emitUpdatedAccounts(updated as CondominiumAccount);
     }
 
     if (this.#networkStatus.isOnline()) {
@@ -202,6 +203,7 @@ export class CondominiumAccounts {
         // Revert optimistic update on failure
         if (existing) {
           await this.#localRepo.upsert('account', existing);
+          this.#emitUpdatedAccounts(existing as unknown as CondominiumAccount);
         }
         throw error;
       }
@@ -234,6 +236,7 @@ export class CondominiumAccounts {
         ...existing,
         deleted_at: new Date().toISOString(),
       });
+      this.#emitAccountsExcluding(id);
     }
 
     if (this.#networkStatus.isOnline()) {
@@ -246,6 +249,7 @@ export class CondominiumAccounts {
         // Revert optimistic update on failure
         if (existing) {
           await this.#localRepo.upsert('account', existing);
+          this.#emitUpdatedAccounts(existing as unknown as CondominiumAccount);
         }
         throw error;
       }
@@ -261,6 +265,19 @@ export class CondominiumAccounts {
   }
 
   // --- Private Methods ---
+
+  /** Replace the account in the current list and emit. */
+  #emitUpdatedAccounts(updated: CondominiumAccount): void {
+    const current = this.accounts$.getValue();
+    const next = current.map((a) => (a.id === updated.id ? updated : a));
+    this.accounts$.next(next);
+  }
+
+  /** Emit the current list excluding the given account ID. */
+  #emitAccountsExcluding(id: string): void {
+    const current = this.accounts$.getValue();
+    this.accounts$.next(current.filter((a) => a.id !== id));
+  }
 
   async #createOnline(data: CreateCondominiumAccountData): Promise<CondominiumAccount> {
     const valuesToInsert = {
