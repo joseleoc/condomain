@@ -30,6 +30,7 @@ import {
   locationOutline,
   business,
   wallet,
+  walletOutline,
   folderOutline,
   lockClosed,
   folderOpenOutline,
@@ -84,6 +85,7 @@ export class AppComponent {
       cashOutline,
       swapHorizontalOutline,
       trendingUp,
+      walletOutline,
     });
   }
 }

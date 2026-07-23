@@ -28,6 +28,11 @@
     "english": "English",
     "spanish": "Spanish"
   },
+  "tabs": {
+    "home": "Home",
+    "financial": "Financial",
+    "condominium": "Condominium"
+  },
   "condominium": {
     "creationSuccess": "Condominium created successfully!",
     "hub": {
