@@ -1,0 +1,121 @@
+<ion-modal
+  [isOpen]="isOpen()"
+  [backdropDismiss]="false"
+  (didDismiss)="cancel()"
+>
+  <ng-template>
+    <ion-header>
+      <ion-toolbar>
+        <ion-title>
+          {{ 'financial.transactions.form.transferTitle' | transloco }}
+        </ion-title>
+        <ion-buttons slot="end">
+          <ion-button fill="clear" color="secondary" (click)="cancel()">
+            {{ 'financial.transactions.form.cancel' | transloco }}
+          </ion-button>
+        </ion-buttons>
+      </ion-toolbar>
+    </ion-header>
+
+    <ion-content class="ion-padding" [scrollY]="true">
+      <form [formGroup]="form" (ngSubmit)="submit()">
+        <ion-item>
+          <ion-select
+            formControlName="from_account_id"
+            [label]="'financial.transactions.form.fromAccount' | transloco"
+            labelPlacement="stacked"
+          >
+            @for (account of availableSourceAccounts(); track account.id) {
+              <ion-select-option [value]="account.id">
+                {{ account.name }}
+              </ion-select-option>
+            }
+          </ion-select>
+        </ion-item>
+
+        <ion-item>
+          <ion-select
+            formControlName="to_account_id"
+            [label]="'financial.transactions.form.toAccount' | transloco"
+            labelPlacement="stacked"
+          >
+            @for (account of availableDestinationAccounts(); track account.id) {
+              <ion-select-option [value]="account.id">
+                {{ account.name }}
+              </ion-select-option>
+            }
+          </ion-select>
+        </ion-item>
+
+        @if (form.hasError('sameAccount') && form.touched) {
+          <ion-item lines="none" class="validation-error">
+            <ion-text color="danger">
+              {{ 'financial.transactions.toast.sameAccountError' | transloco }}
+            </ion-text>
+          </ion-item>
+        }
+
+        <ion-item>
+          <ion-input
+            formControlName="amount"
+            type="number"
+            [label]="'financial.transactions.form.amount' | transloco"
+            labelPlacement="stacked"
+          ></ion-input>
+        </ion-item>
+
+        <ion-item>
+          <ion-select
+            formControlName="original_currency"
+            [label]="'financial.transactions.form.currency' | transloco"
+            labelPlacement="stacked"
+          >
+            @for (currency of currencies(); track currency.iso_code) {
+              <ion-select-option [value]="currency.iso_code">
+                {{ currency.name }} ({{ currency.symbol }})
+              </ion-select-option>
+            }
+          </ion-select>
+        </ion-item>
+
+        @if (showExchangeRate()) {
+          <ion-item>
+            <ion-input
+              formControlName="exchange_rate"
+              type="number"
+              [label]="'financial.transactions.form.exchangeRate' | transloco"
+              labelPlacement="stacked"
+            ></ion-input>
+          </ion-item>
+        }
+
+        <ion-item>
+          <ion-input
+            formControlName="description"
+            [label]="'financial.transactions.form.description' | transloco"
+            labelPlacement="stacked"
+          ></ion-input>
+        </ion-item>
+
+        <ion-item>
+          <ion-input
+            formControlName="transaction_date"
+            type="date"
+            [label]="'financial.transactions.form.transactionDate' | transloco"
+            labelPlacement="stacked"
+          ></ion-input>
+        </ion-item>
+      </form>
+    </ion-content>
+
+    <ion-footer>
+      <ion-toolbar>
+        <ion-buttons slot="end">
+          <ion-button fill="solid" color="primary" (click)="submit()">
+            {{ 'financial.transactions.form.save' | transloco }}
+          </ion-button>
+        </ion-buttons>
+      </ion-toolbar>
+    </ion-footer>
+  </ng-template>
+</ion-modal>

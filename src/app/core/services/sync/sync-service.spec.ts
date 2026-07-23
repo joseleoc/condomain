@@ -2,7 +2,7 @@ import { TestBed } from '@angular/core/testing';
 import { SharedTestingModule } from '@testing/shared-testing.module';
 import { SyncService, calculateBackoff } from './sync-service';
 import { LocalRepository } from './local-repository';
-import { NetworkStatusService } from '../network-status.service';
+import { NetworkStatusService } from '../network-status/network-status.service';
 import { Supabase } from '../supabase/supabase';
 import { QueryClient } from '@tanstack/angular-query-experimental';
 import { resetLocalDB, setTestDbName } from './local-db';
@@ -236,6 +236,172 @@ describe('SyncService', () => {
       await service.processOutbox();
 
       expect(consoleSpy).toHaveBeenCalled();
+    });
+  });
+
+  describe('RPC name mappings', () => {
+    it('should map account create/update/delete mutations', async () => {
+      const rpcSpy = spyOn(supabase.client, 'rpc' as any).and.returnValue(
+        mockRpc(null),
+      );
+
+      await localRepo.enqueueMutation({
+        mutation_type: 'create',
+        entity_type: 'account',
+        entity_id: 'acc-1',
+        payload: { name: 'Cash', condominium_id: 'c1' },
+        idempotency_key: 'key-acc-create',
+        retry_count: 0,
+        max_retries: 5,
+        last_error: null,
+      });
+      await localRepo.enqueueMutation({
+        mutation_type: 'update',
+        entity_type: 'account',
+        entity_id: 'acc-1',
+        payload: { name: 'Updated Cash' },
+        idempotency_key: 'key-acc-update',
+        retry_count: 0,
+        max_retries: 5,
+        last_error: null,
+      });
+      await localRepo.enqueueMutation({
+        mutation_type: 'delete',
+        entity_type: 'account',
+        entity_id: 'acc-1',
+        payload: { id: 'acc-1', reversal_reason: 'User deleted' },
+        idempotency_key: 'key-acc-delete',
+        retry_count: 0,
+        max_retries: 5,
+        last_error: null,
+      });
+
+      await service.processOutbox();
+
+      expect(rpcSpy.calls.count()).toBe(3);
+      expect(rpcSpy.calls.argsFor(0)[0]).toBe('insert_account_idempotent');
+      expect(rpcSpy.calls.argsFor(1)[0]).toBe('update_account_idempotent');
+      expect(rpcSpy.calls.argsFor(2)[0]).toBe('soft_delete_account');
+    });
+
+    it('should map transaction_category create/update/delete mutations', async () => {
+      const rpcSpy = spyOn(supabase.client, 'rpc' as any).and.returnValue(
+        mockRpc(null),
+      );
+
+      await localRepo.enqueueMutation({
+        mutation_type: 'create',
+        entity_type: 'transaction_category',
+        entity_id: 'cat-1',
+        payload: { name: 'Custom', condominium_id: 'c1', category_type: 'expense' },
+        idempotency_key: 'key-cat-create',
+        retry_count: 0,
+        max_retries: 5,
+        last_error: null,
+      });
+      await localRepo.enqueueMutation({
+        mutation_type: 'update',
+        entity_type: 'transaction_category',
+        entity_id: 'cat-1',
+        payload: { name: 'Updated Custom' },
+        idempotency_key: 'key-cat-update',
+        retry_count: 0,
+        max_retries: 5,
+        last_error: null,
+      });
+      await localRepo.enqueueMutation({
+        mutation_type: 'delete',
+        entity_type: 'transaction_category',
+        entity_id: 'cat-1',
+        payload: { id: 'cat-1', reversal_reason: 'User deleted' },
+        idempotency_key: 'key-cat-delete',
+        retry_count: 0,
+        max_retries: 5,
+        last_error: null,
+      });
+
+      await service.processOutbox();
+
+      expect(rpcSpy.calls.count()).toBe(3);
+      expect(rpcSpy.calls.argsFor(0)[0]).toBe(
+        'insert_transaction_category_idempotent',
+      );
+      expect(rpcSpy.calls.argsFor(1)[0]).toBe(
+        'update_transaction_category_idempotent',
+      );
+      expect(rpcSpy.calls.argsFor(2)[0]).toBe('soft_delete_category');
+    });
+
+    it('should map financial_transaction create/update/delete mutations', async () => {
+      const rpcSpy = spyOn(supabase.client, 'rpc' as any).and.returnValue(
+        mockRpc(null),
+      );
+
+      await localRepo.enqueueMutation({
+        mutation_type: 'create',
+        entity_type: 'financial_transaction',
+        entity_id: 'tx-1',
+        payload: { amount: 100, condominium_id: 'c1' },
+        idempotency_key: 'key-tx-create',
+        retry_count: 0,
+        max_retries: 5,
+        last_error: null,
+      });
+      await localRepo.enqueueMutation({
+        mutation_type: 'update',
+        entity_type: 'financial_transaction',
+        entity_id: 'tx-1',
+        payload: { amount: 200 },
+        idempotency_key: 'key-tx-update',
+        retry_count: 0,
+        max_retries: 5,
+        last_error: null,
+      });
+      await localRepo.enqueueMutation({
+        mutation_type: 'delete',
+        entity_type: 'financial_transaction',
+        entity_id: 'tx-1',
+        payload: { id: 'tx-1', reversal_reason: 'User deleted' },
+        idempotency_key: 'key-tx-delete',
+        retry_count: 0,
+        max_retries: 5,
+        last_error: null,
+      });
+
+      await service.processOutbox();
+
+      expect(rpcSpy.calls.count()).toBe(3);
+      expect(rpcSpy.calls.argsFor(0)[0]).toBe(
+        'insert_financial_transaction_idempotent',
+      );
+      expect(rpcSpy.calls.argsFor(1)[0]).toBe(
+        'update_financial_transaction_idempotent',
+      );
+      expect(rpcSpy.calls.argsFor(2)[0]).toBe('soft_delete_transaction');
+    });
+
+    it('should pass delete payload id and reversal reason to RPC params', async () => {
+      const rpcSpy = spyOn(supabase.client, 'rpc' as any).and.returnValue(
+        mockRpc(null),
+      );
+
+      await localRepo.enqueueMutation({
+        mutation_type: 'delete',
+        entity_type: 'transaction_category',
+        entity_id: 'cat-1',
+        payload: { id: 'cat-1', reversal_reason: 'Test reason' },
+        idempotency_key: 'key-cat-delete',
+        retry_count: 0,
+        max_retries: 5,
+        last_error: null,
+      });
+
+      await service.processOutbox();
+
+      expect(rpcSpy.calls.argsFor(0)[1]).toEqual({
+        p_id: 'cat-1',
+        p_reversal_reason: 'Test reason',
+      });
     });
   });
 

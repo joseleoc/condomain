@@ -8,7 +8,6 @@ export const isAuthenticatedGuard: CanActivateFn = (route, state) => {
   const authService = inject(Auth);
   const isAuthenticated$ = authService.isAuthenticated$;
   const isLoadingSession$ = authService.isLoadingSession$;
-
   return isLoadingSession$.pipe(
     filter((isLoading) => !isLoading),
     take(1),

@@ -1,0 +1,133 @@
+.dashboard-skeleton,
+.dashboard-content {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  padding: 1rem 0;
+
+  @media (min-width: 768px) {
+    padding: 1.5rem 0;
+  }
+
+  @media (min-width: 1024px) {
+    padding: 2rem 0;
+  }
+}
+
+.dashboard-skeleton {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.state-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 3rem 1.5rem;
+  text-align: center;
+  gap: 1rem;
+
+  h3 {
+    margin: 0;
+    font-size: 1.25rem;
+    font-weight: 600;
+    color: var(--ion-text-color);
+  }
+
+  p {
+    margin: 0;
+    font-size: 0.95rem;
+    color: var(--ion-color-medium);
+    max-width: 300px;
+  }
+
+  ion-icon {
+    font-size: 3.5rem;
+  }
+}
+
+.wallets-section {
+  margin-top: 2rem;
+  padding: 0 1rem;
+}
+
+.wallets-section-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 0.5rem;
+}
+
+.see-all-link {
+  font-size: 0.875rem;
+  font-weight: 500;
+  color: var(--ion-color-primary);
+  cursor: pointer;
+  text-decoration: none;
+
+  &:hover {
+    text-decoration: underline;
+  }
+}
+
+.wallets-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.wallet-card {
+  width: 100%;
+}
+
+
+.wallets-section-skeleton {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  padding: 0 1rem;
+  margin-top: 2rem;
+}
+
+.section-title {
+  font-size: 1.25rem;
+  font-weight: 600;
+  margin: 0;
+  color: var(--ion-text-color);
+}
+
+.wallet-item-sliding {
+  --ion-item-background: transparent;
+  width: 100%;
+  border-radius: 12px;
+}
+
+.wallet-item {
+  --padding-start: 0;
+  --padding-end: 0;
+  --inner-padding-end: 0;
+  --background: transparent;
+  cursor: pointer;
+  width: 100%;
+}
+
+.dashboard-fab {
+  margin: 1rem;
+  margin-bottom: max(1rem, env(safe-area-inset-bottom));
+}
+
+// Responsive
+@media (min-width: 768px) {
+  .dashboard-content {
+    max-width: 720px;
+    margin: 0 auto;
+  }
+}
+
+@media (min-width: 1024px) {
+  .dashboard-content {
+    max-width: 1080px;
+  }
+}

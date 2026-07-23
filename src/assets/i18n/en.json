@@ -28,6 +28,11 @@
     "english": "English",
     "spanish": "Spanish"
   },
+  "tabs": {
+    "home": "Home",
+    "financial": "Financial",
+    "condominium": "Condominium"
+  },
   "condominium": {
     "creationSuccess": "Condominium created successfully!",
     "hub": {
@@ -398,6 +403,195 @@
       "assignButton": "Assign & Approve",
       "noPropertiesTitle": "No properties available",
       "noPropertiesDescription": "You need to create at least one property before approving join requests."
+    }
+  },
+  "financial": {
+    "dashboard": {
+      "title": "Financial Dashboard",
+      "netWorth": {
+        "title": "Net Worth",
+        "loading": "Calculating...",
+        "empty": "No wallets yet",
+        "error": "Unable to calculate net worth"
+      },
+      "chart": {
+        "title": "Net Worth Trend",
+        "loading": "Loading chart...",
+        "empty": "No data for this period",
+        "error": "Unable to load chart",
+        "retry": "Retry",
+        "duration": {
+          "1m": "1 Month",
+          "3m": "3 Months",
+          "6m": "6 Months",
+          "1y": "1 Year",
+          "2y": "2 Years"
+        }
+      },
+      "empty": {
+        "title": "Welcome to Financial Dashboard",
+        "description": "Create your first wallet to start tracking your finances",
+        "createButton": "Create Wallet"
+      },
+      "error": {
+        "title": "Something went wrong",
+        "description": "We couldn't load your financial data",
+        "retry": "Try Again"
+      }
+    },
+    "wallets": {
+      "title": "Wallets",
+      "seeAll": "See all",
+      "emptyList": "No wallets yet",
+      "createButton": "Create Wallet",
+      "editButton": "Edit",
+      "deleteButton": "Delete",
+      "deleteConfirmTitle": "Delete wallet",
+      "deleteConfirmMessage": "Are you sure you want to delete \"{{name}}\"? This action cannot be undone.",
+      "loading": "Loading wallets...",
+      "error": "Unable to load wallets",
+      "retry": "Retry",
+      "accountType": {
+        "bank": "Bank",
+        "cash": "Cash",
+        "wallet": "Wallet",
+        "credit": "Credit",
+        "investment": "Investment"
+      },
+      "form": {
+        "title": "New Wallet",
+        "editTitle": "Edit Wallet",
+        "name": "Name",
+        "namePlaceholder": "e.g. Main Checking",
+        "type": "Account Type",
+        "currency": "Currency",
+        "institution": "Institution",
+        "institutionPlaceholder": "e.g. Bank of America",
+        "balance": "Initial Balance",
+        "icon": "Icon",
+        "color": "Color",
+        "save": "Save",
+        "cancel": "Cancel"
+      },
+      "toast": {
+        "created": "Wallet created successfully",
+        "updated": "Wallet updated successfully",
+        "deleted": "Wallet deleted successfully",
+        "error": "Failed to save wallet"
+      }
+    },
+    "transactions": {
+      "title": "Transactions",
+      "incomeTab": "Income",
+      "expenseTab": "Expenses",
+      "transferTab": "Transfers",
+      "allTab": "All",
+      "emptyList": "No transactions yet",
+      "createIncomeButton": "New income",
+      "createExpenseButton": "New expense",
+      "createTransferButton": "New transfer",
+      "filters": {
+        "account": "Account",
+        "category": "Category",
+        "type": "Type",
+        "status": "Status",
+        "dateFrom": "From",
+        "dateTo": "To",
+        "allAccounts": "All accounts",
+        "allCategories": "All categories",
+        "allTypes": "All types",
+        "allStatuses": "All statuses"
+      },
+      "status": {
+        "pending": "Pending",
+        "completed": "Completed",
+        "voided": "Voided"
+      },
+      "form": {
+        "incomeTitle": "New income",
+        "expenseTitle": "New expense",
+        "transferTitle": "New transfer",
+        "editTitle": "Edit transaction",
+        "type": "Type",
+        "account": "Account",
+        "fromAccount": "From account",
+        "toAccount": "To account",
+        "category": "Category",
+        "amount": "Amount",
+        "currency": "Currency",
+        "exchangeRate": "Exchange rate",
+        "description": "Description",
+        "referenceNumber": "Reference number",
+        "transactionDate": "Date",
+        "save": "Save",
+        "cancel": "Cancel"
+      },
+      "toast": {
+        "created": "Transaction created successfully",
+        "updated": "Transaction updated successfully",
+        "deleted": "Transaction deleted successfully",
+        "terminalEditError": "Cannot edit completed or voided transactions",
+        "sameAccountError": "Source and destination accounts must be different",
+        "error": "Error saving. Please try again."
+      }
+    },
+    "categories": {
+      "title": "Categories",
+      "incomeTab": "Income",
+      "expenseTab": "Expenses",
+      "emptyList": "No categories yet. Create one to get started.",
+      "createButton": "Create category",
+      "editButton": "Edit",
+      "deleteButton": "Delete",
+      "systemLock": "System category",
+      "deleteConfirmTitle": "Delete category",
+      "deleteConfirmMessage": "Are you sure you want to delete \"{{name}}\"?",
+      "deleteSystemError": "System categories cannot be deleted.",
+      "hierarchyError": "Cannot create subcategories beyond 2 levels.",
+      "form": {
+        "title": "New category",
+        "editTitle": "Edit category",
+        "name": "Name",
+        "namePlaceholder": "e.g. Electricity",
+        "type": "Type",
+        "parent": "Parent category",
+        "parentRoot": "No parent (root category)",
+        "noParent": "Select parent category",
+        "icon": "Icon",
+        "color": "Color",
+        "save": "Save",
+        "cancel": "Cancel"
+      },
+      "system": {
+        "maintenance": "Maintenance",
+        "maintenance_common_areas": "Common areas",
+        "maintenance_repairs": "Repairs",
+        "services": "Public Services",
+        "services_electricity": "Electricity",
+        "services_water": "Water",
+        "services_gas": "Gas",
+        "services_internet": "Internet",
+        "services_phone": "Phone",
+        "services_waste": "Waste collection",
+        "administration": "Administration",
+        "administration_fees": "Management fees",
+        "administration_salaries": "Salaries",
+        "security": "Security",
+        "cleaning": "Cleaning",
+        "fees": "Fees",
+        "fees_monthly": "Monthly fee",
+        "fees_extraordinary": "Extraordinary fee",
+        "reserves": "Reserve funds",
+        "other_income": "Other income"
+      },
+      "toast": {
+        "created": "Category created successfully",
+        "updated": "Category updated successfully",
+        "deleted": "Category deleted successfully",
+        "systemError": "System categories cannot be modified.",
+        "hierarchyError": "No more than 2 category levels allowed.",
+        "error": "Error saving. Please try again."
+      }
     }
   }
 }

@@ -1,8 +1,8 @@
 import { inject, Injectable } from '@angular/core';
 import { QueryClient } from '@tanstack/angular-query-experimental';
-import { NetworkStatusService } from './network-status.service';
-import { Condominium } from './condominium/condominium';
-import { LocalRepository } from './sync/local-repository';
+import { NetworkStatusService } from '../network-status/network-status.service';
+import { Condominium } from '../condominium/condominium';
+import { LocalRepository } from '../sync/local-repository';
 import type { CondominiumWithRole } from '@app-types/condominium';
 
 /**

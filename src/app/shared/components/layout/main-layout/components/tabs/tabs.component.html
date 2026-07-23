@@ -1,0 +1,18 @@
+<ion-tabs>
+  <ion-tab-bar slot="bottom">
+    <ion-tab-button tab="home">
+      <ion-icon name="home-outline"></ion-icon>
+      {{ 'tabs.home' | transloco }}
+    </ion-tab-button>
+    <ion-tab-button tab="financial">
+      <ion-icon name="wallet-outline"></ion-icon>
+      {{ 'tabs.financial' | transloco }}
+    </ion-tab-button>
+    <ion-tab-button tab="condominium/condominium-hub">
+      <ion-icon name="business-outline"></ion-icon>
+      {{ 'tabs.condominium' | transloco }}
+    </ion-tab-button>
+  </ion-tab-bar>
+</ion-tabs>
+
+<ng-content></ng-content>

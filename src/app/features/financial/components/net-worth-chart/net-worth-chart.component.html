@@ -1,0 +1,56 @@
+<ion-card class="net-worth-chart-card">
+  <ion-card-header>
+    <ion-card-title>{{ 'financial.dashboard.chart.title' | transloco }}</ion-card-title>
+  </ion-card-header>
+
+  <ion-card-content>
+    <!-- Duration selector -->
+    <ion-segment [value]="selectedDuration()" (ionChange)="onDurationChange($event)">
+      <ion-segment-button value="1m">
+        <ion-label>{{ 'financial.dashboard.chart.duration.1m' | transloco }}</ion-label>
+      </ion-segment-button>
+      <ion-segment-button value="3m">
+        <ion-label>{{ 'financial.dashboard.chart.duration.3m' | transloco }}</ion-label>
+      </ion-segment-button>
+      <ion-segment-button value="6m">
+        <ion-label>{{ 'financial.dashboard.chart.duration.6m' | transloco }}</ion-label>
+      </ion-segment-button>
+      <ion-segment-button value="1y">
+        <ion-label>{{ 'financial.dashboard.chart.duration.1y' | transloco }}</ion-label>
+      </ion-segment-button>
+      <ion-segment-button value="2y">
+        <ion-label>{{ 'financial.dashboard.chart.duration.2y' | transloco }}</ion-label>
+      </ion-segment-button>
+    </ion-segment>
+
+    <!-- Chart area -->
+    @if (isLoading()) {
+      <div class="chart-skeleton">
+        <div class="skeleton-chart"></div>
+      </div>
+    } @else if (hasError()) {
+      <div class="chart-error">
+        <ion-icon name="cloud-offline-outline" size="large" color="danger"></ion-icon>
+        <p>{{ 'financial.dashboard.chart.error' | transloco }}</p>
+        <ion-button size="small" (click)="retry.emit()">
+          <ion-icon name="refresh" slot="start"></ion-icon>
+          {{ 'financial.dashboard.chart.retry' | transloco }}
+        </ion-button>
+      </div>
+    } @else if (isEmpty()) {
+      <div class="chart-empty">
+        <ion-icon name="trending-up-outline" size="large" color="medium"></ion-icon>
+        <p>{{ 'financial.dashboard.chart.empty' | transloco }}</p>
+      </div>
+    } @else {
+      <div class="chart-container">
+        <canvas
+          baseChart
+          [data]="chartData()"
+          [options]="chartOptions()"
+          [type]="'line'">
+        </canvas>
+      </div>
+    }
+  </ion-card-content>
+</ion-card>

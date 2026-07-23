@@ -1,7 +1,7 @@
 import { inject, Injectable } from '@angular/core';
 import { CreatePropertyData, Property } from '@app-types/property';
 import { Supabase } from '../supabase/supabase';
-import { NetworkStatusService } from '../network-status.service';
+import { NetworkStatusService } from '../network-status/network-status.service';
 import { LocalRepository } from '../sync/local-repository';
 import { SyncService } from '../sync/sync-service';
 import { v4 as uuidv4 } from 'uuid';

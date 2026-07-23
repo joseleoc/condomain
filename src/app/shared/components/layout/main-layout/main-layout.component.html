@@ -1,3 +1,4 @@
+<!-- MENU CONTENT -->
 <ion-menu contentId="main-content">
   <ion-header>
     <ion-toolbar>
@@ -30,6 +31,7 @@
   </ion-footer>
 </ion-menu>
 
+<!-- MAIN CONTENT -->
 <div class="ion-page" id="main-content">
   <ion-header>
     <ion-toolbar>
@@ -43,12 +45,14 @@
         }
       </ion-buttons>
       @if (title() != null) {
-        <ion-title>{{ title() }}</ion-title>
+        <ion-title>{{ title() | transloco}}</ion-title>
       }
     </ion-toolbar>
   </ion-header>
 
   <ion-content class="ion-padding">
+    <app-tabs>
     <ng-content></ng-content>
+    </app-tabs>
   </ion-content>
 </div>

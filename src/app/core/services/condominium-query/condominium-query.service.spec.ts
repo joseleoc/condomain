@@ -4,11 +4,11 @@ import { SharedTestingModule } from '@testing/shared-testing.module';
 import { provideTanStackQuery, QueryClient } from '@tanstack/angular-query-experimental';
 
 import { CondominiumQueryService } from './condominium-query.service';
-import { NetworkStatusService } from './network-status.service';
-import { Condominium } from './condominium/condominium';
-import { LocalRepository } from './sync/local-repository';
+import { NetworkStatusService } from '../network-status/network-status.service';
+import { Condominium } from '../condominium/condominium';
+import { LocalRepository } from '../sync/local-repository';
 import type { CondominiumWithRole } from '@app-types/condominium';
-import type { LocalDBSchema } from './sync/local-db';
+import type { LocalDBSchema } from '../sync/local-db';
 
 describe('CondominiumQueryService', () => {
   let service: CondominiumQueryService;

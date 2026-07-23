@@ -1,0 +1,11 @@
+.type-segment {
+  margin-bottom: 1rem;
+}
+
+.terminal-warning {
+  display: block;
+  margin-bottom: 1rem;
+  padding: 0.75rem;
+  border-radius: 8px;
+  background: rgba(var(--ion-color-danger-rgb), 0.1);
+}

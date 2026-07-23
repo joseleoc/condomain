@@ -28,6 +28,11 @@
     "english": "Inglés",
     "spanish": "Español"
   },
+  "tabs": {
+    "home": "Inicio",
+    "financial": "Finanzas",
+    "condominium": "Condominio"
+  },
   "condominium": {
     "creationSuccess": "¡Condominio creado exitosamente!",
     "hub": {
@@ -392,6 +397,195 @@
       "assignButton": "Asignar y Aprobar",
       "noPropertiesTitle": "No hay propiedades disponibles",
       "noPropertiesDescription": "Debes crear al menos una propiedad antes de aprobar solicitudes de ingreso."
+    }
+  },
+  "financial": {
+    "dashboard": {
+      "title": "Panel Financiero",
+      "netWorth": {
+        "title": "Patrimonio Neto",
+        "loading": "Calculando...",
+        "empty": "Sin billeteras aún",
+        "error": "No se pudo calcular el patrimonio"
+      },
+      "chart": {
+        "title": "Tendencia del Patrimonio",
+        "loading": "Cargando gráfico...",
+        "empty": "Sin datos para este período",
+        "error": "No se pudo cargar el gráfico",
+        "retry": "Reintentar",
+        "duration": {
+          "1m": "1 Mes",
+          "3m": "3 Meses",
+          "6m": "6 Meses",
+          "1y": "1 Año",
+          "2y": "2 Años"
+        }
+      },
+      "empty": {
+        "title": "Bienvenido al Panel Financiero",
+        "description": "Crea tu primera billetera para comenzar a seguir tus finanzas",
+        "createButton": "Crear Billetera"
+      },
+      "error": {
+        "title": "Algo salió mal",
+        "description": "No pudimos cargar tus datos financieros",
+        "retry": "Intentar de Nuevo"
+      }
+    },
+    "wallets": {
+      "title": "Billeteras",
+      "seeAll": "Ver todas",
+      "emptyList": "Sin billeteras aún",
+      "createButton": "Crear Billetera",
+      "editButton": "Editar",
+      "deleteButton": "Eliminar",
+      "deleteConfirmTitle": "Eliminar billetera",
+      "deleteConfirmMessage": "¿Estás seguro de que quieres eliminar \"{{name}}\"? Esta acción no se puede deshacer.",
+      "loading": "Cargando billeteras...",
+      "error": "No se pudieron cargar las billeteras",
+      "retry": "Reintentar",
+      "accountType": {
+        "bank": "Banco",
+        "cash": "Efectivo",
+        "wallet": "Billetera",
+        "credit": "Crédito",
+        "investment": "Inversión"
+      },
+      "form": {
+        "title": "Nueva Billetera",
+        "editTitle": "Editar Billetera",
+        "name": "Nombre",
+        "namePlaceholder": "ej. Cuenta Principal",
+        "type": "Tipo de Cuenta",
+        "currency": "Moneda",
+        "institution": "Institución",
+        "institutionPlaceholder": "ej. Banco Nacional",
+        "balance": "Balance Inicial",
+        "icon": "Ícono",
+        "color": "Color",
+        "save": "Guardar",
+        "cancel": "Cancelar"
+      },
+      "toast": {
+        "created": "Billetera creada exitosamente",
+        "updated": "Billetera actualizada exitosamente",
+        "deleted": "Billetera eliminada exitosamente",
+        "error": "Error al guardar la billetera"
+      }
+    },
+    "transactions": {
+      "title": "Transacciones",
+      "incomeTab": "Ingresos",
+      "expenseTab": "Egresos",
+      "transferTab": "Transferencias",
+      "allTab": "Todas",
+      "emptyList": "No hay transacciones",
+      "createIncomeButton": "Nuevo ingreso",
+      "createExpenseButton": "Nuevo egreso",
+      "createTransferButton": "Nueva transferencia",
+      "filters": {
+        "account": "Cuenta",
+        "category": "Categoría",
+        "type": "Tipo",
+        "status": "Estado",
+        "dateFrom": "Desde",
+        "dateTo": "Hasta",
+        "allAccounts": "Todas las cuentas",
+        "allCategories": "Todas las categorías",
+        "allTypes": "Todos los tipos",
+        "allStatuses": "Todos los estados"
+      },
+      "status": {
+        "pending": "Pendiente",
+        "completed": "Completada",
+        "voided": "Anulada"
+      },
+      "form": {
+        "incomeTitle": "Nuevo ingreso",
+        "expenseTitle": "Nuevo egreso",
+        "transferTitle": "Nueva transferencia",
+        "editTitle": "Editar transacción",
+        "type": "Tipo",
+        "account": "Cuenta",
+        "fromAccount": "Cuenta origen",
+        "toAccount": "Cuenta destino",
+        "category": "Categoría",
+        "amount": "Monto",
+        "currency": "Moneda",
+        "exchangeRate": "Tasa de cambio",
+        "description": "Descripción",
+        "referenceNumber": "Número de referencia",
+        "transactionDate": "Fecha",
+        "save": "Guardar",
+        "cancel": "Cancelar"
+      },
+      "toast": {
+        "created": "Transacción creada correctamente",
+        "updated": "Transacción actualizada correctamente",
+        "deleted": "Transacción eliminada correctamente",
+        "terminalEditError": "No se pueden editar transacciones completadas o anuladas",
+        "sameAccountError": "Las cuentas origen y destino deben ser diferentes",
+        "error": "Error al guardar. Inténtalo de nuevo."
+      }
+    },
+    "categories": {
+      "title": "Categorías",
+      "incomeTab": "Ingresos",
+      "expenseTab": "Egresos",
+      "emptyList": "No hay categorías. Crea una para comenzar.",
+      "createButton": "Crear categoría",
+      "editButton": "Editar",
+      "deleteButton": "Eliminar",
+      "systemLock": "Categoría del sistema",
+      "deleteConfirmTitle": "Eliminar categoría",
+      "deleteConfirmMessage": "¿Estás seguro de que deseas eliminar \"{{name}}\"?",
+      "deleteSystemError": "No se pueden eliminar categorías del sistema.",
+      "hierarchyError": "No se pueden crear subcategorías de más de 2 niveles.",
+      "form": {
+        "title": "Nueva categoría",
+        "editTitle": "Editar categoría",
+        "name": "Nombre",
+        "namePlaceholder": "ej. Electricidad",
+        "type": "Tipo",
+        "parent": "Categoría padre",
+        "parentRoot": "Sin padre (categoría raíz)",
+        "noParent": "Seleccionar categoría padre",
+        "icon": "Ícono",
+        "color": "Color",
+        "save": "Guardar",
+        "cancel": "Cancelar"
+      },
+      "system": {
+        "maintenance": "Mantenimiento",
+        "maintenance_common_areas": "Áreas comunes",
+        "maintenance_repairs": "Reparaciones",
+        "services": "Servicios Públicos",
+        "services_electricity": "Electricidad",
+        "services_water": "Agua",
+        "services_gas": "Gas",
+        "services_internet": "Internet",
+        "services_phone": "Teléfono",
+        "services_waste": "Aseo urbano",
+        "administration": "Administración",
+        "administration_fees": "Honorarios",
+        "administration_salaries": "Sueldos",
+        "security": "Seguridad",
+        "cleaning": "Limpieza",
+        "fees": "Alícuotas",
+        "fees_monthly": "Alícuota mensual",
+        "fees_extraordinary": "Cuota extraordinaria",
+        "reserves": "Fondos de reserva",
+        "other_income": "Otros ingresos"
+      },
+      "toast": {
+        "created": "Categoría creada correctamente",
+        "updated": "Categoría actualizada correctamente",
+        "deleted": "Categoría eliminada correctamente",
+        "systemError": "No se pueden modificar categorías del sistema.",
+        "hierarchyError": "No se permiten más de 2 niveles de categorías.",
+        "error": "Error al guardar. Inténtalo de nuevo."
+      }
     }
   }
 }

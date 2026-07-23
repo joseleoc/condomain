@@ -1,22 +1,4 @@
 <ng-container *transloco="let t">
-  <ion-header>
-    <ion-toolbar>
-      <ion-buttons slot="start">
-        <ion-back-button defaultHref="/home" />
-      </ion-buttons>
-
-      <ion-title>{{ t('condominium.hub.title') }}</ion-title>
-
-      <ion-buttons slot="end">
-        <app-context-status
-          [isAdmin]="isAdmin()"
-          [isOnline]="isOnline()"
-          [hasActiveCondominium]="!!activeCondominium()"
-        />
-      </ion-buttons>
-    </ion-toolbar>
-  </ion-header>
-
   <ion-content [fullscreen]="true">
     <!-- Context Selector -->
     <app-condominium-selector
@@ -45,7 +27,7 @@
     <div class="empty-state">
       <ion-icon name="home-outline" size="large" />
       <h3>{{ t('condominium.hub.noCondominiums') }}</h3>
-      <ion-button href="/create-condominium" size="default">
+      <ion-button href="/onboarding/create-condominium" size="default">
         <ion-icon name="add" slot="start" />
         {{ t('condominium.hub.newButton') }}
       </ion-button>

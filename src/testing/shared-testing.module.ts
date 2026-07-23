@@ -2,7 +2,7 @@ import { NgModule, signal } from '@angular/core';
 import { TranslocoTestingModule } from '@jsverse/transloco';
 import { TELEMETRY_PROVIDER, TELEMETRY_ENABLED, NoOpProvider } from '@core/services/telemetry';
 import { provideNoopAnimations } from '@angular/platform-browser/animations';
-import { NetworkStatusService } from '@core/services/network-status.service';
+import { NetworkStatusService } from '@core/services/network-status/network-status.service';
 import { LocalRepository } from '@core/services/sync/local-repository';
 import { SyncService } from '@core/services/sync/sync-service';
 

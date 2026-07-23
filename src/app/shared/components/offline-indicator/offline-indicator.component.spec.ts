@@ -4,7 +4,7 @@ import { IonicModule } from '@ionic/angular';
 import { SharedTestingModule } from '@testing/shared-testing.module';
 
 import { OfflineIndicatorComponent } from './offline-indicator.component';
-import { NetworkStatusService } from '@core/services/network-status.service';
+import { NetworkStatusService } from '@core/services/network-status/network-status.service';
 
 describe('OfflineIndicatorComponent', () => {
   let component: OfflineIndicatorComponent;

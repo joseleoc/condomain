@@ -1,0 +1,37 @@
+@if (isLoading()) {
+  <!-- Shimmer skeleton row -->
+  <div class="wallet-row shimmer">
+    <div class="wallet-icon-wrapper shimmer-circle"></div>
+    <div class="wallet-info">
+      <div class="skeleton-line title"></div>
+      <div class="skeleton-line subtitle"></div>
+    </div>
+    <div class="wallet-balance">
+      <div class="skeleton-line amount"></div>
+      <div class="skeleton-line currency"></div>
+    </div>
+  </div>
+} @else {
+  <div class="wallet-row" [class.has-error]="hasError()">
+    <!-- Icon -->
+    <div class="wallet-icon-wrapper" [style.background]="iconBgColor()">
+      <ion-icon [name]="iconName()" [style.color]="accentColor()"></ion-icon>
+    </div>
+
+    <!-- Name & subtitle -->
+    <div class="wallet-info">
+      <span class="wallet-name">{{ account().name }}</span>
+      @if (account().institution_name) {
+        <span class="wallet-subtitle">{{ account().institution_name }}</span>
+      }
+    </div>
+
+    <!-- Balance & currency -->
+    <div class="wallet-balance">
+      <span class="balance-amount" [class.negative]="account().current_balance < 0">
+        {{ formattedBalance() }}
+      </span>
+      <span class="balance-currency">{{ account().currency }}</span>
+    </div>
+  </div>
+}

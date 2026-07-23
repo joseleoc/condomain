@@ -1,0 +1,204 @@
+<ion-header>
+  <ion-toolbar>
+    <ion-buttons slot="start">
+      <ion-back-button defaultHref="/home" />
+    </ion-buttons>
+    <ion-title>{{ 'financial.transactions.title' | transloco }}</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content [fullscreen]="true">
+  @let transactions = transactions$ | async;
+  @let loading = loading$ | async;
+  @let error = error$ | async;
+
+  <!-- Filter bar -->
+  <div class="filter-bar">
+    <ion-select
+      [value]="accountFilter()"
+      (ionChange)="setAccountFilter($any($event.detail.value))"
+      [label]="'financial.transactions.filters.account' | transloco"
+      labelPlacement="stacked"
+      interface="popover"
+      class="filter-select"
+    >
+      <ion-select-option value="all">
+        {{ 'financial.transactions.filters.allAccounts' | transloco }}
+      </ion-select-option>
+      @for (account of accounts$ | async; track account.id) {
+        <ion-select-option [value]="account.id">{{ account.name }}</ion-select-option>
+      }
+    </ion-select>
+
+    <ion-select
+      [value]="categoryFilter()"
+      (ionChange)="setCategoryFilter($any($event.detail.value))"
+      [label]="'financial.transactions.filters.category' | transloco"
+      labelPlacement="stacked"
+      interface="popover"
+      class="filter-select"
+    >
+      <ion-select-option value="all">
+        {{ 'financial.transactions.filters.allCategories' | transloco }}
+      </ion-select-option>
+      @for (category of categories$ | async; track category.id) {
+        <ion-select-option [value]="category.id">
+          @if (category.i18n_key) {
+            {{ ('financial.categories.system.' + category.i18n_key) | transloco }}
+          } @else {
+            {{ category.name }}
+          }
+        </ion-select-option>
+      }
+    </ion-select>
+
+    <ion-select
+      [value]="typeFilter()"
+      (ionChange)="setTypeFilter($any($event.detail.value))"
+      [label]="'financial.transactions.filters.type' | transloco"
+      labelPlacement="stacked"
+      interface="popover"
+      class="filter-select"
+    >
+      @for (type of getTypeFilters(); track type) {
+        <ion-select-option [value]="type">
+          {{ ('financial.transactions.' + (type === 'all' ? 'allTab' : type + 'Tab')) | transloco }}
+        </ion-select-option>
+      }
+    </ion-select>
+
+    <ion-select
+      [value]="statusFilter()"
+      (ionChange)="setStatusFilter($any($event.detail.value))"
+      [label]="'financial.transactions.filters.status' | transloco"
+      labelPlacement="stacked"
+      interface="popover"
+      class="filter-select"
+    >
+      @for (status of getStatusFilters(); track status) {
+        <ion-select-option [value]="status">
+          @if (status === 'all') {
+            {{ 'financial.transactions.filters.allStatuses' | transloco }}
+          } @else {
+            {{ ('financial.transactions.status.' + status) | transloco }}
+          }
+        </ion-select-option>
+      }
+    </ion-select>
+
+    <ion-input
+      [value]="dateFromFilter()"
+      (ionChange)="setDateFromFilter($any($event.detail.value))"
+      type="date"
+      [label]="'financial.transactions.filters.dateFrom' | transloco"
+      labelPlacement="stacked"
+      class="filter-date"
+    ></ion-input>
+
+    <ion-input
+      [value]="dateToFilter()"
+      (ionChange)="setDateToFilter($any($event.detail.value))"
+      type="date"
+      [label]="'financial.transactions.filters.dateTo' | transloco"
+      labelPlacement="stacked"
+      class="filter-date"
+    ></ion-input>
+  </div>
+
+  <ion-refresher slot="fixed" (ionRefresh)="handleRefresh($event)">
+    <ion-refresher-content></ion-refresher-content>
+  </ion-refresher>
+
+  <!-- Loading state -->
+  @if (loading) {
+    <div class="state-container loading-state">
+      <ion-spinner name="crescent"></ion-spinner>
+      <p>{{ 'common.loading' | transloco }}</p>
+    </div>
+  }
+
+  <!-- Error state -->
+  @if (!loading && error) {
+    <div class="state-container error-state">
+      <ion-icon name="alert-circle-outline" size="large" color="danger"></ion-icon>
+      <p>{{ 'common.error' | transloco }}</p>
+    </div>
+  }
+
+  <!-- Empty state -->
+  @if (!loading && !error && transactions?.length === 0) {
+    <div class="state-container empty-state">
+      <ion-icon name="receipt-outline" size="large" color="medium"></ion-icon>
+      <h3>{{ 'financial.transactions.emptyList' | transloco }}</h3>
+      <ion-button (click)="openTransactionForm()">
+        <ion-icon name="add" slot="start"></ion-icon>
+        {{ 'financial.transactions.createIncomeButton' | transloco }}
+      </ion-button>
+    </div>
+  }
+
+  <!-- Populated state -->
+  @if (!loading && !error && transactions && transactions.length > 0) {
+    <ion-list class="transaction-list">
+      @for (transaction of transactions; track transaction.id) {
+        <ion-item-sliding>
+          <ion-item
+            lines="full"
+            (click)="openTransactionForm(transaction)"
+            class="transaction-item"
+          >
+            <app-transaction-card
+              [transaction]="transaction"
+              [showAccountName]="accountFilter() === 'all'"
+            />
+          </ion-item>
+
+          <ion-item-options side="end">
+            @if (transaction.status === 'pending') {
+              <ion-item-option color="success" (click)="onStatusChange({id: transaction.id, newStatus: 'completed'})">
+                <ion-icon name="checkmark-outline" slot="icon-only"></ion-icon>
+              </ion-item-option>
+            }
+            @if (transaction.status !== 'voided') {
+              <ion-item-option color="danger" (click)="onStatusChange({id: transaction.id, newStatus: 'voided'})">
+                <ion-icon name="close-outline" slot="icon-only"></ion-icon>
+              </ion-item-option>
+            }
+          </ion-item-options>
+        </ion-item-sliding>
+      }
+    </ion-list>
+  }
+
+  <!-- Floating action buttons -->
+  <ion-fab slot="fixed" vertical="bottom" horizontal="end" class="transaction-fab">
+    <ion-fab-button>
+      <ion-icon name="add"></ion-icon>
+    </ion-fab-button>
+    <ion-fab-list side="top">
+      <ion-fab-button (click)="openTransferForm()" [title]="'financial.transactions.createTransferButton' | transloco">
+        <ion-icon name="swap-horizontal-outline"></ion-icon>
+      </ion-fab-button>
+      <ion-fab-button (click)="openTransactionForm()" [title]="'financial.transactions.createIncomeButton' | transloco">
+        <ion-icon name="cash-outline"></ion-icon>
+      </ion-fab-button>
+    </ion-fab-list>
+  </ion-fab>
+
+  <!-- Transaction form modal -->
+  <app-transaction-form-modal
+    [transaction]="transactionToEdit()"
+    [condominiumId]="contextService.activeCondominium()?.id ?? ''"
+    [baseCurrency]="baseCurrency()"
+    [isOpen]="isTransactionFormOpen()"
+    (isOpenChange)="closeTransactionForm()"
+  />
+
+  <!-- Transfer form modal -->
+  <app-transfer-form-modal
+    [condominiumId]="contextService.activeCondominium()?.id ?? ''"
+    [baseCurrency]="baseCurrency()"
+    [isOpen]="isTransferFormOpen()"
+    (isOpenChange)="closeTransferForm()"
+  />
+</ion-content>

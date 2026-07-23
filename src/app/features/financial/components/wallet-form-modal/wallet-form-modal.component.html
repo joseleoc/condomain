@@ -1,0 +1,107 @@
+<ion-modal
+  [isOpen]="isOpen()"
+  [backdropDismiss]="false"
+  (didDismiss)="cancel()"
+>
+  <ng-template>
+    <ion-header>
+      <ion-toolbar>
+        <ion-title>
+          {{ (isEditMode() ? 'financial.wallets.editButton' : 'financial.wallets.createButton') | transloco }}
+        </ion-title>
+        <ion-buttons slot="end">
+          <ion-button fill="clear" color="secondary" (click)="cancel()">
+            {{ 'common.cancel' | transloco }}
+          </ion-button>
+        </ion-buttons>
+      </ion-toolbar>
+    </ion-header>
+
+    <ion-content class="ion-padding" [scrollY]="true">
+      <form [formGroup]="form" (ngSubmit)="submit()">
+        <ion-item>
+          <ion-input
+            formControlName="name"
+            [label]="'financial.wallets.form.name' | transloco"
+            labelPlacement="stacked"
+            [placeholder]="'financial.wallets.form.name' | transloco"
+          ></ion-input>
+        </ion-item>
+
+        <ion-item>
+          <ion-select
+            formControlName="account_type"
+            [label]="'financial.wallets.form.type' | transloco"
+            labelPlacement="stacked"
+          >
+            @for (type of getAccountTypes(); track type) {
+              <ion-select-option [value]="type">
+                {{ ('financial.wallets.accountType.' + type) | transloco }}
+              </ion-select-option>
+            }
+          </ion-select>
+        </ion-item>
+
+        <ion-item>
+          <ion-select
+            formControlName="currency"
+            [label]="'financial.wallets.form.currency' | transloco"
+            labelPlacement="stacked"
+          >
+            @for (currency of currencies(); track currency.iso_code) {
+              <ion-select-option [value]="currency.iso_code">
+                {{ currency.name }} ({{ currency.symbol }})
+              </ion-select-option>
+            }
+          </ion-select>
+        </ion-item>
+
+        <ion-item>
+          <ion-input
+            formControlName="institution_name"
+            [label]="'financial.wallets.form.institution' | transloco"
+            labelPlacement="stacked"
+            [placeholder]="'financial.wallets.form.institution' | transloco"
+          ></ion-input>
+        </ion-item>
+
+        <ion-item>
+          <ion-input
+            formControlName="initial_balance"
+            type="number"
+            [label]="'financial.wallets.form.balance' | transloco"
+            labelPlacement="stacked"
+          ></ion-input>
+        </ion-item>
+
+        <ion-item>
+          <ion-input
+            formControlName="icon"
+            [label]="'financial.wallets.form.icon' | transloco"
+            labelPlacement="stacked"
+            [placeholder]="'financial.wallets.form.icon' | transloco"
+          ></ion-input>
+        </ion-item>
+
+        <ion-item>
+          <ion-input
+            formControlName="color"
+            [label]="'financial.wallets.form.color' | transloco"
+            labelPlacement="stacked"
+            [placeholder]="'financial.wallets.form.color' | transloco"
+          ></ion-input>
+        </ion-item>
+      </form>
+    </ion-content>
+
+    <ion-footer>
+      <ion-toolbar>
+        <ion-buttons slot="end">
+          <ion-button fill="solid" color="primary" (click)="submit()">
+            {{ 'financial.wallets.form.save' | transloco }}
+          </ion-button>
+        </ion-buttons>
+      </ion-toolbar>
+    </ion-footer>
+  </ng-template>
+</ion-modal>

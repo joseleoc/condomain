@@ -1,0 +1,25 @@
+<ion-card class="net-worth-card">
+  @if (isLoading()) {
+    <div class="loading-state">
+      <div class="pulse-label"></div>
+      <div class="pulse-value"></div>
+    </div>
+  } @else if (hasError()) {
+    <div class="error-state">
+      <ion-icon name="alert-circle-outline" color="danger"></ion-icon>
+      <p>{{ 'financial.dashboard.netWorth.error' | transloco }}</p>
+    </div>
+  } @else if (isEmpty()) {
+    <div class="empty-state">
+      <ion-icon name="wallet-outline" color="medium"></ion-icon>
+      <p>{{ 'financial.dashboard.netWorth.empty' | transloco }}</p>
+    </div>
+  } @else {
+    <ion-card-header>
+      <ion-card-subtitle>{{ 'financial.dashboard.netWorth.title' | transloco }}</ion-card-subtitle>
+    </ion-card-header>
+    <ion-card-content>
+      <h1 class="net-worth-value">{{ currency() }} {{ formattedNetWorth() }}</h1>
+    </ion-card-content>
+  }
+</ion-card>

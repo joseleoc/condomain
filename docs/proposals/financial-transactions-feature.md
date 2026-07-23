@@ -1,121 +1,203 @@
 # Propuesta: Feature de Transacciones Financieras (Ingresos y Egresos)
 
 **Fecha**: 26 de junio de 2026  
+**Última actualización**: 30 de junio de 2026  
 **Proyecto**: Condomain — Plataforma de Gestión de Condominios  
-**Estado**: Propuesta inicial — pendiente de revisión  
-**Fuentes**: Arquitectura Financiera Condomain + Esquema de Base de Datos SQL
+**Estado**: Propuesta revisada — modelo híbrido aprobado  
+**Fuentes**: Arquitectura Financiera Condomain + Análisis de UX (TimelyBills) + Requisitos Legales
 
 ---
 
 ## 1. Objetivo
 
-Implementar el módulo de transacciones financieras que permita registrar ingresos y egresos en cada condominio, manteniendo trazabilidad completa, rigor contable de partida doble, y cumplimiento de los requerimientos de la Ley de Propiedad Horizontal.
+Implementar el módulo de transacciones financieras que permita registrar ingresos y egresos en cada condominio con una **interfaz simplificada** (inspirada en apps de finanzas personales como TimelyBills), manteniendo por detrás el **rigor contable de partida doble** necesario para cumplir con la Ley de Propiedad Horizontal.
 
-### 1.1 ¿Qué NO es este módulo?
+### 1.1 Principio Fundamental: Modelo Híbrido
 
-- No es una app de finanzas personales. Es contabilidad formal de copropiedad.
-- No permite "ingresé $50 y ya". Cada movimiento tiene origen y destino contable.
+**UI del usuario**: Simple e intuitiva, sin requerir conocimientos de contabilidad
+- El usuario ve **billeteras** (donde está el dinero) y **categorías** (para qué se gastó)
+- No ve códigos contables, débitos, créditos, ni asientos
+
+**Motor contable interno**: Formal y completo
+- El sistema automáticamente genera asientos de partida doble
+- Mantiene cuentas contables formales (ocultas al usuario)
+- Genera Libro Diario, Libro Mayor, Balance General, Estado de Resultados
+
+### 1.2 ¿Qué NO es este módulo?
+
+- No es una app de finanzas personales. Es contabilidad formal de copropiedad con UI simplificada.
+- No permite "ingresé $50 y ya". Cada movimiento tiene origen y destino contable (manejado automáticamente).
 - No permite borrar ni modificar transacciones procesadas. Las correcciones son transacciones nuevas de reversa.
+- No requiere que el usuario sepa contabilidad. El sistema traduce acciones simples a asientos contables.
 
 ---
 
 ## 2. Principios de Diseño (y por qué cada uno)
 
-### 2.1 Partida Doble (Doble Entrada)
+### 2.1 Modelo Híbrido: UI Simple + Motor Contable Formal
 
-**Decisión**: Todo movimiento financiero genera al menos un Débito y un Crédito de igual monto.
+**Decisión**: Separar completamente la experiencia de usuario del motor contable interno.
 
-**Por qué**: 
-- La Ley de Propiedad Horizontal exige libros contables formales (Libro Diario, Libro Mayor). La partida doble es el estándar contable universal que garantiza que cada transacción esté balanceada.
-- Previene descuadres **matemáticamente**: si suma(débitos) ≠ suma(créditos), el backend rechaza el registro antes de escribirlo.
-- La interfaz de usuario puede ser simple ("registrar gasto de $300"), pero el motor contable siempre opera con asientos completos.
+**Capa de Usuario (UI)**:
+- **Billeteras** (`condominium_accounts`): Lugares donde vive el dinero (Banco Mercantil USD, Caja Chica, PayPal)
+- **Categorías** (`transaction_categories`): Etiquetas para clasificar ingresos/egresos (Electricidad, Alícuotas, Mantenimiento)
+- **Transacciones**: El usuario solo especifica monto, billetera, categoría y descripción
+
+**Capa Contable (interna)**:
+- **Cuentas contables** (`chart_of_accounts`): Cuentas formales de partida doble (Activos, Pasivos, Ingresos, Egresos)
+- **Asientos automáticos**: El sistema traduce cada transacción de usuario en débitos/créditos
+- **Códigos contables**: Separados en columna `code` (ej. "5.1.01") para evitar ruido visual en UI
+
+**Por qué**:
+- El administrador del condominio NO necesita saber contabilidad
+- La UI es intuitiva (similar a TimelyBills, Mint, YNAB)
+- El sistema cumple con la Ley de Propiedad Horizontal automáticamente
+- Los reportes legales (Libro Diario, Libro Mayor) se generan sin intervención del usuario
 
 **Ejemplo práctico**:
 ```
-Administrador registra: "Pago de electricidad $300 vía transferencia"
+Usuario ve: "Gasté $300 en Electricidad desde Banco Mercantil"
 
-El sistema genera internamente:
-  DÉBITO  $300 → Cuenta "Gasto: Servicios Públicos: Electricidad"
-  CRÉDITO $300 → Cuenta "Activo: Banco Custodia"
+Sistema registra internamente:
+  DÉBITO  $300 → Cuenta contable "5.1.01 Electricidad" (Egreso)
+  CRÉDITO $300 → Cuenta contable "1.1.01 Banco Mercantil USD" (Activo)
 ```
 
-### 2.2 Plan de Cuentas Jerárquico (árbol)
+### 2.2 Billeteras del Condominio (Cuentas de Usuario)
 
-**Decisión**: Las cuentas contables se organizan en árbol con profundidad dinámica, no en categorías planas.
+**Decisión**: Los usuarios crean y gestionan billeteras donde el dinero realmente existe.
+
+**Qué son**: Representación digital de los lugares donde el condominio tiene dinero
+- Cuentas bancarias (Banco Mercantil, Banco de Venezuela)
+- Efectivo (Caja Chica)
+- Wallets digitales (PayPal, Zelle)
+- Criptomonedas (Binance, si aplica)
+
+**Atributos**:
+- Nombre (ej. "Banco Mercantil USD")
+- Tipo (bank, cash, wallet, credit)
+- Moneda (USD, VES, EUR)
+- Institución (opcional, ej. "Banco Mercantil")
+- Número de cuenta (opcional, enmascarado en UI)
+- Saldo actual (calculado automáticamente)
+
+**Eliminación de Billeteras (Soft Delete)**:
+- Las billeteras NO se eliminan físicamente, se marcan con `deleted_at` (soft delete)
+- Las transacciones existentes NO se mueven, permanecen vinculadas a la billetera original
+- La billetera eliminada NO aparece en requests de UI (filtrada por `deleted_at IS NULL`)
+- Las transacciones de billeteras eliminadas NO se muestran directamente en UI
+- Los totales y balances se mantienen intactos (trazabilidad preservada)
+- El usuario nunca ve billeteras eliminadas, pero los datos históricos permanecen
 
 **Por qué**:
-- Las categorías planas ("luz", "agua", "limpieza") no escalan. Un condominio grande puede necesitar 50+ subcategorías.
-- El árbol permite **drill-down**: ver el total de "Mantenimiento" y hacer click para ver "Ascensores", "Piscina", "Iluminación".
-- Los reportes financieros se generan por **agregación recursiva hacia arriba**: un gasto en "5.2.01 Ascensores" suma automáticamente a "5.2 Mantenimiento Técnico" y a "5. EGRESOS".
-- La Ley de Propiedad Horizontal exige presentar estados financieros desagregados. El árbol satisface esto nativamente.
+- Modelo mental simple: "¿Dónde está el dinero?"
+- Similar a apps de finanzas personales que los usuarios ya conocen
+- Flexibilidad para manejar multi-moneda (cada billetera tiene su moneda)
+- Trazabilidad garantizada mediante cuentas del sistema
 
-**Estructura propuesta**:
+### 2.3 Categorías de Ingresos y Egresos
+
+**Decisión**: Sistema de categorías con estructura padre-hijo de 2 niveles para clasificar transacciones.
+
+**Estructura**:
+```
+Nivel 1 (Padre)          Nivel 2 (Hijas)
+─────────────────        ─────────────────
+Servicios Públicos   →   Electricidad, Agua, Gas, Internet
+Mantenimiento        →   Ascensores, Áreas Comunes, Piscinas
+Ingresos Ordinarios  →   Alícuotas, Fondo de Reserva, Multas
+```
+
+**Reglas**:
+- ✅ Solo 2 niveles: Padre → Hijas (sin nietos)
+- ✅ Categorías predefinidas del sistema (no eliminables)
+- ✅ Usuario puede crear categorías padre e hijas adicionales
+- ✅ Cada categoría tiene ícono y color para UI
+- ✅ Tipo fijo: income o expense (heredado por hijas)
+
+**Categorías del Sistema (predefinidas, no eliminables)**:
+
+**Ingresos**:
+- Ingresos Ordinarios (Alícuotas, Fondo de Reserva, Multas)
+- Ingresos Extraordinarios (Cuotas Extraordinarias, Alquiler Áreas Comunes)
+
+**Egresos**:
+- Servicios Públicos (Electricidad, Agua, Gas, Internet, Aseo)
+- Mantenimiento (Ascensores, Áreas Comunes, Piscinas)
+- Administración (Honorarios, Sueldos, Prestaciones Sociales)
+- Gastos Extraordinarios (Reparaciones Mayores)
+
+**Por qué**:
+- Organización lógica sin complejidad excesiva
+- Reportes agregados por categoría padre
+- Drill-down a subcategorías específicas
+- Flexibilidad para que cada condominio cree sus propias categorías
+- Íconos y colores mejoran reconocimiento visual en UI
+
+### 2.4 Partida Doble Automática (Motor Contable Interno)
+
+**Decisión**: Todo movimiento financiero genera automáticamente al menos un Débito y un Crédito de igual monto.
+
+**Por qué**: 
+- La Ley de Propiedad Horizontal exige libros contables formales (Libro Diario, Libro Mayor)
+- La partida doble previene descuadres matemáticamente
+- El usuario no necesita entender esto; el sistema lo maneja automáticamente
+
+**Mapeo automático**:
+
+| Acción del Usuario | Débito Automático | Crédito Automático |
+|-------------------|-------------------|-------------------|
+| Registrar ingreso en billetera | Cuenta contable de la billetera (Activo) | Cuenta contable de la categoría (Ingreso) |
+| Registrar egreso desde billetera | Cuenta contable de la categoría (Egreso) | Cuenta contable de la billetera (Activo) |
+| Transferir entre billeteras | Cuenta contable billetera destino (Activo) | Cuenta contable billetera origen (Activo) |
+
+**Ejemplo**:
+```
+Usuario registra: "Pago de electricidad $300 desde Banco Mercantil"
+
+Sistema automáticamente genera:
+  DÉBITO  $300 → Cuenta "5.1.01 Electricidad" (Egreso)
+  CRÉDITO $300 → Cuenta "1.1.01 Banco Mercantil USD" (Activo)
+```
+
+### 2.5 Plan de Cuentas Contable (Interno, Oculto al Usuario)
+
+**Decisión**: Mantener cuentas contables formales con códigos separados de los nombres para generar reportes legales.
+
+**Estructura de códigos** (NO visibles en UI principal):
 ```
 1. ACTIVOS
    1.1 Activo Corriente
-       1.1.01 Banco Custodia USD
-       1.1.02 Banco Custodia VES
+       1.1.01 Banco Mercantil USD
+       1.1.02 Banco de Venezuela VES
        1.1.03 Caja Chica
-   1.2 Cuentas por Cobrar
-       1.2.01 Apto 1A - Cuotas pendientes
-       1.2.02 Apto 2B - Cuotas pendientes
-
-2. PASIVOS
-   2.1 Pasivo Corriente
-       2.1.01 Fondo de Reserva
-       2.1.02 Fondo de Prestaciones Sociales
-       2.1.03 Cuotas cobradas por adelantado
-
-3. PATRIMONIO
-   3.1 Capital del Condominio
-
-4. INGRESOS
-   4.1 Ingresos Ordinarios
-       4.1.01 Alícuotas de Condominio
-       4.1.02 Fondo de Reserva (aportes)
-       4.1.03 Multas y Recargos
-   4.2 Ingresos Extraordinarios
-       4.2.01 Cuotas Extraordinarias
-       4.2.02 Alquiler de Áreas Comunes
 
 5. EGRESOS
    5.1 Servicios Públicos
        5.1.01 Electricidad
        5.1.02 Agua
-       5.1.03 Telefonía/Internet
-   5.2 Mantenimiento
-       5.2.01 Ascensores
-       5.2.02 Áreas Comunes
-       5.2.03 Piscinas
-   5.3 Administración
-       5.3.01 Honorarios Administrador
-       5.3.02 Sueldos y Salarios
-       5.3.03 Prestaciones Sociales
-   5.4 Gastos Extraordinarios
-       5.4.01 Reparaciones Mayores
+       5.1.03 Internet
 ```
 
-**Gobierno de datos — Dos niveles de cuentas**:
+**Separación código/nombre**:
+- Columna `code`: "5.1.01" (para reportes legales, Libro Mayor)
+- Columna `name`: "Electricidad" (para UI, reportes visuales)
+- El usuario ve el nombre; el sistema usa el código internamente
 
-1. **Cuentas del sistema (globales)**: Definidas UNA SOLA VEZ en una tabla separada (`chart_of_accounts_system`). Son inmutables desde el lado del condominio. Todos los condominios comparten las mismas cuentas del sistema. Si la ley cambia o el sistema necesita actualizar una cuenta, se modifica UN solo registro y se refleja en todos los condominios inmediatamente.
+**Por qué**:
+- Los reportes legales (Libro Mayor) requieren códigos contables
+- La UI no debe mostrar códigos (ruido visual)
+- Separación permite generar ambos tipos de reportes sin conflicto
+- Estándar contable universal usa códigos jerárquicos
 
-2. **Cuentas del condominio (específicas)**: Cada condominio tiene su propia tabla `chart_of_accounts` que referencia las cuentas del sistema (cuando aplica) o define cuentas propias creadas por el administrador. Las cuentas del sistema son inmutables del lado del condominio (no se pueden modificar ni eliminar). El administrador solo puede crear cuentas adicionales para necesidades específicas.
-
-**¿Por qué esta separación?**
-- **Sin duplicación**: Las cuentas del sistema no se replican por cada condominio.
-- **Mantenibilidad centralizada**: Actualizaciones legales o del sistema se aplican una vez.
-- **Estandarización garantizada**: Todos los condominios usan las mismas cuentas obligatorias.
-- **Reportes comparativos**: Comparar gastos entre condominios es trivial porque las cuentas son idénticas.
-- **Cumplimiento legal**: Las cuentas obligatorias por ley no pueden ser accidentalmente modificadas.
-
-### 2.3 Inmutabilidad de Registros
+### 2.6 Inmutabilidad de Registros
 
 **Decisión**: Las transacciones en estado `completed` o `voided` NO se pueden modificar ni eliminar.
 
 **Por qué**:
-- La Ley de Propiedad Horizontal exige que los libros contables reflejen la historia financiera sin alteraciones. Un auditor externo o la junta fiscalizadora deben poder verificar que ningún registro fue modificado después del hecho.
-- Si se comete un error (ej. registrar $500 en vez de $50), la corrección es emitir una **transacción de reversa** (Nota de Crédito/Débito) que anule el efecto contable del registro original.
-- Esto crea un **trail auditable**: cualquier persona puede ver el registro original, la transacción de reversa, y la transacción correcta. La historia queda intacta.
+- La Ley de Propiedad Horizontal exige que los libros contables reflejen la historia financiera sin alteraciones
+- Si se comete un error, la corrección es emitir una **transacción de reversa** que anule el efecto contable
+- Esto crea un **trail auditable**: registro original + reversa + corrección
 
 **Máquina de estados**:
 ```
@@ -128,36 +210,24 @@ pending → voided
 - `completed`: Conciliado y aprobado. Los balances SÍ se actualizan. **Inmutable a partir de aquí.**
 - `voided`: Anulado mediante transacción de reversa. **Inmutable a partir de aquí.**
 
-### 2.4 Multi-moneda Nativa con Doble Almacenamiento
+### 2.7 Multi-moneda Nativa con Doble Almacenamiento
 
 **Decisión**: Cada transacción captura la moneda original, la tasa de cambio del momento, y almacena el monto tanto en divisa original como en moneda base del condominio.
 
 **Por qué**:
-- En Venezuela (y muchos países con inflación alta o bimonetarismo), los condominios operan en USD pero reciben pagos en VES, EUR, etc.
-- Si solo guardáramos el monto en la moneda original, los reportes consolidados serían imposibles.
-- Si solo guardáramos el monto en moneda base, perderíamos la trazabilidad del monto real pagado.
-- **Doble almacenamiento** resuelve ambos: el monto original para conciliación bancaria, y el equivalente en moneda base para estados financieros estables.
+- En Venezuela los condominios operan en USD pero reciben pagos en VES, EUR, etc.
+- **Doble almacenamiento**: monto original para conciliación bancaria, equivalente en moneda base para estados financieros estables
 
-**Regla**: La tasa de cambio se captura en el momento del registro y es inmutable. No se recalcula retroactivamente.
+**Regla**: La tasa de cambio se captura en el momento del registro y es inmutable.
 
-### 2.5 Patrón Cabecera-Detalle
+### 2.8 Saldos Mensuales Acumulados (Snapshots)
 
-**Decisión**: Cada evento económico tiene una cabecera (FinancialTransaction) y una o más líneas de detalle (FinancialTransactionDetail).
+**Decisión**: Mantener una tabla de saldos mensuales por cuenta contable que se actualiza cuando una transacción pasa a `completed`.
 
 **Por qué**:
-- **Gastos consolidados**: Un pago de $300 a Corpoelec puede desglosarse en $200 para "Electricidad Bombas" y $100 para "Iluminación Común". Una cabecera, dos detalles.
-- **Pagos multipropósito**: Un propietario paga $150 que cubren $100 de alícuota del mes, $30 de multa pendiente, y $20 quedan como saldo a favor. Una cabecera, tres detalles.
-- Sin este patrón, tendríamos que crear transacciones separadas artificialmente, perdiendo la relación lógica entre los movimientos.
-
-### 2.6 Saldos Mensuales Acumulados (Snapshots)
-
-**Decisión**: Mantener una tabla de saldos mensuales por cuenta que se actualiza cuando una transacción pasa a `completed`.
-
-**Por qué**:
-- Con años de transacciones, calcular el saldo actual sumando todas las líneas en tiempo real sería lentísimo.
-- Los dashboards financieros necesitan respuestas en milisegundos.
-- La tabla de snapshots permite leer un único registro para obtener el saldo del mes en curso.
-- Para auditorías profundas, siempre se puede hacer el cálculo detallado desde las transacciones individuales.
+- Los dashboards financieros necesitan respuestas en milisegundos
+- La tabla de snapshots permite leer un único registro para obtener el saldo del mes en curso
+- Para auditorías profundas, siempre se puede calcular desde transacciones individuales
 
 ---
 
@@ -165,35 +235,132 @@ pending → voided
 
 ### 3.1 Entidades
 
-| Entidad | Responsabilidad | Atributos Clave |
-|---------|----------------|-----------------|
-| **Condominium** | Nodo raíz, frontera multi-tenant | id, name, address, base_currency |
-| **ChartOfAccountsSystem** | Cuentas globales del sistema (compartidas) | id, parent_id (auto-ref), code, name, type, is_active |
-| **ChartOfAccounts** | Cuentas por condominio (referencia sistema o propias) | id, condominium_id, system_account_id, parent_id (auto-ref), code, name, type, is_system_defined (computed) |
-| **FinancialTransaction** | Cabecera del evento económico | id, condominium_id, actor_id, type, status, description, reference_number, payment_method, original_currency, exchange_rate, transaction_date, created_by |
-| **FinancialTransactionDetail** | Líneas del asiento contable | id, transaction_id, account_id, entry_type (debit/credit), amount_original_currency, amount_base_currency |
-| **AccountMonthlyBalance** | Snapshot de saldo mensual | id, account_id, year, month, initial_balance, total_debits, total_credits, final_balance |
-| **AccountAnnualBalance** | Snapshot de saldo anual | id, account_id, year, initial_balance, total_debits, total_credits, final_balance, is_closed, closed_at |
-| **Party** (futuro) | Actores externos (propietarios, proveedores) | id, identification, contact_info, role |
+| Entidad | Responsabilidad | Visible al Usuario | Multi-lenguaje | Atributos Clave |
+|---------|----------------|-------------------|----------------|-----------------|
+| **Condominium** | Nodo raíz, frontera multi-tenant | Sí | Sí (existente) | id, name, address, base_currency |
+| **CondominiumAccount** | Billeteras donde vive el dinero | Sí (principal) | No (usuario) | id, condominium_id, name, type, currency, balance, institution, deleted_at |
+| **TransactionCategory** | Categorías para clasificar ingresos/egresos | Sí (principal) | Sí (sistema) | id, condominium_id, parent_id, name, name_en, type, icon, color |
+| **ChartOfAccountsSystem** | Cuentas contables globales (internas) | No | Sí (sistema) | id, code, name, name_en, type, parent_id |
+| **ChartOfAccounts** | Cuentas contables por condominio (internas) | No | Sí (heredado) | id, condominium_id, system_account_id, code, name, name_en, type |
+| **FinancialTransaction** | Registro de movimiento financiero | Sí | No | id, condominium_id, account_id, category_id, type, amount, status |
+| **FinancialTransactionEntry** | Asiento contable automático (débito/crédito) | No | No | id, transaction_id, account_id, entry_type, amount |
+| **AccountMonthlyBalance** | Snapshot de saldo mensual (cuentas contables) | No | No | id, account_id, year, month, initial_balance, final_balance |
 
 ### 3.2 Relaciones
 
 ```
-ChartOfAccountsSystem (1) ──── (0..N) ChartOfAccountsSystem  [auto-referencial: parent_id]
+Condominium (1) ──── (N) CondominiumAccount  [billeteras del condominio]
+Condominium (1) ──── (N) TransactionCategory  [categorías del condominio]
+Condominium (1) ──── (N) ChartOfAccounts  [cuentas contables del condominio]
+
+ChartOfAccountsSystem (1) ─── (0..N) ChartOfAccountsSystem  [auto-referencial: parent_id]
 ChartOfAccountsSystem (1) ──── (0..N) ChartOfAccounts  [referencia global: system_account_id]
-Condominium (1) ──── (N) ChartOfAccounts
-ChartOfAccounts (1) ──── (0..N) ChartOfAccounts  [auto-referencial: parent_id]
-Condominium (1) ──── (N) FinancialTransaction
-FinancialTransaction (1) ──── (1..N) FinancialTransactionDetail
-ChartOfAccounts (1) ──── (0..N) FinancialTransactionDetail
-ChartOfAccounts (1) ──── (0..N) AccountMonthlyBalance
+
+TransactionCategory (1) ──── (0..N) TransactionCategory  [auto-referencial: parent_id, máximo 2 niveles]
+
+FinancialTransaction (1) ──── (1..N) FinancialTransactionEntry  [asientos contables]
+CondominiumAccount (1) ──── (0..N) FinancialTransaction  [transacciones de la billetera]
+TransactionCategory (1) ──── (0..N) FinancialTransaction  [transacciones de la categoría]
+ChartOfAccounts (1) ──── (0..N) FinancialTransactionEntry  [asientos de la cuenta contable]
+ChartOfAccounts (1) ──── (0..N) AccountMonthlyBalance  [saldos mensuales]
 ```
 
 ---
 
 ## 4. Esquema de Base de Datos Propuesto
 
-### 4.1 Tabla: `chart_of_accounts_system` (Cuentas Globales del Sistema)
+### 4.1 Tabla: `condominium_accounts` (Billeteras del Condominio)
+
+```sql
+CREATE TABLE condominium_accounts (
+  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  condominium_id UUID NOT NULL REFERENCES condominiums(id) ON DELETE CASCADE,
+  name VARCHAR(100) NOT NULL,
+  type VARCHAR(20) NOT NULL,
+  currency VARCHAR(3) NOT NULL REFERENCES currencies(iso_code),
+  institution VARCHAR(100),
+  account_number VARCHAR(50),
+  balance NUMERIC(15, 2) NOT NULL DEFAULT 0.00,
+  is_active BOOLEAN DEFAULT TRUE,
+  created_at TIMESTAMPTZ DEFAULT CURRENT_TIMESTAMP,
+  updated_at TIMESTAMPTZ DEFAULT CURRENT_TIMESTAMP,
+  deleted_at TIMESTAMPTZ,
+
+  CONSTRAINT chk_account_type CHECK (type IN ('bank', 'cash', 'wallet', 'credit', 'investment')),
+  CONSTRAINT chk_balance_non_negative CHECK (balance >= 0),
+  CONSTRAINT chk_name_not_empty CHECK (char_length(trim(name)) > 0)
+);
+```
+
+**Decisiones explicadas**:
+- **Billeteras del usuario**: El administrador crea cuentas donde el dinero realmente existe (bancos, efectivo, wallets)
+- `type`: Tipos de billetera (bank, cash, wallet, credit, investment)
+- `currency`: Cada billetera tiene su propia moneda (USD, VES, EUR)
+- `institution`: Nombre del banco o institución (ej. "Banco Mercantil")
+- `account_number`: Número de cuenta (enmascarado en UI por seguridad)
+- `balance`: Saldo actual calculado automáticamente (se mantiene aunque la billetera sea eliminada)
+- `deleted_at`: Soft delete - la billetera se marca como eliminada pero NO se borra físicamente
+- **Comportamiento al eliminar**: 
+  - La billetera NO aparece en requests de UI (filtrada por `WHERE deleted_at IS NULL`)
+  - Las transacciones existentes NO se mueven, permanecen vinculadas a la billetera original
+  - Las transacciones de billeteras eliminadas NO se muestran directamente en UI
+  - Los totales y balances se mantienen intactos (trazabilidad preservada)
+- **Nota i18n**: Las billeteras son creadas por el usuario, no requieren multi-lenguaje (solo ES)
+
+### 4.2 Tabla: `transaction_categories` (Categorías de Ingresos/Egresos)
+
+```sql
+CREATE TABLE transaction_categories (
+  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  condominium_id UUID REFERENCES condominiums(id) ON DELETE CASCADE,
+  parent_id UUID REFERENCES transaction_categories(id) ON DELETE RESTRICT,
+  name VARCHAR(100) NOT NULL,
+  name_en VARCHAR(100),
+  description TEXT,
+  description_en TEXT,
+  type VARCHAR(10) NOT NULL,
+  icon VARCHAR(50),
+  color VARCHAR(7),
+  provider_type VARCHAR(50),
+  provider_name VARCHAR(100),
+  is_system_defined BOOLEAN DEFAULT FALSE,
+  is_active BOOLEAN DEFAULT TRUE,
+  sort_order INT DEFAULT 0,
+  created_at TIMESTAMPTZ DEFAULT CURRENT_TIMESTAMP,
+  updated_at TIMESTAMPTZ DEFAULT CURRENT_TIMESTAMP,
+
+  CONSTRAINT chk_category_type CHECK (type IN ('income', 'expense')),
+  CONSTRAINT chk_max_two_levels CHECK (
+    parent_id IS NULL 
+    OR NOT EXISTS (
+      SELECT 1 FROM transaction_categories c 
+      WHERE c.parent_id = transaction_categories.id
+    )
+  ),
+  CONSTRAINT chk_type_matches_parent CHECK (
+    parent_id IS NULL 
+    OR type = (SELECT c.type FROM transaction_categories c WHERE c.id = parent_id)
+  ),
+  CONSTRAINT unique_name_per_parent UNIQUE (condominium_id, COALESCE(parent_id, '00000000-0000-0000-0000-000000000000'::uuid), name),
+  CONSTRAINT chk_name_not_empty CHECK (char_length(trim(name)) > 0)
+);
+```
+
+**Decisiones explicadas**:
+- **Estructura padre-hijo de 2 niveles**: Solo padre → hijas (sin nietos)
+- `parent_id`: NULL = categoría padre, NOT NULL = subcategoría
+- `type`: 'income' o 'expense' (heredado por hijas del padre)
+- `icon`: Nombre del ícono (ion-icons) para UI
+- `color`: Color hex (ej. '#FF8200') para UI
+- `provider_type`: Tipo de proveedor (electricity_company, water_company, others)
+- `provider_name`: Nombre del proveedor (ej. 'Corpoelec')
+- `is_system_defined`: TRUE = categoría predefinida del sistema (no eliminable)
+- **Multi-lenguaje**: `name` (español, default) + `name_en` (inglés, opcional). Lo mismo para `description` / `description_en`
+- **Restricción de 2 niveles**: CHECK constraint previene más de 2 niveles
+- **Tipo consistente**: Hijas deben tener mismo tipo que padre
+- **Categorías del sistema**: Deben tener traducciones ES y EN. Categorías de usuario: solo ES requerido, EN opcional
+
+### 4.3 Tabla: `chart_of_accounts_system` (Cuentas Contables Globales - Internas)
 
 ```sql
 CREATE TABLE chart_of_accounts_system (
@@ -201,22 +368,28 @@ CREATE TABLE chart_of_accounts_system (
   parent_id UUID REFERENCES chart_of_accounts_system(id) ON DELETE RESTRICT,
   code VARCHAR(50) NOT NULL UNIQUE,
   name VARCHAR(100) NOT NULL,
+  name_en VARCHAR(100),
   type VARCHAR(20) NOT NULL,
+  description TEXT,
+  description_en TEXT,
   is_active BOOLEAN DEFAULT TRUE,
   created_at TIMESTAMPTZ DEFAULT CURRENT_TIMESTAMP,
+  updated_at TIMESTAMPTZ DEFAULT CURRENT_TIMESTAMP,
 
   CONSTRAINT chk_account_type CHECK (type IN ('asset', 'liability', 'equity', 'income', 'expense'))
 );
 ```
 
 **Decisiones explicadas**:
-- **Tabla global**: No tiene `condominium_id`. Las cuentas del sistema se definen UNA SOLA VEZ y son compartidas por todos los condominios.
-- `code` UNIQUE global: El código contable (ej. "2.1.01 Fondo de Reserva") es único en todo el sistema. No puede haber dos cuentas con el mismo código.
-- `parent_id` con `ON DELETE RESTRICT`: No puedes eliminar una cuenta padre si tiene hijos. Protege la integridad del árbol global.
-- `is_active`: Permite desactivar cuentas del sistema sin eliminarlas (útil si la ley cambia).
-- **Inmutabilidad**: Esta tabla solo se modifica mediante migraciones del sistema o por administradores de plataforma. Los administradores de condominios NO tienen acceso a modificar esta tabla.
+- **Tabla global interna**: No visible al usuario, usada por el motor contable
+- `code`: Código contable jerárquico (ej. "5.1.01") separado del nombre para evitar ruido visual
+- `name`: Nombre legible en español (ej. "Electricidad")
+- `name_en`: Nombre en inglés (ej. "Electricity") - requerido para cuentas del sistema
+- `type`: Tipos contables estándar (asset, liability, equity, income, expense)
+- **Multi-lenguaje**: Cuentas del sistema deben tener ES y EN. Usado en reportes legales si el usuario cambia idioma
+- **Inmutabilidad**: Solo modificable por administradores de plataforma
 
-### 4.2 Tabla: `chart_of_accounts` (Cuentas por Condominio)
+### 4.4 Tabla: `chart_of_accounts` (Cuentas Contables por Condominio - Internas)
 
 ```sql
 CREATE TABLE chart_of_accounts (
@@ -226,10 +399,14 @@ CREATE TABLE chart_of_accounts (
   parent_id UUID REFERENCES chart_of_accounts(id) ON DELETE RESTRICT,
   code VARCHAR(50) NOT NULL,
   name VARCHAR(100) NOT NULL,
+  name_en VARCHAR(100),
   type VARCHAR(20) NOT NULL,
+  description TEXT,
+  description_en TEXT,
   is_system_defined BOOLEAN GENERATED ALWAYS AS (system_account_id IS NOT NULL) STORED,
   is_active BOOLEAN DEFAULT TRUE,
   created_at TIMESTAMPTZ DEFAULT CURRENT_TIMESTAMP,
+  updated_at TIMESTAMPTZ DEFAULT CURRENT_TIMESTAMP,
 
   CONSTRAINT unique_code_per_condo UNIQUE (condominium_id, code),
   CONSTRAINT chk_account_type CHECK (type IN ('asset', 'liability', 'equity', 'income', 'expense'))
@@ -237,72 +414,72 @@ CREATE TABLE chart_of_accounts (
 ```
 
 **Decisiones explicadas**:
-- `system_account_id`: Referencia a la cuenta global del sistema. Si es NOT NULL, esta cuenta es una referencia a una cuenta del sistema (inmutable). Si es NULL, es una cuenta creada por el usuario (modificable).
-- `is_system_defined` como GENERATED ALWAYS: Este campo se calcula automáticamente. Si `system_account_id IS NOT NULL`, entonces `is_system_defined = true`. No se puede modificar manualmente.
-- `parent_id` con `ON DELETE RESTRICT`: No puedes eliminar una cuenta padre si tiene hijos. Protege la integridad del árbol del condominio.
-- `code` único por condominio: El código contable debe ser único dentro de cada condominio (no globalmente, porque cada condominio puede tener su propia numeración para cuentas propias).
-- **Inmutabilidad del lado del condominio**: Si `is_system_defined = true`, el administrador del condominio NO puede modificar ni eliminar esta cuenta. Solo puede leerla y usarla en transacciones.
-- `type` con CHECK constraint: Solo los 5 tipos contables estándar. No se permiten tipos inventados.
+- **Cuentas contables internas**: No visibles en UI principal, usadas para asientos automáticos
+- `system_account_id`: Referencia a cuenta global del sistema
+- `is_system_defined`: Computed column (TRUE si system_account_id IS NOT NULL)
+- `code`: Código contable (ej. "5.1.01") para reportes legales
+- **Multi-lenguaje**: `name` / `name_en` y `description` / `description_en`. Si viene de system_account, se copian las traducciones
+- **Auto-populación**: Trigger crea cuentas automáticamente cuando se crea condominio, copiando traducciones del sistema
 
-**Flujo de creación**:
-1. Cuando se crea un nuevo condominio, el sistema automáticamente crea registros en `chart_of_accounts` referenciando todas las cuentas activas de `chart_of_accounts_system`.
-2. El administrador puede crear cuentas adicionales (con `system_account_id = NULL`) para necesidades específicas.
-3. Las cuentas del sistema son accesibles mediante `WHERE is_system_defined = true` (optimizado con índice).
-
-### 4.2 Tabla: `financial_transactions`
+### 4.5 Tabla: `financial_transactions` (Transacciones del Usuario)
 
 ```sql
 CREATE TABLE financial_transactions (
   id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
   condominium_id UUID NOT NULL REFERENCES condominiums(id) ON DELETE CASCADE,
-  actor_id UUID REFERENCES actors(id) ON DELETE RESTRICT,
+  account_id UUID NOT NULL REFERENCES condominium_accounts(id) ON DELETE RESTRICT,
+  category_id UUID NOT NULL REFERENCES transaction_categories(id) ON DELETE RESTRICT,
   type VARCHAR(10) NOT NULL,
   status VARCHAR(20) NOT NULL DEFAULT 'pending',
+  amount NUMERIC(15, 2) NOT NULL,
+  original_currency VARCHAR(3) NOT NULL,
+  exchange_rate NUMERIC(14, 4) NOT NULL DEFAULT 1.0000,
   description TEXT NOT NULL,
   reference_number VARCHAR(100),
-  payment_method VARCHAR(30) NOT NULL,
-  original_currency VARCHAR(5) NOT NULL,
-  exchange_rate NUMERIC(14, 4) NOT NULL DEFAULT 1.0000,
   transaction_date DATE NOT NULL,
   created_by UUID NOT NULL,
   created_at TIMESTAMPTZ DEFAULT CURRENT_TIMESTAMP,
+  updated_at TIMESTAMPTZ DEFAULT CURRENT_TIMESTAMP,
 
-  CONSTRAINT chk_tx_type CHECK (type IN ('income', 'expense')),
+  CONSTRAINT chk_tx_type CHECK (type IN ('income', 'expense', 'transfer')),
   CONSTRAINT chk_tx_status CHECK (status IN ('pending', 'completed', 'voided')),
+  CONSTRAINT chk_amount_positive CHECK (amount > 0),
   CONSTRAINT chk_exchange_rate CHECK (exchange_rate > 0)
 );
 ```
 
 **Decisiones explicadas**:
-- `actor_id` con `ON DELETE RESTRICT`: No puedes eliminar un actor (proveedor/propietario) si tiene transacciones asociadas. Protege la trazabilidad.
-- `status` con máquina de estados explícita: Solo 3 estados. La transición de estados se controla a nivel de servicio, no de base de datos.
-- `exchange_rate` con CHECK > 0: La tasa de cambio siempre debe ser positiva. Se captura en el momento del registro.
-- `transaction_date` separado de `created_at`: La fecha del hecho económico puede ser diferente a la fecha de registro en el sistema (ej. registrar hoy un pago que se hizo ayer).
-- `reference_number`: Número de transferencia, cheque, recibo o factura. Esencial para conciliación bancaria y auditoría.
+- **UI simplificada**: El usuario solo especifica billetera, categoría, monto y descripción
+- `account_id`: Billetera de donde sale/entra el dinero
+- `category_id`: Categoría que clasifica el propósito
+- `type`: 'income', 'expense', o 'transfer' (entre billeteras)
+- `status`: pending → completed → voided (inmutable una vez completed/voided)
+- **Multi-moneda**: original_currency + exchange_rate para conversión
 
-### 4.3 Tabla: `financial_transaction_details`
+### 4.6 Tabla: `financial_transaction_entries` (Asientos Contables Automáticos)
 
 ```sql
-CREATE TABLE financial_transaction_details (
+CREATE TABLE financial_transaction_entries (
   id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
   transaction_id UUID NOT NULL REFERENCES financial_transactions(id) ON DELETE CASCADE,
   account_id UUID NOT NULL REFERENCES chart_of_accounts(id) ON DELETE RESTRICT,
   entry_type VARCHAR(6) NOT NULL,
-  amount_original_currency NUMERIC(15, 2) NOT NULL,
-  amount_base_currency NUMERIC(15, 2) NOT NULL,
+  amount NUMERIC(15, 2) NOT NULL,
+  created_at TIMESTAMPTZ DEFAULT CURRENT_TIMESTAMP,
 
   CONSTRAINT chk_entry_type CHECK (entry_type IN ('debit', 'credit')),
-  CONSTRAINT chk_amounts_positive CHECK (amount_original_currency >= 0 AND amount_base_currency >= 0)
+  CONSTRAINT chk_amount_positive CHECK (amount >= 0)
 );
 ```
 
 **Decisiones explicadas**:
-- `transaction_id` con `ON DELETE CASCADE`: Si eliminas una transacción cabecera (solo en estado `pending`), sus detalles se eliminan automáticamente.
-- `account_id` con `ON DELETE RESTRICT`: No puedes eliminar una cuenta contable si tiene movimientos asociados.
-- `amounts_positive`: Los montos siempre son positivos. El signo contable lo determina `entry_type` (debit/credit). Esto evita confusión y errores de doble negación.
-- `NUMERIC(15, 2)`: Precisión financiera. No usar `FLOAT` o `REAL` nunca para dinero.
+- **Asientos automáticos**: Generados por el sistema, no por el usuario
+- `transaction_id`: FK a la transacción del usuario
+- `account_id`: Cuenta contable formal (del chart_of_accounts)
+- `entry_type`: 'debit' o 'credit'
+- **Validación de partida doble**: suma(debits) = suma(credits) por transacción
 
-### 4.4 Tabla: `account_monthly_balances`
+### 4.7 Tabla: `account_monthly_balances` (Saldos Mensuales de Cuentas Contables)
 
 ```sql
 CREATE TABLE account_monthly_balances (
@@ -323,161 +500,295 @@ CREATE TABLE account_monthly_balances (
 ```
 
 **Decisiones explicadas**:
-- `unique_account_period`: Una cuenta solo puede tener un registro por mes. Evita duplicados.
-- `initial_balance + total_debits - total_credits = final_balance`: Esta relación se valida a nivel de servicio. El `final_balance` del mes anterior es el `initial_balance` del mes siguiente.
-- `year >= 2020`: Validación de rango razonable. No esperamos transacciones antes de 2020.
+- **Snapshots mensuales**: Optimización para dashboards y reportes
+- `initial_balance + total_debits - total_credits = final_balance`
+- Se actualiza cuando transacción pasa a 'completed'
 
-### 4.5 Tabla: `account_annual_balances`
-
-```sql
-CREATE TABLE account_annual_balances (
-  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-  account_id UUID NOT NULL REFERENCES chart_of_accounts(id) ON DELETE CASCADE,
-  year INT NOT NULL,
-  initial_balance NUMERIC(15, 2) NOT NULL DEFAULT 0.00,
-  total_debits NUMERIC(15, 2) NOT NULL DEFAULT 0.00,
-  total_credits NUMERIC(15, 2) NOT NULL DEFAULT 0.00,
-  final_balance NUMERIC(15, 2) NOT NULL DEFAULT 0.00,
-  is_closed BOOLEAN DEFAULT FALSE,
-  closed_at TIMESTAMPTZ,
-  updated_at TIMESTAMPTZ DEFAULT CURRENT_TIMESTAMP,
-
-  CONSTRAINT unique_account_year UNIQUE (account_id, year),
-  CONSTRAINT chk_year_valid CHECK (year >= 2020)
-);
-```
-
-**Decisiones explicadas**:
-- `unique_account_year`: Una cuenta solo puede tener un registro por año. Evita duplicados.
-- `is_closed`: Indica si el año fiscal fue cerrado. Una vez cerrado, el snapshot es inmutable (no se puede modificar).
-- `closed_at`: Fecha y hora de cierre del año fiscal. NULL si aún no se ha cerrado.
-- **Propósito**: Optimización para reportes anuales (estados financieros, asamblea de copropietarios, reportes SUNAPI/SENIAT). Consulta UN registro en vez de sumar 12 meses.
-- **Relación con snapshots mensuales**: El `final_balance` de diciembre es el `initial_balance` del año siguiente. El snapshot anual consolida los 12 snapshots mensuales.
-- **Inmutabilidad**: Una vez cerrado el año (`is_closed = true`), el snapshot no se puede modificar. Si hay ajustes retroactivos, se debe generar una transacción de reversa en el año actual.
-
-### 4.6 Índices de Rendimiento
+### 4.8 Índices de Rendimiento
 
 ```sql
--- Índice para filtrar rápidamente cuentas del sistema vs cuentas propias
-CREATE INDEX idx_accounts_system_defined ON chart_of_accounts(is_system_defined) WHERE is_system_defined = true;
+-- Índices para condominium_accounts
+CREATE INDEX idx_condo_accounts_condo_id ON condominium_accounts(condominium_id) WHERE deleted_at IS NULL;
+CREATE INDEX idx_condo_accounts_type ON condominium_accounts(type) WHERE is_active = true;
 
--- Índices para transacciones
-CREATE INDEX idx_tx_condo_date ON financial_transactions(condominium_id, transaction_date);
-CREATE INDEX idx_tx_details_account ON financial_transaction_details(account_id);
+-- Índices para transaction_categories
+CREATE INDEX idx_tx_categories_condo_id ON transaction_categories(condominium_id) WHERE is_active = true;
+CREATE INDEX idx_tx_categories_parent_id ON transaction_categories(parent_id) WHERE parent_id IS NOT NULL;
+CREATE INDEX idx_tx_categories_type ON transaction_categories(type) WHERE is_system_defined = true;
 
--- Índices para saldos mensuales
-CREATE INDEX idx_balances_period ON account_monthly_balances(year, month);
+-- Índices para financial_transactions
+CREATE INDEX idx_financial_tx_condo_date ON financial_transactions(condominium_id, transaction_date);
+CREATE INDEX idx_financial_tx_account ON financial_transactions(account_id);
+CREATE INDEX idx_financial_tx_category ON financial_transactions(category_id);
+CREATE INDEX idx_financial_tx_status ON financial_transactions(status) WHERE status = 'pending';
 
--- Índices para saldos anuales
-CREATE INDEX idx_annual_balances_year ON account_annual_balances(year);
-CREATE INDEX idx_annual_balances_closed ON account_annual_balances(is_closed) WHERE is_closed = true;
+-- Índices para financial_transaction_entries
+CREATE INDEX idx_tx_entries_transaction ON financial_transaction_entries(transaction_id);
+CREATE INDEX idx_tx_entries_account ON financial_transaction_entries(account_id);
+
+-- Índices para account_monthly_balances
+CREATE INDEX idx_monthly_balances_period ON account_monthly_balances(year, month);
+CREATE INDEX idx_monthly_balances_account ON account_monthly_balances(account_id);
 ```
 
-**Por qué estos índices**:
-- `idx_accounts_system_defined`: Índice parcial (filtered index) que solo indexa las cuentas del sistema (`is_system_defined = true`). Permite filtrar rápidamente las cuentas inmutables del sistema sin escanear toda la tabla. Útil para mostrar el plan de cuentas del sistema en la UI.
-- `idx_tx_condo_date`: El reporte más común es "flujo de caja de este condominio en este mes". Este índice lo resuelve en milisegundos.
-- `idx_tx_details_account`: Para calcular el saldo analítico de una cuenta específica (drill-down).
-- `idx_balances_period`: Para cargar estados financieros comparativos (mes actual vs mes anterior).
-- `idx_annual_balances_year`: Para consultas de reportes anuales (estados financieros, asamblea de copropietarios).
-- `idx_annual_balances_closed`: Índice parcial para filtrar rápidamente años cerrados (inmutables). Útil para auditorías y reportes históricos.
+### 4.9 Triggers y Funciones Automáticas
 
----
+**Función 1**: Auto-popular cuentas contables cuando se crea condominio
+```sql
+-- Trigger: trg_condominiums_auto_populate_chart_of_accounts
+-- Cuando se crea un condominio, automáticamente crea registros en chart_of_accounts
+-- referenciando todas las cuentas activas de chart_of_accounts_system
+```
 
+**Función 2**: Generar asientos contables automáticamente
+```sql
+-- Trigger: trg_financial_transactions_generate_entries
+-- Cuando se inserta una financial_transaction, automáticamente genera
+-- los financial_transaction_entries (débito/crédito) basados en:
+-- - type (income/expense/transfer)
+-- - account_id (billetera → cuenta contable de activo)
+-- - category_id (categoría → cuenta contable de ingreso/egreso)
+```
+
+**Función 3**: Actualizar saldo de billetera
+```sql
+-- Trigger: trg_financial_transactions_update_balance
+-- Cuando una transacción pasa a 'completed', actualiza el balance
+-- de la condominium_account asociada
+```
+
+**Función 4**: Actualizar saldos mensuales
+```sql
+-- Trigger: trg_financial_transactions_update_monthly_balance
+-- Cuando una transacción pasa a 'completed', actualiza
+-- account_monthly_balances para las cuentas contables afectadas
+```
 ## 5. Flujos de Negocio
 
-### 5.1 Registro de Ingreso (Pago de Alícuota)
+### 5.1 Configuración Inicial (Administrador)
 
 ```
-1. Propietario reporta pago de $100 (alícuota mensual) vía transferencia bancaria.
-2. Sistema crea FinancialTransaction:
+1. Administrador crea billeteras del condominio:
+   • "Banco Mercantil USD" (type: bank, currency: USD)
+   • "Caja Chica" (type: cash, currency: USD)
+   • "Banco de Venezuela VES" (type: bank, currency: VES)
+
+2. Sistema automáticamente crea cuentas contables internas:
+   • 1.1.01 Banco Mercantil USD (asset)
+   • 1.1.02 Caja Chica (asset)
+   • 1.1.03 Banco de Venezuela VES (asset)
+   • 5.1.01 Electricidad (expense)
+   • 5.1.02 Agua (expense)
+   • 4.1.01 Alícuotas de Condominio (income)
+   • ... (todas las cuentas del sistema)
+
+3. Administrador puede crear categorías adicionales:
+   • Categoría padre: "Seguridad" (expense)
+   • Subcategoría: "Vigilancia 24h" (expense, parent: Seguridad)
+```
+
+### 5.2 Registro de Ingreso (Pago de Alícuota) - UI Simplificada
+
+**Lo que ve el usuario**:
+```
+┌─────────────────────────────────────────────┐
+│  Registrar Ingreso                          │
+├─────────────────────────────────────────────┤
+│  Monto: [$100.00]                           │
+│  Billetera: [Banco Mercantil USD ▼]         │
+│  Categoría: [Alícuotas de Condominio ▼]     │
+│  Fecha: [30/06/2026]                        │
+│  Descripción: [Pago alícuota junio - Apto 1A]│
+│  Referencia: [TRF-2026-001234]              │
+│                                             │
+│         [Cancelar]  [Registrar]             │
+└─────────────────────────────────────────────┘
+```
+
+**Lo que hace el sistema automáticamente**:
+```
+1. Crea financial_transaction:
+   - account_id: Banco Mercantil USD
+   - category_id: Alícuotas de Condominio
    - type: 'income'
+   - amount: $100.00
    - status: 'pending'
-   - original_currency: 'USD'
-   - exchange_rate: 1.0000
-   - transaction_date: hoy
-   
-3. Sistema crea FinancialTransactionDetail (2 líneas):
-   - Línea 1: DÉBITO $100 → Cuenta "1.1.01 Banco Custodia USD"
-   - Línea 2: CRÉDITO $100 → Cuenta "1.2.01 Apto 1A - Cuotas pendientes"
-   
-4. Validación: suma(débitos) = suma(créditos) → $100 = $100 ✓
-5. Transacción guardada en estado 'pending'. Balances NO se actualizan.
 
-6. Administrador concilia con estado de cuenta bancario.
-7. Administrador aprueba transacción → status cambia a 'completed'.
-8. Sistema actualiza AccountMonthlyBalance:
-   - Cuenta "1.1.01": total_debits += $100
-   - Cuenta "1.2.01": total_credits += $100
+2. Genera asientos contables automáticos:
+   DÉBITO  $100 → Cuenta "1.1.01 Banco Mercantil USD" (Activo)
+   CRÉDITO $100 → Cuenta "4.1.01 Alícuotas de Condominio" (Ingreso)
+
+3. Valida partida doble: $100 = $100 ✓
+
+4. Cuando administrador aprueba (status → 'completed'):
+   - Actualiza balance de "Banco Mercantil USD": +$100
+   - Actualiza account_monthly_balances para cuentas 1.1.01 y 4.1.01
 ```
 
-### 5.2 Registro de Egreso (Pago de Electricidad)
+### 5.3 Registro de Egreso (Pago de Electricidad) - UI Simplificada
 
+**Lo que ve el usuario**:
 ```
-1. Administrador registra pago de $300 a Corpoelec vía transferencia.
-2. Sistema crea FinancialTransaction:
+┌─────────────────────────────────────────────┐
+│  Registrar Egreso                           │
+├─────────────────────────────────────────────┤
+│  Monto: [$300.00]                           │
+│  Billetera: [Banco Mercantil USD ▼]         │
+│  Categoría: [Electricidad ▼]                │
+│  Fecha: [30/06/2026]                        │
+│  Descripción: [Pago electricidad junio]     │
+│  Referencia: [TRF-2026-001235]              │
+│  Proveedor: [Corpoelec]                     │
+│                                             │
+│         [Cancelar]  [Registrar]             │
+└─────────────────────────────────────────────┘
+```
+
+**Lo que hace el sistema automáticamente**:
+```
+1. Crea financial_transaction:
+   - account_id: Banco Mercantil USD
+   - category_id: Electricidad
    - type: 'expense'
+   - amount: $300.00
    - status: 'pending'
-   - original_currency: 'USD'
-   - exchange_rate: 1.0000
-   - reference_number: 'TRF-2026-001234'
-   
-3. Sistema crea FinancialTransactionDetail (2 líneas):
-   - Línea 1: DÉBITO $300 → Cuenta "5.1.01 Electricidad"
-   - Línea 2: CRÉDITO $300 → Cuenta "1.1.01 Banco Custodia USD"
-   
-4. Validación: suma(débitos) = suma(créditos) → $300 = $300 ✓
-5. Administrador aprueba → status: 'completed'
-6. Balances actualizados.
+
+2. Genera asientos contables automáticos:
+   DÉBITO  $300 → Cuenta "5.1.01 Electricidad" (Egreso)
+   CRÉDITO $300 → Cuenta "1.1.01 Banco Mercantil USD" (Activo)
+
+3. Valida partida doble: $300 = $300 ✓
+
+4. Cuando administrador aprueba (status → 'completed'):
+   - Actualiza balance de "Banco Mercantil USD": -$300
+   - Actualiza account_monthly_balances para cuentas 5.1.01 y 1.1.01
 ```
 
-### 5.3 Corrección de Error (Transacción de Reversa)
+### 5.4 Transferencia entre Billeteras
 
+**Lo que ve el usuario**:
 ```
-1. Administrador registró gasto de $500 por error (debía ser $50).
-   Transacción original: TX-001, status: 'completed'
-   
-2. NO se puede modificar TX-001. Sistema obliga a crear transacción de reversa.
+┌─────────────────────────────────────────────┐
+│  Transferir entre Billeteras                │
+├─────────────────────────────────────────────┤
+│  Monto: [$500.00]                           │
+│  De: [Banco Mercantil USD ▼]                │
+│  A: [Caja Chica ▼]                          │
+│  Fecha: [30/06/2026]                        │
+│  Descripción: [Retiro para caja chica]      │
+│                                             │
+│         [Cancelar]  [Transferir]            │
+└─────────────────────────────────────────────┘
+```
 
-3. Sistema crea FinancialTransaction:
-   - type: 'expense'
+**Lo que hace el sistema automáticamente**:
+```
+1. Crea financial_transaction:
+   - account_id: Banco Mercantil USD (origen)
+   - category_id: NULL (transferencia no usa categoría)
+   - type: 'transfer'
+   - amount: $500.00
    - status: 'pending'
-   - description: 'REVERSA de TX-001: Error en monto'
-   - reference_number: 'REV-TX-001'
-   
-4. Sistema crea FinancialTransactionDetail (2 líneas, invertidas):
-   - Línea 1: CRÉDITO $500 → Cuenta "5.1.01 Electricidad" (revierte el débito original)
-   - Línea 2: DÉBITO $500 → Cuenta "1.1.01 Banco Custodia USD" (revierte el crédito original)
-   
-5. Administrador aprueba → status: 'completed'
-6. Efecto contable neto: $0 (la transacción original queda anulada)
 
-7. Administrador registra la transacción correcta por $50.
+2. Genera asientos contables automáticos:
+   DÉBITO  $500 → Cuenta "1.1.02 Caja Chica" (Activo destino)
+   CRÉDITO $500 → Cuenta "1.1.01 Banco Mercantil USD" (Activo origen)
+
+3. Valida partida doble: $500 = $500 ✓
+
+4. Cuando se completa:
+   - Banco Mercantil USD: -$500
+   - Caja Chica: +$500
 ```
 
-### 5.4 Pago Multipropósito
+### 5.5 Pago Multipropósito (Varias Categorías)
 
+**Lo que ve el usuario**:
 ```
-1. Propietario paga $150 que cubren:
-   - $100 de alícuota del mes corriente
-   - $30 de multa pendiente
-   - $20 quedan como saldo a favor
-   
-2. Sistema crea FinancialTransaction:
+┌─────────────────────────────────────────────┐
+│  Registrar Pago Múltiple                    │
+├─────────────────────────────────────────────┤
+│  Monto Total: [$150.00]                     │
+│  Billetera: [Banco Mercantil USD ▼]         │
+│                                             │
+│  Distribución:                              │
+│  ┌─────────────────────────────────────┐   │
+│  │ Alícuotas: [$100.00] [Alícuotas ▼] │   │
+│  │ Multas: [$30.00] [Multas ▼]        │   │
+│  │ Saldo a favor: [$20.00] [Anticipado▼]│  │
+│  └─────────────────────────────────────┘   │
+│                                             │
+│  Descripción: [Pago propietario Apto 1A]    │
+│                                             │
+│         [Cancelar]  [Registrar]             │
+└─────────────────────────────────────────────┘
+```
+
+**Lo que hace el sistema automáticamente**:
+```
+1. Crea financial_transaction (cabecera):
+   - account_id: Banco Mercantil USD
    - type: 'income'
+   - amount: $150.00
    - status: 'pending'
-   - original_currency: 'USD'
-   
-3. Sistema crea FinancialTransactionDetail (4 líneas):
-   - Línea 1: DÉBITO $150 → Cuenta "1.1.01 Banco Custodia USD"
-   - Línea 2: CRÉDITO $100 → Cuenta "4.1.01 Alícuotas de Condominio"
-   - Línea 3: CRÉDITO $30 → Cuenta "4.1.03 Multas y Recargos"
-   - Línea 4: CRÉDITO $20 → Cuenta "2.1.03 Cuotas cobradas por adelantado"
-   
-4. Validación: suma(débitos) = suma(créditos) → $150 = $150 ✓
+
+2. Genera asientos contables automáticos:
+   DÉBITO  $150 → Cuenta "1.1.01 Banco Mercantil USD" (Activo)
+   CRÉDITO $100 → Cuenta "4.1.01 Alícuotas de Condominio" (Ingreso)
+   CRÉDITO $30  → Cuenta "4.1.03 Multas y Recargos" (Ingreso)
+   CRÉDITO $20  → Cuenta "2.1.03 Cuotas cobradas por adelantado" (Pasivo)
+
+3. Valida partida doble: $150 = $100 + $30 + $20 ✓
 ```
 
----
+### 5.6 Corrección de Error (Transacción de Reversa)
 
+**Escenario**: Administrador registró gasto de $500 por error (debía ser $50)
+
+**Lo que hace el sistema**:
+```
+1. NO permite modificar la transacción original (TX-001, status: 'completed')
+
+2. Administrador crea transacción de reversa:
+   - Selecciona TX-001
+   - Click en "Crear reversa"
+   - Sistema pre-llena formulario con montos invertidos
+
+3. Sistema genera automáticamente:
+   DÉBITO  $500 → Cuenta "1.1.01 Banco Mercantil USD" (revierte crédito original)
+   CRÉDITO $500 → Cuenta "5.1.01 Electricidad" (revierte débito original)
+
+4. Efecto contable neto: $0 (transacción original anulada)
+
+5. Administrador registra transacción correcta por $50
+```
+
+**Nota**: Si el administrador elimina la billetera "Banco Mercantil USD":
+- La billetera se marca con `deleted_at` (soft delete)
+- Las transacciones (TX-001, reversa, corrección) permanecen vinculadas a la billetera
+- La billetera NO aparece en la UI de selección
+- Las transacciones de esta billetera NO se muestran en listados
+- El balance histórico se mantiene para trazabilidad
+
+### 5.7 Aprobación y Conciliación
+
+```
+1. Transacción creada → status: 'pending'
+   - Balance de billetera NO se actualiza
+   - Asientos contables generados pero no efectivos
+
+2. Administrador revisa transacciones pendientes:
+   - Compara con estado de cuenta bancario
+   - Verifica montos y referencias
+
+3. Administrador aprueba → status: 'completed'
+   - Balance de billetera SÍ se actualiza
+   - Asientos contables se vuelven efectivos
+   - AccountMonthlyBalance se actualiza
+   - Transacción se vuelve INMUTABLE
+
+4. Si hay error → crear transacción de reversa (no modificar)
+```
 ## 6. Cumplimiento Legal — Ley de Propiedad Horizontal
 
 ### 6.1 Libros Contables Obligatorios
@@ -486,10 +797,10 @@ La Ley de Propiedad Horizontal exige que el administrador lleve los siguientes l
 
 | Libro | Cómo lo satisface el sistema |
 |-------|------------------------------|
-| **Libro Diario** | Tabla `financial_transactions` + `financial_transaction_details` ordenadas por `transaction_date`. Cada transacción muestra el asiento completo (débitos y créditos). |
-| **Libro Mayor** | Tabla `account_monthly_balances` + consulta de detalles por `account_id`. Muestra el movimiento de cada cuenta individual. |
-| **Balance de Comprobación** | Reporte generado desde `account_monthly_balances` que lista todas las cuentas con sus saldos débitos y créditos. |
-| **Estados Financieros** | Reportes generados desde el árbol de cuentas: Balance General (Activos, Pasivos, Patrimonio) y Estado de Resultados (Ingresos, Egresos). |
+| **Libro Diario** | Tabla `financial_transactions` + `financial_transaction_entries` ordenadas por `transaction_date`. Cada transacción muestra el asiento completo (débitos y créditos) generado automáticamente. |
+| **Libro Mayor** | Tabla `account_monthly_balances` + consulta de `financial_transaction_entries` por `account_id`. Muestra el movimiento de cada cuenta contable individual. |
+| **Balance de Comprobación** | Reporte generado desde `account_monthly_balances` que lista todas las cuentas contables con sus saldos débitos y créditos. |
+| **Estados Financieros** | Reportes generados desde el árbol de cuentas contables (`chart_of_accounts`): Balance General (Activos, Pasivos, Patrimonio) y Estado de Resultados (Ingresos, Egresos). |
 
 ### 6.2 Fondos Obligatorios
 
@@ -565,39 +876,90 @@ La Ley exige que los registros contables no sean alterados. Nuestro sistema gara
 2. Validar que todas las cuentas están activas (`is_active = true`).
 3. Actualizar `account_monthly_balances` en la misma transacción de base de datos.
 
+### 7.5 Internacionalización (i18n)
+
+**Regla**: Todo contenido creado a nivel de sistema debe tener soporte multi-lenguaje (ES/EN).
+
+**Implementación**:
+- **Cuentas del sistema** (`chart_of_accounts_system`): Campos `name` / `name_en` y `description` / `description_en`
+- **Categorías del sistema** (`transaction_categories` con `is_system_defined = true`): Campos `name` / `name_en` y `description` / `description_en`
+- **Cuentas por condominio** (`chart_of_accounts`): Heredan traducciones del sistema cuando `system_account_id IS NOT NULL`
+- **Categorías de usuario**: Solo `name` (ES) requerido, `name_en` opcional
+- **Billeteras** (`condominium_accounts`): Solo `name` (ES), no requieren multi-lenguaje (contenido de usuario)
+
+**Frontend (Transloco)**:
+- Usar `transloco` pipe/directive para mostrar nombres según idioma activo
+- Fallback: Si `name_en` es NULL, mostrar `name` (ES)
+- Reportes legales: Usar idioma del usuario al momento de generar el reporte
+
+### 7.6 Telemetría y Analytics
+
+**Objetivo**: Trackear uso del módulo financiero para mejorar UX y detectar problemas.
+
+**Eventos a trackear** (via `TelemetryService`):
+
+| Evento | Propiedades | Trigger |
+|--------|-------------|---------|
+| `financial_wallet_created` | wallet_type, currency | Usuario crea billetera |
+| `financial_category_created` | category_type, is_system_defined, has_parent | Usuario crea categoría |
+| `financial_transaction_created` | type, amount, currency, category_type | Usuario registra transacción |
+| `financial_transaction_approved` | type, amount, time_to_approve | Admin aprueba transacción |
+| `financial_transaction_voided` | original_transaction_id, reason | Admin crea reversa |
+| `financial_report_generated` | report_type, date_range | Usuario genera reporte |
+| `financial_balance_viewed` | account_id, view_type | Usuario ve saldo de billetera |
+
+**Implementación**:
+- Usar `TelemetryService` existente (PostHog)
+- No trackear montos exactos (privacidad), solo rangos o flags
+- Respetar configuración de opt-in/opt-out del usuario
+- Eventos anónimos (sin PII) para usuarios no autenticados
+
 ---
 
 ## 8. Alcance del Feature (Fases Sugeridas)
 
-### Fase 1: Plan de Cuentas (Chart of Accounts)
-- Crear tabla `chart_of_accounts`.
-- Implementar servicio de gestión del árbol (CRUD de cuentas).
-- Cargar plantilla base de cuentas del sistema.
-- UI para visualizar y administrar el árbol de cuentas.
+### Fase 1: Billeteras y Categorías (Base)
+- Crear tabla `condominium_accounts` (billeteras del usuario)
+- Crear tabla `transaction_categories` (categorías padre-hijo)
+- Implementar CRUD de billeteras (UI tipo TimelyBills)
+- Implementar CRUD de categorías (con íconos y colores)
+- Cargar categorías predefinidas del sistema (no eliminables)
+- UI para gestionar billeteras y categorías
 
-### Fase 2: Transacciones Básicas
-- Crear tablas `financial_transactions` y `financial_transaction_details`.
-- Implementar servicio de registro de ingresos y egresos.
-- Validación de partida doble balanceada.
-- UI para crear y listar transacciones.
+### Fase 2: Transacciones Básicas (UI Simplificada)
+- Crear tabla `financial_transactions`
+- Implementar registro de ingresos/egresos (UI simple)
+- Implementar transferencias entre billeteras
+- Validación de montos y selección de billetera/categoría
+- UI para listar transacciones con filtros
 
-### Fase 3: Ciclo de Vida y Conciliación
-- Implementar máquina de estados (pending → completed → voided).
-- Flujo de aprobación por administrador.
-- Transacciones de reversa para correcciones.
-- UI para aprobar/anular transacciones.
+### Fase 3: Motor Contable Automático (Interno)
+- Crear tablas `chart_of_accounts_system` y `chart_of_accounts`
+- Implementar auto-populación de cuentas contables al crear condominio
+- Implementar generación automática de asientos (financial_transaction_entries)
+- Validación de partida doble (suma débitos = suma créditos)
+- Actualización automática de saldos de billeteras
 
-### Fase 4: Saldos y Reportes
-- Crear tabla `account_monthly_balances`.
-- Implementar actualización automática de saldos.
-- Reportes financieros básicos: Balance General, Estado de Resultados.
-- UI de dashboard financiero con drill-down.
+### Fase 4: Ciclo de Vida y Conciliación
+- Implementar máquina de estados (pending → completed → voided)
+- Flujo de aprobación por administrador
+- Transacciones de reversa para correcciones
+- UI para aprobar/anular transacciones pendientes
+- Conciliación manual con estado de cuenta bancario
 
-### Fase 5: Multi-moneda y Actores
-- Implementar captura de tasas de cambio.
-- Doble almacenamiento de montos.
-- Integración con entidad `Party` (actores externos).
-- Conciliación bancaria asistida.
+### Fase 5: Saldos y Reportes Legales
+- Crear tabla `account_monthly_balances`
+- Implementar actualización automática de saldos mensuales
+- Reportes legales: Libro Diario, Libro Mayor
+- Reportes financieros: Balance General, Estado de Resultados
+- UI de dashboard financiero con gráficos por categoría
+
+### Fase 6: Multi-moneda y Advanced Features
+- Implementar captura de tasas de cambio
+- Doble almacenamiento de montos (original + base)
+- Integración con entidad `Party` (actores externos)
+- Conciliación bancaria semi-automática (importación CSV)
+- Portal del propietario (self-service)
 
 ---
 
@@ -763,31 +1125,34 @@ Luego, dentro de Torre A:
 
 | Decisión | Justificación |
 |----------|---------------|
-| Partida doble | Estándar contable universal, previene descuadres, cumple Ley de Propiedad Horizontal |
-| Plan de cuentas jerárquico | Permite drill-down, reportes agregados, flexibilidad para cada condominio |
-| Cuentas del sistema globales + cuentas por condominio | Sin duplicación, actualizaciones centralizadas, estandarización garantizada, reportes comparativos |
-| Inmutabilidad de registros | Trazabilidad auditable, cumplimiento legal, correcciones vía reversas |
-| Multi-moneda con doble almacenamiento | Contexto bimonetario, estados financieros estables, conciliación bancaria |
-| Patrón cabecera-detalle | Flexibilidad para gastos consolidados y pagos multipropósito |
-| Saldos mensuales acumulados | Optimización de lectura para dashboards, auditoría detallada bajo demanda |
-| Máquina de estados explícita | Control de ciclo de vida, conciliación, prevención de alteraciones |
-| Aislamiento por condominium_id | Multi-tenancy seguro, cumplimiento de privacidad entre condominios |
-| Fondo de Reserva híbrido (automático con override) | Automatización previene errores, flexibilidad para casos excepcionales, cumplimiento legal garantizado |
-| Conciliación bancaria diferida (manual → semi-automática → automática) | MVP primero, aprender del uso real, bancos venezolanos no tienen APIs públicas |
-| Portal del propietario (self-service) | Cumple derecho de información de Ley de Propiedad Horizontal, self-service, escalable, evolución natural hacia notificaciones opcionales |
-| Distribución de gastos en tres niveles (condominio, estructura, compartido) | Todos los gastos se distribuyen entre estructuras y propietarios, automatización reduce errores, granularidad para reportes por condominio y estructura |
-| Presupuestos anuales fuera de scope (MVP) | MVP enfocado en registro y trazabilidad, presupuestos son enhancement posterior (requerimiento legal documentado en backlog) |
-| Pasarelas de pago fuera de scope (MVP) | MVP enfocado en registro manual, integración con pasarelas es enhancement posterior (diferenciador competitivo documentado en backlog) |
-| Reportes fiscales fuera de scope (MVP) | MVP enfocado en registro y trazabilidad, reportes oficiales SUNAPI/SENIAT son enhancement posterior (obligación legal documentada en backlog) |
+| **Modelo Híbrido** (UI simple + motor contable formal) | Usuario no necesita saber contabilidad, pero el sistema cumple con la Ley de Propiedad Horizontal automáticamente |
+| **Billeteras del condominio** (condominium_accounts) | Modelo mental simple: "¿Dónde está el dinero?" Similar a apps de finanzas personales (TimelyBills, Mint) |
+| **Categorías padre-hijo de 2 niveles** | Organización lógica sin complejidad excesiva, reportes agregados por padre, drill-down a hijas |
+| **Cuentas contables internas** (chart_of_accounts) | Motor de partida doble oculto al usuario, genera Libro Diario/Mayor automáticamente |
+| **Código contable separado del nombre** | Columna `code` (ej. "5.1.01") para reportes legales, `name` para UI (sin ruido visual) |
+| **Asientos contables automáticos** | El sistema traduce transacciones simples a débitos/créditos automáticamente |
+| **Categorías predefinidas del sistema** (no eliminables) | Estandarización, cumplimiento legal, reportes comparativos entre condominios |
+| **Inmutabilidad de registros** | Trazabilidad auditable, cumplimiento legal, correcciones vía reversas |
+| **Multi-moneda con doble almacenamiento** | Contexto bimonetario (Venezuela), estados financieros estables, conciliación bancaria |
+| **Máquina de estados explícita** | Control de ciclo de vida (pending → completed → voided), conciliación, prevención de alteraciones |
+| **Aislamiento por condominium_id** | Multi-tenancy seguro, cumplimiento de privacidad entre condominios |
+| **Fondo de Reserva híbrido** (automático con override) | Automatización previene errores, flexibilidad para casos excepcionales, cumplimiento legal |
+| **Conciliación bancaria diferida** (manual → semi-automática → automática) | MVP primero, aprender del uso real, bancos venezolanos no tienen APIs públicas |
+| **Portal del propietario** (self-service) | Cumple derecho de información de Ley de Propiedad Horizontal, escalable |
+| **Distribución de gastos en tres niveles** | Condominio, estructura, compartido - todos los gastos se distribuyen proporcionalmente |
+| **Presupuestos anuales fuera de scope** (MVP) | MVP enfocado en registro y trazabilidad, presupuestos son enhancement posterior |
+| **Pasarelas de pago fuera de scope** (MVP) | MVP enfocado en registro manual, integración con pasarelas es enhancement posterior |
+| **Reportes fiscales fuera de scope** (MVP) | MVP enfocado en registro y trazabilidad, reportes SUNAPI/SENIAT son enhancement posterior |
 
 ---
 
 ## Próximos Pasos
 
-1. **Tu revisión**: Lee esta propuesta, haz cambios, pregunta dudas, ajusta lo que necesites.
-2. **Responder preguntas abiertas**: Las 7 preguntas de la sección 9 guiarán decisiones de implementación.
-3. **Definir alcance inicial**: ¿Empezamos con Fase 1 (Plan de Cuentas) o prefieres un MVP más pequeño?
-4. **SDD formal**: Una vez aprobada la propuesta, podemos usar SDD para generar specs, diseño y tareas de implementación.
+1. **✅ Revisión completada**: Propuesta actualizada con modelo híbrido (UI simple + motor contable formal)
+2. **✅ Decisiones tomadas**: Billeteras, categorías de 2 niveles, soft delete, i18n, telemetría
+3. **Definir alcance inicial**: ¿Empezamos con Fase 1 (Billeteras y Categorías) para MVP?
+4. **SDD formal**: Una vez aprobado el alcance, usar SDD para generar specs, diseño y tareas de implementación.
+5. **Migraciones de base de datos**: Crear tablas `condominium_accounts`, `transaction_categories`, `chart_of_accounts_system`, `chart_of_accounts`, `financial_transactions`, `financial_transaction_entries`, `account_monthly_balances`
 
 ---
 
