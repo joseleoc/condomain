@@ -29,7 +29,8 @@
       "referenceNumber": "Reference Number",
       "transactionDate": "Transaction Date",
       "submit": "Save Income",
-      "cancel": "Cancel"
+      "cancel": "Cancel",
+      "apply": "Apply"
     }
   },
   "general": {

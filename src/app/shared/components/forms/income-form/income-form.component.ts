@@ -1,4 +1,4 @@
-import { Component, computed, effect, inject, input, output } from '@angular/core';
+import { Component, computed, inject, input, OnInit, output, signal } from '@angular/core';
 import {
   AbstractControl,
   FormControl,
@@ -13,6 +13,12 @@ import {
   IonItem,
   IonSelect,
   IonSelectOption,
+  IonDatetimeButton,
+  IonDatetime,
+  IonPopover,
+  IonLabel,
+  IonNote,
+  IonButton,
 } from '@ionic/angular/standalone';
 import { TranslocoPipe, TranslocoService } from '@jsverse/transloco';
 import { takeUntilDestroyed, toSignal } from '@angular/core/rxjs-interop';
@@ -45,9 +51,15 @@ export interface IncomeFormValue {
     IonItem,
     IonSelect,
     IonSelectOption,
+    IonDatetimeButton,
+    IonDatetime,
+    IonPopover,
+    IonLabel,
+    IonNote,
+    IonButton,
   ],
 })
-export class IncomeFormComponent {
+export class IncomeFormComponent implements OnInit {
   // --- Dependencies ---
   #accountsService = inject(CondominiumAccounts);
   #categoriesService = inject(TransactionCategories);
@@ -62,10 +74,30 @@ export class IncomeFormComponent {
   formSubmit = output<IncomeFormValue>();
   cancelled = output<void>();
 
+  // --- Lifecycle ---
+  ngOnInit(): void {
+    // Set default currency once on init
+    this.form.patchValue(
+      {
+        original_currency: this.baseCurrency(),
+      },
+      { emitEvent: false },
+    );
+    
+    // Fetch data
+    this.#accountsService.fetchByCondominium(this.condominiumId()).catch((error) => {
+      console.error('Failed to fetch accounts:', error);
+    });
+    this.#categoriesService.fetchByCondominium(this.condominiumId()).catch((error) => {
+      console.error('Failed to fetch categories:', error);
+    });
+  }
+
   // --- Signals ---
   #accounts = toSignal(this.#accountsService.accounts$, { initialValue: [] });
   #categories = toSignal(this.#categoriesService.categories$, { initialValue: [] });
   currencies = toSignal(this.#currencyService.currencies$, { initialValue: [] });
+  tempDate = signal<string>(this.#today());
 
   availableAccounts = computed(() =>
     this.#accounts().filter((account) => account.condominium_id === this.condominiumId()),
@@ -110,7 +142,7 @@ export class IncomeFormComponent {
       nonNullable: true,
     }),
     reference_number: new FormControl<string | null>(null),
-    transaction_date: new FormControl('', {
+    transaction_date: new FormControl(this.#today(), {
       validators: [Validators.required, this.#futureDateValidator()],
       nonNullable: true,
     }),
@@ -148,24 +180,6 @@ export class IncomeFormComponent {
   });
 
   // --- Reactivity ---
-  #loadAccountsEffect = effect(() => {
-    const condominiumId = this.condominiumId();
-    if (condominiumId) {
-      this.#accountsService.fetchByCondominium(condominiumId).catch((error) => {
-        console.error('Failed to fetch accounts:', error);
-      });
-    }
-  });
-
-  #loadCategoriesEffect = effect(() => {
-    const condominiumId = this.condominiumId();
-    if (condominiumId) {
-      this.#categoriesService.fetchByCondominium(condominiumId).catch((error) => {
-        console.error('Failed to fetch categories:', error);
-      });
-    }
-  });
-
   #currencyChangeSubscription = this.form.controls.original_currency.valueChanges
     .pipe(takeUntilDestroyed())
     .subscribe((currency) => {
@@ -203,6 +217,36 @@ export class IncomeFormComponent {
     this.#resetForm();
   }
 
+  /**
+   * Handles date selection from the calendar. Auto-applies the date.
+   */
+  onDateChange(event: CustomEvent): void {
+    const dateValue = event.detail.value;
+    if (dateValue) {
+      // Extract just the date part (YYYY-MM-DD)
+      const dateOnly = dateValue.split('T')[0];
+      this.tempDate.set(dateOnly);
+      this.form.patchValue({ transaction_date: dateOnly }, { emitEvent: false });
+    }
+  }
+
+  /**
+   * Applies the selected date and closes the popover.
+   */
+  applyDate(popover: IonPopover): void {
+    // Date is already applied via onDateChange, just close the popover
+    popover.dismiss();
+  }
+
+  /**
+   * Cancels the date selection and closes the popover.
+   */
+  cancelDate(popover: IonPopover): void {
+    // Revert to the original date from the form
+    this.tempDate.set(this.form.controls.transaction_date.value);
+    popover.dismiss();
+  }
+
   // --- Private Methods ---
 
   #resetForm(): void {
@@ -219,6 +263,7 @@ export class IncomeFormComponent {
       },
       { emitEvent: false },
     );
+    this.tempDate.set(this.#today());
   }
 
   #markAllAsTouched(): void {

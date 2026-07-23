@@ -128,7 +128,9 @@ describe('IncomeFormComponent', () => {
     expect(component.form.value.exchange_rate).toBe(1);
     expect(component.form.value.description).toBe('');
     expect(component.form.value.reference_number).toBeNull();
-    expect(component.form.value.transaction_date).toMatch(/^\d{4}-\d{2}-\d{2}$/);
+    expect(component.form.value.transaction_date).toBe(
+      new Date().toISOString().split('T')[0],
+    );
   });
 
   it('should fetch accounts and categories when condominiumId is set', () => {

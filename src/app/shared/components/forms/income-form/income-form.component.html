@@ -94,12 +94,37 @@
   </ion-item>
 
   <ion-item>
-    <ion-input
-      formControlName="transaction_date"
-      type="date"
-      [label]="'shared.incomeForm.transactionDate' | transloco"
-      labelPlacement="stacked"
-      [errorText]="transactionDateErrors$ | async"
-    ></ion-input>
+    <ion-label>
+      {{ 'shared.incomeForm.transactionDate' | transloco }}
+    </ion-label>
+    <ion-datetime-button datetime="income-date"></ion-datetime-button>
   </ion-item>
+
+  @if (
+    form.controls.transaction_date.touched &&
+    form.controls.transaction_date.invalid
+  ) {
+    <ion-note color="danger" class="error-note">
+      {{ transactionDateErrors$ | async }}
+    </ion-note>
+  }
+
+  <ion-popover #datePopover [keepContentsMounted]="true">
+    <ng-template>
+      <ion-datetime
+        id="income-date"
+        [value]="tempDate()"
+        presentation="date"
+        (ionChange)="onDateChange($event)"
+      ></ion-datetime>
+      <div class="datetime-buttons">
+        <ion-button fill="clear" color="medium" (click)="cancelDate(datePopover)">
+          {{ 'shared.incomeForm.cancel' | transloco }}
+        </ion-button>
+        <ion-button fill="solid" color="primary" (click)="applyDate(datePopover)">
+          {{ 'shared.incomeForm.apply' | transloco }}
+        </ion-button>
+      </div>
+    </ng-template>
+  </ion-popover>
 </form>

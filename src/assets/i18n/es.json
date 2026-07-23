@@ -29,7 +29,8 @@
       "referenceNumber": "Número de Referencia",
       "transactionDate": "Fecha de Transacción",
       "submit": "Guardar Ingreso",
-      "cancel": "Cancelar"
+      "cancel": "Cancelar",
+      "apply": "Aplicar"
     }
   },
   "general": {
