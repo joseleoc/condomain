@@ -1,0 +1,43 @@
+<ion-modal
+  [isOpen]="isOpen()"
+  [backdropDismiss]="false"
+  (didDismiss)="cancel()"
+>
+  <ng-template>
+    <ion-header>
+      <ion-toolbar>
+        <ion-title>
+          {{ 'shared.incomeForm.title' | transloco }}
+        </ion-title>
+        <ion-buttons slot="end">
+          <ion-button fill="clear" color="secondary" (click)="cancel()">
+            {{ 'shared.incomeForm.cancel' | transloco }}
+          </ion-button>
+        </ion-buttons>
+      </ion-toolbar>
+    </ion-header>
+
+    <ion-content class="ion-padding" [scrollY]="true">
+      <app-income-form
+        [condominiumId]="condominiumId()"
+        [baseCurrency]="baseCurrency()"
+        (formSubmit)="onFormSubmit($event)"
+        (cancelled)="cancel()"
+      />
+    </ion-content>
+
+    <ion-footer>
+      <ion-toolbar>
+        <ion-buttons slot="end">
+          <ion-button
+            fill="solid"
+            color="primary"
+            (click)="submit()"
+          >
+            {{ 'shared.incomeForm.submit' | transloco }}
+          </ion-button>
+        </ion-buttons>
+      </ion-toolbar>
+    </ion-footer>
+  </ng-template>
+</ion-modal>
