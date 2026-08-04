@@ -4,12 +4,13 @@
     {{ 'shared.incomeForm.title' | transloco }}
   </ion-button>
 
+  <app-income-list [condominiumId]="condominium.id" />
+
   <app-income-form-modal
     [isOpen]="isIncomeModalOpen()"
     [condominiumId]="condominium.id"
     [baseCurrency]="condominium.currency"
     (isOpenChange)="isIncomeModalOpen.set($event)"
-    (formSubmit)="onIncomeFormSubmit($event)"
   />
 } @else {
   <app-new-condo-animated-btn />

@@ -17,6 +17,11 @@
     "total": "Total",
     "copiedToClipboard": "Copiado al portapapeles"
   },
+  "home": {
+    "incomeCreated": "Ingreso creado exitosamente",
+    "incomeCreateError": "Error al crear el ingreso. Por favor intenta de nuevo.",
+    "duplicateReferenceNumber": "Este número de referencia ya existe. Por favor usa uno diferente."
+  },
   "shared": {
     "incomeForm": {
       "title": "Nuevo Ingreso",

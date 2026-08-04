@@ -291,7 +291,7 @@ describe('IncomeFormComponent', () => {
     expect(component.form.value.exchange_rate).toBe(1);
   }));
 
-  it('should emit formSubmit with valid data and reset the form', () => {
+  it('should emit formSubmit with valid data without resetting the form', () => {
     spyOn(component.formSubmit, 'emit');
     component.form.setValue(createValidFormValue());
 
@@ -300,7 +300,19 @@ describe('IncomeFormComponent', () => {
     expect(component.formSubmit.emit).toHaveBeenCalledWith(
       jasmine.objectContaining(createValidFormValue()),
     );
+    // Form should NOT be reset after submit
+    expect(component.form.value.account_id).toBe('account-1');
+  });
+
+  it('should reset the form when resetForm is called', () => {
+    component.form.setValue(createValidFormValue());
+    expect(component.form.value.account_id).toBe('account-1');
+
+    component.resetForm();
+
     expect(component.form.value.account_id).toBe('');
+    expect(component.form.value.category_id).toBe('');
+    expect(component.form.value.amount).toBe(0);
   });
 
   it('should mark all controls touched and not emit when form is invalid', () => {

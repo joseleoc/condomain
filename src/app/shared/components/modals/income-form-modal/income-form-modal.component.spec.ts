@@ -6,6 +6,8 @@ import { TransactionCategories } from '@core/services/transaction-categories/tra
 import { Currency } from '@core/services/currency/currency';
 import { IncomeFormModalComponent } from './income-form-modal.component';
 import { IncomeFormValue } from '@shared/components/forms/income-form/income-form.component';
+import { IncomesService } from '@core/services/incomes/incomes.service';
+import { Toast } from '@core/services/toast/toast';
 
 function createMockAccountsService(): CondominiumAccounts {
   return {
@@ -38,9 +40,23 @@ function createMockCurrencyService(): Currency {
   } as unknown as Currency;
 }
 
+function createMockIncomesService(): IncomesService {
+  return {
+    createIncome: jasmine.createSpy('createIncome').and.returnValue(Promise.resolve({})),
+  } as unknown as IncomesService;
+}
+
+function createMockToast(): Toast {
+  return {
+    present: jasmine.createSpy('present').and.returnValue(Promise.resolve()),
+  } as unknown as Toast;
+}
+
 describe('IncomeFormModalComponent', () => {
   let component: IncomeFormModalComponent;
   let fixture: ComponentFixture<IncomeFormModalComponent>;
+  let incomesService: IncomesService;
+  let toast: Toast;
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
@@ -52,6 +68,8 @@ describe('IncomeFormModalComponent', () => {
           useFactory: createMockCategoriesService,
         },
         { provide: Currency, useFactory: createMockCurrencyService },
+        { provide: IncomesService, useFactory: createMockIncomesService },
+        { provide: Toast, useFactory: createMockToast },
       ],
     }).compileComponents();
 
@@ -61,6 +79,9 @@ describe('IncomeFormModalComponent', () => {
     fixture.componentRef.setInput('baseCurrency', 'USD');
     fixture.componentRef.setInput('isOpen', true);
     fixture.detectChanges();
+
+    incomesService = TestBed.inject(IncomesService);
+    toast = TestBed.inject(Toast);
   });
 
   it('should create', () => {
@@ -73,9 +94,37 @@ describe('IncomeFormModalComponent', () => {
     expect(component.isOpen()).toBe(true);
   });
 
-  it('should emit formSubmit and close modal on form submit', () => {
-    spyOn(component.formSubmit, 'emit');
+  it('should call incomesService.createIncome on form submit', async () => {
+    const value: IncomeFormValue = {
+      account_id: 'account-1',
+      category_id: 'category-1',
+      amount: 100,
+      original_currency: 'USD',
+      exchange_rate: 1,
+      description: 'Test',
+      reference_number: null,
+      transaction_date: '2026-07-01',
+    };
+
+    await component.onFormSubmit(value);
+
+    expect(incomesService.createIncome).toHaveBeenCalledWith({
+      condominium_id: 'condo-1',
+      account_id: 'account-1',
+      category_id: 'category-1',
+      amount: 100,
+      original_currency: 'USD',
+      exchange_rate: 1,
+      description: 'Test',
+      reference_number: null,
+      transaction_date: '2026-07-01',
+    });
+  });
+
+  it('should close modal on successful submission', async () => {
     spyOn(component.isOpenChange, 'emit');
+    spyOn(component.formSubmit, 'emit');
+    spyOn(component.incomeForm(), 'resetForm');
 
     const value: IncomeFormValue = {
       account_id: 'account-1',
@@ -88,10 +137,54 @@ describe('IncomeFormModalComponent', () => {
       transaction_date: '2026-07-01',
     };
 
-    component.onFormSubmit(value);
+    await component.onFormSubmit(value);
 
     expect(component.formSubmit.emit).toHaveBeenCalledWith(value);
     expect(component.isOpenChange.emit).toHaveBeenCalledWith(false);
+    expect(component.incomeForm().resetForm).toHaveBeenCalled();
+    expect(toast.present).toHaveBeenCalledWith(
+      jasmine.objectContaining({
+        color: 'success',
+        duration: 2000,
+      })
+    );
+  });
+
+  it('should not close modal on error', async () => {
+    spyOn(component.isOpenChange, 'emit');
+    spyOn(component.formSubmit, 'emit');
+    spyOn(component.incomeForm(), 'resetForm');
+
+    // Mock error
+    (incomesService.createIncome as jasmine.Spy).and.returnValue(
+      Promise.reject({
+        code: '23505',
+        message: 'duplicate key value violates unique constraint "reference_unique_active"',
+      })
+    );
+
+    const value: IncomeFormValue = {
+      account_id: 'account-1',
+      category_id: 'category-1',
+      amount: 100,
+      original_currency: 'USD',
+      exchange_rate: 1,
+      description: 'Test',
+      reference_number: 'DUPLICATE',
+      transaction_date: '2026-07-01',
+    };
+
+    await component.onFormSubmit(value);
+
+    expect(component.formSubmit.emit).not.toHaveBeenCalled();
+    expect(component.isOpenChange.emit).not.toHaveBeenCalled();
+    expect(component.incomeForm().resetForm).not.toHaveBeenCalled();
+    expect(toast.present).toHaveBeenCalledWith(
+      jasmine.objectContaining({
+        color: 'danger',
+        duration: 3000,
+      })
+    );
   });
 
   it('should emit isOpenChange false on cancel', () => {

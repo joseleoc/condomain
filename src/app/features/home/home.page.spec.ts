@@ -4,7 +4,6 @@ import { BehaviorSubject } from 'rxjs';
 import { CondominiumAccounts } from '@core/services/condominium-accounts/condominium-accounts';
 import { TransactionCategories } from '@core/services/transaction-categories/transaction-categories';
 import { Currency } from '@core/services/currency/currency';
-import { IncomesService } from '@core/services/incomes/incomes.service';
 
 import { HomePage } from './home.page';
 
@@ -28,12 +27,6 @@ function createMockCurrencyService(): Currency {
   } as unknown as Currency;
 }
 
-function createMockIncomesService(): IncomesService {
-  return {
-    createIncome: () => Promise.resolve({} as any),
-  } as unknown as IncomesService;
-}
-
 describe('HomePage', () => {
   let component: HomePage;
   let fixture: ComponentFixture<HomePage>;
@@ -45,7 +38,6 @@ describe('HomePage', () => {
         { provide: CondominiumAccounts, useFactory: createMockAccountsService },
         { provide: TransactionCategories, useFactory: createMockCategoriesService },
         { provide: Currency, useFactory: createMockCurrencyService },
-        { provide: IncomesService, useFactory: createMockIncomesService },
       ],
     }).compileComponents();
 

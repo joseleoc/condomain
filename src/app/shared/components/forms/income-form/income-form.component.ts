@@ -206,7 +206,6 @@ export class IncomeFormComponent implements OnInit {
 
     const formValue = this.form.value as IncomeFormValue;
     this.formSubmit.emit(formValue);
-    this.#resetForm();
   }
 
   /**
@@ -214,6 +213,13 @@ export class IncomeFormComponent implements OnInit {
    */
   onCancel(): void {
     this.cancelled.emit();
+    this.#resetForm();
+  }
+
+  /**
+   * Resets the form to its initial state.
+   */
+  resetForm(): void {
     this.#resetForm();
   }
 
