@@ -1,0 +1,130 @@
+<form [formGroup]="form" (ngSubmit)="submit()">
+  <ion-item>
+    <ion-select
+      formControlName="account_id"
+      [label]="'shared.incomeForm.account' | transloco"
+      labelPlacement="stacked"
+      interface="popover"
+      [errorText]="accountErrors$ | async"
+    >
+      @for (account of availableAccounts(); track account.id) {
+        <ion-select-option [value]="account.id">
+          {{ account.name }}
+        </ion-select-option>
+      }
+    </ion-select>
+  </ion-item>
+
+  <ion-item>
+    <ion-select
+      formControlName="category_id"
+      [label]="'shared.incomeForm.category' | transloco"
+      labelPlacement="stacked"
+      interface="popover"
+      [errorText]="categoryErrors$ | async"
+    >
+      @for (category of availableCategories(); track category.id) {
+        <ion-select-option [value]="category.id">
+          @if (category.i18n_key) {
+            {{ ('financial.categories.system.' + category.i18n_key) | transloco }}
+          } @else {
+            {{ category.name }}
+          }
+        </ion-select-option>
+      }
+    </ion-select>
+  </ion-item>
+
+  <ion-item>
+    <ion-input
+      formControlName="amount"
+      type="number"
+      step="0.01"
+      [label]="'shared.incomeForm.amount' | transloco"
+      labelPlacement="stacked"
+      [errorText]="amountErrors$ | async"
+    ></ion-input>
+  </ion-item>
+
+  <ion-item>
+    <ion-select
+      formControlName="original_currency"
+      [label]="'shared.incomeForm.currency' | transloco"
+      labelPlacement="stacked"
+      interface="popover"
+      [errorText]="currencyErrors$ | async"
+    >
+      @for (currency of currencies(); track currency.iso_code) {
+        <ion-select-option [value]="currency.iso_code">
+          {{ currency.name }} ({{ currency.symbol }})
+        </ion-select-option>
+      }
+    </ion-select>
+  </ion-item>
+
+  @if (showExchangeRate()) {
+    <ion-item>
+      <ion-input
+        formControlName="exchange_rate"
+        type="number"
+        step="0.0001"
+        [label]="'shared.incomeForm.exchangeRate' | transloco"
+        labelPlacement="stacked"
+        [errorText]="exchangeRateErrors$ | async"
+      ></ion-input>
+    </ion-item>
+  }
+
+  <ion-item>
+    <ion-input
+      formControlName="description"
+      [label]="'shared.incomeForm.description' | transloco"
+      labelPlacement="stacked"
+      [errorText]="descriptionErrors$ | async"
+    ></ion-input>
+  </ion-item>
+
+  <ion-item>
+    <ion-input
+      formControlName="reference_number"
+      [label]="'shared.incomeForm.referenceNumber' | transloco"
+      labelPlacement="stacked"
+      [errorText]="referenceNumberErrors$ | async"
+    ></ion-input>
+  </ion-item>
+
+  <ion-item>
+    <ion-label>
+      {{ 'shared.incomeForm.transactionDate' | transloco }}
+    </ion-label>
+    <ion-datetime-button datetime="income-date"></ion-datetime-button>
+  </ion-item>
+
+  @if (
+    form.controls.transaction_date.touched &&
+    form.controls.transaction_date.invalid
+  ) {
+    <ion-note color="danger" class="error-note">
+      {{ transactionDateErrors$ | async }}
+    </ion-note>
+  }
+
+  <ion-popover #datePopover [keepContentsMounted]="true">
+    <ng-template>
+      <ion-datetime
+        id="income-date"
+        [value]="tempDate()"
+        presentation="date"
+        (ionChange)="onDateChange($event)"
+      ></ion-datetime>
+      <div class="datetime-buttons">
+        <ion-button fill="clear" color="medium" (click)="cancelDate(datePopover)">
+          {{ 'shared.incomeForm.cancel' | transloco }}
+        </ion-button>
+        <ion-button fill="solid" color="primary" (click)="applyDate(datePopover)">
+          {{ 'shared.incomeForm.apply' | transloco }}
+        </ion-button>
+      </div>
+    </ng-template>
+  </ion-popover>
+</form>

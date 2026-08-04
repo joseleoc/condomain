@@ -1,0 +1,38 @@
+:host {
+  display: block;
+}
+
+form {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+ion-item {
+  --padding-start: 0.75rem;
+  --inner-padding-end: 0.75rem;
+}
+
+ion-input,
+ion-select,
+ion-datetime-button {
+  --padding-start: 0.75rem;
+}
+
+ion-label {
+  padding-left: 0.75rem;
+}
+
+.error-note {
+  display: block;
+  padding: 0.25rem 0.75rem;
+  font-size: 0.75rem;
+}
+
+.datetime-buttons {
+  display: flex;
+  justify-content: flex-end;
+  gap: 0.5rem;
+  padding: 0.5rem;
+  border-top: 1px solid var(--ion-color-light-shade);
+}

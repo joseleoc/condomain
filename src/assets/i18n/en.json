@@ -17,6 +17,27 @@
     "total": "Total",
     "copiedToClipboard": "Copied to clipboard"
   },
+  "home": {
+    "incomeCreated": "Income created successfully",
+    "incomeCreateError": "Error creating income. Please try again.",
+    "duplicateReferenceNumber": "This reference number already exists. Please use a different one."
+  },
+  "shared": {
+    "incomeForm": {
+      "title": "New Income",
+      "account": "Account",
+      "category": "Category",
+      "amount": "Amount",
+      "currency": "Currency",
+      "exchangeRate": "Exchange Rate",
+      "description": "Description",
+      "referenceNumber": "Reference Number",
+      "transactionDate": "Transaction Date",
+      "submit": "Save Income",
+      "cancel": "Cancel",
+      "apply": "Apply"
+    }
+  },
   "general": {
     "changeImage": "Change Image",
     "selectImage": "Select Image",
@@ -282,6 +303,7 @@
     "maxLength": "Maximum length is {{length}} characters",
     "min": "Minimum value is {{value}}",
     "max": "Maximum value is {{value}}",
+    "futureDate": "Future dates are not allowed",
     "passwordMismatch": "Passwords do not match"
   },
   "auth": {
