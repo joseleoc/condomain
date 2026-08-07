@@ -1,0 +1,92 @@
+<form [formGroup]="form">
+  <ion-item>
+    <ion-select
+      formControlName="account_id"
+      [label]="'financial.transactions.form.account' | transloco"
+      labelPlacement="stacked"
+    >
+      @for (account of availableAccounts(); track account.id) {
+        <ion-select-option [value]="account.id">
+          {{ account.name }}
+        </ion-select-option>
+      }
+    </ion-select>
+  </ion-item>
+
+  <ion-item>
+    <ion-select
+      formControlName="category_id"
+      [label]="'financial.transactions.form.category' | transloco"
+      labelPlacement="stacked"
+    >
+      @for (category of availableCategories(); track category.id) {
+        <ion-select-option [value]="category.id">
+          @if (category.i18n_key) {
+            {{ ('financial.categories.system.' + category.i18n_key) | transloco }}
+          } @else {
+            {{ category.name }}
+          }
+        </ion-select-option>
+      }
+    </ion-select>
+  </ion-item>
+
+  <ion-item>
+    <ion-input
+      formControlName="amount"
+      type="number"
+      [label]="'financial.transactions.form.amount' | transloco"
+      labelPlacement="stacked"
+    ></ion-input>
+  </ion-item>
+
+  <ion-item>
+    <ion-select
+      formControlName="original_currency"
+      [label]="'financial.transactions.form.currency' | transloco"
+      labelPlacement="stacked"
+    >
+      @for (currency of currencies(); track currency.iso_code) {
+        <ion-select-option [value]="currency.iso_code">
+          {{ currency.name }} ({{ currency.symbol }})
+        </ion-select-option>
+      }
+    </ion-select>
+  </ion-item>
+
+  @if (showExchangeRate()) {
+    <ion-item>
+      <ion-input
+        formControlName="exchange_rate"
+        type="number"
+        [label]="'financial.transactions.form.exchangeRate' | transloco"
+        labelPlacement="stacked"
+      ></ion-input>
+    </ion-item>
+  }
+
+  <ion-item>
+    <ion-input
+      formControlName="description"
+      [label]="'financial.transactions.form.description' | transloco"
+      labelPlacement="stacked"
+    ></ion-input>
+  </ion-item>
+
+  <ion-item>
+    <ion-input
+      formControlName="reference_number"
+      [label]="'financial.transactions.form.referenceNumber' | transloco"
+      labelPlacement="stacked"
+    ></ion-input>
+  </ion-item>
+
+  <ion-item>
+    <ion-input
+      formControlName="transaction_date"
+      type="date"
+      [label]="'financial.transactions.form.transactionDate' | transloco"
+      labelPlacement="stacked"
+    ></ion-input>
+  </ion-item>
+</form>
