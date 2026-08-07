@@ -1,5 +1,6 @@
 import { Component, computed, effect, inject, signal } from '@angular/core';
 import { AsyncPipe } from '@angular/common';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import {
   IonContent,
   IonHeader,
@@ -30,6 +31,7 @@ import { CondominiumAccounts } from '@core/services/condominium-accounts/condomi
 import { TransactionCategories } from '@core/services/transaction-categories/transaction-categories';
 import { ContextService } from '@core/services/context/context.service';
 import { Toast } from '@core/services/toast/toast';
+import { FinancialEventsService } from '@core/services/financial-events/financial-events.service';
 import { TransactionCardComponent } from '../../components/transaction-card/transaction-card.component';
 import { TransactionFormModalComponent } from '../../components/transaction-form-modal/transaction-form-modal.component';
 import { TransferFormModalComponent } from '../../components/transfer-form-modal/transfer-form-modal.component';
@@ -88,6 +90,7 @@ export class TransactionListPage {
   #transactionsService = inject(FinancialTransactions);
   #accountsService = inject(CondominiumAccounts);
   #categoriesService = inject(TransactionCategories);
+  #financialEvents = inject(FinancialEventsService);
   contextService = inject(ContextService);
   #translocoService = inject(TranslocoService);
   #toast = inject(Toast);
@@ -163,6 +166,20 @@ export class TransactionListPage {
       });
     }
   });
+
+  constructor() {
+    // Listen to financial events and refresh transactions list
+    this.#financialEvents.onAll().pipe(takeUntilDestroyed()).subscribe((event) => {
+      const condominium = this.contextService.activeCondominium();
+      if (condominium && event.condominiumId === condominium.id) {
+        this.#transactionsService
+          .fetchByCondominium(condominium.id, this.filters())
+          .catch((error) => {
+            console.error('Failed to refresh transactions after event:', error);
+          });
+      }
+    });
+  }
 
   // --- Event Handlers ---
 

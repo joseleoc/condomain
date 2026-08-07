@@ -1,6 +1,5 @@
 import { Component, computed, inject, input, output } from '@angular/core';
 import {
-  IonItem,
   IonLabel,
   IonBadge,
   IonIcon,
@@ -41,7 +40,7 @@ const TYPE_COLOR_MAP: Record<TransactionType, TypeColor> = {
   templateUrl: './transaction-card.component.html',
   styleUrls: ['./transaction-card.component.scss'],
   standalone: true,
-  imports: [IonItem, IonLabel, IonBadge, IonIcon, TranslocoPipe],
+  imports: [IonLabel, IonBadge, IonIcon, TranslocoPipe],
 })
 export class TransactionCardComponent {
   // --- Dependencies ---

@@ -1,7 +1,5 @@
-.transaction-card {
-  --padding-start: 0.75rem;
-  --padding-end: 0.75rem;
-  --inner-padding-end: 0;
+:host {
+  display: contents;
 }
 
 .transaction-type-icon {
