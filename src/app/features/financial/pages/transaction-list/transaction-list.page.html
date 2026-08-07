@@ -139,13 +139,13 @@
 
   <!-- Populated state -->
   @if (!loading && !error && transactions && transactions.length > 0) {
-    <ion-list class="transaction-list">
+    <div class="transaction-list-container">
       @for (transaction of transactions; track transaction.id) {
-        <ion-item-sliding>
+        <ion-item-sliding class="transaction-card-wrapper">
           <ion-item
-            lines="full"
+            lines="none"
             (click)="openTransactionForm(transaction)"
-            class="transaction-item"
+            class="transaction-card-item"
           >
             <app-transaction-card
               [transaction]="transaction"
@@ -167,7 +167,7 @@
           </ion-item-options>
         </ion-item-sliding>
       }
-    </ion-list>
+    </div>
   }
 
   <!-- Floating action buttons -->

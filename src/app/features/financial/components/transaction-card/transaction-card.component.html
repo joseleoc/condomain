@@ -1,41 +1,46 @@
 <ion-icon
   [name]="typeIcon()"
-  slot="start"
   [color]="typeColor()"
   class="transaction-type-icon"
 ></ion-icon>
 
-<ion-label>
+<div class="transaction-content">
+  <!-- Primera línea: Descripción y Fecha -->
   <div class="transaction-header">
     <h2 class="transaction-description">{{ transaction().description }}</h2>
-    <ion-badge [color]="statusColor()" class="transaction-status">
-      {{ ('financial.transactions.status.' + transaction().status) | transloco }}
-    </ion-badge>
+    <span class="transaction-date">{{ transaction().transaction_date }}</span>
   </div>
 
-  <p class="transaction-meta">
-    @if (category()) {
-      <span class="category-label">
-        <ion-icon [name]="categoryIcon()" class="category-icon"></ion-icon>
-        @if (category()?.i18n_key) {
-          {{ ('financial.categories.system.' + category()!.i18n_key) | transloco }}
-        } @else {
-          {{ category()?.name }}
-        }
-      </span>
-    } @else if (transaction().type === 'transfer') {
-      <span class="category-label">
-        <ion-icon name="swap-horizontal-outline" class="category-icon"></ion-icon>
-        {{ 'financial.transactions.transferTab' | transloco }}
-      </span>
-    }
-    @if (showAccountName() && accountName()) {
-      <span class="account-label">{{ accountName() }}</span>
-    }
-    <span class="transaction-date">{{ transaction().transaction_date }}</span>
-  </p>
-</ion-label>
+  <!-- Segunda línea: Categoría, Billetera y Monto -->
+  <div class="transaction-footer">
+    <div class="transaction-meta">
+      @if (category()) {
+        <span class="category-label">
+          <ion-icon [name]="categoryIcon()" class="category-icon"></ion-icon>
+          @if (category()?.i18n_key) {
+            {{ ('financial.categories.system.' + category()!.i18n_key) | transloco }}
+          } @else {
+            {{ category()?.name }}
+          }
+        </span>
+      } @else if (transaction().type === 'transfer') {
+        <span class="category-label">
+          <ion-icon name="swap-horizontal-outline" class="category-icon"></ion-icon>
+          {{ 'financial.transactions.transferTab' | transloco }}
+        </span>
+      }
+      @if (showAccountName() && accountName()) {
+        <span class="account-label">{{ accountName() }}</span>
+      }
+    </div>
 
-<div slot="end" class="transaction-amount" [class]="'amount-' + transaction().type">
-  {{ formattedAmount() }}
+    <div class="transaction-amount" [class]="'amount-' + transaction().type">
+      {{ formattedAmount() }}
+    </div>
+  </div>
+
+  <!-- Status Badge -->
+  <ion-badge [color]="statusColor()" class="transaction-status">
+    {{ ('financial.transactions.status.' + transaction().status) | transloco }}
+  </ion-badge>
 </div>

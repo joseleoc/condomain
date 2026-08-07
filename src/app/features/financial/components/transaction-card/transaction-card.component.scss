@@ -3,19 +3,28 @@
 }
 
 .transaction-type-icon {
-  font-size: 1.5rem;
-  margin-right: 0.75rem;
+  font-size: 2rem;
+  margin-right: 1rem;
+  flex-shrink: 0;
+}
+
+.transaction-content {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  position: relative;
 }
 
 .transaction-header {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  gap: 0.5rem;
+  gap: 1rem;
 }
 
 .transaction-description {
-  font-size: 1rem;
+  font-size: 1.1rem;
   font-weight: 600;
   margin: 0;
   overflow: hidden;
@@ -24,19 +33,27 @@
   flex: 1;
 }
 
-.transaction-status {
-  font-size: 0.7rem;
-  text-transform: uppercase;
+.transaction-date {
+  font-size: 0.85rem;
+  color: var(--ion-color-medium);
+  white-space: nowrap;
   flex-shrink: 0;
+}
+
+.transaction-footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
 }
 
 .transaction-meta {
   display: flex;
   align-items: center;
   gap: 0.75rem;
-  margin: 0.25rem 0 0;
-  font-size: 0.85rem;
+  font-size: 0.9rem;
   color: var(--ion-color-medium);
+  flex: 1;
 }
 
 .category-label,
@@ -47,18 +64,15 @@
 }
 
 .category-icon {
-  font-size: 0.9rem;
-}
-
-.transaction-date {
-  margin-left: auto;
+  font-size: 1rem;
 }
 
 .transaction-amount {
-  font-size: 1.1rem;
+  font-size: 1.4rem;
   font-weight: 700;
   white-space: nowrap;
-  margin-left: 0.75rem;
+  text-align: right;
+  flex-shrink: 0;
 }
 
 .amount-income {
@@ -71,4 +85,13 @@
 
 .amount-transfer {
   color: var(--ion-color-primary);
+}
+
+.transaction-status {
+  position: absolute;
+  top: 0;
+  right: 0;
+  font-size: 0.65rem;
+  text-transform: uppercase;
+  transform: translate(0, -50%);
 }
