@@ -16,6 +16,7 @@ import { TelemetryService } from '../telemetry/telemetry.service';
 import { TelemetryEvents } from '../telemetry/telemetry.types';
 import { Profile } from '../profile/profile';
 import { ContextService } from '../context/context.service';
+import { FinancialEventsService } from '../financial-events/financial-events.service';
 import { v4 as uuidv4 } from 'uuid';
 import { BehaviorSubject } from 'rxjs';
 
@@ -39,6 +40,7 @@ export class FinancialTransactions {
   #telemetry = inject(TelemetryService);
   #profile = inject(Profile);
   #context = inject(ContextService);
+  #financialEvents = inject(FinancialEventsService);
 
   // --- State ---
   transactions$ = new BehaviorSubject<FinancialTransaction[]>([]);
@@ -236,16 +238,32 @@ export class FinancialTransactions {
    * Create a new income/expense/transfer transaction.
    * Online: inserts into Supabase, caches locally, tracks telemetry.
    * Offline: generates a local UUID, queues a mutation for sync.
+   * Emits 'transaction:created' event after successful creation.
    */
   async create(data: CreateFinancialTransactionData): Promise<FinancialTransaction> {
+    let result: FinancialTransaction;
+    
     if (this.#networkStatus.isOnline()) {
-      return this.#createOnline(data);
+      result = await this.#createOnline(data);
+    } else {
+      result = await this.#createOffline(data);
     }
-    return this.#createOffline(data);
+    
+    // Emit event for other services to react (e.g., refresh wallet balances)
+    this.#financialEvents.emit({
+      type: 'transaction:created',
+      condominiumId: data.condominium_id,
+      accountId: data.account_id,
+      transactionId: result.id,
+      timestamp: new Date(),
+    });
+    
+    return result;
   }
 
   /**
    * Create a transfer as two linked transactions.
+   * Emits 'transaction:created' events for both legs after successful creation.
    */
   async createTransfer(data: CreateTransferData): Promise<FinancialTransaction[]> {
     if (data.amount <= 0) {
@@ -286,6 +304,8 @@ export class FinancialTransactions {
       type: 'income',
     };
 
+    let result: FinancialTransaction[];
+    
     if (this.#networkStatus.isOnline()) {
       const expenseLeg = await this.#createOnline(expenseLegData, true);
       let incomeLeg: FinancialTransaction;
@@ -296,12 +316,30 @@ export class FinancialTransactions {
         console.error('Failed to create transfer income leg:', error);
         throw error;
       }
-      return [expenseLeg, incomeLeg];
+      result = [expenseLeg, incomeLeg];
+    } else {
+      const expenseLeg = await this.#createOffline(expenseLegData, true);
+      const incomeLeg = await this.#createOffline(incomeLegData, true);
+      result = [expenseLeg, incomeLeg];
     }
-
-    const expenseLeg = await this.#createOffline(expenseLegData, true);
-    const incomeLeg = await this.#createOffline(incomeLegData, true);
-    return [expenseLeg, incomeLeg];
+    
+    // Emit events for both legs
+    this.#financialEvents.emit({
+      type: 'transaction:created',
+      condominiumId: data.condominium_id,
+      accountId: data.source_account_id,
+      transactionId: result[0].id,
+      timestamp: new Date(),
+    });
+    this.#financialEvents.emit({
+      type: 'transaction:created',
+      condominiumId: data.condominium_id,
+      accountId: data.destination_account_id,
+      transactionId: result[1].id,
+      timestamp: new Date(),
+    });
+    
+    return result;
   }
 
   /**
@@ -405,6 +443,7 @@ export class FinancialTransactions {
 
   /**
    * Update only the status of a transaction, validating the transition.
+   * Emits 'transaction:status-changed' event after successful update.
    */
   async updateStatus(id: string, newStatus: TransactionStatus): Promise<void> {
     const existing = await this.#localRepo.getById(ENTITY_TYPE, id);
@@ -449,6 +488,15 @@ export class FinancialTransactions {
         `update-status-financial_transaction-${id}-${Date.now()}`,
       );
     }
+    
+    // Emit event for other services to react (e.g., refresh wallet balances when status changes to 'completed')
+    this.#financialEvents.emit({
+      type: 'transaction:status-changed',
+      condominiumId: existingTransaction.condominium_id,
+      accountId: existingTransaction.account_id,
+      transactionId: id,
+      timestamp: new Date(),
+    });
   }
 
   /**

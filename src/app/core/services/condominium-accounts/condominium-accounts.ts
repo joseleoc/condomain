@@ -1,4 +1,4 @@
-import { inject, Injectable } from '@angular/core';
+import { inject, Injectable, DestroyRef } from '@angular/core';
 import { Supabase } from '../supabase/supabase';
 import {
   CondominiumAccount,
@@ -9,8 +9,9 @@ import { LocalRepository } from '../sync/local-repository';
 import { SyncService } from '../sync/sync-service';
 import { TelemetryService } from '../telemetry/telemetry.service';
 import { TelemetryEvents } from '../telemetry/telemetry.types';
+import { FinancialEventsService } from '../financial-events/financial-events.service';
 import { v4 as uuidv4 } from 'uuid';
-import { BehaviorSubject } from 'rxjs';
+import { BehaviorSubject, Subscription } from 'rxjs';
 
 export interface UpdateCondominiumAccountData {
   name?: string;
@@ -33,11 +34,54 @@ export class CondominiumAccounts {
   #localRepo = inject(LocalRepository);
   #syncService = inject(SyncService);
   #telemetry = inject(TelemetryService);
+  #financialEvents = inject(FinancialEventsService);
+  #destroyRef = inject(DestroyRef);
 
   // --- State ---
   accounts$ = new BehaviorSubject<CondominiumAccount[]>([]);
   loading$ = new BehaviorSubject<boolean>(false);
   error$ = new BehaviorSubject<unknown>(null);
+
+  // --- Subscriptions ---
+  #eventSubscriptions: Subscription[] = [];
+
+  constructor() {
+    this.#setupEventListeners();
+  }
+
+  /**
+   * Setup listeners for financial events that affect wallet balances.
+   * When transactions are created or status changes, refresh wallet data.
+   */
+  #setupEventListeners(): void {
+    // Listen to transaction creation events
+    const createSub = this.#financialEvents.on('transaction:created').subscribe((event) => {
+      this.#handleTransactionEvent(event.condominiumId);
+    });
+
+    // Listen to transaction status change events
+    const statusSub = this.#financialEvents.on('transaction:status-changed').subscribe((event) => {
+      this.#handleTransactionEvent(event.condominiumId);
+    });
+
+    // Store subscriptions for cleanup
+    this.#eventSubscriptions.push(createSub, statusSub);
+
+    // Cleanup on destroy
+    this.#destroyRef.onDestroy(() => {
+      this.#eventSubscriptions.forEach(sub => sub.unsubscribe());
+    });
+  }
+
+  /**
+   * Handle transaction events by refreshing wallet data for the affected condominium.
+   */
+  #handleTransactionEvent(condominiumId: string): void {
+    // Refresh wallet data to reflect updated balances
+    this.fetchByCondominium(condominiumId).catch((error) => {
+      console.error('Failed to refresh wallet data after transaction event:', error);
+    });
+  }
 
   // --- Methods ---
 
