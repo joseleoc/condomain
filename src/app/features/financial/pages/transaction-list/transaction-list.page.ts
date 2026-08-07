@@ -33,6 +33,7 @@ import { Toast } from '@core/services/toast/toast';
 import { TransactionCardComponent } from '../../components/transaction-card/transaction-card.component';
 import { TransactionFormModalComponent } from '../../components/transaction-form-modal/transaction-form-modal.component';
 import { TransferFormModalComponent } from '../../components/transfer-form-modal/transfer-form-modal.component';
+import { ExpenseFormModalComponent } from '@shared/components/modals/expense-form-modal/expense-form-modal.component';
 import type {
   FinancialTransaction,
   TransactionFilter,
@@ -79,6 +80,7 @@ const STATUS_FILTERS: StatusFilter[] = ['all', 'pending', 'completed', 'voided']
     TransactionCardComponent,
     TransactionFormModalComponent,
     TransferFormModalComponent,
+    ExpenseFormModalComponent,
   ],
 })
 export class TransactionListPage {
@@ -93,6 +95,7 @@ export class TransactionListPage {
   // --- State signals ---
   isTransactionFormOpen = signal(false);
   isTransferFormOpen = signal(false);
+  isExpenseFormOpen = signal(false);
   transactionToEdit = signal<FinancialTransaction | null>(null);
   accountFilter = signal<string>('all');
   categoryFilter = signal<string>('all');
@@ -179,6 +182,14 @@ export class TransactionListPage {
 
   closeTransferForm(): void {
     this.isTransferFormOpen.set(false);
+  }
+
+  openExpenseForm(): void {
+    this.isExpenseFormOpen.set(true);
+  }
+
+  closeExpenseForm(): void {
+    this.isExpenseFormOpen.set(false);
   }
 
   setAccountFilter(value: string | null): void {

@@ -179,6 +179,9 @@
       <ion-fab-button (click)="openTransferForm()" [title]="'financial.transactions.createTransferButton' | transloco">
         <ion-icon name="swap-horizontal-outline"></ion-icon>
       </ion-fab-button>
+      <ion-fab-button (click)="openExpenseForm()" [title]="'financial.transactions.createExpenseButton' | transloco">
+        <ion-icon name="arrow-down-circle-outline"></ion-icon>
+      </ion-fab-button>
       <ion-fab-button (click)="openTransactionForm()" [title]="'financial.transactions.createIncomeButton' | transloco">
         <ion-icon name="cash-outline"></ion-icon>
       </ion-fab-button>
@@ -200,5 +203,13 @@
     [baseCurrency]="baseCurrency()"
     [isOpen]="isTransferFormOpen()"
     (isOpenChange)="closeTransferForm()"
+  />
+
+  <!-- Expense form modal -->
+  <app-expense-form-modal
+    [condominiumId]="contextService.activeCondominium()?.id ?? ''"
+    [baseCurrency]="baseCurrency()"
+    [isOpen]="isExpenseFormOpen()"
+    (isOpenChange)="closeExpenseForm()"
   />
 </ion-content>
