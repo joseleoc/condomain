@@ -1,6 +1,6 @@
 import { Component, computed, effect, inject, signal } from '@angular/core';
 import { AsyncPipe } from '@angular/common';
-import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { takeUntilDestroyed, toSignal } from '@angular/core/rxjs-interop';
 import {
   IonContent,
   IonHeader,
@@ -23,6 +23,10 @@ import {
   IonInput,
   IonRefresher,
   IonRefresherContent,
+  IonInfiniteScroll,
+  IonInfiniteScrollContent,
+  IonListHeader,
+  IonLabel,
 } from '@ionic/angular/standalone';
 import { TranslocoPipe, TranslocoService } from '@jsverse/transloco';
 import { FinancialTransactions } from '@core/services/financial-transactions/financial-transactions';
@@ -76,6 +80,10 @@ const STATUS_FILTERS: StatusFilter[] = ['all', 'pending', 'completed', 'voided']
     IonInput,
     IonRefresher,
     IonRefresherContent,
+    IonInfiniteScroll,
+    IonInfiniteScrollContent,
+    IonListHeader,
+    IonLabel,
     TranslocoPipe,
     TransactionCardComponent,
     TransactionFormModalComponent,
@@ -130,9 +138,14 @@ export class TransactionListPage {
   // --- Service state ---
   transactions$ = this.#transactionsService.transactions$;
   loading$ = this.#transactionsService.loading$;
+  loadingMore$ = this.#transactionsService.loadingMore$;
+  hasMore$ = this.#transactionsService.hasMore$;
   error$ = this.#transactionsService.error$;
   accounts$ = this.#accountsService.accounts$;
   categories$ = this.#categoriesService.categories$;
+
+  hasMore = toSignal(this.hasMore$, { initialValue: true });
+  loadingMore = toSignal(this.loadingMore$, { initialValue: false });
 
   // --- Effects ---
   #fetchTransactionsEffect = effect(() => {
@@ -140,7 +153,7 @@ export class TransactionListPage {
     const filters = this.filters();
     if (condominium) {
       this.#transactionsService
-        .fetchByCondominium(condominium.id, filters)
+        .fetchByCondominium(condominium.id, filters, 0)
         .catch((error) => {
           console.error('Failed to fetch transactions:', error);
         });
@@ -263,11 +276,69 @@ export class TransactionListPage {
     const condominium = this.contextService.activeCondominium();
     if (condominium) {
       try {
-        await this.#transactionsService.fetchByCondominium(condominium.id, this.filters());
+        await this.#transactionsService.fetchByCondominium(
+          condominium.id,
+          this.filters(),
+          0,
+        );
       } catch (error) {
         console.error('Failed to refresh transactions:', error);
       }
     }
     (event.target as HTMLIonRefresherElement).complete();
+  }
+
+  async handleInfiniteScroll(event: CustomEvent): Promise<void> {
+    try {
+      await this.#transactionsService.loadMore();
+    } catch (error) {
+      console.error('Failed to load more transactions:', error);
+    }
+    (event.target as HTMLIonInfiniteScrollElement).complete();
+  }
+
+  /**
+   * Group transactions by date for display with date headers.
+   */
+  getTransactionsByDate(transactions: FinancialTransaction[]): { date: string; transactions: FinancialTransaction[] }[] {
+    const grouped = new Map<string, FinancialTransaction[]>();
+
+    for (const transaction of transactions) {
+      const date = transaction.transaction_date;
+      if (!grouped.has(date)) {
+        grouped.set(date, []);
+      }
+      grouped.get(date)!.push(transaction);
+    }
+
+    return Array.from(grouped.entries())
+      .map(([date, transactions]) => ({ date, transactions }))
+      .sort((a, b) => b.date.localeCompare(a.date));
+  }
+
+  /**
+   * Format date for display as section header.
+   */
+  formatDateHeader(dateString: string): string {
+    const date = new Date(dateString);
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+
+    const yesterday = new Date(today);
+    yesterday.setDate(yesterday.getDate() - 1);
+
+    if (date.getTime() === today.getTime()) {
+      return this.#translocoService.translate('financial.transactions.date.today');
+    }
+    if (date.getTime() === yesterday.getTime()) {
+      return this.#translocoService.translate('financial.transactions.date.yesterday');
+    }
+
+    return date.toLocaleDateString(undefined, {
+      weekday: 'long',
+      year: 'numeric',
+      month: 'long',
+      day: 'numeric',
+    });
   }
 }

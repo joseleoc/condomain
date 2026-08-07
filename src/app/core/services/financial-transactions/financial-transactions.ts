@@ -45,7 +45,15 @@ export class FinancialTransactions {
   // --- State ---
   transactions$ = new BehaviorSubject<FinancialTransaction[]>([]);
   loading$ = new BehaviorSubject<boolean>(false);
+  loadingMore$ = new BehaviorSubject<boolean>(false);
+  hasMore$ = new BehaviorSubject<boolean>(true);
   error$ = new BehaviorSubject<unknown>(null);
+
+  // --- Pagination ---
+  #pageSize = 20;
+  #currentPage = 0;
+  #currentFilters: TransactionFilter = {};
+  #currentCondominiumId = '';
 
   // --- Methods ---
 
@@ -53,13 +61,21 @@ export class FinancialTransactions {
    * Fetch transactions for a condominium with optional filters.
    * Online: fetches from Supabase and caches locally.
    * Offline: reads from IndexedDB cache.
+   * Supports pagination with limit/offset.
    */
   async fetchByCondominium(
     condominiumId: string,
     filters: TransactionFilter = {},
+    page = 0,
+    pageSize = this.#pageSize,
   ): Promise<FinancialTransaction[]> {
     this.loading$.next(true);
     this.error$.next(null);
+
+    // Store pagination state
+    this.#currentCondominiumId = condominiumId;
+    this.#currentFilters = filters;
+    this.#currentPage = page;
 
     try {
       if (!this.#networkStatus.isOnline()) {
@@ -70,8 +86,14 @@ export class FinancialTransactions {
           .filter((t) => this.#matchesFilters(t, filters))
           .sort((a, b) => b.transaction_date.localeCompare(a.transaction_date));
 
-        this.transactions$.next(transactions);
-        return transactions;
+        // Apply pagination for offline mode
+        const start = page * pageSize;
+        const end = start + pageSize;
+        const paginatedTransactions = transactions.slice(start, end);
+
+        this.transactions$.next(paginatedTransactions);
+        this.hasMore$.next(end < transactions.length);
+        return paginatedTransactions;
       }
 
       let query = this.client
@@ -99,7 +121,10 @@ export class FinancialTransactions {
         query = query.lte('transaction_date', filters.date_to);
       }
 
-      query = query.order('transaction_date', { ascending: false });
+      // Apply pagination
+      const from = page * pageSize;
+      const to = from + pageSize - 1;
+      query = query.order('transaction_date', { ascending: false }).range(from, to);
 
       const { data, error } = await query;
 
@@ -109,7 +134,17 @@ export class FinancialTransactions {
         await this.#localRepo.upsert(ENTITY_TYPE, transaction);
       }
 
-      this.transactions$.next(data || []);
+      // For first page, replace all transactions. For subsequent pages, append.
+      if (page === 0) {
+        this.transactions$.next(data || []);
+      } else {
+        const currentTransactions = this.transactions$.getValue();
+        this.transactions$.next([...currentTransactions, ...(data || [])]);
+      }
+
+      // Check if there are more transactions
+      this.hasMore$.next((data || []).length === pageSize);
+
       return data || [];
     } catch (error) {
       this.error$.next(error);
@@ -117,6 +152,41 @@ export class FinancialTransactions {
     } finally {
       this.loading$.next(false);
     }
+  }
+
+  /**
+   * Load more transactions for infinite scroll.
+   * Appends to existing transactions list.
+   */
+  async loadMore(): Promise<void> {
+    if (this.loadingMore$.getValue() || !this.hasMore$.getValue()) {
+      return;
+    }
+
+    this.loadingMore$.next(true);
+
+    try {
+      const nextPage = this.#currentPage + 1;
+      await this.fetchByCondominium(
+        this.#currentCondominiumId,
+        this.#currentFilters,
+        nextPage,
+        this.#pageSize,
+      );
+    } catch (error) {
+      console.error('Failed to load more transactions:', error);
+    } finally {
+      this.loadingMore$.next(false);
+    }
+  }
+
+  /**
+   * Reset pagination state. Call when filters change.
+   */
+  resetPagination(): void {
+    this.#currentPage = 0;
+    this.hasMore$.next(true);
+    this.transactions$.next([]);
   }
 
   /**

@@ -140,32 +140,50 @@
   <!-- Populated state -->
   @if (!loading && !error && transactions && transactions.length > 0) {
     <div class="transaction-list-container">
-      @for (transaction of transactions; track transaction.id) {
-        <ion-item-sliding class="transaction-card-wrapper">
-          <ion-item
-            lines="none"
-            (click)="openTransactionForm(transaction)"
-            class="transaction-card-item"
-          >
-            <app-transaction-card
-              [transaction]="transaction"
-              [showAccountName]="accountFilter() === 'all'"
-            />
-          </ion-item>
+      @for (group of getTransactionsByDate(transactions); track group.date) {
+        <ion-list-header class="date-header">
+          <ion-label>
+            {{ formatDateHeader(group.date) }}
+          </ion-label>
+        </ion-list-header>
 
-          <ion-item-options side="end">
-            @if (transaction.status === 'pending') {
-              <ion-item-option color="success" (click)="onStatusChange({id: transaction.id, newStatus: 'completed'})">
-                <ion-icon name="checkmark-outline" slot="icon-only"></ion-icon>
-              </ion-item-option>
-            }
-            @if (transaction.status !== 'voided') {
-              <ion-item-option color="danger" (click)="onStatusChange({id: transaction.id, newStatus: 'voided'})">
-                <ion-icon name="close-outline" slot="icon-only"></ion-icon>
-              </ion-item-option>
-            }
-          </ion-item-options>
-        </ion-item-sliding>
+        @for (transaction of group.transactions; track transaction.id) {
+          <ion-item-sliding class="transaction-card-wrapper">
+            <ion-item
+              lines="none"
+              (click)="openTransactionForm(transaction)"
+              class="transaction-card-item"
+            >
+              <app-transaction-card
+                [transaction]="transaction"
+                [showAccountName]="accountFilter() === 'all'"
+              />
+            </ion-item>
+
+            <ion-item-options side="end">
+              @if (transaction.status === 'pending') {
+                <ion-item-option color="success" (click)="onStatusChange({id: transaction.id, newStatus: 'completed'})">
+                  <ion-icon name="checkmark-outline" slot="icon-only"></ion-icon>
+                </ion-item-option>
+              }
+              @if (transaction.status !== 'voided') {
+                <ion-item-option color="danger" (click)="onStatusChange({id: transaction.id, newStatus: 'voided'})">
+                  <ion-icon name="close-outline" slot="icon-only"></ion-icon>
+                </ion-item-option>
+              }
+            </ion-item-options>
+          </ion-item-sliding>
+        }
+      }
+
+      <!-- Infinite Scroll -->
+      @if (hasMore()) {
+        <ion-infinite-scroll (ionInfinite)="handleInfiniteScroll($event)">
+          <ion-infinite-scroll-content
+            loadingSpinner="crescent"
+            [loadingText]="'financial.transactions.loadingMore' | transloco">
+          </ion-infinite-scroll-content>
+        </ion-infinite-scroll>
       }
     </div>
   }

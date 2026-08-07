@@ -486,6 +486,11 @@
       "createIncomeButton": "Nuevo ingreso",
       "createExpenseButton": "Nuevo egreso",
       "createTransferButton": "Nueva transferencia",
+      "loadingMore": "Cargando más...",
+      "date": {
+        "today": "Hoy",
+        "yesterday": "Ayer"
+      },
       "filters": {
         "account": "Cuenta",
         "category": "Categoría",

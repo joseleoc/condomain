@@ -492,6 +492,11 @@
       "createIncomeButton": "New income",
       "createExpenseButton": "New expense",
       "createTransferButton": "New transfer",
+      "loadingMore": "Loading more...",
+      "date": {
+        "today": "Today",
+        "yesterday": "Yesterday"
+      },
       "filters": {
         "account": "Account",
         "category": "Category",
