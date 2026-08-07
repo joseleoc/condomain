@@ -282,7 +282,9 @@
     "maxLength": "La longitud máxima es de {{length}} caracteres",
     "min": "El valor mínimo es {{value}}",
     "max": "El valor máximo es {{value}}",
-    "passwordMismatch": "Las contraseñas no coinciden"
+    "passwordMismatch": "Las contraseñas no coinciden",
+    "futureDate": "La fecha no puede ser futura",
+    "minAmount": "El monto mínimo es 0.01"
   },
   "auth": {
     "email": "Email",
@@ -526,7 +528,10 @@
         "deleted": "Transacción eliminada correctamente",
         "terminalEditError": "No se pueden editar transacciones completadas o anuladas",
         "sameAccountError": "Las cuentas origen y destino deben ser diferentes",
-        "error": "Error al guardar. Inténtalo de nuevo."
+        "error": "Error al guardar. Inténtalo de nuevo.",
+        "expenseCreated": "Gasto creado exitosamente",
+        "expenseCreateError": "Error al crear el gasto",
+        "duplicateReferenceNumber": "Número de referencia duplicado"
       }
     },
     "categories": {

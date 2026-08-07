@@ -282,7 +282,9 @@
     "maxLength": "Maximum length is {{length}} characters",
     "min": "Minimum value is {{value}}",
     "max": "Maximum value is {{value}}",
-    "passwordMismatch": "Passwords do not match"
+    "passwordMismatch": "Passwords do not match",
+    "futureDate": "Date cannot be in the future",
+    "minAmount": "Minimum amount is 0.01"
   },
   "auth": {
     "email": "Email",
@@ -532,7 +534,10 @@
         "deleted": "Transaction deleted successfully",
         "terminalEditError": "Cannot edit completed or voided transactions",
         "sameAccountError": "Source and destination accounts must be different",
-        "error": "Error saving. Please try again."
+        "error": "Error saving. Please try again.",
+        "expenseCreated": "Expense created successfully",
+        "expenseCreateError": "Failed to create expense",
+        "duplicateReferenceNumber": "Duplicate reference number"
       }
     },
     "categories": {
