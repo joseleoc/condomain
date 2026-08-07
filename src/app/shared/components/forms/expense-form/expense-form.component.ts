@@ -2,12 +2,10 @@ import {
   Component,
   computed,
   DestroyRef,
-  effect,
   inject,
   input,
   OnInit,
   output,
-  signal,
 } from '@angular/core';
 import {
   AbstractControl,
@@ -17,18 +15,11 @@ import {
   ValidationErrors,
   Validators,
 } from '@angular/forms';
-import { AsyncPipe } from '@angular/common';
 import {
   IonInput,
   IonItem,
   IonSelect,
   IonSelectOption,
-  IonDatetimeButton,
-  IonDatetime,
-  IonPopover,
-  IonLabel,
-  IonNote,
-  IonButton,
 } from '@ionic/angular/standalone';
 import { TranslocoPipe, TranslocoService } from '@jsverse/transloco';
 import { takeUntilDestroyed, toSignal } from '@angular/core/rxjs-interop';
@@ -54,19 +45,12 @@ export interface ExpenseFormValue {
   styleUrls: ['./expense-form.component.scss'],
   standalone: true,
   imports: [
-    AsyncPipe,
     ReactiveFormsModule,
     TranslocoPipe,
     IonInput,
     IonItem,
     IonSelect,
     IonSelectOption,
-    IonDatetimeButton,
-    IonDatetime,
-    IonPopover,
-    IonLabel,
-    IonNote,
-    IonButton,
   ],
 })
 export class ExpenseFormComponent implements OnInit {
@@ -108,7 +92,6 @@ export class ExpenseFormComponent implements OnInit {
   #accounts = toSignal(this.#accountsService.accounts$, { initialValue: [] });
   #categories = toSignal(this.#categoriesService.categories$, { initialValue: [] });
   currencies = toSignal(this.#currencyService.currencies$, { initialValue: [] });
-  tempDate = signal<string>(this.#today());
 
   availableAccounts = computed(() =>
     this.#accounts().filter((account) => account.condominium_id === this.condominiumId()),
@@ -234,36 +217,6 @@ export class ExpenseFormComponent implements OnInit {
     this.#resetForm();
   }
 
-  /**
-   * Handles date selection from the calendar. Auto-applies the date.
-   */
-  onDateChange(event: CustomEvent): void {
-    const dateValue = event.detail.value;
-    if (dateValue) {
-      // Extract just the date part (YYYY-MM-DD)
-      const dateOnly = dateValue.split('T')[0];
-      this.tempDate.set(dateOnly);
-      this.form.patchValue({ transaction_date: dateOnly }, { emitEvent: false });
-    }
-  }
-
-  /**
-   * Applies the selected date and closes the popover.
-   */
-  applyDate(popover: IonPopover): void {
-    // Date is already applied via onDateChange, just close the popover
-    popover.dismiss();
-  }
-
-  /**
-   * Cancels the date selection and closes the popover.
-   */
-  cancelDate(popover: IonPopover): void {
-    // Revert to the original date from the form
-    this.tempDate.set(this.form.controls.transaction_date.value);
-    popover.dismiss();
-  }
-
   // --- Private Methods ---
 
   #resetForm(): void {
@@ -280,7 +233,6 @@ export class ExpenseFormComponent implements OnInit {
       },
       { emitEvent: false },
     );
-    this.tempDate.set(this.#today());
   }
 
   #markAllAsTouched(): void {

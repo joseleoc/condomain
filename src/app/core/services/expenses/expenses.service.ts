@@ -2,6 +2,7 @@ import { inject, Injectable } from '@angular/core';
 import { FinancialTransactions } from '../financial-transactions/financial-transactions';
 import { FinancialTransaction } from '@app-types/financial-transactions';
 import { CondominiumAccounts } from '../condominium-accounts/condominium-accounts';
+import { ContextService } from '../context/context.service';
 import { BehaviorSubject } from 'rxjs';
 
 export interface CreateExpenseData {
@@ -23,6 +24,7 @@ export class ExpensesService {
   // --- Dependencies ---
   #financialTransactions = inject(FinancialTransactions);
   #condominiumAccounts = inject(CondominiumAccounts);
+  #contextService = inject(ContextService);
 
   // --- State ---
   expenses$ = new BehaviorSubject<FinancialTransaction[]>([]);
@@ -44,6 +46,7 @@ export class ExpensesService {
     this.error$.next(null);
 
     try {
+      const baseCurrency = this.#contextService.activeCondominium()?.currency ?? 'USD';
       const expense = await this.#financialTransactions.create({
         condominium_id: data.condominium_id,
         account_id: data.account_id,
@@ -52,6 +55,7 @@ export class ExpensesService {
         amount: data.amount,
         original_currency: data.original_currency,
         exchange_rate: data.exchange_rate,
+        base_currency: baseCurrency,
         description: data.description,
         reference_number: data.reference_number,
         transaction_date: data.transaction_date,
