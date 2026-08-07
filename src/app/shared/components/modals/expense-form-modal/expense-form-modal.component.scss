@@ -1,0 +1,11 @@
+:host {
+  display: block;
+}
+
+ion-content {
+  --padding-bottom: 20px;
+}
+
+ion-footer {
+  --border-top: 1px solid var(--ion-color-step-150, #d9d9d9);
+}
