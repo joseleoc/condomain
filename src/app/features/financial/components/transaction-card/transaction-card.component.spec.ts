@@ -22,6 +22,7 @@ describe('TransactionCardComponent', () => {
     original_currency: 'USD',
     exchange_rate: 1,
     base_amount: 50,
+    base_currency: 'USD',
     description: 'Electricity bill',
     reference_number: 'REF-001',
     transaction_date: '2026-07-01',
@@ -29,6 +30,13 @@ describe('TransactionCardComponent', () => {
     created_at: '2026-07-01T00:00:00Z',
     updated_at: '2026-07-01T00:00:00Z',
     deleted_at: null,
+    approved_at: null,
+    approved_by: null,
+    reconciled_at: null,
+    reconciled_by: null,
+    reversal_transaction_id: null,
+    reversed_by_transaction_id: null,
+    reversal_reason: null,
   };
 
   beforeEach(async () => {

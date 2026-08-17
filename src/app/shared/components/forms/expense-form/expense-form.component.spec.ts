@@ -288,7 +288,7 @@ describe('ExpenseFormComponent', () => {
     it('should require exchange_rate when currency differs from baseCurrency', () => {
       component.form.patchValue({ original_currency: 'EUR' });
 
-      expect(component.form.controls.exchange_rate.hasValidator(jasmine.anything())).toBeTrue();
+      expect(component.form.controls.exchange_rate.validator).toBeTruthy();
     });
   });
 });

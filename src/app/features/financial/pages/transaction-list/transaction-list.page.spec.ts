@@ -26,6 +26,7 @@ describe('TransactionListPage', () => {
     original_currency: 'USD',
     exchange_rate: 1,
     base_amount: 100,
+    base_currency: 'USD',
     description: 'Test',
     reference_number: null,
     transaction_date: '2026-07-01',
@@ -33,6 +34,13 @@ describe('TransactionListPage', () => {
     created_at: '2026-07-01T00:00:00Z',
     updated_at: '2026-07-01T00:00:00Z',
     deleted_at: null,
+    approved_at: null,
+    approved_by: null,
+    reconciled_at: null,
+    reconciled_by: null,
+    reversal_transaction_id: null,
+    reversed_by_transaction_id: null,
+    reversal_reason: null,
   };
 
   beforeEach(async () => {

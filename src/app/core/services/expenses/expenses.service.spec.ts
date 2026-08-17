@@ -88,10 +88,13 @@ describe('ExpensesService', () => {
 
       await service.createExpense(createExpenseData);
 
-      expect(financialTransactionsSpy.create).toHaveBeenCalledWith({
-        ...createExpenseData,
-        type: 'expense',
-      });
+      expect(financialTransactionsSpy.create).toHaveBeenCalledWith(
+        jasmine.objectContaining({
+          ...createExpenseData,
+          type: 'expense',
+          base_currency: 'USD',
+        }),
+      );
     });
 
     it('should refresh wallet cache after creation', async () => {
