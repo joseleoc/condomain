@@ -8,6 +8,7 @@ import {
   type NetWorthDataPoint,
 } from '../../data/services/financial-dashboard.service';
 import { ContextService } from '@core/services/context/context.service';
+import { FinancialEventsService } from '@core/services/financial-events/financial-events.service';
 import { Toast } from '@core/services/toast/toast';
 import type { CondominiumAccount } from '@app-types/condominium-accounts';
 import type { CondominiumWithRole } from '@app-types/condominium';
@@ -48,6 +49,7 @@ describe('FinancialDashboardPage', () => {
     institution_name: 'Test Bank',
     initial_balance: 1000,
     current_balance: 1200,
+    chart_account_id: 'chart-1',
     icon: null,
     color: null,
     created_at: new Date().toISOString(),
@@ -58,7 +60,7 @@ describe('FinancialDashboardPage', () => {
   beforeEach(async () => {
     dashboardService = jasmine.createSpyObj<FinancialDashboardService>(
       'FinancialDashboardService',
-      ['loadData', 'setDuration', 'enableMockData'],
+      ['loadData', 'setDuration', 'deleteWallet'],
       {
         netWorth$: netWorth$.asObservable(),
         wallets$: wallets$.asObservable(),
@@ -70,7 +72,7 @@ describe('FinancialDashboardPage', () => {
       },
     );
     dashboardService.loadData.and.returnValue(Promise.resolve());
-    dashboardService.enableMockData.and.returnValue(undefined);
+    dashboardService.deleteWallet.and.returnValue(Promise.resolve());
 
     await TestBed.configureTestingModule({
       imports: [FinancialDashboardPage, SharedTestingModule],
@@ -88,6 +90,13 @@ describe('FinancialDashboardPage', () => {
           provide: Toast,
           useValue: {
             present: jasmine.createSpy('present').and.returnValue(Promise.resolve()),
+          },
+        },
+        {
+          provide: FinancialEventsService,
+          useValue: {
+            onAll: () => new BehaviorSubject<any>(null).asObservable(),
+            on: () => new BehaviorSubject<any>(null).asObservable(),
           },
         },
       ],

@@ -1,4 +1,5 @@
 import { Component, computed, effect, inject, signal } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { AsyncPipe } from '@angular/common';
 import {
   IonContent,
@@ -20,6 +21,7 @@ import {
 import { TranslocoPipe, TranslocoService } from '@jsverse/transloco';
 import { CondominiumAccounts } from '@core/services/condominium-accounts/condominium-accounts';
 import { ContextService } from '@core/services/context/context.service';
+import { FinancialEventsService } from '@core/services/financial-events/financial-events.service';
 import { Toast } from '@core/services/toast/toast';
 import { WalletCardComponent } from '../../components/wallet-card/wallet-card.component';
 import { WalletFormModalComponent } from '../../components/wallet-form-modal/wallet-form-modal.component';
@@ -56,6 +58,7 @@ export class WalletListPage {
   // --- Dependencies ---
   #accountsService = inject(CondominiumAccounts);
   contextService = inject(ContextService);
+  #financialEvents = inject(FinancialEventsService);
   #translocoService = inject(TranslocoService);
   #toast = inject(Toast);
 
@@ -72,6 +75,7 @@ export class WalletListPage {
     currency: 'USD',
     current_balance: 0,
     initial_balance: 0,
+    chart_account_id: null,
     condominium_id: '',
     created_at: '',
     updated_at: '',
@@ -111,6 +115,21 @@ export class WalletListPage {
       });
     }
   });
+
+  constructor() {
+    // Refresh wallet list when financial events occur (transaction created, approved, voided)
+    this.#financialEvents
+      .onAll()
+      .pipe(takeUntilDestroyed())
+      .subscribe((event) => {
+        const condominium = this.contextService.activeCondominium();
+        if (condominium && event.condominiumId === condominium.id) {
+          this.#accountsService.fetchByCondominium(condominium.id).catch((error) => {
+            console.error('Failed to refresh wallets after financial event:', error);
+          });
+        }
+      });
+  }
 
   // --- Event Handlers ---
 

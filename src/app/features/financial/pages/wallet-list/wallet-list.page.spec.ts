@@ -3,6 +3,7 @@ import { SharedTestingModule } from '@testing/shared-testing.module';
 import { WalletListPage } from './wallet-list.page';
 import { CondominiumAccounts } from '@core/services/condominium-accounts/condominium-accounts';
 import { ContextService } from '@core/services/context/context.service';
+import { FinancialEventsService } from '@core/services/financial-events/financial-events.service';
 import { Toast } from '@core/services/toast/toast';
 import { BehaviorSubject } from 'rxjs';
 import { signal, Signal } from '@angular/core';
@@ -68,6 +69,7 @@ describe('WalletListPage', () => {
     institution_name: 'Test Bank',
     initial_balance: 1000,
     current_balance: 1200,
+    chart_account_id: 'chart-1',
     icon: null,
     color: null,
     created_at: new Date().toISOString(),
@@ -85,6 +87,13 @@ describe('WalletListPage', () => {
           useFactory: () => createMockContextService(mockCondominium),
         },
         { provide: Toast, useFactory: createMockToast },
+        {
+          provide: FinancialEventsService,
+          useValue: {
+            onAll: () => new BehaviorSubject<any>(null).asObservable(),
+            on: () => new BehaviorSubject<any>(null).asObservable(),
+          },
+        },
       ],
     }).compileComponents();
 

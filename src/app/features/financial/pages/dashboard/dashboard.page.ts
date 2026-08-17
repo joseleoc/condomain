@@ -8,6 +8,7 @@ import {
   QueryList,
 } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { AsyncPipe } from '@angular/common';
 import {
   IonContent,
@@ -27,6 +28,7 @@ import {
   ChartDuration,
 } from '../../data/services/financial-dashboard.service';
 import { ContextService } from '@core/services/context/context.service';
+import { FinancialEventsService } from '@core/services/financial-events/financial-events.service';
 import { Toast } from '@core/services/toast/toast';
 import { NetWorthCardComponent } from '../../components/net-worth-card/net-worth-card.component';
 import { NetWorthChartComponent } from '../../components/net-worth-chart/net-worth-chart.component';
@@ -63,6 +65,7 @@ export class FinancialDashboardPage {
   // --- Dependencies ---
   #dashboardService = inject(FinancialDashboardService);
   contextService = inject(ContextService);
+  #financialEvents = inject(FinancialEventsService);
   #translocoService = inject(TranslocoService);
   #toast = inject(Toast);
 
@@ -84,7 +87,20 @@ export class FinancialDashboardPage {
   walletToEdit = signal<CondominiumAccount | null>(null);
   deleteTarget = signal<CondominiumAccount | null>(null);
 
-  constructor() {}
+  constructor() {
+    // Refresh dashboard data when financial events occur (transaction created, approved, voided)
+    this.#financialEvents
+      .onAll()
+      .pipe(takeUntilDestroyed())
+      .subscribe((event) => {
+        const condominium = this.contextService.activeCondominium();
+        if (condominium && event.condominiumId === condominium.id) {
+          this.#dashboardService.loadData().catch((error) => {
+            console.error('Failed to refresh dashboard after financial event:', error);
+          });
+        }
+      });
+  }
 
   // --- Mock account for skeleton loading ---
   mockAccount: CondominiumAccount = {
@@ -94,6 +110,7 @@ export class FinancialDashboardPage {
     currency: 'USD',
     current_balance: 0,
     initial_balance: 0,
+    chart_account_id: null,
     condominium_id: '',
     created_at: '',
     updated_at: '',
