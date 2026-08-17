@@ -371,6 +371,7 @@ export class CondominiumAccounts {
       institution_name: data.institution_name ?? null,
       initial_balance: data.initial_balance ?? 0,
       current_balance: data.initial_balance ?? 0,
+      chart_account_id: null,
       icon: data.icon ?? null,
       color: data.color ?? null,
       created_at: new Date().toISOString(),
