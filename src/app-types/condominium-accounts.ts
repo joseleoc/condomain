@@ -7,6 +7,7 @@ export interface CondominiumAccount {
   institution_name: string | null;
   initial_balance: number;
   current_balance: number;
+  chart_account_id: string | null;
   icon: string | null;
   color: string | null;
   created_at: string;

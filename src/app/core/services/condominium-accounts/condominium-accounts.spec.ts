@@ -103,6 +103,7 @@ describe('CondominiumAccounts', () => {
     institution_name: 'Example Bank',
     initial_balance: 1000,
     current_balance: 1000,
+    chart_account_id: '00000000-0000-0000-0000-000000000020',
     icon: 'card',
     color: '#ff8200',
     created_at: '2026-07-01T00:00:00Z',

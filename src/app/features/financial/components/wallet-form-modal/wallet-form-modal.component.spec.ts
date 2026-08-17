@@ -186,6 +186,7 @@ describe('WalletFormModalComponent', () => {
       institution_name: 'Bank of America',
       initial_balance: 1000,
       current_balance: 1000,
+      chart_account_id: 'chart-1',
       icon: null,
       color: null,
       created_at: new Date().toISOString(),

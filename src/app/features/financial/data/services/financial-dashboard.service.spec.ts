@@ -44,6 +44,7 @@ describe('FinancialDashboardService', () => {
     institution_name: 'Bank A',
     initial_balance: 1000,
     current_balance: 1500,
+    chart_account_id: '00000000-0000-0000-0000-000000000100',
     icon: null,
     color: null,
     created_at: '2026-01-01T00:00:00Z',
@@ -60,6 +61,7 @@ describe('FinancialDashboardService', () => {
     institution_name: null,
     initial_balance: 200,
     current_balance: 300,
+    chart_account_id: '00000000-0000-0000-0000-000000000101',
     icon: null,
     color: null,
     created_at: '2026-01-01T00:00:00Z',
@@ -221,8 +223,11 @@ describe('FinancialDashboardService', () => {
   describe('netWorthHistory$', () => {
     it('should aggregate monthly balances across all wallets', async () => {
       accountsServiceSpy.accounts$.next([walletA, walletB]);
-      balanceServiceSpy.fetchMonthlyByAccount.withArgs(walletA.id).and.returnValue(Promise.resolve(balanceA));
-      balanceServiceSpy.fetchMonthlyByAccount.withArgs(walletB.id).and.returnValue(Promise.resolve(balanceB));
+      balanceServiceSpy.fetchMonthlyByAccount.and.callFake((accountId: string) => {
+        if (accountId === walletA.chart_account_id) return Promise.resolve(balanceA);
+        if (accountId === walletB.chart_account_id) return Promise.resolve(balanceB);
+        return Promise.resolve([]);
+      });
 
       const history = await firstValueFrom(service.netWorthHistory$);
 

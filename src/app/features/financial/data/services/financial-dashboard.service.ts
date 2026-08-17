@@ -165,8 +165,19 @@ export class FinancialDashboardService {
   async #fetchAndAggregateHistory(
     wallets: CondominiumAccount[],
   ): Promise<NetWorthDataPoint[]> {
-    const balancePromises = wallets.map((wallet) =>
-      this.#balanceService.fetchMonthlyByAccount(wallet.id),
+    // Only fetch balances for wallets that have a chart_account_id assigned.
+    // account_monthly_balances.account_id references chart_of_accounts(id),
+    // NOT condominium_accounts(id).
+    const walletsWithChartAccount = wallets.filter(
+      (w) => w.chart_account_id != null,
+    );
+
+    if (walletsWithChartAccount.length === 0) {
+      return [];
+    }
+
+    const balancePromises = walletsWithChartAccount.map((wallet) =>
+      this.#balanceService.fetchMonthlyByAccount(wallet.chart_account_id!),
     );
     const allBalances = await Promise.all(balancePromises);
 
