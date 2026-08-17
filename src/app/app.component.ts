@@ -37,6 +37,12 @@ import {
   receiptOutline,
   cashOutline,
   swapHorizontalOutline,
+  card,
+  trendingUpOutline,
+  pricetagOutline,
+  arrowUpCircleOutline,
+  arrowDownCircleOutline,
+  closeOutline,
 } from 'ionicons/icons';
 import { PendingInvitation } from '@core/services/pending-invitation/pending-invitation';
 
@@ -54,9 +60,15 @@ export class AppComponent {
       languageOutline,
       chevronForward,
       add,
+      card,
+      trendingUpOutline,
       cameraOutline,
       businessOutline,
       chatbubblesOutline,
+      arrowUpCircleOutline,
+      arrowDownCircleOutline,
+      pricetagOutline,
+      closeOutline,
       personOutline,
       documentOutline,
       trashOutline,
