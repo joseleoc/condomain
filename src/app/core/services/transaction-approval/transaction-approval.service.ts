@@ -5,6 +5,7 @@ import { NetworkStatusService } from '@core/services/network-status/network-stat
 import { LocalRepository } from '@core/services/sync/local-repository';
 import { SyncService } from '@core/services/sync/sync-service';
 import { Profile } from '@core/services/profile/profile';
+import { FinancialEventsService } from '@core/services/financial-events/financial-events.service';
 import type { FinancialTransaction, TransactionStatus } from '@app-types/financial-transactions';
 
 const ENTITY_TYPE = 'financial_transaction';
@@ -16,6 +17,7 @@ export class TransactionApprovalService {
   #localRepo = inject(LocalRepository);
   #syncService = inject(SyncService);
   #profile = inject(Profile);
+  #financialEvents = inject(FinancialEventsService);
 
   pendingTransactions$ = new BehaviorSubject<FinancialTransaction[]>([]);
   loading$ = new BehaviorSubject<boolean>(false);
@@ -70,6 +72,10 @@ export class TransactionApprovalService {
     const profileId = this.#getCurrentProfileId();
     const now = new Date().toISOString();
 
+    // Fetch transaction BEFORE updating so we have data for the event
+    const existing = await this.#localRepo.getById(ENTITY_TYPE, transactionId);
+    const transaction = existing as unknown as FinancialTransaction;
+
     const { error } = await this.#client
       .from('financial_transactions')
       .update({
@@ -83,7 +89,6 @@ export class TransactionApprovalService {
     if (error) throw error;
 
     // Update local cache
-    const existing = await this.#localRepo.getById(ENTITY_TYPE, transactionId);
     if (existing) {
       await this.#localRepo.upsert(ENTITY_TYPE, {
         ...existing,
@@ -95,9 +100,19 @@ export class TransactionApprovalService {
     }
 
     // Refresh pending list
-    const transaction = existing as unknown as FinancialTransaction;
     const pending = this.pendingTransactions$.value.filter((t) => t.id !== transactionId);
     this.pendingTransactions$.next(pending);
+
+    // Emit event so wallet balances and UI refresh
+    if (transaction) {
+      this.#financialEvents.emit({
+        type: 'transaction:status-changed',
+        condominiumId: transaction.condominium_id,
+        accountId: transaction.account_id,
+        transactionId,
+        timestamp: new Date(),
+      });
+    }
   }
 
   /**
@@ -169,6 +184,15 @@ export class TransactionApprovalService {
     // Refresh pending list
     const pending = this.pendingTransactions$.value.filter((t) => t.id !== transactionId);
     this.pendingTransactions$.next(pending);
+
+    // Emit event so wallet balances and UI refresh
+    this.#financialEvents.emit({
+      type: 'transaction:status-changed',
+      condominiumId: transaction.condominium_id,
+      accountId: transaction.account_id,
+      transactionId,
+      timestamp: new Date(),
+    });
   }
 
   /**
